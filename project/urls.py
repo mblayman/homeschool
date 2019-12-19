@@ -19,6 +19,7 @@ from django.urls import include, path
 
 urlpatterns = [path("admin/", admin.site.urls)]
 
+# Enable the debug toolbar only in DEBUG mode.
 if settings.DEBUG and settings.DEBUG_TOOLBAR:
     import debug_toolbar
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns

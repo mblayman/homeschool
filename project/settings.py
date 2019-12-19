@@ -55,11 +55,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# Enable the debug toolbar only in DEBUG mode.
 if DEBUG and DEBUG_TOOLBAR:
-    # Enable the debug toolbar only in DEBUG mode.
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    # INTERNAL_IPS = ["0.0.0.0"]
     INTERNAL_IPS = ["127.0.0.1"]
 
 ROOT_URLCONF = "project.urls"
