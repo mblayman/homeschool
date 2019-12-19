@@ -6,13 +6,14 @@
 #
 asgiref==3.2.3            # via django
 dj-database-url==0.5.0    # via django-heroku
+django-debug-toolbar==2.1
 django-environ==0.4.5
 django-heroku==0.3.1
 django==3.0.1
 gunicorn==20.0.4
 psycopg2==2.8.4           # via django-heroku
 pytz==2019.3              # via django
-sqlparse==0.3.0           # via django
+sqlparse==0.3.0           # via django, django-debug-toolbar
 whitenoise==4.1.4         # via django-heroku
 
 # The following packages are considered to be unsafe in a requirements file:
