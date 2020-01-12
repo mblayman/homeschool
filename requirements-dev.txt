@@ -1,2 +1,3 @@
+factory-boy
 flake8
 pip-tools
