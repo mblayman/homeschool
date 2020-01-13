@@ -1,0 +1,31 @@
+name: Tests Runner
+on: push
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Cache Python packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
+
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+
+      - name: Install packages
+        run: pip install -r requirements.txt requirements-dev.txt
+
+      - name: Run publisher
+        run: python manage.py test
