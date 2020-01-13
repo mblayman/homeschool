@@ -28,7 +28,7 @@ jobs:
         run: sudo apt install libpq-dev
 
       - name: Install packages
-        run: pip install -r requirements.txt requirements-dev.txt
+        run: pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run publisher
         run: python manage.py test
