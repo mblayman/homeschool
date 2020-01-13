@@ -24,11 +24,11 @@ jobs:
           python-version: '3.x'
           architecture: 'x64'
 
+      - name: Install Postgres dev headers for pg_config
+        run: sudo apt install libpq-dev
+
       - name: Install packages
-        run: |
-          cat requirements.txt | grep -v psycopg2 > requirements-no-pg.txt
-          pip install -r requirements-no-pg.txt requirements-dev.txt
-          pip install psycopg2-binary
+        run: pip install -r requirements.txt requirements-dev.txt
 
       - name: Run publisher
         run: python manage.py test
