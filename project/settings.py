@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "waffle",
+    "homeschool.core",
     "homeschool.schools",
     "homeschool.users",
 ]
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "waffle.middleware.WaffleMiddleware",
 ]
 
 # Enable the debug toolbar only in DEBUG mode.
@@ -150,5 +153,9 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_REDIRECT_URL = "app"
+
+# django-waffle
+WAFFLE_FLAG_MODEL = "core.Flag"
+WAFFLE_CREATE_MISSING_FLAGS = True
 
 django_heroku.settings(locals(), secret_key=False)
