@@ -1,7 +1,5 @@
-from django.test import TestCase
-
 from homeschool.schools.tests.factories import SchoolFactory
-from homeschool.users.tests.factories import UserFactory
+from homeschool.test import TestCase
 
 
 class TestSchool(TestCase):
@@ -13,7 +11,7 @@ class TestSchool(TestCase):
 
     def test_school_has_admin(self):
         """A school has an administrator."""
-        user = UserFactory()
+        user = self.make_user()
         school = SchoolFactory(admin=user)
 
         self.assertEqual(school.admin, user)
