@@ -17,7 +17,13 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-urlpatterns = [path("office/", admin.site.urls)]
+from homeschool.schools.views import app
+
+urlpatterns = [
+    path("office/", admin.site.urls),
+    path("accounts/", include("allauth.urls")),
+    path("app/", app, name="app"),
+]
 
 # Enable the debug toolbar only in DEBUG mode.
 if settings.DEBUG and settings.DEBUG_TOOLBAR:

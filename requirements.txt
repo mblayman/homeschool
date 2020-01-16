@@ -5,15 +5,25 @@
 #    pip-compile --output-file=requirements.txt requirements.in
 #
 asgiref==3.2.3            # via django
+certifi==2019.11.28       # via requests
+chardet==3.0.4            # via requests
+defusedxml==0.6.0         # via python3-openid
 dj-database-url==0.5.0    # via django-heroku
+django-allauth==0.41.0
 django-debug-toolbar==2.1
 django-environ==0.4.5
 django-heroku==0.3.1
 django==3.0.1
 gunicorn==20.0.4
+idna==2.8                 # via requests
+oauthlib==3.1.0           # via requests-oauthlib
 psycopg2==2.8.4           # via django-heroku
+python3-openid==3.1.0     # via django-allauth
 pytz==2019.3              # via django
+requests-oauthlib==1.3.0  # via django-allauth
+requests==2.22.0          # via django-allauth, requests-oauthlib
 sqlparse==0.3.0           # via django, django-debug-toolbar
+urllib3==1.25.7           # via requests
 whitenoise==4.1.4         # via django-heroku
 
 # The following packages are considered to be unsafe in a requirements file:
