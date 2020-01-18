@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "waffle",
     "homeschool.core",
+    "homeschool.courses",
     "homeschool.schools",
     "homeschool.users",
 ]
