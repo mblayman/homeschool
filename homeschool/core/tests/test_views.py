@@ -1,6 +1,11 @@
 from homeschool.test import TestCase
 
 
+class TestIndex(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:index")
+
+
 class TestApp(TestCase):
     def test_ok(self):
         user = self.make_user()
