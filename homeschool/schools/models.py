@@ -10,3 +10,17 @@ class School(models.Model):
         on_delete=models.CASCADE,
         help_text="The school administrator",
     )
+
+
+class SchoolYear(models.Model):
+    """A school year to bound start and end dates of the academic year"""
+
+    school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+
+class GradeLevel(models.Model):
+    """A student is in a grade level in a given school year"""
+
+    school_year = models.ForeignKey("schools.SchoolYear", on_delete=models.CASCADE)
