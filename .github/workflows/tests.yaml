@@ -26,10 +26,12 @@ jobs:
 
       - name: Install packages
         run: |
-          sudo apt install \
           # Postgres dev headers for pg_config
-          libpq-dev \
+          # libpq-dev
           # Graphviz support
+          # python3-dev graphviz libgraphviz-dev
+          sudo apt install \
+          libpq-dev \
           python3-dev graphviz libgraphviz-dev
 
       - name: Install packages
