@@ -1,8 +1,12 @@
-{% if user.is_authenticated %}
-  Hi {{ user.email }}!
-  <p><a href="{% url 'account_logout' %}">Log Out</a></p>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'account_login' %}">Log In</a> |
-  <a href="{% url 'account_signup' %}">Sign Up</a>
-{% endif %}
+{% extends "base.html" %}
+
+{% block body %}
+  {% if user.is_authenticated %}
+    Hi {{ user.email }}!
+    <p><a href="{% url 'account_logout' %}">Log Out</a></p>
+  {% else %}
+    <p>You are not logged in</p>
+    <a href="{% url 'account_login' %}">Log In</a> |
+    <a href="{% url 'account_signup' %}">Sign Up</a>
+  {% endif %}
+{% endblock %}
