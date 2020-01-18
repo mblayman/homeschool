@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "django_extensions",
     "waffle",
     "homeschool.core",
     "homeschool.courses",

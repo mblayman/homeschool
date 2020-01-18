@@ -105,3 +105,6 @@ venv.bak/
 
 # Vim
 *.sw*
+
+# Modeling output
+models.png

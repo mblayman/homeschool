@@ -1,6 +1,8 @@
+django-extensions==2.2.6
 django-test-plus==1.4.0
 factory-boy
 flake8==3.7.9
 isort==4.3.21
 pip-tools
 pre-commit
+pygraphviz==1.5
