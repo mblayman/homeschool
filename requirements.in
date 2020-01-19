@@ -1,3 +1,4 @@
+beautifulsoup4==4.8.2
 Django==3.0.1
 django-allauth==0.41.0
 django-debug-toolbar==2.1
