@@ -1,8 +1,49 @@
+{% load waffle_tags %}
 <!DOCTYPE html>
-<html>
+<html lang="en-US" class="bg-white subpixel-antialiased">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
+
+  <nav class="flex bg-blue-800 text-white border-b-2 border-yellow-300 sm:h-16 items-center">
+    <div class="w-full max-w-6xl relative mx-auto px-6">
+      <div class="flex flex-col sm:flex-row sm:items-center">
+        <a href="/" class="block mr-4 py-1">
+          <h1 class="text-lg uppercase tracking-wider font-hairline hover:underline">Homeschool App</h1>
+        </a>
+        <div class="flex-grow">
+          {% if messages %}
+          <ul>
+            {% for message in messages %}
+              <li class="bg-yellow-300 border border-yellow-200 text-blue-900 py-2 px-4 mx-8 rounded-lg">{{ message }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+          <div class="mr-4">
+            <a class="hover:underline font-light" href="{% url "core:app" %}">{{ user.email }}</a>
+          </div>
+          <form method="POST" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button class="hover:underline font-light" type="submit">Log Out</button>
+          </form>
+        {% else %}
+          <a class="hover:underline font-light" href="{% url 'account_login' %}">Log In</a>
+          {% flag signup_flag %}
+            <a class="hover:underline ml-0 sm:ml-4 my-2 font-light" href="{% url 'account_signup' %}">Sign Up</a>
+          {% endflag %}
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-8">
 {% block body %}{% endblock %}
+  </div>
 </body>
 </html>
