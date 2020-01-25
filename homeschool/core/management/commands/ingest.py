@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 
 from homeschool.courses.models import Course, CourseTask
 from homeschool.schools.models import GradeLevel, School, SchoolYear
+from homeschool.students.models import Enrollment, Student
 
 User = get_user_model()
 
@@ -17,6 +18,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("email")
         parser.add_argument("grade")
+        parser.add_argument("student")
 
     def handle(self, *args, **options):
         self.stdout.write("Check for user")
@@ -32,7 +34,7 @@ class Command(BaseCommand):
                     self.process_course(course_name, f"{dirpath}/{filename}")
                 )
 
-        self.persist_to_school(user, options["grade"], courses)
+        self.persist_to_school(user, options["grade"], options["student"], courses)
 
     def process_course(self, course_name, file_path):
         self.stdout.write(f"Processing {course_name}...")
@@ -72,7 +74,7 @@ class Command(BaseCommand):
 
         return {"name": course_name, "tasks": tasks}
 
-    def persist_to_school(self, user, grade_level_name, courses):
+    def persist_to_school(self, user, grade_level_name, student_full_name, courses):
         """Create a school with all its records."""
         school = School.objects.create(admin=user)
         start_date = datetime.date.today()
@@ -95,3 +97,10 @@ class Command(BaseCommand):
                     )
                 )
             CourseTask.objects.bulk_create(tasks)
+
+        # Create student and add to grade.
+        student_name = student_full_name.split()
+        student = Student.objects.create(
+            first_name=student_name[0], last_name=student_name[1]
+        )
+        Enrollment.objects.create(student=student, grade_level=grade_level)
