@@ -1,5 +1,6 @@
 import csv
 import os
+import pprint
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
@@ -35,23 +36,33 @@ class Command(BaseCommand):
         searching_tasks = True
         sequence = 1
         tasks = []
+        row_length = 1
         for row in reader:
             if searching_tasks:
                 # Stop searching after finding the task column labels.
                 if row and row[0] == "Sequence":
                     searching_tasks = False
+                    row_length = len(row)
                 continue
 
             try:
                 if sequence == int(row[0]):
                     tasks.append(row)
                     sequence += 1
-                    # TODO: check length and join descriptions (see Reading 2)
             except ValueError:
                 # Hit extra line from poor description wrapping.
                 # Join this to the previous task.
                 tasks[-1][-1] = "\n".join([tasks[-1][-1], row[0]])
                 tasks[-1].extend(row[1:])
+
+        # Clean up the cases when there were commas in the descriptions.
+        description_index = 3
+        for task in tasks:
+            while len(task) != row_length:
+                more_description = task.pop(description_index + 1)
+                task[description_index] = ", ".join(
+                    [task[description_index], more_description]
+                )
 
         return {"name": course_name, "tasks": tasks}
 
@@ -59,4 +70,4 @@ class Command(BaseCommand):
         """Create a school with all its records."""
         print(user)
         print(grade_level)
-        print(courses[0])
+        pprint.pprint(courses[0])
