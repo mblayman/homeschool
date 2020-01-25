@@ -1,5 +1,5 @@
-from homeschool.schools.tests.factories import SchoolFactory
-from homeschool.students.tests.factories import StudentFactory
+from homeschool.schools.tests.factories import GradeLevelFactory, SchoolFactory
+from homeschool.students.tests.factories import EnrollmentFactory, StudentFactory
 from homeschool.test import TestCase
 
 
@@ -38,3 +38,22 @@ class TestStudent(TestCase):
         student = StudentFactory()
 
         self.assertEqual(str(student), student.full_name)
+
+
+class TestEnrollment(TestCase):
+    def test_factory(self):
+        enrollment = EnrollmentFactory()
+
+        self.assertIsNotNone(enrollment)
+
+    def test_has_student(self):
+        student = StudentFactory()
+        enrollment = EnrollmentFactory(student=student)
+
+        self.assertEqual(enrollment.student, student)
+
+    def test_has_grade_level(self):
+        grade_level = GradeLevelFactory()
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+
+        self.assertEqual(enrollment.grade_level, grade_level)
