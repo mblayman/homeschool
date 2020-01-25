@@ -6,12 +6,19 @@
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
   <title>{% block head_title %}Homeschool App{% endblock %}</title>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
   {% include "nav.html" %}
 
-  <main class="container mx-auto p-8">
+  <main class="container mx-auto p-8 flex-grow">
     {% block main %}{% endblock %}
   </main>
+
+  <footer class="container mx-auto border-t border-gray-400 p-4 text-center text-sm text-gray-600">
+    <span class="mx-1">&copy; {% now "Y" %} Matt Layman</span>
+    <a href="#" class="mx-1 hover:text-gray-900">About</a>
+    <a href="#" class="mx-1 hover:text-gray-900">Terms</a>
+    <a href="#" class="mx-1 hover:text-gray-900">Privacy</a>
+  </footer>
 </body>
 </html>
