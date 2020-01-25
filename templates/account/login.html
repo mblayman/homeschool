@@ -1,10 +1,43 @@
 {% extends "base.html" %}
 
+{% block head_title %}Log In{% endblock %}
+
 {% block main %}
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Log In</button>
-</form>
+  <div class="w-full max-w-xs mx-auto">
+    <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST">
+      {% csrf_token %}
+      <h1 class="font-bold text-xl mb-2">Log In</h1>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="id_login">
+          E-mail
+        </label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="email" name="login" id="id_login" type="text" placeholder="E-mail address" required
+          {% if form.login.value %}
+            value="{{ form.login.value }}"
+          {% endif %}
+          >
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="id_password">
+          Password
+        </label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+          type="password" name="password" id="id_password" placeholder="****************" required>
+      </div>
+      <div class="flex items-center justify-between">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Sign In
+        </button>
+        <a class="inline-block align-baseline font-bold text-sm text-blue-700 hover:text-blue-500" href="{% url 'account_reset_password' %}">
+          Forgot Password?
+        </a>
+      </div>
+      {% if form.errors %}
+        {% for error in form.non_field_errors %}
+          <p class="text-red-500 text-xs italic mt-4">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+    </form>
+  </div>
 {% endblock %}

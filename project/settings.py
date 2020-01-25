@@ -155,6 +155,7 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_REDIRECT_URL = "core:index"
+ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
 
 # django-waffle
 WAFFLE_FLAG_MODEL = "core.Flag"
