@@ -17,3 +17,4 @@ class CourseTaskFactory(factory.django.DjangoModelFactory):
 
     course = factory.SubFactory(CourseFactory)
     description = factory.Faker("sentence")
+    duration = factory.Faker("pyint", min_value=0, max_value=60)
