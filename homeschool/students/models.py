@@ -21,3 +21,11 @@ class Enrollment(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
+
+
+class Coursework(models.Model):
+    """The work that student completes for course tasks"""
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course_task = models.ForeignKey("courses.CourseTask", on_delete=models.CASCADE)
+    completed_date = models.DateField()

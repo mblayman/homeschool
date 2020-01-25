@@ -1,4 +1,5 @@
 import factory
+from django.utils import timezone
 
 
 class StudentFactory(factory.django.DjangoModelFactory):
@@ -18,3 +19,14 @@ class EnrollmentFactory(factory.django.DjangoModelFactory):
     grade_level = factory.SubFactory(
         "homeschool.schools.tests.factories.GradeLevelFactory"
     )
+
+
+class CourseworkFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "students.Coursework"
+
+    student = factory.SubFactory(StudentFactory)
+    course_task = factory.SubFactory(
+        "homeschool.courses.tests.factories.CourseTaskFactory"
+    )
+    completed_date = factory.LazyFunction(lambda: timezone.now().date())
