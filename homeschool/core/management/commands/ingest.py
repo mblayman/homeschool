@@ -1,9 +1,12 @@
 import csv
+import datetime
 import os
-import pprint
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+
+from homeschool.courses.models import Course, CourseTask
+from homeschool.schools.models import GradeLevel, School, SchoolYear
 
 User = get_user_model()
 
@@ -24,7 +27,10 @@ class Command(BaseCommand):
         courses = []
         for dirpath, dirnames, filenames in os.walk("courses_exports"):
             for filename in filenames:
-                courses.append(self.process_course(filename, f"{dirpath}/{filename}"))
+                course_name = filename.strip(".csv")
+                courses.append(
+                    self.process_course(course_name, f"{dirpath}/{filename}")
+                )
 
         self.persist_to_school(user, options["grade"], courses)
 
@@ -66,8 +72,26 @@ class Command(BaseCommand):
 
         return {"name": course_name, "tasks": tasks}
 
-    def persist_to_school(self, user, grade_level, courses):
+    def persist_to_school(self, user, grade_level_name, courses):
         """Create a school with all its records."""
-        print(user)
-        print(grade_level)
-        pprint.pprint(courses[0])
+        school = School.objects.create(admin=user)
+        start_date = datetime.date.today()
+        end_date = start_date + datetime.timedelta(days=365)
+        school_year = SchoolYear.objects.create(
+            school=school, start_date=start_date, end_date=end_date
+        )
+        grade_level = GradeLevel.objects.create(
+            name=grade_level_name, school_year=school_year
+        )
+        for course_dict in courses:
+            course = Course.objects.create(
+                name=course_dict["name"], grade_level=grade_level
+            )
+            tasks = []
+            for task in course_dict["tasks"]:
+                tasks.append(
+                    CourseTask(
+                        course=course, description=task[3], duration=int(task[2])
+                    )
+                )
+            CourseTask.objects.bulk_create(tasks)
