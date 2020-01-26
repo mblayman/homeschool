@@ -33,3 +33,11 @@ class DaysOfWeekModel(models.Model):
         Days of week is a bit field and day acts as a bitmask.
         """
         return bool(self.days_of_week & day)
+
+    @property
+    def total_week_days(self):
+        """Get the total number of selected days of the week."""
+        total = 0
+        for shift_bits in range(7):
+            total += (self.days_of_week >> shift_bits) % 2
+        return total
