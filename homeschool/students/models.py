@@ -31,4 +31,4 @@ class Coursework(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course_task = models.ForeignKey("courses.CourseTask", on_delete=models.CASCADE)
-    completed_date = models.DateField()
+    completed_date = models.DateField(db_index=True)
