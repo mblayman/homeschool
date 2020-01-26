@@ -2,8 +2,10 @@ import uuid
 
 from django.db import models
 
+from homeschool.core.models import DaysOfWeekModel
 
-class Course(models.Model):
+
+class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
 
     name = models.CharField(max_length=256)

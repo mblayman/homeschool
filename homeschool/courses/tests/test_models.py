@@ -1,5 +1,6 @@
 import uuid
 
+from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
 from homeschool.schools.tests.factories import GradeLevelFactory
 from homeschool.test import TestCase
@@ -23,6 +24,12 @@ class TestCourse(TestCase):
         course = CourseFactory(grade_level=grade_level)
 
         self.assertEqual(course.grade_level, grade_level)
+
+    def test_has_days_of_week(self):
+        days_of_week = Course.MONDAY + Course.TUESDAY
+        school_year = CourseFactory(days_of_week=days_of_week)
+
+        self.assertEqual(school_year.days_of_week, days_of_week)
 
 
 class TestCourseTask(TestCase):

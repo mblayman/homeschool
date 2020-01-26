@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from homeschool.core.models import DaysOfWeekModel
+
 
 class School(models.Model):
     """A school to hold students"""
@@ -12,33 +14,12 @@ class School(models.Model):
     )
 
 
-class SchoolYear(models.Model):
+class SchoolYear(DaysOfWeekModel):
     """A school year to bound start and end dates of the academic year"""
-
-    # Instead of bringing in django-bitfield, do this directly
-    # since the use case is constrained to seven values.
-    MONDAY = 1
-    TUESDAY = 2
-    WEDNESDAY = 4
-    THURSDAY = 8
-    FRIDAY = 16
-    SATURDAY = 32
-    SUNDAY = 64
 
     school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
-    days_of_week = models.PositiveIntegerField(
-        help_text="The days of the week when school is in session",
-        default=MONDAY + TUESDAY + WEDNESDAY + THURSDAY + FRIDAY,
-    )
-
-    def runs_on(self, day):
-        """Check if a school year runs on the given day.
-
-        Days of week is a bit field and day acts as a bitmask.
-        """
-        return bool(self.days_of_week & day)
 
 
 class GradeLevel(models.Model):
