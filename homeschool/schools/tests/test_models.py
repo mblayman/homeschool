@@ -1,3 +1,4 @@
+from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
@@ -40,6 +41,12 @@ class TestSchoolYear(TestCase):
 
         self.assertEqual(school_year.days_of_week, days_of_week)
 
+    def test_has_grade_levels(self):
+        school_year = SchoolYearFactory()
+        grade_level = GradeLevelFactory(school_year=school_year)
+
+        self.assertEqual(list(school_year.grade_levels.all()), [grade_level])
+
     def test_runs_on(self):
         school_year = SchoolYearFactory(days_of_week=SchoolYear.MONDAY)
 
@@ -76,3 +83,9 @@ class TestGradeLevel(TestCase):
         grade_level = GradeLevelFactory(school_year=school_year)
 
         self.assertEqual(grade_level.school_year, school_year)
+
+    def test_has_courses(self):
+        grade_level = GradeLevelFactory()
+        course = CourseFactory(grade_level=grade_level)
+
+        self.assertEqual(list(grade_level.courses.all()), [course])

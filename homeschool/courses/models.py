@@ -9,7 +9,9 @@ class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
 
     name = models.CharField(max_length=256)
-    grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
+    grade_level = models.ForeignKey(
+        "schools.GradeLevel", on_delete=models.CASCADE, related_name="courses"
+    )
 
     def __str__(self):
         return self.name

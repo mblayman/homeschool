@@ -26,7 +26,9 @@ class GradeLevel(models.Model):
     """A student is in a grade level in a given school year"""
 
     name = models.CharField(max_length=128)
-    school_year = models.ForeignKey("schools.SchoolYear", on_delete=models.CASCADE)
+    school_year = models.ForeignKey(
+        "schools.SchoolYear", on_delete=models.CASCADE, related_name="grade_levels"
+    )
 
     def __str__(self):
         return self.name
