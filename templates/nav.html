@@ -25,6 +25,13 @@
             {% endif %}
           </a>
         </div>
+        {% if user.is_staff %}
+          <div class="mr-4">
+            <a class="hover:underline font-light" href="{% url "admin:index" %}">
+              Office
+            </a>
+          </div>
+        {% endif %}
         <form method="POST" action="{% url 'account_logout' %}">
           {% csrf_token %}
           <button class="hover:underline font-light" type="submit">Log Out</button>
