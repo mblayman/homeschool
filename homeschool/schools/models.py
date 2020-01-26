@@ -1,7 +1,12 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from homeschool.core.models import DaysOfWeekModel
+
+User = get_user_model()
 
 
 class School(models.Model):
@@ -12,6 +17,13 @@ class School(models.Model):
         on_delete=models.CASCADE,
         help_text="The school administrator",
     )
+
+
+@receiver(post_save, sender=User)
+def create_school(sender, instance, created, **kwargs):
+    """A new user gets an associated school."""
+    if created:
+        School.objects.create(admin=instance)
 
 
 class SchoolYear(DaysOfWeekModel):

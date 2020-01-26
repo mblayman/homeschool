@@ -4,7 +4,9 @@ from django.db import models
 class Student(models.Model):
     """The learner"""
 
-    school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
+    school = models.ForeignKey(
+        "schools.School", on_delete=models.CASCADE, related_name="students"
+    )
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
 

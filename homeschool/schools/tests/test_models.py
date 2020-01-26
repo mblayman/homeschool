@@ -5,6 +5,7 @@ from homeschool.schools.tests.factories import (
     SchoolFactory,
     SchoolYearFactory,
 )
+from homeschool.students.tests.factories import StudentFactory
 from homeschool.test import TestCase
 
 
@@ -19,6 +20,12 @@ class TestSchool(TestCase):
         school = SchoolFactory(admin=user)
 
         self.assertEqual(school.admin, user)
+
+    def test_has_students(self):
+        school = SchoolFactory()
+        student = StudentFactory(school=school)
+
+        self.assertEqual(list(school.students.all()), [student])
 
 
 class TestSchoolYear(TestCase):
