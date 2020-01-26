@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 
 from homeschool.courses.models import Course, CourseTask
 from homeschool.schools.models import GradeLevel, School, SchoolYear
-from homeschool.students.models import Enrollment, Student
+from homeschool.students.models import Coursework, Enrollment, Student
 
 User = get_user_model()
 
@@ -76,6 +76,7 @@ class Command(BaseCommand):
 
     def persist_to_school(self, user, grade_level_name, student_full_name, courses):
         """Create a school with all its records."""
+        # Create all school related instances.
         school = School.objects.create(admin=user)
         start_date = datetime.date.today()
         end_date = start_date + datetime.timedelta(days=365)
@@ -85,22 +86,26 @@ class Command(BaseCommand):
         grade_level = GradeLevel.objects.create(
             name=grade_level_name, school_year=school_year
         )
+
+        # Create student.
+        student_name = student_full_name.split()
+        student = Student.objects.create(
+            school=school, first_name=student_name[0], last_name=student_name[1]
+        )
+        Enrollment.objects.create(student=student, grade_level=grade_level)
+
         for course_dict in courses:
             course = Course.objects.create(
                 name=course_dict["name"], grade_level=grade_level
             )
-            tasks = []
             for task in course_dict["tasks"]:
-                tasks.append(
-                    CourseTask(
-                        course=course, description=task[3], duration=int(task[2])
-                    )
+                course_task = CourseTask.objects.create(
+                    course=course, description=task[3], duration=int(task[2])
                 )
-            CourseTask.objects.bulk_create(tasks)
-
-        # Create student and add to grade.
-        student_name = student_full_name.split()
-        student = Student.objects.create(
-            first_name=student_name[0], last_name=student_name[1]
-        )
-        Enrollment.objects.create(student=student, grade_level=grade_level)
+                if task[1]:
+                    completed_date = datetime.datetime.strptime(task[1], "%m/%d/%Y")
+                    Coursework.objects.create(
+                        student=student,
+                        course_task=course_task,
+                        completed_date=completed_date,
+                    )

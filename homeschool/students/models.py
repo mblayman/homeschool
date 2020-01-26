@@ -26,6 +26,9 @@ class Enrollment(models.Model):
 class Coursework(models.Model):
     """The work that student completes for course tasks"""
 
+    class Meta:
+        verbose_name_plural = "coursework"
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course_task = models.ForeignKey("courses.CourseTask", on_delete=models.CASCADE)
     completed_date = models.DateField()
