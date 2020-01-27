@@ -1,6 +1,6 @@
 import datetime
 
-from homeschool.courses.tests.factories import CourseTaskFactory
+from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolFactory
 from homeschool.students.tests.factories import (
     CourseworkFactory,
@@ -45,6 +45,17 @@ class TestStudent(TestCase):
         student = StudentFactory()
 
         self.assertEqual(str(student), student.full_name)
+
+    def test_get_courses(self):
+        enrollment = EnrollmentFactory()
+        student = enrollment.student
+        school_year = enrollment.grade_level.school_year
+        GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_level=enrollment.grade_level)
+
+        courses = student.get_courses(school_year)
+
+        self.assertEqual(list(courses), [course])
 
 
 class TestEnrollment(TestCase):

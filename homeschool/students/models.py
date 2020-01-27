@@ -17,6 +17,19 @@ class Student(models.Model):
     def __str__(self):
         return self.full_name
 
+    def get_courses(self, school_year):
+        """Get the courses from the school year."""
+        enrollment = Enrollment.objects.filter(
+            student=self, grade_level__in=school_year.grade_levels.all()
+        ).first()
+        if enrollment:
+            # This looks goofy, but it operates under the assumption
+            # school year did all the prefetching on grade levels and courses.
+            for grade_level in school_year.grade_levels.all():
+                if grade_level.id == enrollment.grade_level_id:
+                    return list(grade_level.courses.all())
+        return []
+
 
 class Enrollment(models.Model):
     """The association between a student and grade level"""
