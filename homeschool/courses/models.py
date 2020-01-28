@@ -20,7 +20,9 @@ class Course(DaysOfWeekModel):
 class CourseTask(models.Model):
     """A student's required action in a course."""
 
-    course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        "courses.Course", on_delete=models.CASCADE, related_name="course_tasks"
+    )
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
     description = models.TextField()
     duration = models.PositiveIntegerField(

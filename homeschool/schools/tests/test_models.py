@@ -1,3 +1,5 @@
+import datetime
+
 from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import (
@@ -60,6 +62,14 @@ class TestSchoolYear(TestCase):
         self.assertTrue(school_year.runs_on(SchoolYear.MONDAY))
         self.assertFalse(school_year.runs_on(SchoolYear.TUESDAY))
 
+    def test_runs_on_date(self):
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.MONDAY)
+        monday = datetime.date(2020, 1, 20)
+        tuesday = datetime.date(2020, 1, 21)
+
+        self.assertTrue(school_year.runs_on(monday))
+        self.assertFalse(school_year.runs_on(tuesday))
+
     def test_days_of_week_default(self):
         school_year = SchoolYearFactory()
 
@@ -70,6 +80,23 @@ class TestSchoolYear(TestCase):
         self.assertTrue(school_year.runs_on(SchoolYear.FRIDAY))
         self.assertFalse(school_year.runs_on(SchoolYear.SATURDAY))
         self.assertFalse(school_year.runs_on(SchoolYear.SUNDAY))
+
+    def test_get_week_dates_for(self):
+        school_year = SchoolYearFactory()
+        monday = datetime.date(2020, 1, 20)
+        sunday = datetime.date(2020, 1, 26)
+        week = (monday, sunday)
+
+        self.assertEqual(
+            school_year.get_week_dates_for(week),
+            [
+                datetime.date(2020, 1, 20),
+                datetime.date(2020, 1, 21),
+                datetime.date(2020, 1, 22),
+                datetime.date(2020, 1, 23),
+                datetime.date(2020, 1, 24),
+            ],
+        )
 
 
 class TestGradeLevel(TestCase):
