@@ -91,6 +91,8 @@ class AppView(LoginRequiredMixin, TemplateView):
             # If it's possible to do a single query of all tasks
             # that groups by course then that would be better.
             # No need to over-optimize until that's a real issue.
+            # I brought this up on the forum. It doesn't look like it's easy to fix.
+            # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
             course_tasks = list(
                 course.course_tasks.exclude(id__in=completed_task_ids)[:task_limit]
             )

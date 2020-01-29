@@ -4,6 +4,28 @@
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Week of {{ monday|date:"l, N j" }} &ndash; {{ sunday|date:"l, N j" }}</h1>
 
   {% for schedule in schedules %}
-    <h2 class="font-thin text-xl text-blue-900">{{ schedule.student.first_name }}</h2>
+    <h2 class="font-thin text-xl text-blue-900 mb-4">{{ schedule.student.first_name }}</h2>
+
+    {% for course_schedule in schedule.courses %}
+      <div class="flex flex-row py-2 border-b border-t border-yellow-300">
+        <div class="flex-1 text-sm uppercase tracking-wide font-thin pr-4">{{ course_schedule.course.name }}</div>
+
+        {% for day in course_schedule.days %}
+          {% if day %}
+            {% if day.coursework %}
+              <div class="flex-1">
+                {% for coursework in day.coursework %}
+                  <div class="text-sm font-light text-gray-500">{{ coursework.course_task.description }}</div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="flex-1 text-sm font-light">{{ day.task.description }}</div>
+            {% endif %}
+          {% else %}
+            <div class="flex-1"></div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
   {% endfor %}
 {% endblock %}
