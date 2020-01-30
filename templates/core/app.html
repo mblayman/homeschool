@@ -4,27 +4,35 @@
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Week of {{ monday|date:"l, N j" }} &ndash; {{ sunday|date:"l, N j" }}</h1>
 
   {% for schedule in schedules %}
-    <h2 class="font-thin text-xl text-blue-900 mb-4">{{ schedule.student.first_name }}</h2>
+    <h2 class="font-thin text-xl text-blue-900">{{ schedule.student.first_name }}</h2>
+
+    <div class="flex flex-row">
+      <div class="flex-1 py-2 pr-4"></div>
+
+      {% for week_date in week_dates %}
+        <div class="flex-1 text-sm text-center uppercase tracking-wide font-thin p-2 {% if week_date == today %}bg-gray-100 rounded-t-lg{% endif %}">{{ week_date|date:"l, n/j" }}</div>
+      {% endfor %}
+    </div>
 
     {% for course_schedule in schedule.courses %}
-      <div class="flex flex-row py-2 border-b border-t border-yellow-300">
-        <div class="flex-1 text-sm uppercase tracking-wide font-thin pr-4">{{ course_schedule.course.name }}</div>
+      <div class="flex flex-row border-t border-yellow-400">
+        <div class="flex-1 text-sm uppercase tracking-wide font-thin py-2 pr-4">{{ course_schedule.course.name }}</div>
 
-        {% for day in course_schedule.days %}
-          {% if day %}
-            {% if day.coursework %}
-              <div class="flex-1">
+        {% with last_row=forloop.last %}
+          {% for day in course_schedule.days %}
+            {% if day.task %}
+              <div class="flex-1 p-2 text-sm font-light overflow-x-scroll {% if day.week_date == today %}bg-gray-100 {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ day.task.description }}</div>
+            {% elif day.coursework %}
+              <div class="flex-1 p-2 {% if day.week_date == today %}bg-gray-100 {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
                 {% for coursework in day.coursework %}
-                  <div class="text-sm font-light text-gray-500">{{ coursework.course_task.description }}</div>
+                  <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description }}</div>
                 {% endfor %}
               </div>
             {% else %}
-              <div class="flex-1 text-sm font-light">{{ day.task.description }}</div>
+              <div class="flex-1 p-2 {% if day.week_date == today %}bg-gray-100 {% if last_row %}rounded-b-lg{% endif %}{% endif %}"></div>
             {% endif %}
-          {% else %}
-            <div class="flex-1"></div>
-          {% endif %}
-        {% endfor %}
+          {% endfor %}
+        {% endwith %}
       </div>
     {% endfor %}
   {% endfor %}
