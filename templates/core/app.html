@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "app_base.html" %}
 
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Week of {{ monday|date:"l, N j" }} &ndash; {{ sunday|date:"l, N j" }}</h1>
@@ -21,11 +21,11 @@
         {% with last_row=forloop.last %}
           {% for day in course_schedule.days %}
             {% if day.task %}
-              <div class="flex-1 p-2 text-sm font-light overflow-x-scroll {% if day.week_date == today %}bg-gray-100 {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ day.task.description }}</div>
+              <div class="flex-1 p-2 text-sm font-light overflow-x-scroll {% if day.week_date == today %}bg-gray-100 {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ day.task.description|linebreaksbr }}</div>
             {% elif day.coursework %}
               <div class="flex-1 p-2 {% if day.week_date == today %}bg-gray-100 {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
                 {% for coursework in day.coursework %}
-                  <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description }}</div>
+                  <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|linebreaksbr }}</div>
                 {% endfor %}
               </div>
             {% else %}

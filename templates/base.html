@@ -10,6 +10,8 @@
 
   {% include "nav.html" %}
 
+  {% block sub_nav %}{% endblock %}
+
   <main class="container mx-auto p-8 flex-grow">
     {% block main %}{% endblock %}
   </main>
