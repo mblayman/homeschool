@@ -191,3 +191,70 @@ class TestDaily(TestCase):
             self.get("core:daily")
 
         self.assertContext("day", today)
+
+    def test_no_school_year(self):
+        user = self.make_user()
+        StudentFactory(school=user.school)
+
+        with self.login(user):
+            self.get("core:daily")
+
+        self.assertContext("schedules", [])
+
+    @mock.patch("homeschool.core.views.timezone")
+    def test_school_not_run_on_day(self, timezone):
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        sunday = now.date()
+        timezone.now.return_value = now
+        user = self.make_user()
+        SchoolYearFactory(
+            school=user.school,
+            start_date=sunday - datetime.timedelta(days=90),
+            end_date=sunday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.MONDAY,
+        )
+
+        with self.login(user):
+            self.get("core:daily")
+
+        self.assertContext("schedules", [])
+
+    @mock.patch("homeschool.core.views.timezone")
+    def test_has_schedules(self, timezone):
+        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
+        friday = now.date()
+        timezone.now.return_value = now
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=friday - datetime.timedelta(days=90),
+            end_date=friday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.FRIDAY,
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_level=grade_level, days_of_week=Course.FRIDAY)
+        task_1 = CourseTaskFactory(course=course)
+        coursework = CourseworkFactory(
+            student=student, course_task=task_1, completed_date=friday
+        )
+        course_2 = CourseFactory(grade_level=grade_level, days_of_week=Course.FRIDAY)
+        task_2 = CourseTaskFactory(course=course_2)
+        course_3 = CourseFactory(grade_level=grade_level, days_of_week=Course.THURSDAY)
+        CourseTaskFactory(course=course_3)
+        course_4 = CourseFactory(grade_level=grade_level, days_of_week=Course.FRIDAY)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+
+        with self.login(user):
+            self.get("core:daily")
+
+        expected_schedule = {
+            "student": student,
+            "courses": [
+                {"course": course, "coursework": [coursework]},
+                {"course": course_2, "task": task_2},
+                {"course": course_3},
+                {"course": course_4, "task": None},
+            ],
+        }
+        self.assertContext("schedules", [expected_schedule])
