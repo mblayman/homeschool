@@ -85,6 +85,27 @@ class TestStudent(TestCase):
             week_coursework, {course.id: {monday: [coursework_1, coursework_2]}}
         )
 
+    def test_get_day_coursework(self):
+        today = timezone.now().date()
+        monday = today + relativedelta(weekday=MO(-1))
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__start_date=today - datetime.timedelta(days=30)
+        )
+        student = enrollment.student
+        school_year = enrollment.grade_level.school_year
+        GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_level=enrollment.grade_level)
+        coursework_1 = CourseworkFactory(
+            student=student, course_task__course=course, completed_date=monday
+        )
+        coursework_2 = CourseworkFactory(
+            student=student, course_task__course=course, completed_date=monday
+        )
+
+        day_coursework = student.get_day_coursework(monday)
+
+        self.assertEqual(day_coursework, {course.id: [coursework_1, coursework_2]})
+
 
 class TestEnrollment(TestCase):
     def test_factory(self):

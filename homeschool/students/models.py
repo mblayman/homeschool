@@ -53,6 +53,26 @@ class Student(models.Model):
 
         return week_coursework
 
+    def get_day_coursework(self, day):
+        """Get the coursework completed in the week.
+
+        The data is in a dictionary for fast lookups.
+        """
+        day_coursework = {}
+        coursework_qs = Coursework.objects.filter(
+            student=self, completed_date=day
+        ).select_related("course_task")
+        for coursework in coursework_qs:
+            course_id = coursework.course_task.course_id
+            if course_id not in day_coursework:
+                # It's possible for multiple coursework items to share the same
+                # completion day because that's controlled by user input.
+                day_coursework[course_id] = []
+
+            day_coursework[course_id].append(coursework)
+
+        return day_coursework
+
 
 class Enrollment(models.Model):
     """The association between a student and grade level"""
