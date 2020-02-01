@@ -1,5 +1,8 @@
 import datetime
 
+from dateutil.relativedelta import MO, SU, relativedelta
+from django.utils import timezone
+
 from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolFactory
 from homeschool.students.tests.factories import (
@@ -56,6 +59,31 @@ class TestStudent(TestCase):
         courses = student.get_courses(school_year)
 
         self.assertEqual(list(courses), [course])
+
+    def test_get_week_coursework(self):
+        today = timezone.now().date()
+        monday = today + relativedelta(weekday=MO(-1))
+        sunday = today + relativedelta(weekday=SU(+1))
+        week = (monday, sunday)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__start_date=today - datetime.timedelta(days=30)
+        )
+        student = enrollment.student
+        school_year = enrollment.grade_level.school_year
+        GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_level=enrollment.grade_level)
+        coursework_1 = CourseworkFactory(
+            student=student, course_task__course=course, completed_date=monday
+        )
+        coursework_2 = CourseworkFactory(
+            student=student, course_task__course=course, completed_date=monday
+        )
+
+        week_coursework = student.get_week_coursework(week)
+
+        self.assertEqual(
+            week_coursework, {course.id: {monday: [coursework_1, coursework_2]}}
+        )
 
 
 class TestEnrollment(TestCase):

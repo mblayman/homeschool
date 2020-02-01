@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytz
 from dateutil.relativedelta import MO, SU, relativedelta
+from django.utils import timezone
 
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
@@ -170,3 +171,23 @@ class TestApp(TestCase):
             self.get("core:app")
 
         self.assertContext("schedules", [])
+
+
+class TestDaily(TestCase):
+    def test_ok(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("core:daily")
+
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:daily")
+
+    def test_has_day(self):
+        user = self.make_user()
+        today = timezone.now().date()
+
+        with self.login(user):
+            self.get("core:daily")
+
+        self.assertContext("day", today)
