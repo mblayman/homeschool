@@ -62,3 +62,33 @@ class DaysOfWeekModel(models.Model):
         if isinstance(day, datetime.date):
             day = self.date_to_day[day.isoweekday()]
         return bool(self.days_of_week & day)
+
+    def get_previous_day_from(self, day: datetime.date) -> datetime.date:
+        """Get the previous day that runs relative to the provided date.
+
+        Return the same date if the record runs on no days.
+        """
+        # Guard against an infinite loop.
+        # A record with no running days will never terminate.
+        if not self.days_of_week:
+            return day
+
+        previous_day = day - datetime.timedelta(days=1)
+        while not self.runs_on(previous_day):
+            previous_day -= datetime.timedelta(days=1)
+        return previous_day
+
+    def get_next_day_from(self, day: datetime.date) -> datetime.date:
+        """Get the next day that runs relative to the provided date.
+
+        Return the same date if the record runs on no days.
+        """
+        # Guard against an infinite loop.
+        # A record with no running days will never terminate.
+        if not self.days_of_week:
+            return day
+
+        next_day = day + datetime.timedelta(days=1)
+        while not self.runs_on(next_day):
+            next_day += datetime.timedelta(days=1)
+        return next_day

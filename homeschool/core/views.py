@@ -1,3 +1,5 @@
+import datetime
+
 from dateutil.relativedelta import MO, SU, relativedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
@@ -107,18 +109,38 @@ class DailyView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        # This is UTC so it is not localized to the user's timezone.
-        # That may lead to funny results in the evening.
-        today = timezone.now().date()
-        context["day"] = today
+        year = self.kwargs.get("year")
+        month = self.kwargs.get("month")
+        day = self.kwargs.get("day")
+        if year and month and day:
+            day = datetime.date(year, month, day)
+        else:
+            # This is UTC so it is not localized to the user's timezone.
+            # That may lead to funny results in the evening.
+            day = timezone.now().date()
+        context["day"] = day
 
         school_year = (
-            SchoolYear.objects.filter(start_date__lte=today, end_date__gte=today)
+            SchoolYear.objects.filter(start_date__lte=day, end_date__gte=day)
             .prefetch_related("grade_levels", "grade_levels__courses")
             .first()
         )
 
-        context["schedules"] = self.get_schedules(school_year, today)
+        # Set previous and next days navigation.
+        if school_year:
+            context["yesterday"] = school_year.get_previous_day_from(day)
+            context["ereyesterday"] = school_year.get_previous_day_from(
+                context["yesterday"]
+            )
+            context["tomorrow"] = school_year.get_next_day_from(day)
+            context["overmorrow"] = school_year.get_next_day_from(context["tomorrow"])
+        else:
+            context["ereyesterday"] = day - datetime.timedelta(days=2)
+            context["yesterday"] = day - datetime.timedelta(days=1)
+            context["tomorrow"] = day + datetime.timedelta(days=1)
+            context["overmorrow"] = day + datetime.timedelta(days=2)
+
+        context["schedules"] = self.get_schedules(school_year, day)
         return context
 
     def get_schedules(self, school_year, day):

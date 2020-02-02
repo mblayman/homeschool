@@ -3,7 +3,15 @@
 {% block head_title %}Day of {{ day|date:"l, N j" }}{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900">Day of {{ day|date:"l, N j" }}</h1>
+  <div class="flex flex-col sm:flex-row items-center">
+    <h1 class="flex-grow font-thin text-2xl text-blue-900">Day of {{ day|date:"l, N j" }}</h1>
+    <div class="text-sm text-blue-900 font-thin">
+      <a class="hover:underline" href="{% url "core:daily_for_date" ereyesterday.year ereyesterday.month ereyesterday.day %}">Ereyesterday</a> |
+      <a class="hover:underline" href="{% url "core:daily_for_date" yesterday.year yesterday.month yesterday.day %}">Yesterday</a> |
+      <a class="hover:underline" href="{% url "core:daily_for_date" tomorrow.year tomorrow.month tomorrow.day %}">Tomorrow</a> |
+      <a class="hover:underline" href="{% url "core:daily_for_date" overmorrow.year overmorrow.month overmorrow.day %}">Overmorrow</a>
+    </div>
+  </div>
 
   {% for schedule in schedules %}
     <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>

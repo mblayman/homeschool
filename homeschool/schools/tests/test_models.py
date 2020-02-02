@@ -70,6 +70,32 @@ class TestSchoolYear(TestCase):
         self.assertTrue(school_year.runs_on(monday))
         self.assertFalse(school_year.runs_on(tuesday))
 
+    def test_get_previous_day_from(self):
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.MONDAY)
+        monday = datetime.date(2020, 1, 20)
+        previous_monday = datetime.date(2020, 1, 13)
+
+        self.assertEqual(school_year.get_previous_day_from(monday), previous_monday)
+
+    def test_get_previous_day_from_no_running_days(self):
+        school_year = SchoolYearFactory(days_of_week=0)
+        monday = datetime.date(2020, 1, 20)
+
+        self.assertEqual(school_year.get_previous_day_from(monday), monday)
+
+    def test_get_next_day_from(self):
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.MONDAY)
+        monday = datetime.date(2020, 1, 20)
+        next_monday = datetime.date(2020, 1, 27)
+
+        self.assertEqual(school_year.get_next_day_from(monday), next_monday)
+
+    def test_get_next_day_from_no_running_days(self):
+        school_year = SchoolYearFactory(days_of_week=0)
+        monday = datetime.date(2020, 1, 20)
+
+        self.assertEqual(school_year.get_next_day_from(monday), monday)
+
     def test_days_of_week_default(self):
         school_year = SchoolYearFactory()
 

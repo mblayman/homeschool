@@ -258,3 +258,49 @@ class TestDaily(TestCase):
             ],
         }
         self.assertContext("schedules", [expected_schedule])
+
+    def test_specific_day(self):
+        user = self.make_user()
+        day = datetime.date(2020, 1, 20)
+
+        with self.login(user):
+            self.get("core:daily_for_date", year=day.year, month=day.month, day=day.day)
+
+        self.assertContext("day", day)
+
+    def test_surrounding_dates_no_school_year(self):
+        user = self.make_user()
+        today = timezone.now().date()
+
+        with self.login(user):
+            self.get("core:daily")
+
+        self.assertContext("ereyesterday", today - datetime.timedelta(days=2))
+        self.assertContext("yesterday", today - datetime.timedelta(days=1))
+        self.assertContext("tomorrow", today + datetime.timedelta(days=1))
+        self.assertContext("overmorrow", today + datetime.timedelta(days=2))
+
+    @mock.patch("homeschool.core.views.timezone")
+    def test_surrounding_dates(self, timezone):
+        now = datetime.datetime(2020, 1, 22, tzinfo=pytz.utc)
+        wednesday = now.date()
+        timezone.now.return_value = now
+        user = self.make_user()
+        SchoolYearFactory(
+            school=user.school,
+            start_date=wednesday - datetime.timedelta(days=90),
+            end_date=wednesday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.TUESDAY
+            + SchoolYear.WEDNESDAY
+            + SchoolYear.THURSDAY,
+        )
+
+        with self.login(user):
+            self.get("core:daily")
+
+        previous_thursday = wednesday - datetime.timedelta(days=6)
+        self.assertContext("ereyesterday", previous_thursday)
+        self.assertContext("yesterday", wednesday - datetime.timedelta(days=1))
+        self.assertContext("tomorrow", wednesday + datetime.timedelta(days=1))
+        next_tuesday = wednesday + datetime.timedelta(days=6)
+        self.assertContext("overmorrow", next_tuesday)
