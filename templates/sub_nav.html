@@ -1,0 +1,39 @@
+{% if user.is_authenticated %}
+  <nav class="flex bg-gray-100 text-blue-800 border-b border-gray-300 items-center">
+    <div class="w-full max-w-6xl relative mx-auto px-6">
+      <div class="flex flex-col sm:flex-row sm:items-center">
+        <a href="{% url "core:app" %}" class="block sm:-ml-2 p-2 flex items-center hover:bg-gray-200">
+          <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M8 20H3V10H0L10 0l10 10h-3v10h-5v-6H8v6z"/></svg>
+          <div class="text-base pl-1 font-light">
+            {% if user.first_name %}
+              {{ user.first_name }}’s School
+            {% else %}
+              Home
+            {% endif %}
+          </div>
+        </a>
+        <a href="{% url "core:daily" %}" class="block p-2 flex items-center hover:bg-gray-200">
+          <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>
+          <div class="text-base pl-1 font-light">Today</div>
+        </a>
+        <a href="/" class="block p-2 flex items-center hover:bg-gray-200">
+          <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M0 6l10-6 10 6v2H0V6zm0 12h20v2H0v-2zm2-2h16v2H2v-2zm0-8h4v8H2V8zm6 0h4v8H8V8zm6 0h4v8h-4V8z"/></svg>
+          <div class="text-base pl-1 font-light">Courses</div>
+        </a>
+        <a href="/" class="block p-2 flex items-center hover:bg-gray-200">
+          <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
+          <div class="text-base pl-1 font-light">Students</div>
+        </a>
+        <a href="/" class="block p-2 flex items-center hover:bg-gray-200">
+          <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+          <div class="text-base pl-1 font-light">Reports</div>
+        </a>
+        <div class="flex-grow"></div>
+        <a href="/" class="block sm:-m-2 p-2 flex items-center hover:bg-gray-200">
+          <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M3.94 6.5L2.22 3.64l1.42-1.42L6.5 3.94c.52-.3 1.1-.54 1.7-.7L9 0h2l.8 3.24c.6.16 1.18.4 1.7.7l2.86-1.72 1.42 1.42-1.72 2.86c.3.52.54 1.1.7 1.7L20 9v2l-3.24.8c-.16.6-.4 1.18-.7 1.7l1.72 2.86-1.42 1.42-2.86-1.72c-.52.3-1.1.54-1.7.7L11 20H9l-.8-3.24c-.6-.16-1.18-.4-1.7-.7l-2.86 1.72-1.42-1.42 1.72-2.86c-.3-.52-.54-1.1-.7-1.7L0 11V9l3.24-.8c.16-.6.4-1.18.7-1.7zM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+          <div class="text-base pl-1 font-light">Settings</div>
+        </a>
+      </div>
+    </div>
+  </nav>
+{% endif %}

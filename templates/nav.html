@@ -16,15 +16,6 @@
       </div>
 
       {% if user.is_authenticated %}
-        <div class="mr-4">
-          <a class="hover:underline font-light" href="{% url "core:app" %}">
-            {% if user.first_name %}
-              {{ user.first_name }}’s School
-            {% else %}
-              {{ user.email }}
-            {% endif %}
-          </a>
-        </div>
         {% if user.is_staff %}
           <div class="mr-4">
             <a class="hover:underline font-light" href="{% url "admin:index" %}">
