@@ -13,6 +13,9 @@
     </div>
   </div>
 
+  <form method="POST" action="?next={{ request.path|urlencode }}">
+    {% csrf_token %}
+    <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
   {% for schedule in schedules %}
     <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
 
@@ -26,12 +29,16 @@
           <div class="w-48 text-sm uppercase tracking-wide font-thin py-2 pr-4">{{ course_schedule.course.name }}</div>
 
           {% if course_schedule.task %}
-            <div class="w-20 text-sm text-center p-2"><input type="checkbox"></div>
+            <div class="w-20 text-sm text-center p-2">
+              <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
+              <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
+            </div>
             <div class="flex-grow p-2 text-sm font-light overflow-x-scroll">{{ course_schedule.task.description|linebreaksbr }}</div>
           {% elif course_schedule.coursework %}
             <div class="w-20 text-sm text-center p-2">
               {% for coursework in course_schedule.coursework %}
-                <input type="checkbox" checked><br>
+                <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
+                <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked><br>
               {% endfor %}
             </div>
             <div class="flex-grow p-2">
@@ -49,4 +56,5 @@
   {% empty %}
     <h1>Nothing on the schedule for the day!</h1>
   {% endfor %}
+  </form>
 {% endblock %}

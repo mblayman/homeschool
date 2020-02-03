@@ -9,6 +9,7 @@ from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
+from homeschool.students.models import Coursework
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
@@ -304,3 +305,46 @@ class TestDaily(TestCase):
         self.assertContext("tomorrow", wednesday + datetime.timedelta(days=1))
         next_tuesday = wednesday + datetime.timedelta(days=6)
         self.assertContext("overmorrow", next_tuesday)
+
+    def test_complete_daily(self):
+        today = timezone.now().date()
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_level=grade_level)
+        task = CourseTaskFactory(course=course)
+        data = {
+            "completed_date": "{:%Y-%m-%d}".format(today),
+            f"task-{student.id}-{task.id}": "on",
+        }
+
+        with self.login(user):
+            self.post("core:daily", data=data)
+
+        self.assertTrue(
+            Coursework.objects.filter(
+                student=student, course_task=task, completed_date=today
+            ).exists()
+        )
+
+    def test_incomplete_daily(self):
+        today = timezone.now().date()
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_level=grade_level)
+        task = CourseTaskFactory(course=course)
+        CourseworkFactory(student=student, course_task=task)
+        data = {
+            "completed_date": "{:%Y-%m-%d}".format(today),
+            f"task-{student.id}-{task.id}": "off",
+        }
+
+        with self.login(user):
+            self.post("core:daily", data=data)
+
+        self.assertFalse(
+            Coursework.objects.filter(student=student, course_task=task).exists()
+        )

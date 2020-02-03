@@ -1,7 +1,10 @@
 import datetime
 
+from dateutil.parser import parse
 from dateutil.relativedelta import MO, SU, relativedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import TemplateView
 
@@ -185,3 +188,68 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 course_schedule["task"] = course_task
             schedule["courses"].append(course_schedule)
         return schedule
+
+    def post(self, request, *args, **kwargs):
+        """Process students' work."""
+        completed_date = timezone.now().date()
+        if "completed_date" in request.POST:
+            completed_date = parse(request.POST["completed_date"])
+
+        tasks_by_student = self.get_task_completions_by_student(request.POST)
+        if tasks_by_student:
+            for student_id, tasks in tasks_by_student.items():
+                student = request.user.school.students.filter(id=student_id).first()
+                self.mark_completion(student, tasks, completed_date)
+        success_url = request.GET.get("next", reverse("core:daily"))
+        return HttpResponseRedirect(success_url)
+
+    def get_task_completions_by_student(self, post_data):
+        """Parse out the tasks."""
+        tasks = {}
+        for key, value in post_data.items():
+            if not key.startswith("task"):
+                continue
+            parts = key.split("-")
+            student_id = int(parts[1])
+            task_id = int(parts[2])
+
+            if student_id not in tasks:
+                tasks[student_id] = {"complete": [], "incomplete": []}
+
+            category = "complete" if value == "on" else "incomplete"
+            tasks[student_id][category].append(task_id)
+        return tasks
+
+    def mark_completion(self, student, tasks, completed_date):
+        """Mark completed tasks or clear already complete tasks."""
+        if not student:
+            return
+
+        self.process_complete_tasks(student, tasks["complete"], completed_date)
+        self.process_incomplete_tasks(student, tasks["incomplete"])
+
+    def process_complete_tasks(self, student, complete_task_ids, completed_date):
+        """Add coursework for any tasks that do not have it."""
+        existing_complete_task_ids = set(
+            Coursework.objects.filter(
+                student=student, course_task__in=complete_task_ids
+            ).values_list("course_task_id", flat=True)
+        )
+        newly_complete_task_ids = set(complete_task_ids) - existing_complete_task_ids
+        if newly_complete_task_ids:
+            new_coursework = []
+            for task_id in newly_complete_task_ids:
+                new_coursework.append(
+                    Coursework(
+                        student=student,
+                        course_task_id=task_id,
+                        completed_date=completed_date,
+                    )
+                )
+            Coursework.objects.bulk_create(new_coursework)
+
+    def process_incomplete_tasks(self, student, incomplete_task_ids):
+        """Remove any coursework for tasks that are marked as incomplete."""
+        Coursework.objects.filter(
+            student=student, course_task__in=incomplete_task_ids
+        ).delete()
