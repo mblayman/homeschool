@@ -75,6 +75,37 @@ class TestApp(TestCase):
         self.assertContext("today", today)
 
     @mock.patch("homeschool.core.views.timezone")
+    def test_school_year_for_user_only(self, timezone):
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        sunday = now.date()
+        timezone.now.return_value = now
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        SchoolYearFactory(
+            start_date=sunday - datetime.timedelta(days=90),
+            end_date=sunday + datetime.timedelta(days=90),
+        )
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=sunday - datetime.timedelta(days=90),
+            end_date=sunday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.MONDAY
+            + SchoolYear.TUESDAY
+            + SchoolYear.WEDNESDAY
+            + SchoolYear.THURSDAY
+            + SchoolYear.FRIDAY,
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        CourseFactory(grade_level=grade_level)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+
+        with self.login(user):
+            self.get("core:app")
+
+        schedules = self.get_context("schedules")
+        self.assertTrue(len(schedules[0]["courses"]) > 0)
+
+    @mock.patch("homeschool.core.views.timezone")
     def test_has_schedules(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
@@ -219,6 +250,31 @@ class TestDaily(TestCase):
             self.get("core:daily")
 
         self.assertContext("schedules", [])
+
+    @mock.patch("homeschool.core.views.timezone")
+    def test_school_year_for_user_only(self, timezone):
+        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
+        friday = now.date()
+        timezone.now.return_value = now
+        user = self.make_user()
+        StudentFactory(school=user.school)
+        SchoolYearFactory(
+            start_date=friday - datetime.timedelta(days=90),
+            end_date=friday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.MONDAY,
+        )
+        SchoolYearFactory(
+            school=user.school,
+            start_date=friday - datetime.timedelta(days=90),
+            end_date=friday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.FRIDAY,
+        )
+
+        with self.login(user):
+            self.get("core:daily")
+
+        schedules = self.get_context("schedules")
+        self.assertNotEqual(schedules, [])
 
     @mock.patch("homeschool.core.views.timezone")
     def test_has_schedules(self, timezone):

@@ -31,7 +31,11 @@ class AppView(LoginRequiredMixin, TemplateView):
         context["monday"], context["sunday"] = week
 
         school_year = (
-            SchoolYear.objects.filter(start_date__lte=today, end_date__gte=today)
+            SchoolYear.objects.filter(
+                school=self.request.user.school,
+                start_date__lte=today,
+                end_date__gte=today,
+            )
             .prefetch_related("grade_levels", "grade_levels__courses")
             .first()
         )
@@ -124,7 +128,9 @@ class DailyView(LoginRequiredMixin, TemplateView):
         context["day"] = day
 
         school_year = (
-            SchoolYear.objects.filter(start_date__lte=day, end_date__gte=day)
+            SchoolYear.objects.filter(
+                school=self.request.user.school, start_date__lte=day, end_date__gte=day
+            )
             .prefetch_related("grade_levels", "grade_levels__courses")
             .first()
         )
