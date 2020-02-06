@@ -39,3 +39,17 @@ class TestCourseTaskUpdateView(TestCase):
         self.assertEqual(task.description, data["description"])
         self.assertEqual(task.duration, data["duration"])
         self.response_302(response)
+
+    def test_redirect_next(self):
+        next_url = "/another/location/"
+        user = self.make_user()
+        task = CourseTaskFactory(course__grade_level__school_year__school__admin=user)
+        data = {"description": "new description", "duration": 15}
+        url = self.reverse("courses:course_task_edit", uuid=task.uuid)
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url, data=data)
+
+        self.response_302(response)
+        self.assertIn(next_url, response.get("Location"))

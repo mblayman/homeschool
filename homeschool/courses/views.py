@@ -17,4 +17,7 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
         )
 
     def get_success_url(self):
+        next_url = self.request.GET.get("next")
+        if next_url:
+            return next_url
         return reverse("courses:course_task_edit", kwargs={"uuid": self.object.uuid})
