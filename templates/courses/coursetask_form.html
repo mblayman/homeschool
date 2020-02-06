@@ -1,0 +1,11 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Edit Course Task{% endblock %}
+
+{% block main %}
+  <h1>Hello from course task edit</h1>
+  <form method="post" class="form-class">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Send message">
+</form>
+{% endblock %}
