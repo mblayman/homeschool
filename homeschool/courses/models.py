@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from ordered_model.models import OrderedModel, OrderedModelManager
 
 from homeschool.core.models import DaysOfWeekModel
 
@@ -17,8 +18,15 @@ class Course(DaysOfWeekModel):
         return self.name
 
 
-class CourseTask(models.Model):
+class CourseTaskManager(OrderedModelManager):
+    pass
+
+
+class CourseTask(OrderedModel):
     """A student's required action in a course."""
+
+    class Meta(OrderedModel.Meta):
+        pass
 
     course = models.ForeignKey(
         "courses.Course", on_delete=models.CASCADE, related_name="course_tasks"
@@ -28,6 +36,9 @@ class CourseTask(models.Model):
     duration = models.PositiveIntegerField(
         help_text="The expected length of the task in minutes"
     )
+
+    objects = CourseTaskManager()
+    order_with_respect_to = "course"
 
     def __str__(self):
         return self.description

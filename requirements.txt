@@ -14,6 +14,7 @@ django-allauth==0.41.0
 django-debug-toolbar==2.1
 django-environ==0.4.5
 django-heroku==0.3.1
+django-ordered-model==3.3.0
 django-waffle==0.19.0
 django==3.0.2
 gunicorn==20.0.4

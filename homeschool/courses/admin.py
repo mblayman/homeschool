@@ -1,4 +1,5 @@
 from django.contrib import admin
+from ordered_model.admin import OrderedModelAdmin
 
 from homeschool.courses.models import Course, CourseTask
 
@@ -9,5 +10,5 @@ class CourseAdmin(admin.ModelAdmin):
 
 
 @admin.register(CourseTask)
-class CourseTaskAdmin(admin.ModelAdmin):
-    list_display = ("course", "description")
+class CourseTaskAdmin(OrderedModelAdmin):
+    list_display = ("course", "description", "move_up_down_links")
