@@ -3,9 +3,39 @@
 {% block head_title %}Edit Course Task{% endblock %}
 
 {% block main %}
-  <h1>Hello from course task edit</h1>
-  <form method="post" class="form-class">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Send message">
-</form>
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">Edit Course Task</h1>
+  <form method="post" class="w-full max-w-lg">
+    {% csrf_token %}
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_description">
+          Description
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <textarea class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          rows="4" id="id_description" name="description" autofocus
+          >{% if form.description.value %}{{ form.description.value|safe|escape }}{% endif %}</textarea>
+      </div>
+    </div>
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_duration">
+          Duration
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          id="id_duration" type="number" min="0" name="duration" {% if form.duration.value %}value="{{ form.duration.value }}"{% endif %} autocomplete="off" required>
+      </div>
+    </div>
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      <div class="md:w-3/4">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Update
+        </button>
+      </div>
+    </div>
+  </form>
 {% endblock %}
