@@ -4,9 +4,6 @@ from . import views
 
 app_name = "courses"
 urlpatterns = [
-    path(
-        "tasks/<uuid:uuid>/",
-        views.CourseTaskUpdateView.as_view(),
-        name="course_task_edit",
-    )
+    path("<uuid:uuid>/", views.CourseDetailView.as_view(), name="detail"),
+    path("tasks/<uuid:uuid>/", views.CourseTaskUpdateView.as_view(), name="task_edit"),
 ]

@@ -13,6 +13,12 @@ class TestCourse(TestCase):
         self.assertIsNotNone(course)
         self.assertNotEqual(course.name, "")
 
+    def test_has_uuid(self):
+        course_uuid = uuid.uuid4()
+        course = CourseFactory(uuid=course_uuid)
+
+        self.assertEqual(course.uuid, course_uuid)
+
     def test_has_name(self):
         name = "Calculus I"
         course = CourseFactory(name=name)

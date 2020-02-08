@@ -13,6 +13,7 @@ class Course(DaysOfWeekModel):
     grade_level = models.ForeignKey(
         "schools.GradeLevel", on_delete=models.CASCADE, related_name="courses"
     )
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     def __str__(self):
         return self.name
