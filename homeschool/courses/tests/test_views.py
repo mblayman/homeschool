@@ -130,3 +130,40 @@ class TestCourseTaskUpdateView(TestCase):
 
         self.response_302(response)
         self.assertIn(next_url, response.get("Location"))
+
+
+class TestCourseTaskDeleteView(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        task = CourseTaskFactory(course=course)
+        self.assertLoginRequired(
+            "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
+        )
+
+    def test_post(self):
+        user = self.make_user()
+        course = CourseFactory(grade_level__school_year__school__admin=user)
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.post(
+                "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
+            )
+
+        self.assertEqual(CourseTask.objects.count(), 0)
+        self.response_302(response)
+        self.assertEqual(
+            response.get("Location"), self.reverse("courses:detail", uuid=course.uuid)
+        )
+
+    def test_post_other_user(self):
+        user = self.make_user()
+        course = CourseFactory()
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.get(
+                "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
+            )
+
+        self.response_404(response)
