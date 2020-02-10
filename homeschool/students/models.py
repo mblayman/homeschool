@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -9,6 +11,7 @@ class Student(models.Model):
     )
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     @property
     def full_name(self):
