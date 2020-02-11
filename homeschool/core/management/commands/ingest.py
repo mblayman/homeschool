@@ -17,24 +17,31 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("email")
-        parser.add_argument("grade")
-        parser.add_argument("student")
 
     def handle(self, *args, **options):
         self.stdout.write("Check for user")
         user = User.objects.get(email=options["email"])
 
-        self.stdout.write("Read in CSV data")
+        school_year = self.persist_school_year(user)
 
-        courses = []
+        grades = {"Faye": "Kindergarten", "Mark": "2nd Grade"}
+        self.stdout.write("Read in CSV data")
         for dirpath, dirnames, filenames in os.walk("courses_exports"):
+            # Skip the root directory.
+            if dirnames:
+                continue
+
+            courses = []
+            student = dirpath.split("/")[-1]
             for filename in filenames:
                 course_name = filename.strip(".csv")
                 courses.append(
                     self.process_course(course_name, f"{dirpath}/{filename}")
                 )
 
-        self.persist_to_school(user, options["grade"], options["student"], courses)
+            self.persist_grade(
+                school_year, grades[student], f"{student} Layman", courses
+            )
 
     def process_course(self, course_name, file_path):
         self.stdout.write(f"Processing {course_name}...")
@@ -74,15 +81,19 @@ class Command(BaseCommand):
 
         return {"name": course_name, "tasks": tasks}
 
-    def persist_to_school(self, user, grade_level_name, student_full_name, courses):
-        """Create a school with all its records."""
-        # Create all school related instances.
+    def persist_school_year(self, user):
+        self.stdout.write("Create school and school year.")
         school = School.objects.create(admin=user)
         start_date = datetime.date.today()
         end_date = start_date + datetime.timedelta(days=365)
         school_year = SchoolYear.objects.create(
             school=school, start_date=start_date, end_date=end_date
         )
+        return school_year
+
+    def persist_grade(self, school_year, grade_level_name, student_full_name, courses):
+        """Create a school with all its records."""
+        # Create all school related instances.
         grade_level = GradeLevel.objects.create(
             name=grade_level_name, school_year=school_year
         )
@@ -90,7 +101,9 @@ class Command(BaseCommand):
         # Create student.
         student_name = student_full_name.split()
         student = Student.objects.create(
-            school=school, first_name=student_name[0], last_name=student_name[1]
+            school=school_year.school,
+            first_name=student_name[0],
+            last_name=student_name[1],
         )
         Enrollment.objects.create(student=student, grade_level=grade_level)
 
