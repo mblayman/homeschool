@@ -44,6 +44,7 @@ class TestCourseTaskCreateView(TestCase):
         self.assertEqual(
             response.get("Location"), self.reverse("courses:detail", uuid=course.uuid)
         )
+        self.assertIsNone(task.graded_work)
 
     def test_has_create(self):
         user = self.make_user()
@@ -77,6 +78,23 @@ class TestCourseTaskCreateView(TestCase):
 
         task_3 = CourseTask.objects.get(description="A new task")
         self.assertEqual(list(CourseTask.objects.all()), [task_1, task_3, task_2])
+
+    def test_is_graded(self):
+        user = self.make_user()
+        course = CourseFactory(grade_level__school_year__school__admin=user)
+        data = {
+            "course": str(course.id),
+            "description": "A new task",
+            "duration": "30",
+            "is_graded": "on",
+        }
+
+        with self.login(user):
+            self.post("courses:task_create", uuid=course.uuid, data=data)
+
+        self.assertEqual(CourseTask.objects.count(), 1)
+        task = CourseTask.objects.get(course=course)
+        self.assertIsNotNone(task.graded_work)
 
 
 class TestCourseTaskUpdateView(TestCase):

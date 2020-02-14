@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
+from .forms import CourseTaskCreateForm
 from .models import Course, CourseTask
 
 
@@ -19,8 +20,8 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
 
 class CourseTaskCreateView(LoginRequiredMixin, CreateView):
-    fields = ["course", "description", "duration"]
-    model = CourseTask
+    form_class = CourseTaskCreateForm
+    template_name = "courses/coursetask_form.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

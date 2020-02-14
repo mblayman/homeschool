@@ -32,6 +32,17 @@
           id="id_duration" type="number" min="0" name="duration" {% if form.duration.value %}value="{{ form.duration.value }}"{% endif %} autocomplete="off" required>
       </div>
     </div>
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_is_graded">
+          Is graded?
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input
+          id="id_is_graded" type="checkbox" name="is_graded" {% if form.is_graded.value %}checked{% endif %}>
+      </div>
+    </div>
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       {% if create %}
