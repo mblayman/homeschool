@@ -11,6 +11,11 @@ class CourseFactory(factory.django.DjangoModelFactory):
     )
 
 
+class GradedWorkFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "courses.GradedWork"
+
+
 class CourseTaskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = "courses.CourseTask"

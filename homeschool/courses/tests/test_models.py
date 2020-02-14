@@ -1,7 +1,11 @@
 import uuid
 
 from homeschool.courses.models import Course, CourseTask
-from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
+from homeschool.courses.tests.factories import (
+    CourseFactory,
+    CourseTaskFactory,
+    GradedWorkFactory,
+)
 from homeschool.schools.tests.factories import GradeLevelFactory
 from homeschool.test import TestCase
 
@@ -38,6 +42,13 @@ class TestCourse(TestCase):
         self.assertEqual(course.days_of_week, days_of_week)
 
 
+class TestGradedWork(TestCase):
+    def test_factory(self):
+        graded_work = GradedWorkFactory()
+
+        self.assertIsNotNone(graded_work)
+
+
 class TestCourseTask(TestCase):
     def test_factory(self):
         task = CourseTaskFactory()
@@ -45,6 +56,7 @@ class TestCourseTask(TestCase):
         self.assertIsNotNone(task)
         self.assertNotEqual(str(task.uuid), "")
         self.assertNotEqual(task.description, "")
+        self.assertIsNone(task.graded_work)
 
     def test_has_course(self):
         course = CourseFactory()
@@ -69,6 +81,12 @@ class TestCourseTask(TestCase):
         task = CourseTaskFactory(duration=duration)
 
         self.assertEqual(task.duration, duration)
+
+    def test_has_graded_work(self):
+        graded_work = GradedWorkFactory()
+        task = CourseTaskFactory(graded_work=graded_work)
+
+        self.assertEqual(task.graded_work, graded_work)
 
     def test_order_with_respect_to_course(self):
         """Moving a task will only affect tasks within a individual course."""

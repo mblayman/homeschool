@@ -19,6 +19,10 @@ class Course(DaysOfWeekModel):
         return self.name
 
 
+class GradedWork(models.Model):
+    """Any type of work that a student might be graded on like a test or quiz."""
+
+
 class CourseTaskManager(OrderedModelManager):
     pass
 
@@ -36,6 +40,9 @@ class CourseTask(OrderedModel):
     description = models.TextField()
     duration = models.PositiveIntegerField(
         help_text="The expected length of the task in minutes"
+    )
+    graded_work = models.ForeignKey(
+        "courses.GradedWork", null=True, blank=True, on_delete=models.SET_NULL
     )
 
     objects = CourseTaskManager()
