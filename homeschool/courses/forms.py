@@ -15,8 +15,11 @@ class IsGradedMixin(forms.Form):
     def save(self, *args, **kwargs):
         task = super().save(*args, **kwargs)
         if self.cleaned_data["is_graded"]:
-            task.graded_work = GradedWork.objects.create()
-            task.save()
+            if not task.graded_work:
+                task.graded_work = GradedWork.objects.create()
+                task.save()
+        elif task.graded_work:
+            task.graded_work.delete()
         return task
 
 
@@ -24,3 +27,9 @@ class CourseTaskCreateForm(IsGradedMixin, forms.ModelForm):
     class Meta:
         model = CourseTask
         fields = ["course", "description", "duration", "is_graded"]
+
+
+class CourseTaskUpdateForm(IsGradedMixin, forms.ModelForm):
+    class Meta:
+        model = CourseTask
+        fields = ["description", "duration", "is_graded"]

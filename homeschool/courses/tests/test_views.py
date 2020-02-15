@@ -1,5 +1,9 @@
-from homeschool.courses.models import CourseTask
-from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
+from homeschool.courses.models import CourseTask, GradedWork
+from homeschool.courses.tests.factories import (
+    CourseFactory,
+    CourseTaskFactory,
+    GradedWorkFactory,
+)
 from homeschool.test import TestCase
 
 
@@ -148,6 +152,56 @@ class TestCourseTaskUpdateView(TestCase):
 
         self.response_302(response)
         self.assertIn(next_url, response.get("Location"))
+
+    def test_is_graded(self):
+        user = self.make_user()
+        task = CourseTaskFactory(
+            description="some description",
+            duration=30,
+            course__grade_level__school_year__school__admin=user,
+        )
+        data = {"description": "new description", "duration": 15, "is_graded": "on"}
+
+        with self.login(user):
+            self.post("courses:task_edit", uuid=task.uuid, data=data)
+
+        task.refresh_from_db()
+        self.assertIsNotNone(task.graded_work)
+
+    def test_keep_graded(self):
+        user = self.make_user()
+        graded_work = GradedWorkFactory()
+        task = CourseTaskFactory(
+            description="some description",
+            duration=30,
+            course__grade_level__school_year__school__admin=user,
+            graded_work=graded_work,
+        )
+        data = {"description": "new description", "duration": 15, "is_graded": "on"}
+
+        with self.login(user):
+            self.post("courses:task_edit", uuid=task.uuid, data=data)
+
+        task.refresh_from_db()
+        self.assertIsNotNone(task.graded_work)
+        self.assertEqual(GradedWork.objects.count(), 1)
+
+    def test_remove_graded(self):
+        user = self.make_user()
+        graded_work = GradedWorkFactory()
+        task = CourseTaskFactory(
+            description="some description",
+            duration=30,
+            course__grade_level__school_year__school__admin=user,
+            graded_work=graded_work,
+        )
+        data = {"description": "new description", "duration": 15}
+
+        with self.login(user):
+            self.post("courses:task_edit", uuid=task.uuid, data=data)
+
+        task.refresh_from_db()
+        self.assertIsNone(task.graded_work)
 
 
 class TestCourseTaskDeleteView(TestCase):

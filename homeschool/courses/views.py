@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from .forms import CourseTaskCreateForm
+from .forms import CourseTaskCreateForm, CourseTaskUpdateForm
 from .models import Course, CourseTask
 
 
@@ -53,7 +53,8 @@ class CourseTaskCreateView(LoginRequiredMixin, CreateView):
 
 
 class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
-    fields = ["description", "duration"]
+    form_class = CourseTaskUpdateForm
+    template_name = "courses/coursetask_form.html"
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
 
