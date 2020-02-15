@@ -186,3 +186,9 @@ class TestGrade(TestCase):
         grade = GradeFactory(uuid=grade_uuid)
 
         self.assertEqual(grade.uuid, grade_uuid)
+
+    def test_has_score(self):
+        score = 99
+        grade = GradeFactory(score=score)
+
+        self.assertEqual(grade.score, score)

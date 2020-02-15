@@ -101,3 +101,4 @@ class Grade(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     graded_work = models.ForeignKey("courses.GradedWork", on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
+    score = models.PositiveIntegerField(default=0)

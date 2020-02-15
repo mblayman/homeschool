@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from homeschool.students.models import Coursework, Enrollment, Student
+from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 
 @admin.register(Student)
@@ -12,6 +12,11 @@ class StudentAdmin(admin.ModelAdmin):
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ("id", "student", "grade_level")
+
+
+@admin.register(Grade)
+class GradeAdmin(admin.ModelAdmin):
+    list_display = ("id", "student")
 
 
 @admin.register(Coursework)

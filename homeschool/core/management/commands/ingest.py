@@ -5,9 +5,9 @@ import os
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from homeschool.courses.models import Course, CourseTask
+from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.schools.models import GradeLevel, School, SchoolYear
-from homeschool.students.models import Coursework, Enrollment, Student
+from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 User = get_user_model()
 
@@ -121,4 +121,9 @@ class Command(BaseCommand):
                         student=student,
                         course_task=course_task,
                         completed_date=completed_date,
+                    )
+                if task[5]:
+                    graded_work = GradedWork.objects.create(course_task=course_task)
+                    Grade.objects.create(
+                        student=student, graded_work=graded_work, score=int(task[5])
                     )
