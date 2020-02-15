@@ -129,7 +129,11 @@ class TestCourseTaskUpdateView(TestCase):
             duration=30,
             course__grade_level__school_year__school__admin=user,
         )
-        data = {"description": "new description", "duration": 15}
+        data = {
+            "course": str(task.course.id),
+            "description": "new description",
+            "duration": 15,
+        }
 
         with self.login(user):
             response = self.post("courses:task_edit", uuid=task.uuid, data=data)
@@ -139,11 +143,24 @@ class TestCourseTaskUpdateView(TestCase):
         self.assertEqual(task.duration, data["duration"])
         self.response_302(response)
 
+    def test_has_course(self):
+        user = self.make_user()
+        task = CourseTaskFactory(course__grade_level__school_year__school__admin=user)
+
+        with self.login(user):
+            self.get("courses:task_edit", uuid=task.uuid)
+
+        self.assertContext("course", task.course)
+
     def test_redirect_next(self):
         next_url = "/another/location/"
         user = self.make_user()
         task = CourseTaskFactory(course__grade_level__school_year__school__admin=user)
-        data = {"description": "new description", "duration": 15}
+        data = {
+            "course": str(task.course.id),
+            "description": "new description",
+            "duration": 15,
+        }
         url = self.reverse("courses:task_edit", uuid=task.uuid)
         url += f"?next={next_url}"
 
@@ -160,7 +177,12 @@ class TestCourseTaskUpdateView(TestCase):
             duration=30,
             course__grade_level__school_year__school__admin=user,
         )
-        data = {"description": "new description", "duration": 15, "is_graded": "on"}
+        data = {
+            "course": str(task.course.id),
+            "description": "new description",
+            "duration": 15,
+            "is_graded": "on",
+        }
 
         with self.login(user):
             self.post("courses:task_edit", uuid=task.uuid, data=data)
@@ -177,7 +199,12 @@ class TestCourseTaskUpdateView(TestCase):
             course__grade_level__school_year__school__admin=user,
             graded_work=graded_work,
         )
-        data = {"description": "new description", "duration": 15, "is_graded": "on"}
+        data = {
+            "course": str(task.course.id),
+            "description": "new description",
+            "duration": 15,
+            "is_graded": "on",
+        }
 
         with self.login(user):
             self.post("courses:task_edit", uuid=task.uuid, data=data)
@@ -195,7 +222,11 @@ class TestCourseTaskUpdateView(TestCase):
             course__grade_level__school_year__school__admin=user,
             graded_work=graded_work,
         )
-        data = {"description": "new description", "duration": 15}
+        data = {
+            "course": str(task.course.id),
+            "description": "new description",
+            "duration": 15,
+        }
 
         with self.login(user):
             self.post("courses:task_edit", uuid=task.uuid, data=data)

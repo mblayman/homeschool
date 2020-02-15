@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from .forms import CourseTaskCreateForm, CourseTaskUpdateForm
+from .forms import CourseTaskForm
 from .models import Course, CourseTask
 
 
@@ -20,7 +20,7 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
 
 class CourseTaskCreateView(LoginRequiredMixin, CreateView):
-    form_class = CourseTaskCreateForm
+    form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -53,7 +53,7 @@ class CourseTaskCreateView(LoginRequiredMixin, CreateView):
 
 
 class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
-    form_class = CourseTaskUpdateForm
+    form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
@@ -62,7 +62,12 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
         user = self.request.user
         return CourseTask.objects.filter(
             course__grade_level__school_year__school__admin=user
-        )
+        ).select_related("course")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["course"] = self.object.course
+        return context
 
     def get_success_url(self):
         next_url = self.request.GET.get("next")

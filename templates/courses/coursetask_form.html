@@ -6,9 +6,7 @@
   <h1 class="font-thin text-2xl text-blue-900 mb-8">{% if create %}Add{% else %}Edit{% endif %} Course Task</h1>
   <form method="post" class="w-full max-w-lg">
     {% csrf_token %}
-    {% if create %}
-      <input type="hidden" name="course" value="{{ course.id }}">
-    {% endif %}
+    <input type="hidden" name="course" value="{{ course.id }}">
     <div class="md:flex md:items-center mb-6">
       <div class="md:w-1/4">
         <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_description">
@@ -40,7 +38,7 @@
       </div>
       <div class="md:w-3/4">
         <input
-          id="id_is_graded" type="checkbox" name="is_graded" {% if form.is_graded.value %}checked{% endif %}>
+          id="id_is_graded" type="checkbox" name="is_graded" {% if coursetask.graded_work %}checked{% endif %}>
       </div>
     </div>
     <div class="md:flex md:items-center">
