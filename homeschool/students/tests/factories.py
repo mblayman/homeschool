@@ -30,3 +30,13 @@ class CourseworkFactory(factory.django.DjangoModelFactory):
         "homeschool.courses.tests.factories.CourseTaskFactory"
     )
     completed_date = factory.LazyFunction(lambda: timezone.now().date())
+
+
+class GradeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "students.Grade"
+
+    student = factory.SubFactory(StudentFactory)
+    graded_work = factory.SubFactory(
+        "homeschool.courses.tests.factories.GradedWorkFactory"
+    )

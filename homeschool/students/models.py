@@ -93,3 +93,11 @@ class Coursework(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course_task = models.ForeignKey("courses.CourseTask", on_delete=models.CASCADE)
     completed_date = models.DateField(db_index=True)
+
+
+class Grade(models.Model):
+    """An evaluation associated with graded work"""
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    graded_work = models.ForeignKey("courses.GradedWork", on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)

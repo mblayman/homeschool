@@ -4,11 +4,16 @@ import uuid
 from dateutil.relativedelta import MO, SU, relativedelta
 from django.utils import timezone
 
-from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
+from homeschool.courses.tests.factories import (
+    CourseFactory,
+    CourseTaskFactory,
+    GradedWorkFactory,
+)
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolFactory
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
+    GradeFactory,
     StudentFactory,
 )
 from homeschool.test import TestCase
@@ -156,3 +161,28 @@ class TestCoursework(TestCase):
         coursework = CourseworkFactory(completed_date=completed_date)
 
         self.assertEqual(coursework.completed_date, completed_date)
+
+
+class TestGrade(TestCase):
+    def test_factory(self):
+        grade = GradeFactory()
+
+        self.assertIsNotNone(grade)
+
+    def test_has_student(self):
+        student = StudentFactory()
+        grade = GradeFactory(student=student)
+
+        self.assertEqual(grade.student, student)
+
+    def test_has_graded_work(self):
+        graded_work = GradedWorkFactory()
+        grade = GradeFactory(graded_work=graded_work)
+
+        self.assertEqual(grade.graded_work, graded_work)
+
+    def test_has_uuid(self):
+        grade_uuid = uuid.uuid4()
+        grade = GradeFactory(uuid=grade_uuid)
+
+        self.assertEqual(grade.uuid, grade_uuid)
