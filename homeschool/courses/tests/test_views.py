@@ -59,6 +59,24 @@ class TestCourseTaskCreateView(TestCase):
 
         self.assertContext("create", True)
 
+    def test_redirect_next(self):
+        next_url = "/another/location/"
+        user = self.make_user()
+        course = CourseFactory(grade_level__school_year__school__admin=user)
+        data = {
+            "course": str(course.id),
+            "description": "new description",
+            "duration": 15,
+        }
+        url = self.reverse("courses:task_create", uuid=course.uuid)
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url, data=data)
+
+        self.response_302(response)
+        self.assertIn(next_url, response.get("Location"))
+
     def test_has_course(self):
         user = self.make_user()
         course = CourseFactory(grade_level__school_year__school__admin=user)
