@@ -37,9 +37,6 @@ class CourseTask(OrderedModel):
     duration = models.PositiveIntegerField(
         help_text="The expected length of the task in minutes"
     )
-    graded_work = models.OneToOneField(
-        "courses.GradedWork", null=True, blank=True, on_delete=models.SET_NULL
-    )
 
     objects = CourseTaskManager()
     order_with_respect_to = "course"
@@ -50,3 +47,7 @@ class CourseTask(OrderedModel):
 
 class GradedWork(models.Model):
     """Any type of work that a student might be graded on like a test or quiz."""
+
+    course_task = models.OneToOneField(
+        "courses.CourseTask", on_delete=models.CASCADE, related_name="graded_work"
+    )

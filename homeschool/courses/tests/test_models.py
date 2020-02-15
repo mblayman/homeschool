@@ -56,7 +56,7 @@ class TestCourseTask(TestCase):
         self.assertIsNotNone(task)
         self.assertNotEqual(str(task.uuid), "")
         self.assertNotEqual(task.description, "")
-        self.assertIsNone(task.graded_work)
+        self.assertFalse(hasattr(task, "graded_work"))
 
     def test_has_course(self):
         course = CourseFactory()

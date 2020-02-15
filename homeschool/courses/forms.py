@@ -13,9 +13,8 @@ class CourseTaskForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         task = super().save(*args, **kwargs)
         if self.cleaned_data["is_graded"]:
-            if not task.graded_work:
-                task.graded_work = GradedWork.objects.create()
-                task.save()
-        elif task.graded_work:
+            if not hasattr(task, "graded_work"):
+                GradedWork.objects.create(course_task=task)
+        elif hasattr(task, "graded_work"):
             task.graded_work.delete()
         return task

@@ -11,11 +11,6 @@ class CourseFactory(factory.django.DjangoModelFactory):
     )
 
 
-class GradedWorkFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = "courses.GradedWork"
-
-
 class CourseTaskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = "courses.CourseTask"
@@ -23,3 +18,10 @@ class CourseTaskFactory(factory.django.DjangoModelFactory):
     course = factory.SubFactory(CourseFactory)
     description = factory.Faker("sentence")
     duration = factory.Faker("pyint", min_value=0, max_value=60)
+
+
+class GradedWorkFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "courses.GradedWork"
+
+    course_task = factory.SubFactory(CourseTaskFactory)

@@ -48,7 +48,7 @@ class TestCourseTaskCreateView(TestCase):
         self.assertEqual(
             response.get("Location"), self.reverse("courses:detail", uuid=course.uuid)
         )
-        self.assertIsNone(task.graded_work)
+        self.assertFalse(hasattr(task, "graded_work"))
 
     def test_has_create(self):
         user = self.make_user()
@@ -192,13 +192,12 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_keep_graded(self):
         user = self.make_user()
-        graded_work = GradedWorkFactory()
         task = CourseTaskFactory(
             description="some description",
             duration=30,
             course__grade_level__school_year__school__admin=user,
-            graded_work=graded_work,
         )
+        GradedWorkFactory(course_task=task)
         data = {
             "course": str(task.course.id),
             "description": "new description",
@@ -232,7 +231,7 @@ class TestCourseTaskUpdateView(TestCase):
             self.post("courses:task_edit", uuid=task.uuid, data=data)
 
         task.refresh_from_db()
-        self.assertIsNone(task.graded_work)
+        self.assertFalse(hasattr(task, "graded_work"))
 
 
 class TestCourseTaskDeleteView(TestCase):
