@@ -1,1 +1,35 @@
 {% extends "app_base.html" %}
+
+{% block head_title %}Tasks To Grade{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">Tasks To Grade</h1>
+
+  <form method="POST" class="w-full max-w-2xl">
+    {% for student_work in students %}
+      <h2 class="font-thin text-xl text-blue-900">{{ student_work.student.first_name }}</h2>
+
+      {% for work in student_work.graded_work %}
+
+        <div class="flex-1 p-2 text-sm font-light overflow-x-scroll">{{ work.course_task.description|linebreaksbr }}</div>
+      {% endfor %}
+    {% endfor %}
+
+    <div class="flex flex-col sm:flex-row items-center mt-8">
+      <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+        Grade
+      </button>
+      {% if request.GET.next %}
+        <a href="{{ request.GET.next }}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline">
+          Later
+        </a>
+      {% else %}
+        <a href="{% url "core:daily" %}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline">
+          Later
+        </a>
+      {% endif %}
+    </div>
+  </form>
+{% endblock %}
