@@ -8,5 +8,6 @@ urlpatterns = [
         "<uuid:uuid>/courses/<uuid:course_uuid>/",
         views.StudentCourseView.as_view(),
         name="course",
-    )
+    ),
+    path("grade/", views.GradeView.as_view(), name="grade"),
 ]
