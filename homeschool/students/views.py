@@ -4,7 +4,8 @@ from django.utils import timezone
 from django.views.generic.base import TemplateView
 
 from homeschool.courses.models import Course, GradedWork
-from homeschool.students.models import Coursework
+from homeschool.schools.models import SchoolYear
+from homeschool.students.models import Coursework, Grade
 
 
 class StudentCourseView(LoginRequiredMixin, TemplateView):
@@ -70,16 +71,12 @@ class GradeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["students"] = self.get_students_graded_work()
+        context["work_to_grade"] = self.get_students_graded_work()
         return context
 
     def get_students_graded_work(self):
         """Get all the graded work for each student."""
-        student_uuids_str = self.request.GET.get("students")
-        if not student_uuids_str:
-            return []
-        student_uuids = student_uuids_str.split(",")
-        students = self.request.user.school.students.filter(uuid__in=student_uuids)
+        students = self.request.user.school.students.all()
 
         graded_work_by_student = []
         for student in students:
@@ -91,13 +88,22 @@ class GradeView(LoginRequiredMixin, TemplateView):
         return graded_work_by_student
 
     def get_graded_work(self, student):
-        graded_work_str = self.request.GET.get(f"{student.uuid}_graded_work")
-        if not graded_work_str:
+        today = self.request.user.get_local_today()
+        school_year = SchoolYear.objects.filter(
+            school=self.request.user.school, start_date__lte=today, end_date__gte=today
+        ).first()
+        if not school_year:
             return []
-        user = self.request.user
-        graded_work_ids = graded_work_str.split(",")
-        graded_work = GradedWork.objects.filter(
-            id__in=graded_work_ids,
-            course_task__course__grade_level__school_year__school=user.school,
-        ).select_related("course_task")
-        return list(graded_work)
+
+        completed_task_ids = Coursework.objects.filter(
+            student=student, course_task__course__grade_level__school_year=school_year
+        ).values_list("course_task_id", flat=True)
+
+        graded_work = GradedWork.objects.filter(course_task__in=completed_task_ids)
+
+        already_graded_work_ids = set(
+            Grade.objects.filter(
+                student=student, graded_work__in=graded_work
+            ).values_list("graded_work_id", flat=True)
+        )
+        return [work for work in graded_work if work.id not in already_graded_work_ids]

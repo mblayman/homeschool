@@ -6,8 +6,10 @@
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Tasks To Grade</h1>
 
   <form method="POST" class="w-full max-w-2xl">
-    {% for student_work in students %}
-      <h2 class="font-thin text-xl text-blue-900">{{ student_work.student.first_name }}</h2>
+    {% for student_work in work_to_grade %}
+      {% if student_work.graded_work %}
+        <h2 class="font-thin text-xl text-blue-900">{{ student_work.student.first_name }}</h2>
+      {% endif %}
 
       {% for work in student_work.graded_work %}
 

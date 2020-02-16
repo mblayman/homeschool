@@ -9,7 +9,12 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.students.tests.factories import CourseworkFactory, StudentFactory
+from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.students.tests.factories import (
+    CourseworkFactory,
+    GradeFactory,
+    StudentFactory,
+)
 from homeschool.test import TestCase
 
 
@@ -113,15 +118,12 @@ class TestGradeView(TestCase):
         user = self.make_user()
         student_1 = StudentFactory(school=user.school)
         student_2 = StudentFactory(school=user.school)
-        query_params = {
-            "students": ",".join([str(student_1.uuid), str(student_2.uuid)])
-        }
 
         with self.login(user):
-            self.get("students:grade", data=query_params)
+            self.get("students:grade")
 
         self.assertContext(
-            "students",
+            "work_to_grade",
             [
                 {"student": student_1, "graded_work": []},
                 {"student": student_2, "graded_work": []},
@@ -130,55 +132,48 @@ class TestGradeView(TestCase):
 
     def test_not_other_students(self):
         user = self.make_user()
-        student = StudentFactory()
-        query_params = {"students": ",".join([str(student.uuid)])}
+        StudentFactory()
 
         with self.login(user):
-            self.get("students:grade", data=query_params)
+            self.get("students:grade")
 
-        self.assertContext("students", [])
+        self.assertContext("work_to_grade", [])
 
     def test_fetch_graded_work(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
         graded_work_1 = GradedWorkFactory(
-            course_task__course__grade_level__school_year__school=user.school
+            course_task__course__grade_level__school_year=school_year
         )
+        CourseworkFactory(student=student, course_task=graded_work_1.course_task)
+        GradeFactory(student=student, graded_work=graded_work_1)
         graded_work_2 = GradedWorkFactory(
-            course_task__course__grade_level__school_year__school=user.school
+            course_task__course__grade_level__school_year=school_year
         )
-        query_params = {
-            "students": str(student.uuid),
-            f"{student.uuid}_graded_work": ",".join(
-                [str(graded_work_1.id), str(graded_work_2.id)]
-            ),
-        }
+        CourseworkFactory(student=student, course_task=graded_work_2.course_task)
 
         with self.login(user):
-            self.get("students:grade", data=query_params)
+            self.get("students:grade")
 
         self.assertContext(
-            "students",
-            [{"student": student, "graded_work": [graded_work_1, graded_work_2]}],
+            "work_to_grade", [{"student": student, "graded_work": [graded_work_2]}]
         )
 
     def test_not_graded_work_from_other_school(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
         graded_work_1 = GradedWorkFactory(
-            course_task__course__grade_level__school_year__school=user.school
+            course_task__course__grade_level__school_year=school_year
         )
+        CourseworkFactory(student=student, course_task=graded_work_1.course_task)
         graded_work_2 = GradedWorkFactory()
-        query_params = {
-            "students": str(student.uuid),
-            f"{student.uuid}_graded_work": ",".join(
-                [str(graded_work_1.id), str(graded_work_2.id)]
-            ),
-        }
+        CourseworkFactory(course_task=graded_work_2.course_task)
 
         with self.login(user):
-            self.get("students:grade", data=query_params)
+            self.get("students:grade")
 
         self.assertContext(
-            "students", [{"student": student, "graded_work": [graded_work_1]}]
+            "work_to_grade", [{"student": student, "graded_work": [graded_work_1]}]
         )
