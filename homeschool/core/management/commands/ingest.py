@@ -122,8 +122,9 @@ class Command(BaseCommand):
                         course_task=course_task,
                         completed_date=completed_date,
                     )
-                if task[5]:
+                if task[4] != "Regular":
                     graded_work = GradedWork.objects.create(course_task=course_task)
-                    Grade.objects.create(
-                        student=student, graded_work=graded_work, score=int(task[5])
-                    )
+                    if task[5]:
+                        Grade.objects.create(
+                            student=student, graded_work=graded_work, score=int(task[5])
+                        )

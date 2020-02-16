@@ -46,9 +46,13 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
 
         coursework_by_task = self.get_course_work_by_task(student, course)
 
+        course_tasks = course.course_tasks.all().select_related("graded_work")
         task_items = []
-        for course_task in course.course_tasks.all():
-            task_item = {"course_task": course_task}
+        for course_task in course_tasks:
+            task_item = {
+                "course_task": course_task,
+                "has_graded_work": hasattr(course_task, "graded_work"),
+            }
             if course_task in coursework_by_task:
                 task_item["coursework"] = coursework_by_task[course_task]
             else:

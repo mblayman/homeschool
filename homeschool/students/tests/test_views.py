@@ -4,7 +4,11 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from homeschool.courses.models import Course
-from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
+from homeschool.courses.tests.factories import (
+    CourseFactory,
+    CourseTaskFactory,
+    GradedWorkFactory,
+)
 from homeschool.students.tests.factories import CourseworkFactory, StudentFactory
 from homeschool.test import TestCase
 
@@ -74,6 +78,7 @@ class TestStudentCourseView(TestCase):
         task_1 = CourseTaskFactory(course=course)
         coursework = CourseworkFactory(course_task=task_1, student=student)
         task_2 = CourseTaskFactory(course=course)
+        GradedWorkFactory(course_task=task_2)
         today = timezone.now().date() + datetime.timedelta(days=2)
 
         with self.login(user):
@@ -84,7 +89,11 @@ class TestStudentCourseView(TestCase):
         self.assertContext(
             "task_items",
             [
-                {"course_task": task_1, "coursework": coursework},
-                {"course_task": task_2, "planned_date": today},
+                {
+                    "course_task": task_1,
+                    "coursework": coursework,
+                    "has_graded_work": False,
+                },
+                {"course_task": task_2, "planned_date": today, "has_graded_work": True},
             ],
         )

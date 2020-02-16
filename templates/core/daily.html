@@ -6,10 +6,10 @@
   <div class="flex flex-col sm:flex-row items-center">
     <h1 class="flex-grow font-thin text-2xl text-blue-900">Day of {{ day|date:"l, N j" }}</h1>
     <div class="text-sm text-blue-900 font-thin">
-      <a class="hover:underline" href="{% url "core:daily_for_date" ereyesterday.year ereyesterday.month ereyesterday.day %}">Ereyesterday</a> |
-      <a class="hover:underline" href="{% url "core:daily_for_date" yesterday.year yesterday.month yesterday.day %}">Yesterday</a> |
-      <a class="hover:underline" href="{% url "core:daily_for_date" tomorrow.year tomorrow.month tomorrow.day %}">Tomorrow</a> |
-      <a class="hover:underline" href="{% url "core:daily_for_date" overmorrow.year overmorrow.month overmorrow.day %}">Overmorrow</a>
+      <a class="hover:underline" href="{% url "core:daily_for_date" ereyesterday.year ereyesterday.month ereyesterday.day %}">{{ ereyesterday|date:"N j" }}</a> |
+      <a class="hover:underline" href="{% url "core:daily_for_date" yesterday.year yesterday.month yesterday.day %}">{{ yesterday|date:"N j" }}</a> |
+      <a class="hover:underline" href="{% url "core:daily_for_date" tomorrow.year tomorrow.month tomorrow.day %}">{{ tomorrow|date:"N j" }}</a> |
+      <a class="hover:underline" href="{% url "core:daily_for_date" overmorrow.year overmorrow.month overmorrow.day %}">{{ overmorrow|date:"N j" }}</a>
     </div>
   </div>
 
@@ -19,13 +19,13 @@
   {% for schedule in schedules %}
     <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
 
-    <div class="flex flex-col sm:flex-row">
+    <div class="flex flex-col sm:flex-row max-w-3xl">
       <div class="w-48 pr-4"></div>
       <div class="text-sm text-center uppercase tracking-wide font-thin py-2 w-20">Complete?</div>
     </div>
     {% for course_schedule in schedule.courses %}
       {% if course_schedule.task or course_schedule.coursework %}
-        <div class="flex flex-col sm:flex-row border-t border-yellow-400">
+        <div class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-3xl">
           <div class="w-48 text-sm uppercase tracking-wide font-thin py-2 pr-4">
             <a class="hover:underline" href="{% url "students:course" schedule.student.uuid course_schedule.course.uuid %}">{{ course_schedule.course.name }}</a>
           </div>
