@@ -6,13 +6,18 @@ from dateutil.relativedelta import MO, SU, relativedelta
 from django.utils import timezone
 
 from homeschool.courses.models import Course
-from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
+from homeschool.courses.tests.factories import (
+    CourseFactory,
+    CourseTaskFactory,
+    GradedWorkFactory,
+)
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.students.models import Coursework
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
+    GradeFactory,
     StudentFactory,
 )
 from homeschool.test import TestCase
@@ -366,10 +371,7 @@ class TestDaily(TestCase):
         today = timezone.now().date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_level=grade_level)
-        task = CourseTaskFactory(course=course)
+        task = CourseTaskFactory(course__grade_level__school_year__school=user.school)
         data = {
             "completed_date": "{:%Y-%m-%d}".format(today),
             f"task-{student.id}-{task.id}": "on",
@@ -388,10 +390,7 @@ class TestDaily(TestCase):
         today = timezone.now().date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_level=grade_level)
-        task = CourseTaskFactory(course=course)
+        task = CourseTaskFactory(course__grade_level__school_year__school=user.school)
         CourseworkFactory(student=student, course_task=task)
         data = {
             "completed_date": "{:%Y-%m-%d}".format(today),
@@ -404,3 +403,46 @@ class TestDaily(TestCase):
         self.assertFalse(
             Coursework.objects.filter(student=student, course_task=task).exists()
         )
+
+    def test_to_grade(self):
+        today = timezone.now().date()
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        graded_work = GradedWorkFactory(
+            course_task__course__grade_level__school_year__school=user.school
+        )
+        data = {
+            "completed_date": "{:%Y-%m-%d}".format(today),
+            f"task-{student.id}-{graded_work.course_task.id}": "on",
+        }
+
+        with self.login(user):
+            response = self.post("core:daily", data=data)
+
+        self.response_302(response)
+        url = self.reverse("students:grade")
+        self.assertIn(url, response.get("Location"))
+        self.assertIn(f"students={student.uuid}", response.get("Location"))
+        self.assertIn(
+            f"{student.uuid}_graded_work={graded_work.id}", response.get("Location")
+        )
+
+    def test_no_grade_when_already_graded(self):
+        today = timezone.now().date()
+        user = self.make_user()
+        school = user.school
+        student = StudentFactory(school=school)
+        grade = GradeFactory(
+            student=student,
+            graded_work__course_task__course__grade_level__school_year__school=school,
+        )
+        data = {
+            "completed_date": "{:%Y-%m-%d}".format(today),
+            f"task-{student.id}-{grade.graded_work.course_task.id}": "on",
+        }
+
+        with self.login(user):
+            response = self.post("core:daily", data=data)
+
+        self.response_302(response)
+        self.assertEqual(self.reverse("core:daily"), response.get("Location"))

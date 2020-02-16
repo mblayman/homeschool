@@ -8,8 +8,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import TemplateView
 
+from homeschool.courses.models import GradedWork
 from homeschool.schools.models import SchoolYear
-from homeschool.students.models import Coursework
+from homeschool.students.models import Coursework, Grade
 
 
 class IndexView(TemplateView):
@@ -202,11 +203,18 @@ class DailyView(LoginRequiredMixin, TemplateView):
             completed_date = parse(request.POST["completed_date"])
 
         tasks_by_student = self.get_task_completions_by_student(request.POST)
+        students_work_to_grade = {}
         if tasks_by_student:
             for student_id, tasks in tasks_by_student.items():
                 student = request.user.school.students.filter(id=student_id).first()
-                self.mark_completion(student, tasks, completed_date)
-        success_url = request.GET.get("next", reverse("core:daily"))
+                work_to_grade = self.mark_completion(student, tasks, completed_date)
+                if work_to_grade:
+                    students_work_to_grade[student] = work_to_grade
+
+        if students_work_to_grade:
+            success_url = self.get_grade_url(students_work_to_grade)
+        else:
+            success_url = request.GET.get("next", reverse("core:daily"))
         return HttpResponseRedirect(success_url)
 
     def get_task_completions_by_student(self, post_data):
@@ -226,16 +234,33 @@ class DailyView(LoginRequiredMixin, TemplateView):
             tasks[student_id][category].append(task_id)
         return tasks
 
+    def get_grade_url(self, students_work_to_grade):
+        next_url = self.request.GET.get("next", reverse("core:daily"))
+        student_uuids = ",".join(
+            [str(student.uuid) for student in students_work_to_grade.keys()]
+        )
+        grade_url = reverse("students:grade")
+        grade_url += f"?students={student_uuids}&next={next_url}"
+        for student, work_to_grade in students_work_to_grade.items():
+            graded_work_ids = ",".join(work_to_grade)
+            grade_url += f"&{student.uuid}_graded_work={graded_work_ids}"
+
+        return grade_url
+
     def mark_completion(self, student, tasks, completed_date):
         """Mark completed tasks or clear already complete tasks."""
         if not student:
             return
 
-        self.process_complete_tasks(student, tasks["complete"], completed_date)
+        work_to_grade = self.process_complete_tasks(
+            student, tasks["complete"], completed_date
+        )
         self.process_incomplete_tasks(student, tasks["incomplete"])
+        return work_to_grade
 
     def process_complete_tasks(self, student, complete_task_ids, completed_date):
         """Add coursework for any tasks that do not have it."""
+        work_to_grade = []
         existing_complete_task_ids = set(
             Coursework.objects.filter(
                 student=student, course_task__in=complete_task_ids
@@ -253,6 +278,20 @@ class DailyView(LoginRequiredMixin, TemplateView):
                     )
                 )
             Coursework.objects.bulk_create(new_coursework)
+
+            graded_work_ids = set(
+                GradedWork.objects.filter(
+                    course_task__in=newly_complete_task_ids
+                ).values_list("id", flat=True)
+            )
+            already_graded_work_ids = set(
+                Grade.objects.filter(
+                    student=student, graded_work__in=graded_work_ids
+                ).values_list("graded_work_id", flat=True)
+            )
+            work_to_grade = list(map(str, graded_work_ids - already_graded_work_ids))
+
+        return work_to_grade
 
     def process_incomplete_tasks(self, student, incomplete_task_ids):
         """Remove any coursework for tasks that are marked as incomplete."""
