@@ -422,10 +422,6 @@ class TestDaily(TestCase):
         self.response_302(response)
         url = self.reverse("students:grade")
         self.assertIn(url, response.get("Location"))
-        self.assertIn(f"students={student.uuid}", response.get("Location"))
-        self.assertIn(
-            f"{student.uuid}_graded_work={graded_work.id}", response.get("Location")
-        )
 
     def test_no_grade_when_already_graded(self):
         today = timezone.now().date()
