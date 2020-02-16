@@ -23,9 +23,7 @@ class AppView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        # This is UTC so it is not localized to the user's timezone.
-        # That may lead to funny results in the evening.
-        today = timezone.now().date()
+        today = self.request.user.get_local_today()
         context["today"] = today
 
         week = self.get_week_boundaries(today)
@@ -123,9 +121,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
         if year and month and day:
             day = datetime.date(year, month, day)
         else:
-            # This is UTC so it is not localized to the user's timezone.
-            # That may lead to funny results in the evening.
-            day = timezone.now().date()
+            day = self.request.user.get_local_today()
         context["day"] = day
 
         school_year = (

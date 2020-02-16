@@ -38,7 +38,7 @@ class TestApp(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("core:app")
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_monday(self, timezone):
         user = self.make_user()
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
@@ -50,7 +50,7 @@ class TestApp(TestCase):
 
         self.assertContext("monday", monday)
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_sunday(self, timezone):
         user = self.make_user()
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
@@ -62,7 +62,7 @@ class TestApp(TestCase):
 
         self.assertContext("sunday", sunday)
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_today(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         timezone.now.return_value = now
@@ -79,7 +79,7 @@ class TestApp(TestCase):
 
         self.assertContext("today", today)
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_school_year_for_user_only(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
@@ -110,7 +110,7 @@ class TestApp(TestCase):
         schedules = self.get_context("schedules")
         self.assertTrue(len(schedules[0]["courses"]) > 0)
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
@@ -170,7 +170,7 @@ class TestApp(TestCase):
         }
         self.assertContext("schedules", [expected_schedule])
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_week_dates(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
@@ -238,7 +238,7 @@ class TestDaily(TestCase):
 
         self.assertContext("schedules", [])
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_school_not_run_on_day(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
@@ -256,7 +256,7 @@ class TestDaily(TestCase):
 
         self.assertContext("schedules", [])
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_school_year_for_user_only(self, timezone):
         now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
         friday = now.date()
@@ -281,7 +281,7 @@ class TestDaily(TestCase):
         schedules = self.get_context("schedules")
         self.assertNotEqual(schedules, [])
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
         now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
         friday = now.date()
@@ -342,7 +342,7 @@ class TestDaily(TestCase):
         self.assertContext("tomorrow", today + datetime.timedelta(days=1))
         self.assertContext("overmorrow", today + datetime.timedelta(days=2))
 
-    @mock.patch("homeschool.core.views.timezone")
+    @mock.patch("homeschool.users.models.timezone")
     def test_surrounding_dates(self, timezone):
         now = datetime.datetime(2020, 1, 22, tzinfo=pytz.utc)
         wednesday = now.date()
