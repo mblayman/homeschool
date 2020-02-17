@@ -441,4 +441,4 @@ class TestDaily(TestCase):
             response = self.post("core:daily", data=data)
 
         self.response_302(response)
-        self.assertEqual(self.reverse("core:daily"), response.get("Location"))
+        self.assertEqual(response.get("Location"), self.reverse("core:daily"))

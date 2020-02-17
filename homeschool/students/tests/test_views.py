@@ -10,6 +10,7 @@ from homeschool.courses.tests.factories import (
     GradedWorkFactory,
 )
 from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.students.models import Grade
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     GradeFactory,
@@ -177,3 +178,26 @@ class TestGradeView(TestCase):
         self.assertContext(
             "work_to_grade", [{"student": student, "graded_work": [graded_work_1]}]
         )
+
+    def test_grade(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
+        graded_work = GradedWorkFactory(
+            course_task__course__grade_level__school_year=school_year
+        )
+        graded_work_2 = GradedWorkFactory(
+            course_task__course__grade_level__school_year=school_year
+        )
+        data = {
+            f"graded_work-{student.id}-{graded_work.id}": "100",
+            f"graded_work-{student.id}-{graded_work_2.id}": "",
+        }
+
+        with self.login(user):
+            response = self.post("students:grade", data=data)
+
+        self.response_302(response)
+        self.assertEqual(response.get("Location"), self.reverse("core:daily"))
+        grade = Grade.objects.get(student=student, graded_work=graded_work)
+        self.assertEqual(grade.score, 100)

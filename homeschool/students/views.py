@@ -1,5 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import pluralize
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import TemplateView
 
@@ -99,7 +103,9 @@ class GradeView(LoginRequiredMixin, TemplateView):
             student=student, course_task__course__grade_level__school_year=school_year
         ).values_list("course_task_id", flat=True)
 
-        graded_work = GradedWork.objects.filter(course_task__in=completed_task_ids)
+        graded_work = GradedWork.objects.filter(
+            course_task__in=completed_task_ids
+        ).select_related("course_task", "course_task__course")
 
         already_graded_work_ids = set(
             Grade.objects.filter(
@@ -107,3 +113,61 @@ class GradeView(LoginRequiredMixin, TemplateView):
             ).values_list("graded_work_id", flat=True)
         )
         return [work for work in graded_work if work.id not in already_graded_work_ids]
+
+    def post(self, request, *args, **kwargs):
+        self.persist_grades()
+        success_url = request.GET.get("next", reverse("core:daily"))
+        return HttpResponseRedirect(success_url)
+
+    def persist_grades(self):
+        """Parse the scores and persist new grades."""
+        scores = self.get_scores()
+
+        school = self.request.user.school
+        grades = []
+        students = self.request.user.school.students.filter(id__in=scores.keys())
+        for student in students:
+            graded_work_ids = set(
+                GradedWork.objects.filter(
+                    id__in=scores[student.id].keys(),
+                    course_task__course__grade_level__school_year__school=school,
+                ).values_list("id", flat=True)
+            )
+            already_graded_work_ids = set(
+                Grade.objects.filter(
+                    student=student, graded_work__in=graded_work_ids
+                ).values_list("graded_work_id", flat=True)
+            )
+            graded_work_missing_grades = graded_work_ids - already_graded_work_ids
+            for graded_work_id in graded_work_missing_grades:
+                grades.append(
+                    Grade(
+                        student=student,
+                        graded_work_id=graded_work_id,
+                        score=int(scores[student.id][graded_work_id]),
+                    )
+                )
+
+        if grades:
+            grades_created = len(Grade.objects.bulk_create(grades))
+            message = "Saved {} grade{}.".format(
+                grades_created, pluralize(grades_created)
+            )
+            messages.add_message(self.request, messages.SUCCESS, message)
+
+    def get_scores(self):
+        raw_scores = {
+            k: v for k, v in self.request.POST.items() if k.startswith("graded_work")
+        }
+        scores = {}
+        for student_work, score in raw_scores.items():
+            if not score:
+                continue
+            work_parts = student_work.split("-")
+            student_id = int(work_parts[1])
+            graded_work_id = int(work_parts[2])
+            if student_id not in scores:
+                scores[student_id] = {}
+            scores[student_id][graded_work_id] = score
+
+        return scores
