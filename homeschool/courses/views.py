@@ -3,9 +3,38 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
+
+from homeschool.schools.models import SchoolYear
 
 from .forms import CourseTaskForm
 from .models import Course, CourseTask
+
+
+class CourseListView(LoginRequiredMixin, ListView):
+    def get_queryset(self):
+        user = self.request.user
+        today = user.get_local_today()
+        school_year = SchoolYear.objects.filter(
+            school=user.school, start_date__lte=today, end_date__gte=today
+        ).first()
+        return (
+            Course.objects.filter(grade_level__school_year=school_year)
+            .order_by("grade_level")
+            .select_related("grade_level")
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        courses_by_grade_level = {}
+        for course in context["object_list"]:
+            if course.grade_level not in courses_by_grade_level:
+                courses_by_grade_level[course.grade_level] = []
+            courses_by_grade_level[course.grade_level].append(course)
+        context["courses_by_grade_level"] = courses_by_grade_level
+
+        return context
 
 
 class CourseDetailView(LoginRequiredMixin, DetailView):
