@@ -43,7 +43,7 @@ class TestApp(TestCase):
         user = self.make_user()
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         monday = now.date() + relativedelta(weekday=MO(-1))
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
 
         with self.login(user):
             self.get("core:app")
@@ -55,7 +55,7 @@ class TestApp(TestCase):
         user = self.make_user()
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date() + relativedelta(weekday=SU(+1))
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
 
         with self.login(user):
             self.get("core:app")
@@ -65,7 +65,7 @@ class TestApp(TestCase):
     @mock.patch("homeschool.users.models.timezone")
     def test_has_today(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         today = now.date()
         user = self.make_user()
         SchoolYearFactory(
@@ -83,7 +83,7 @@ class TestApp(TestCase):
     def test_school_year_for_user_only(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
         SchoolYearFactory(
@@ -115,7 +115,7 @@ class TestApp(TestCase):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
         monday = sunday - datetime.timedelta(days=6)
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
         school_year = SchoolYearFactory(
@@ -175,7 +175,7 @@ class TestApp(TestCase):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
         monday = sunday - datetime.timedelta(days=6)
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         user = self.make_user()
         SchoolYearFactory(
             school=user.school,
@@ -242,7 +242,7 @@ class TestDaily(TestCase):
     def test_school_not_run_on_day(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date()
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         user = self.make_user()
         SchoolYearFactory(
             school=user.school,
@@ -260,7 +260,7 @@ class TestDaily(TestCase):
     def test_school_year_for_user_only(self, timezone):
         now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
         friday = now.date()
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         user = self.make_user()
         StudentFactory(school=user.school)
         SchoolYearFactory(
@@ -285,7 +285,7 @@ class TestDaily(TestCase):
     def test_has_schedules(self, timezone):
         now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
         friday = now.date()
-        timezone.now.return_value = now
+        timezone.localdate.return_value = now.date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
         school_year = SchoolYearFactory(
@@ -346,7 +346,7 @@ class TestDaily(TestCase):
     def test_surrounding_dates(self, timezone):
         now = datetime.datetime(2020, 1, 22, tzinfo=pytz.utc)
         wednesday = now.date()
-        timezone.now.return_value = now
+        timezone.localdate.return_value = wednesday
         user = self.make_user()
         SchoolYearFactory(
             school=user.school,
