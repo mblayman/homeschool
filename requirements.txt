@@ -15,6 +15,7 @@ django-debug-toolbar==2.1
 django-environ==0.4.5
 django-heroku==0.3.1
 django-ordered-model==3.3.0
+django-tz-detect==0.3.0
 django-waffle==0.19.0
 django==3.0.2
 freezegun==0.3.14
@@ -24,10 +25,10 @@ oauthlib==3.1.0           # via requests-oauthlib
 psycopg2==2.8.4           # via django-heroku
 python-dateutil==2.8.1
 python3-openid==3.1.0     # via django-allauth
-pytz==2019.3              # via django
+pytz==2019.3              # via django, django-tz-detect
 requests-oauthlib==1.3.0  # via django-allauth
 requests==2.22.0          # via django-allauth, requests-oauthlib
-six==1.14.0               # via django-waffle, freezegun, python-dateutil
+six==1.14.0               # via django-tz-detect, django-waffle, freezegun, python-dateutil
 soupsieve==1.9.5          # via beautifulsoup4
 sqlparse==0.3.0           # via django, django-debug-toolbar
 urllib3==1.25.7           # via requests

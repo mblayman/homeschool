@@ -23,6 +23,7 @@ urlpatterns = [
     path("office/", admin.site.urls),
     path("students/", include("homeschool.students.urls")),
     path("accounts/", include("allauth.urls")),
+    path("tz_detect/", include("tz_detect.urls")),
 ]
 
 # Enable the debug toolbar only in DEBUG mode.

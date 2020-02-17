@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "django_extensions",
     "ordered_model",
+    "tz_detect",
     "waffle",
     "homeschool.core",
     "homeschool.courses",
@@ -66,6 +67,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "waffle.middleware.WaffleMiddleware",
+    "tz_detect.middleware.TimezoneMiddleware",
 ]
 
 # Enable the debug toolbar only in DEBUG mode.

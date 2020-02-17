@@ -11,5 +11,9 @@ class User(AbstractUser):
         return self.school_set.latest("id")
 
     def get_local_today(self):
-        """Get the current date from the user's timezone point of view."""
-        return timezone.now().date()
+        """Get the current date from the user's timezone point of view.
+
+        Use tz_detect so that localdate is pulling the current timezone
+        from the session.
+        """
+        return timezone.localdate()
