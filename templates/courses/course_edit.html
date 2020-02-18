@@ -1,0 +1,79 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Edit {{ course.name }}{% endblock %}
+
+{% block main %}
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+    {{ course.grade_level.name }}
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+    {{ course.name }}
+  </h1>
+
+  {% if form.errors %}
+    <div class="pb-8">{{ form.errors }}</div>
+  {% endif %}
+
+  <form method="POST" class="w-full max-w-2xl">
+    {% csrf_token %}
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_name">
+          Name
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          id="id_name" type="text" name="name" {% if form.name.value %}value="{{ form.name.value }}"{% endif %} required autofocus>
+      </div>
+    </div>
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <div class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4">
+          Days of week
+        </div>
+      </div>
+      <div class="md:w-3/4">
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="monday" {% if form.monday.value %}checked{% endif %}>
+          Mon.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="tuesday" {% if form.tuesday.value %}checked{% endif %}>
+          Tues.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="wednesday" {% if form.wednesday.value %}checked{% endif %}>
+          Wed.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="thursday" {% if form.thursday.value %}checked{% endif %}>
+          Thurs.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="friday" {% if form.friday.value %}checked{% endif %}>
+          Fri.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="saturday" {% if form.saturday.value %}checked{% endif %}>
+          Sat.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="sunday" {% if form.sunday.value %}checked{% endif %}>
+          Sun.
+        </label>
+      </div>
+    </div>
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Update
+        </button>
+        <a href="{% url "courses:detail" course.uuid %}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline">
+          Cancel
+        </a>
+      </div>
+    </div>
+  </form>
+{% endblock %}

@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 
 from homeschool.schools.models import SchoolYear
 
-from .forms import CourseTaskForm
+from .forms import CourseForm, CourseTaskForm
 from .models import Course, CourseTask
 
 
@@ -46,6 +46,38 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         return Course.objects.filter(
             grade_level__school_year__school__admin=user
         ).select_related("grade_level")
+
+
+class CourseEditView(LoginRequiredMixin, UpdateView):
+    form_class = CourseForm
+    template_name = "courses/course_edit.html"
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        user = self.request.user
+        return Course.objects.filter(
+            grade_level__school_year__school__admin=user
+        ).select_related("grade_level")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        course = kwargs["instance"]
+        kwargs["initial"].update(
+            {
+                "monday": course.runs_on(Course.MONDAY),
+                "tuesday": course.runs_on(Course.TUESDAY),
+                "wednesday": course.runs_on(Course.WEDNESDAY),
+                "thursday": course.runs_on(Course.THURSDAY),
+                "friday": course.runs_on(Course.FRIDAY),
+                "saturday": course.runs_on(Course.SATURDAY),
+                "sunday": course.runs_on(Course.SUNDAY),
+            }
+        )
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
 
 
 class CourseTaskCreateView(LoginRequiredMixin, CreateView):

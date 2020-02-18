@@ -2,7 +2,7 @@ import datetime
 
 from django.utils import timezone
 
-from homeschool.courses.models import CourseTask, GradedWork
+from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
     CourseFactory,
     CourseTaskFactory,
@@ -53,6 +53,31 @@ class TestCourseDetailView(TestCase):
 
         with self.login(user):
             self.get_check_200("courses:detail", uuid=course.uuid)
+
+
+class TestCourseEditView(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        self.assertLoginRequired("courses:edit", uuid=course.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        course = CourseFactory(grade_level__school_year__school__admin=user)
+
+        with self.login(user):
+            self.get_check_200("courses:edit", uuid=course.uuid)
+
+    def test_post(self):
+        user = self.make_user()
+        course = CourseFactory(grade_level__school_year__school__admin=user)
+        data = {"name": "New course name", "wednesday": "on", "friday": "on"}
+
+        with self.login(user):
+            self.post("courses:edit", uuid=course.uuid, data=data)
+
+        course.refresh_from_db()
+        self.assertEqual(course.name, "New course name")
+        self.assertEqual(course.days_of_week, Course.WEDNESDAY + Course.FRIDAY)
 
 
 class TestCourseTaskCreateView(TestCase):
