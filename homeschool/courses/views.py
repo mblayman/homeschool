@@ -43,9 +43,11 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         user = self.request.user
-        return Course.objects.filter(
-            grade_level__school_year__school__admin=user
-        ).select_related("grade_level")
+        return (
+            Course.objects.filter(grade_level__school_year__school__admin=user)
+            .select_related("grade_level")
+            .prefetch_related("course_tasks__graded_work")
+        )
 
 
 class CourseEditView(LoginRequiredMixin, UpdateView):
