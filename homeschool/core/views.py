@@ -115,13 +115,14 @@ class DailyView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
+        today = self.request.user.get_local_today()
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")
         day = self.kwargs.get("day")
         if year and month and day:
             day = datetime.date(year, month, day)
         else:
-            day = self.request.user.get_local_today()
+            day = today
         context["day"] = day
 
         school_year = (
@@ -146,10 +147,10 @@ class DailyView(LoginRequiredMixin, TemplateView):
             context["tomorrow"] = day + datetime.timedelta(days=1)
             context["overmorrow"] = day + datetime.timedelta(days=2)
 
-        context["schedules"] = self.get_schedules(school_year, day)
+        context["schedules"] = self.get_schedules(school_year, today, day)
         return context
 
-    def get_schedules(self, school_year, day):
+    def get_schedules(self, school_year, today, day):
         """Get the schedules for each student."""
         schedules = []
         if not school_year:
@@ -160,12 +161,12 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
         for student in self.request.user.school.students.all():
             courses = student.get_courses(school_year)
-            schedule = self.get_student_schedule(student, day, courses)
+            schedule = self.get_student_schedule(student, today, day, courses)
             schedules.append(schedule)
 
         return schedules
 
-    def get_student_schedule(self, student, day, courses):
+    def get_student_schedule(self, student, today, day, courses):
         """Get the daily schedule for the student."""
         day_coursework = student.get_day_coursework(day)
         completed_task_ids = list(
@@ -179,15 +180,19 @@ class DailyView(LoginRequiredMixin, TemplateView):
             if course.id in day_coursework:
                 course_schedule["coursework"] = day_coursework[course.id]
             elif course.runs_on(day):
+                task_index = max(course.get_task_count_in_range(today, day) - 1, 0)
                 # Doing this query in a loop is definitely an N+1 bug.
                 # If it's possible to do a single query of all tasks
                 # that groups by course then that would be better.
                 # No need to over-optimize until that's a real issue.
                 # I brought this up on the forum. It doesn't look like it's easy to fix.
                 # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
-                course_task = course.course_tasks.exclude(
-                    id__in=completed_task_ids
-                ).first()
+                try:
+                    course_task = course.course_tasks.exclude(
+                        id__in=completed_task_ids
+                    )[task_index]
+                except IndexError:
+                    course_task = None
                 course_schedule["task"] = course_task
             schedule["courses"].append(course_schedule)
         return schedule
