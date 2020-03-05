@@ -7,9 +7,9 @@
       </a>
       <div class="flex-grow">
         {% if messages %}
-        <ul>
+        <ul class="flex flex-row justify-center mx-4">
           {% for message in messages %}
-            <li class="bg-yellow-300 border border-yellow-200 text-blue-900 py-2 px-4 mx-8 rounded-lg">{{ message }}</li>
+            <li class="bg-yellow-300 border border-yellow-200 text-blue-900 py-2 px-4 mx-2 rounded-lg overflow-x-scroll h-10">{{ message }}</li>
           {% endfor %}
         </ul>
         {% endif %}
