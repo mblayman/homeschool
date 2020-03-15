@@ -34,6 +34,13 @@ class AppView(LoginRequiredMixin, TemplateView):
         context["day"] = day
 
         week = self.get_week_boundaries(day)
+
+        # Fix the corner case when the weekly view is used and today falls in the week.
+        # In that scenario, don't point at the first day of the week
+        # since it messes with the UI.
+        if week[0] <= today <= week[1]:
+            context["day"] = today
+
         context["monday"], context["sunday"] = week
         context["previous_week_date"] = context["monday"] - datetime.timedelta(days=7)
         context["next_week_date"] = context["monday"] + datetime.timedelta(days=7)

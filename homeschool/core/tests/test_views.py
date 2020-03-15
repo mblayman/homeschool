@@ -292,6 +292,23 @@ class TestApp(TestCase):
         }
         self.assertContext("schedules", [expected_schedule])
 
+    @mock.patch("homeschool.users.models.timezone")
+    def test_when_weekly_includes_today(self, timezone):
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        timezone.localdate.return_value = now.date()
+        today = now.date()
+        user = self.make_user()
+        SchoolYearFactory(
+            school=user.school,
+            start_date=today - datetime.timedelta(days=90),
+            end_date=today + datetime.timedelta(days=90),
+        )
+
+        with self.login(user):
+            self.get("core:weekly", year=2020, month=1, day=20)
+
+        self.assertContext("day", today)
+
 
 class TestDaily(TestCase):
     def test_ok(self):
