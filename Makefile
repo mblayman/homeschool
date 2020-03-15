@@ -11,3 +11,7 @@ graph:
 		students \
 		users \
 		-o models.png
+
+coverage:
+	coverage run --source='homeschool' manage.py test
+	coverage report

@@ -235,6 +235,63 @@ class TestApp(TestCase):
 
         self.assertContext("schedules", [])
 
+    @mock.patch("homeschool.users.models.timezone")
+    def test_weekly(self, timezone):
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        sunday = now.date()
+        monday = sunday - datetime.timedelta(days=6)
+        timezone.localdate.return_value = now.date()
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=sunday - datetime.timedelta(days=90),
+            end_date=sunday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.MONDAY
+            + SchoolYear.TUESDAY
+            + SchoolYear.WEDNESDAY
+            + SchoolYear.THURSDAY
+            + SchoolYear.FRIDAY,
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_level=grade_level,
+            days_of_week=Course.MONDAY
+            + Course.WEDNESDAY
+            + Course.THURSDAY
+            + Course.FRIDAY,
+        )
+        task_1 = CourseTaskFactory(course=course)
+        CourseTaskFactory(course=course)
+        CourseTaskFactory(course=course)
+        CourseTaskFactory(course=course)
+        task_2 = CourseTaskFactory(course=course)
+        CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+
+        with self.login(user), self.assertNumQueries(12):
+            self.get("core:weekly", year=2020, month=1, day=27)
+
+        expected_schedule = {
+            "student": student,
+            "courses": [
+                {
+                    "course": course,
+                    "days": [
+                        {
+                            "week_date": monday + datetime.timedelta(days=7),
+                            "task": task_2,
+                        },
+                        {"week_date": monday + datetime.timedelta(days=8)},
+                        {"week_date": monday + datetime.timedelta(days=9)},
+                        {"week_date": monday + datetime.timedelta(days=10)},
+                        {"week_date": monday + datetime.timedelta(days=11)},
+                    ],
+                }
+            ],
+        }
+        self.assertContext("schedules", [expected_schedule])
+
 
 class TestDaily(TestCase):
     def test_ok(self):
