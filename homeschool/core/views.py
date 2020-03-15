@@ -24,10 +24,19 @@ class AppView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
 
         today = self.request.user.get_local_today()
-        context["today"] = today
+        year = self.kwargs.get("year")
+        month = self.kwargs.get("month")
+        day = self.kwargs.get("day")
+        if year and month and day:
+            day = datetime.date(year, month, day)
+        else:
+            day = today
+        context["day"] = day
 
-        week = self.get_week_boundaries(today)
+        week = self.get_week_boundaries(day)
         context["monday"], context["sunday"] = week
+        context["previous_week_date"] = context["monday"] - datetime.timedelta(days=7)
+        context["next_week_date"] = context["monday"] + datetime.timedelta(days=7)
 
         school_year = (
             SchoolYear.objects.filter(
@@ -44,7 +53,7 @@ class AppView(LoginRequiredMixin, TemplateView):
             week_dates = school_year.get_week_dates_for(week)
         context["week_dates"] = week_dates
 
-        context["schedules"] = self.get_schedules(school_year, week, week_dates)
+        context["schedules"] = self.get_schedules(school_year, today, week, week_dates)
         return context
 
     def get_week_boundaries(self, today):
@@ -53,23 +62,26 @@ class AppView(LoginRequiredMixin, TemplateView):
         sunday = today + relativedelta(weekday=SU(+1))
         return monday, sunday
 
-    def get_schedules(self, school_year, week, week_dates):
+    def get_schedules(self, school_year, today, week, week_dates):
         """Get the schedules for each student."""
         schedules = []
         if school_year is None:
             return schedules
 
+        monday = week[0]
         for student in self.request.user.school.students.all():
             courses = student.get_courses(school_year)
             week_coursework = student.get_week_coursework(week)
             schedule = self.get_student_schedule(
-                student, week_dates, courses, week_coursework
+                student, today, monday, week_dates, courses, week_coursework
             )
             schedules.append(schedule)
 
         return schedules
 
-    def get_student_schedule(self, student, week_dates, courses, week_coursework):
+    def get_student_schedule(
+        self, student, today, week_start_date, week_dates, courses, week_coursework
+    ):
         """Get the schedule.
 
         Each student will get a list of courses, filled with each day.
@@ -84,6 +96,13 @@ class AppView(LoginRequiredMixin, TemplateView):
         schedule = {"student": student, "courses": []}
         for course in courses:
             course_schedule = {"course": course, "days": []}
+
+            task_index = 0
+            if week_start_date > today:
+                task_index = self.get_future_course_task_index(
+                    student, course, today, week_start_date
+                )
+
             # Doing this query in a loop is definitely an N+1 bug.
             # If it's possible to do a single query of all tasks
             # that groups by course then that would be better.
@@ -91,9 +110,11 @@ class AppView(LoginRequiredMixin, TemplateView):
             # I brought this up on the forum. It doesn't look like it's easy to fix.
             # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
             course_tasks = list(
-                course.course_tasks.exclude(id__in=completed_task_ids)[:task_limit]
+                course.course_tasks.exclude(id__in=completed_task_ids)[
+                    task_index : task_index + task_limit
+                ]
             )
-            course_tasks.reverse()
+            course_tasks.reverse()  # for the performance of pop below.
             for week_date in week_dates:
                 course_schedule_item = {"week_date": week_date}
                 if (
@@ -107,6 +128,35 @@ class AppView(LoginRequiredMixin, TemplateView):
                 course_schedule["days"].append(course_schedule_item)
             schedule["courses"].append(course_schedule)
         return schedule
+
+    def get_future_course_task_index(self, student, course, today, week_start_date):
+        """Get the db index of course tasks for future weeks.
+
+        This is based on the last completed coursework for the course.
+        """
+        this_week = self.get_week_boundaries(today)
+        latest_coursework = (
+            Coursework.objects.filter(student=student, course_task__course=course)
+            .order_by("-completed_date")
+            .first()
+        )
+        if latest_coursework and (
+            this_week[0] <= latest_coursework.completed_date <= this_week[1]
+        ):
+            task_index = (
+                course.get_task_count_in_range(
+                    latest_coursework.completed_date + datetime.timedelta(days=1),
+                    week_start_date,
+                )
+                - 1
+            )
+        else:
+            # When the student has no coursework yet, the counting should start
+            # from the week start date relative to today.
+            task_index = (
+                course.get_task_count_in_range(this_week[0], week_start_date) - 1
+            )
+        return task_index
 
 
 class DailyView(LoginRequiredMixin, TemplateView):

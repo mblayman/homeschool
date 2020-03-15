@@ -63,6 +63,32 @@ class TestApp(TestCase):
         self.assertContext("sunday", sunday)
 
     @mock.patch("homeschool.users.models.timezone")
+    def test_has_previous_week_date(self, timezone):
+        user = self.make_user()
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        monday = now.date() + relativedelta(weekday=MO(-1))
+        previous_monday = monday - datetime.timedelta(days=7)
+        timezone.localdate.return_value = now.date()
+
+        with self.login(user):
+            self.get("core:app")
+
+        self.assertContext("previous_week_date", previous_monday)
+
+    @mock.patch("homeschool.users.models.timezone")
+    def test_has_next_week_date(self, timezone):
+        user = self.make_user()
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        monday = now.date() + relativedelta(weekday=MO(-1))
+        next_monday = monday + datetime.timedelta(days=7)
+        timezone.localdate.return_value = now.date()
+
+        with self.login(user):
+            self.get("core:app")
+
+        self.assertContext("next_week_date", next_monday)
+
+    @mock.patch("homeschool.users.models.timezone")
     def test_has_today(self, timezone):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         timezone.localdate.return_value = now.date()
@@ -77,7 +103,7 @@ class TestApp(TestCase):
         with self.login(user):
             self.get("core:app")
 
-        self.assertContext("today", today)
+        self.assertContext("day", today)
 
     @mock.patch("homeschool.users.models.timezone")
     def test_school_year_for_user_only(self, timezone):
