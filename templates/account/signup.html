@@ -6,7 +6,7 @@
 {% block main %}
   {% flag signup_flag %}
     <div class="w-full max-w-xs mx-auto">
-      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST">
+      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST" action="?next={% url "core:start" %}">
         {% csrf_token %}
         <h1 class="font-bold text-xl mb-2">Sign Up</h1>
         <div class="mb-4">

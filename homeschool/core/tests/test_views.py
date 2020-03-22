@@ -580,3 +580,14 @@ class TestDaily(TestCase):
 
         self.response_302(response)
         self.assertEqual(response.get("Location"), self.reverse("core:daily"))
+
+
+class TestStart(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:start")
+
+    def test_ok(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("core:start")

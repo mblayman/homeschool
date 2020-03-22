@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from homeschool.core import views
 
@@ -17,4 +17,5 @@ urlpatterns = [
         views.DailyView.as_view(),
         name="daily_for_date",
     ),
+    path("start/", include("homeschool.core.start_urls")),
 ]

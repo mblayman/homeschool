@@ -348,3 +348,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
         Coursework.objects.filter(
             student=student, course_task__in=incomplete_task_ids
         ).delete()
+
+
+class StartView(LoginRequiredMixin, TemplateView):
+    template_name = "core/start.html"
