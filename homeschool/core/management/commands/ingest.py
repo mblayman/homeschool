@@ -84,7 +84,7 @@ class Command(BaseCommand):
     def persist_school_year(self, user):
         self.stdout.write("Create school and school year.")
         school = School.objects.create(admin=user)
-        start_date = datetime.date.today()
+        start_date = datetime.date(2020, 1, 1)
         end_date = start_date + datetime.timedelta(days=365)
         school_year = SchoolYear.objects.create(
             school=school, start_date=start_date, end_date=end_date
