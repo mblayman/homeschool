@@ -125,6 +125,27 @@ class Command(BaseCommand):
                 if task[4] != "Regular":
                     graded_work = GradedWork.objects.create(course_task=course_task)
                     if task[5]:
+                        score = None
+                        try:
+                            score = int(task[5])
+                        except ValueError:
+                            # This should handle the small edge case
+                            # when there are commas in an optional grade description.
+                            # Start from the end and look for the grade number.
+                            # The CSV output is so bad that it could be
+                            # in various places depending on the number of commas.
+                            index = len(task) - 1
+                            # If it's not found by the description at index 3,
+                            # something is very wrong.
+                            while index >= 3:
+                                try:
+                                    score = int(task[index].split(",")[-1].strip())
+                                    break
+                                except ValueError:
+                                    pass
+                                index -= 1
+                        if score is None:
+                            raise Exception("Failed to find grade.")
                         Grade.objects.create(
-                            student=student, graded_work=graded_work, score=int(task[5])
+                            student=student, graded_work=graded_work, score=score
                         )
