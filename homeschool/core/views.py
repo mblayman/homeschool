@@ -75,25 +75,26 @@ class AppView(LoginRequiredMixin, TemplateView):
         if school_year is None:
             return schedules
 
-        monday = week[0]
         for student in self.request.user.school.students.all():
             courses = student.get_courses(school_year)
             week_coursework = student.get_week_coursework(week)
             schedule = self.get_student_schedule(
-                student, today, monday, week_dates, courses, week_coursework
+                student, today, week, week_dates, courses, week_coursework
             )
             schedules.append(schedule)
 
         return schedules
 
     def get_student_schedule(
-        self, student, today, week_start_date, week_dates, courses, week_coursework
+        self, student, today, week, week_dates, courses, week_coursework
     ):
         """Get the schedule.
 
         Each student will get a list of courses, filled with each day.
         Empty slots will contain None.
         """
+        week_start_date = week[0]
+        week_end_date = week[1]
         completed_task_ids = list(
             Coursework.objects.filter(
                 student=student, course_task__course__in=courses
@@ -104,24 +105,28 @@ class AppView(LoginRequiredMixin, TemplateView):
         for course in courses:
             course_schedule = {"course": course, "days": []}
 
-            task_index = 0
-            if week_start_date > today:
-                task_index = self.get_future_course_task_index(
-                    student, course, today, week_start_date
-                )
+            course_tasks = []
+            # Only show tasks on current or future weeks.
+            if week_end_date >= today:
+                task_index = 0
+                if week_start_date > today:
+                    task_index = self.get_future_course_task_index(
+                        student, course, today, week_start_date
+                    )
 
-            # Doing this query in a loop is definitely an N+1 bug.
-            # If it's possible to do a single query of all tasks
-            # that groups by course then that would be better.
-            # No need to over-optimize until that's a real issue.
-            # I brought this up on the forum. It doesn't look like it's easy to fix.
-            # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
-            course_tasks = list(
-                course.course_tasks.exclude(id__in=completed_task_ids)[
-                    task_index : task_index + task_limit
-                ]
-            )
-            course_tasks.reverse()  # for the performance of pop below.
+                # Doing this query in a loop is definitely an N+1 bug.
+                # If it's possible to do a single query of all tasks
+                # that groups by course then that would be better.
+                # No need to over-optimize until that's a real issue.
+                # I brought this up on the forum. It doesn't look like it's easy to fix.
+                # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
+                course_tasks = list(
+                    course.course_tasks.exclude(id__in=completed_task_ids)[
+                        task_index : task_index + task_limit
+                    ]
+                )
+                course_tasks.reverse()  # for the performance of pop below.
+
             for week_date in week_dates:
                 course_schedule_item = {"week_date": week_date}
                 if (

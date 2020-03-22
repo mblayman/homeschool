@@ -309,6 +309,48 @@ class TestApp(TestCase):
 
         self.assertContext("day", today)
 
+    @mock.patch("homeschool.users.models.timezone")
+    def test_no_tasks_in_past_week(self, timezone):
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        sunday = now.date()
+        monday = sunday - datetime.timedelta(days=6)
+        timezone.localdate.return_value = now.date()
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=sunday - datetime.timedelta(days=90),
+            end_date=sunday + datetime.timedelta(days=90),
+            days_of_week=SchoolYear.MONDAY
+            + SchoolYear.TUESDAY
+            + SchoolYear.WEDNESDAY
+            + SchoolYear.THURSDAY
+            + SchoolYear.FRIDAY,
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_level=grade_level,
+            days_of_week=Course.MONDAY
+            + Course.WEDNESDAY
+            + Course.THURSDAY
+            + Course.FRIDAY,
+        )
+        task_1 = CourseTaskFactory(course=course)
+        CourseTaskFactory(course=course)
+        CourseworkFactory(
+            student=student,
+            course_task=task_1,
+            completed_date=monday - datetime.timedelta(days=7),
+        )
+        EnrollmentFactory(student=student, grade_level=grade_level)
+
+        with self.login(user):
+            self.get("core:weekly", year=2020, month=1, day=13)
+
+        schedules = self.get_context("schedules")
+        # Day 0 has coursework. Day 1 should show no task.
+        self.assertNotIn("task", schedules[0]["courses"][0]["days"][1])
+
 
 class TestDaily(TestCase):
     def test_ok(self):
