@@ -152,23 +152,15 @@ class AppView(LoginRequiredMixin, TemplateView):
             .order_by("-completed_date")
             .first()
         )
-        if latest_coursework and (
-            this_week[0] <= latest_coursework.completed_date <= this_week[1]
-        ):
-            task_index = (
-                course.get_task_count_in_range(
-                    latest_coursework.completed_date + datetime.timedelta(days=1),
-                    week_start_date,
-                )
-                - 1
-            )
+        if latest_coursework and (this_week[0] <= latest_coursework.completed_date):
+            start_date = latest_coursework.completed_date + datetime.timedelta(days=1)
         else:
             # When the student has no coursework yet, the counting should start
             # from the week start date relative to today.
-            task_index = (
-                course.get_task_count_in_range(this_week[0], week_start_date) - 1
-            )
-        return task_index
+            start_date = this_week[0]
+        return course.get_task_count_in_range(
+            start_date, week_start_date - datetime.timedelta(days=1)
+        )
 
 
 class DailyView(LoginRequiredMixin, TemplateView):
