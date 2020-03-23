@@ -52,4 +52,13 @@
       </div>
     </div>
   {% endfor %}
+
+  <p class="text-sm text-gray-700 font-light mt-4">
+  {% if request.GET.completed_tasks %}
+    <a class="hover:underline" href="{% url 'students:course' student.uuid course.uuid %}">Hide completed tasks</a>
+  {% else %}
+    <a class="hover:underline" href="{% url 'students:course' student.uuid course.uuid %}?completed_tasks=1">Show completed tasks</a>
+  {% endif %}
+  </p>
+
 {% endblock %}

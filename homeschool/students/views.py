@@ -23,6 +23,10 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
         context["task_items"] = self.get_task_items(
             context["student"], context["course"]
         )
+        if not self.request.GET.get("completed_tasks"):
+            context["task_items"] = [
+                item for item in context["task_items"] if "coursework" not in item
+            ]
         return context
 
     def get_student(self, user):

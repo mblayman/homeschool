@@ -82,7 +82,7 @@ class TestStudentCourseView(TestCase):
             days_of_week=Course.WEDNESDAY + Course.THURSDAY,
         )
         task_1 = CourseTaskFactory(course=course)
-        coursework = CourseworkFactory(course_task=task_1, student=student)
+        CourseworkFactory(course_task=task_1, student=student)
         task_2 = CourseTaskFactory(course=course)
         GradedWorkFactory(course_task=task_2)
         today = timezone.now().date() + datetime.timedelta(days=2)
@@ -90,6 +90,33 @@ class TestStudentCourseView(TestCase):
         with self.login(user):
             self.get_check_200(
                 "students:course", uuid=student.uuid, course_uuid=course.uuid
+            )
+
+        self.assertContext(
+            "task_items",
+            [{"course_task": task_2, "planned_date": today, "has_graded_work": True}],
+        )
+
+    @freeze_time("2020-02-10")  # Monday
+    def test_has_tasks_with_completed(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        course = CourseFactory(
+            grade_level__school_year__school=user.school,
+            days_of_week=Course.WEDNESDAY + Course.THURSDAY,
+        )
+        task_1 = CourseTaskFactory(course=course)
+        coursework = CourseworkFactory(course_task=task_1, student=student)
+        task_2 = CourseTaskFactory(course=course)
+        GradedWorkFactory(course_task=task_2)
+        today = timezone.now().date() + datetime.timedelta(days=2)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:course",
+                uuid=student.uuid,
+                course_uuid=course.uuid,
+                data={"completed_tasks": "1"},
             )
 
         self.assertContext(
