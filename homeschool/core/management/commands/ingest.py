@@ -11,6 +11,35 @@ from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 User = get_user_model()
 
+COURSE_DAYS = {
+    "Art 2": 1,
+    "Art K": 1,
+    "Bible 2": 10,
+    "Bible K": 21,
+    "Bible OT": 21,
+    "Handwriting 2": 18,
+    "Health 2": 17,
+    "Health K": 17,
+    "History 2": 11,
+    "History K": 25,
+    "Math 2": 31,
+    "Math K": 31,
+    "Music 2": 19,
+    "Music K": 2,
+    "PE 2": 4,
+    "PE K": 4,
+    "Reading 2": 31,
+    "Reading Aloud K": 31,
+    "Reading Instruction K": 31,
+    "Science 2": 26,
+    "Science K": 26,
+    "Spelling 2": 18,
+    "Sustained Silent Reading 2": 10,
+    "Sustained Silent Reading K": 10,
+    "Wiggle Room": 31,
+    "Writing & Grammar 2": 25,
+}
+
 
 class Command(BaseCommand):
     help = "Ingest CSV data from Homeschool Skedtrack"
@@ -108,9 +137,19 @@ class Command(BaseCommand):
         Enrollment.objects.create(student=student, grade_level=grade_level)
 
         for course_dict in courses:
+            days_of_week = None
+            if course_dict["name"] in COURSE_DAYS:
+                days_of_week = COURSE_DAYS[course_dict["name"]]
+            else:
+                self.stdout.write(
+                    "Failed to find course days for {}".format(course_dict["name"])
+                )
             course = Course.objects.create(
-                name=course_dict["name"], grade_level=grade_level
+                name=course_dict["name"],
+                grade_level=grade_level,
+                days_of_week=days_of_week,
             )
+
             for task in course_dict["tasks"]:
                 course_task = CourseTask.objects.create(
                     course=course, description=task[3], duration=int(task[2])
