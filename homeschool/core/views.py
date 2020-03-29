@@ -2,8 +2,10 @@ import datetime
 
 from dateutil.parser import parse
 from dateutil.relativedelta import MO, SU, relativedelta
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
+from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic.base import TemplateView
@@ -326,6 +328,12 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 )
             Coursework.objects.bulk_create(new_coursework)
 
+            pluralized = pluralize(len(newly_complete_task_ids))
+            message = "Completed {} task{} for {}.".format(
+                len(newly_complete_task_ids), pluralized, student.full_name
+            )
+            messages.add_message(self.request, messages.SUCCESS, message)
+
             graded_work_ids = set(
                 GradedWork.objects.filter(
                     course_task__in=newly_complete_task_ids
@@ -342,9 +350,16 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def process_incomplete_tasks(self, student, incomplete_task_ids):
         """Remove any coursework for tasks that are marked as incomplete."""
-        Coursework.objects.filter(
+        delete_info = Coursework.objects.filter(
             student=student, course_task__in=incomplete_task_ids
         ).delete()
+        coursework_deleted = delete_info[0]
+        if coursework_deleted > 0:
+            pluralized = pluralize(coursework_deleted)
+            message = "Undid {} task{} for {}.".format(
+                coursework_deleted, pluralized, student.full_name
+            )
+            messages.add_message(self.request, messages.SUCCESS, message)
 
 
 class StartView(LoginRequiredMixin, TemplateView):
