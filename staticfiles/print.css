@@ -1,0 +1,11 @@
+.print-hide {
+    display: none;
+}
+
+.print-no-max-width {
+    max-width: none;
+}
+
+.print-break-after-page {
+    break-after: page;
+}

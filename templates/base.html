@@ -1,10 +1,11 @@
-{% load tz_detect %}
+{% load static tz_detect %}
 <!DOCTYPE html>
 <html lang="en-US" class="bg-white subpixel-antialiased">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+  <link href="{% static "print.css" %}" rel="stylesheet" media="print">
   <title>{% block head_title %}Homeschool App{% endblock %}</title>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -12,7 +13,7 @@
   {% include "nav.html" %}
   {% include "sub_nav.html" %}
 
-  <main class="container mx-auto p-8 flex-grow">
+  <main class="container mx-auto p-8 flex-grow print-no-max-width">
 
     {% if messages %}
     <ul class="flex flex-row justify-center mx-4 -mt-4 mb-4 w-full">
@@ -25,7 +26,7 @@
     {% block main %}{% endblock %}
   </main>
 
-  <footer class="container mx-auto border-t border-gray-400 p-4 text-center text-sm text-gray-600">
+  <footer class="container mx-auto border-t border-gray-400 p-4 text-center text-sm text-gray-600 print-hide">
     <span class="mx-1">&copy; {% now "Y" %} Matt Layman</span>
     <a href="#" class="mx-1 hover:text-gray-900">About</a>
     <a href="#" class="mx-1 hover:text-gray-900">Terms</a>
