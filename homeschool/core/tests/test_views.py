@@ -633,3 +633,14 @@ class TestStart(TestCase):
 
         with self.login(user):
             self.get_check_200("core:start")
+
+
+class TestStartSchoolYear(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:start-school-year")
+
+    def test_ok(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("core:start-school-year")

@@ -364,3 +364,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
 class StartView(LoginRequiredMixin, TemplateView):
     template_name = "core/start.html"
+
+
+class StartSchoolYearView(LoginRequiredMixin, TemplateView):
+    template_name = "core/start_school_year.html"

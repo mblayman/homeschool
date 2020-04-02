@@ -1,0 +1,47 @@
+<div class="flex flex-col sm:flex-row justify-around items-center text-center font-light rounded-lg bg-blue-700 border border-blue-400 text-white w-full h-20 mb-8">
+  {% if step == "welcome" %}
+    <div class="w-2/12 m-2 p-2 rounded-md bg-blue-100 text-blue-900 shadow-lg">Welcome To<br>Homeschool App</div>
+  {% else %}
+    <a href="{% url "core:start" %}" class="w-2/12 m-2 p-2 rounded-md hover:text-blue-900 hover:bg-blue-100 hover:shadow-lg">Welcome To<br>Homeschool App</a>
+  {% endif %}
+
+  <div class="1/12">
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+  </div>
+
+  {% if step == "school-year" %}
+    <div class="w-2/12 m-2 p-2 rounded-md bg-blue-100 text-blue-900 shadow-lg">Start Your<br>School Year</div>
+  {% else %}
+    <a href="{% url "core:start-school-year" %}" class="w-2/12 m-2 p-2 rounded-md hover:text-blue-900 hover:bg-blue-100 hover:shadow-lg">Start Your<br>School Year</a>
+  {% endif %}
+
+  <div class="1/12">
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+  </div>
+
+  {% if step == "grade-level" %}
+    <div class="w-2/12 m-2 p-2 rounded-md bg-blue-100 text-blue-900 shadow-lg">Create A<br>Grade Level</div>
+  {% else %}
+    <a href="{% url "core:start-school-year" %}" class="w-2/12 m-2 p-2 rounded-md hover:text-blue-900 hover:bg-blue-100 hover:shadow-lg">Create A<br>Grade Level</a>
+  {% endif %}
+
+  <div class="1/12">
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+  </div>
+
+  {% if step == "course" %}
+    <div class="w-2/12 m-2 p-2 rounded-md bg-blue-100 text-blue-900 shadow-lg">Add A Course<br>To Your Grade</div>
+  {% else %}
+    <a href="{% url "core:start-school-year" %}" class="w-2/12 m-2 p-2 rounded-md hover:text-blue-900 hover:bg-blue-100 hover:shadow-lg">Add A Course<br>To Your Grade</a>
+  {% endif %}
+
+  <div class="1/12">
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+  </div>
+
+  {% if step == "task" %}
+    <div class="w-2/12 m-2 p-2 rounded-md bg-blue-100 text-blue-900 shadow-lg">Make Your First<br>Course Task</div>
+  {% else %}
+    <a href="{% url "core:start-school-year" %}" class="w-2/12 m-2 p-2 rounded-md hover:text-blue-900 hover:bg-blue-100 hover:shadow-lg">Make Your First<br>Course Task</a>
+  {% endif %}
+</div>
