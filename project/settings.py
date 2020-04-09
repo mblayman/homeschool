@@ -165,4 +165,4 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
 WAFFLE_FLAG_MODEL = "core.Flag"
 WAFFLE_CREATE_MISSING_FLAGS = True
 
-django_heroku.settings(locals(), secret_key=False)
+django_heroku.settings(locals(), secret_key=False, test_runner=False)
