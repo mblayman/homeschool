@@ -1,24 +1,82 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head_title %}Start Your School Year{% endblock %}
+
 {% block main %}
   {% include "core/start_banner.html" with step="school-year" %}
 
   <div class="flex flex-row w-full">
     <div class="w-1/2 mr-8 text-blue-900 font-light">
-      <p class="mb-4">Thanks for signing up for Homeschool App!</p>
-      <p class="mb-4">
-        I know from my own home life that managing a child's school schedule is a lot of work.
-        I've worked with my wife who homeschools our children to develop this application.
+      <p class="ml-10 mb-2">
+        Everything begins with your school year.
+        Each school year tracks your grade levels and sets when school is in session.
       </p>
-      <p class="mb-4">
-        This application is the system that we use to keep our school life sane.
-        I'm glad I can share it, and I hope the app can bring some sanity to you as well.
+      <p class="ml-10 mb-6">
+        Please tell us when your school year will start and end.
+        You can pick a range in the future and adjust the dates later if you are unsure.
       </p>
-      <p class="mb-4">Warm regards,<br>Matt Layman, Founder of Homeschool App</p>
-      <a href="{% url "core:start-school-year" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Start Your School
-      </a>
+      {% for error_message in form.non_field_errors %}
+        <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
+      {% endfor %}
+      <form method="post" class="w-full max-w-lg">
+        {% csrf_token %}
+        <input type="hidden" name="school" value="{{ user.school.id }}">
+        <div class="md:flex md:items-center {% if not form.errors.start_date %}mb-6{% endif %}">
+          <div class="md:w-1/4">
+            <label class="block text-blue-900 font-light md:text-right mb-1 md:mb-0 pr-4" for="id_start_date">
+              Start Date
+            </label>
+          </div>
+          <div class="md:w-3/4">
+            <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
+                         {% if form.errors.start_date %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
+                   id="id_start_date" type="text" name="start_date" {% if form.start_date.value %}value="{{ form.start_date.value }}"{% endif %}
+                   placeholder="9/1/2020" autofocus required>
+          </div>
+        </div>
+        {% if form.errors.start_date %}
+          <div class="md:flex md:items-center mt-2 mb-6">
+            <div class="md:w-1/4"></div>
+            <div class="md:w-3/4">
+              {% for error_message in form.errors.start_date %}
+                <p class="text-red-500 text-xs italic">{{ error_message }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        <div class="md:flex md:items-center {% if not form.errors.end_date %}mb-6{% endif %}">
+          <div class="md:w-1/4">
+            <label class="block text-blue-900 font-light md:text-right mb-1 md:mb-0 pr-4" for="id_end_date">
+              End Date
+            </label>
+          </div>
+          <div class="md:w-3/4">
+            <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
+                         {% if form.errors.end_date %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
+                   id="id_end_date" type="text" name="end_date" {% if form.end_date.value %}value="{{ form.end_date.value }}"{% endif %}
+                  placeholder="6/1/2021"  required>
+          </div>
+        </div>
+        {% if form.errors.end_date %}
+          <div class="md:flex md:items-center mt-2 mb-6">
+            <div class="md:w-1/4"></div>
+            <div class="md:w-3/4">
+              {% for error_message in form.errors.end_date %}
+                <p class="text-red-500 text-xs italic">{{ error_message }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        <div class="md:flex md:items-center">
+          <div class="md:w-1/4"></div>
+          <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Create School Year
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
     <div class="w-1/2 text-center">
       <img src="{% static "time.svg" %}" alt="Woman contemplating time">

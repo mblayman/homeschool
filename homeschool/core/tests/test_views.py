@@ -12,7 +12,11 @@ from homeschool.courses.tests.factories import (
     GradedWorkFactory,
 )
 from homeschool.schools.models import SchoolYear
-from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
+from homeschool.schools.tests.factories import (
+    GradeLevelFactory,
+    SchoolFactory,
+    SchoolYearFactory,
+)
 from homeschool.students.models import Coursework
 from homeschool.students.tests.factories import (
     CourseworkFactory,
@@ -644,3 +648,56 @@ class TestStartSchoolYear(TestCase):
 
         with self.login(user):
             self.get_check_200("core:start-school-year")
+
+    def test_valid_submission(self):
+        user = self.make_user()
+        data = {
+            "school": str(user.school.id),
+            "start_date": "1/1/20",
+            "end_date": "12/31/20",
+        }
+
+        with self.login(user):
+            response = self.post("core:start-school-year", data=data)
+
+        self.assertEqual(SchoolYear.objects.filter(school=user.school).count(), 1)
+        self.response_302(response)
+        self.assertEqual(
+            response.get("Location"), self.reverse("core:start-grade-level")
+        )
+
+    def test_start_date_before_end_date(self):
+        user = self.make_user()
+        data = {
+            "school": str(user.school.id),
+            "start_date": "12/31/20",
+            "end_date": "1/1/20",
+        }
+
+        with self.login(user):
+            response = self.post("core:start-school-year", data=data)
+
+        self.response_200(response)
+        form = self.get_context("form")
+        self.assertEqual(
+            form.non_field_errors(), ["The start date must be before the end date."]
+        )
+
+    def test_only_school_for_user(self):
+        school = SchoolFactory()
+        user = self.make_user()
+        data = {
+            "school": str(school.id),
+            "start_date": "1/1/20",
+            "end_date": "12/31/20",
+        }
+
+        with self.login(user):
+            response = self.post("core:start-school-year", data=data)
+
+        self.response_200(response)
+        form = self.get_context("form")
+        self.assertEqual(
+            form.non_field_errors(),
+            ["A school year cannot be created for a different school."],
+        )

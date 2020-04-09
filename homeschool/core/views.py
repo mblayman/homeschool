@@ -8,9 +8,10 @@ from django.http import HttpResponseRedirect
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic.base import TemplateView
+from django.views.generic import CreateView, TemplateView
 
 from homeschool.courses.models import GradedWork
+from homeschool.schools.forms import SchoolYearForm
 from homeschool.schools.models import SchoolYear
 from homeschool.students.models import Coursework, Grade
 
@@ -366,5 +367,18 @@ class StartView(LoginRequiredMixin, TemplateView):
     template_name = "core/start.html"
 
 
-class StartSchoolYearView(LoginRequiredMixin, TemplateView):
+class StartSchoolYearView(LoginRequiredMixin, CreateView):
     template_name = "core/start_school_year.html"
+    form_class = SchoolYearForm
+
+    def get_success_url(self):
+        return reverse("core:start-grade-level")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+class StartGradeLevelView(LoginRequiredMixin, TemplateView):
+    template_name = "core/start.html"
