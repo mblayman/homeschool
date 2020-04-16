@@ -701,3 +701,12 @@ class TestStartSchoolYear(TestCase):
             form.non_field_errors(),
             ["A school year cannot be created for a different school."],
         )
+
+    def test_has_school_year(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get("core:start-school-year")
+
+        self.assertContext("school_year", school_year)

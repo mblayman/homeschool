@@ -371,6 +371,13 @@ class StartSchoolYearView(LoginRequiredMixin, CreateView):
     template_name = "core/start_school_year.html"
     form_class = SchoolYearForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["school_year"] = SchoolYear.objects.filter(
+            school=self.request.user.school
+        ).first()
+        return context
+
     def get_success_url(self):
         return reverse("core:start-grade-level")
 
