@@ -11,8 +11,8 @@ from django.utils import timezone
 from django.views.generic import CreateView, TemplateView
 
 from homeschool.courses.models import GradedWork
-from homeschool.schools.forms import SchoolYearForm
-from homeschool.schools.models import SchoolYear
+from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
+from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Grade
 
 
@@ -387,5 +387,28 @@ class StartSchoolYearView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class StartGradeLevelView(LoginRequiredMixin, TemplateView):
-    template_name = "core/start.html"
+class StartGradeLevelView(LoginRequiredMixin, CreateView):
+    template_name = "core/start_grade_level.html"
+    form_class = GradeLevelForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["grade_level"] = GradeLevel.objects.filter(
+            school_year__school=self.request.user.school
+        ).first()
+        context["school_year"] = SchoolYear.objects.filter(
+            school=self.request.user.school
+        ).first()
+        return context
+
+    def get_success_url(self):
+        return reverse("core:start-course")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+class StartCourseView(LoginRequiredMixin, TemplateView):
+    template_name = "core/start_grade_level.html"

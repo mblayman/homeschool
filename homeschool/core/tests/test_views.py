@@ -11,7 +11,7 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.models import SchoolYear
+from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
     SchoolFactory,
@@ -628,7 +628,7 @@ class TestDaily(TestCase):
         self.assertEqual(response.get("Location"), self.reverse("core:daily"))
 
 
-class TestStart(TestCase):
+class TestStartView(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("core:start")
 
@@ -639,7 +639,7 @@ class TestStart(TestCase):
             self.get_check_200("core:start")
 
 
-class TestStartSchoolYear(TestCase):
+class TestStartSchoolYearView(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("core:start-school-year")
 
@@ -710,3 +710,70 @@ class TestStartSchoolYear(TestCase):
             self.get("core:start-school-year")
 
         self.assertContext("school_year", school_year)
+
+
+class TestStartGradeLevelView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:start-grade-level")
+
+    def test_ok(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("core:start-grade-level")
+
+    def test_has_school_year(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get("core:start-grade-level")
+
+        self.assertContext("school_year", school_year)
+
+    def test_has_grade_level(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get("core:start-grade-level")
+
+        self.assertContext("grade_level", grade_level)
+
+    def test_valid_submission(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        data = {"school_year": str(school_year.id), "name": "Kindergarten"}
+
+        with self.login(user):
+            response = self.post("core:start-grade-level", data=data)
+
+        self.assertEqual(GradeLevel.objects.filter(school_year=school_year).count(), 1)
+        self.response_302(response)
+        self.assertEqual(response.get("Location"), self.reverse("core:start-course"))
+
+    def test_only_school_year_for_user(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+        data = {"school_year": str(school_year.id), "name": "Kindergarten"}
+
+        with self.login(user):
+            response = self.post("core:start-grade-level", data=data)
+
+        self.response_200(response)
+        form = self.get_context("form")
+        self.assertEqual(
+            form.non_field_errors(),
+            ["A grade level cannot be created for a different user's school year."],
+        )
+
+    def test_bogus_school_year(self):
+        user = self.make_user()
+        data = {"school_year": "0", "name": "Kindergarten"}
+
+        with self.login(user):
+            response = self.post("core:start-grade-level", data=data)
+
+        self.response_200(response)
+        form = self.get_context("form")
+        self.assertEqual(form.non_field_errors(), ["Invalid school year."])
