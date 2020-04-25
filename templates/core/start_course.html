@@ -1,38 +1,33 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head_title %}Create A Grade Level{% endblock %}
+{% block head_title %}Add A Course{% endblock %}
 
 {% block main %}
-  {% include "core/start_banner.html" with step="grade-level" %}
+  {% include "core/start_banner.html" with step="course" %}
 
-  <div class="flex flex-row {% if grade_level or not school_year %}items-center{% endif %} w-full">
-    <div class="w-1/2 text-center">
-      <div class="mb-8">
-        <img src="{% static "grade-level.svg" %}" alt="Two school friends chatting">
-      </div>
-    </div>
-    <div class="w-1/2 ml-8 text-blue-900 font-light">
+  <div class="flex flex-row {% if course or not grad_level %}items-center{% endif %} w-full">
+    <div class="w-1/2 mr-8 text-blue-900 font-light">
       {% if grade_level %}
         <p class="mb-8">
-          You already created your first grade level.
-          The next step is to create a course.
+          You already created your first course.
+          The next step is to create a task for the course.
         </p>
         <div class="text-center">
-          <a href="{% url "core:start-course" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add A Course</a>
+          <a href="{% url "core:start-course-task" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Make Your First Task</a>
         </div>
-      {% elif school_year %}
-        <p class="mb-2">
+      {% elif not school_year %}
+        <p class="ml-10 mb-2">
           Each of your students will be enrolled in a grade level for the school year.
           If you have more than one student in your school,
           you will be able to add more grade levels in the future.
         </p>
-        <p class="mb-2">
+        <p class="ml-10 mb-2">
           These starting steps are designed to show you all the parts needed
           for one grade,
           and you may add more later.
         </p>
-        <p class="mb-6">
+        <p class="ml-10 mb-6">
           Please tell us what you want to call your grade level.
         </p>
         {% for error_message in form.non_field_errors %}
@@ -51,7 +46,7 @@
               <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
                      {% if form.errors.name %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
                      id="id_name" type="text" name="name" {% if form.name.value %}value="{{ form.name.value }}"{% endif %}
-                     placeholder='e.g., "Kindergarten" or "6th Grade"' autofocus required>
+                     placeholder='e.g., "Math" or "Chemistry"' autofocus required>
             </div>
           </div>
           {% if form.errors.name %}
@@ -75,14 +70,19 @@
         </form>
       {% else %}
         <p class="mb-8">
-          Before you can create a grade level for your student,
-          you must first create a school year
-          to set when your school is in session.
+          Before you can create a course for your student,
+          you must first create a grade level
+          that can hold all of their courses.
         </p>
         <div class="text-center">
-          <a href="{% url "core:start-school-year" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create School Year</a>
+          <a href="{% url "core:start-grade-level" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create Grade Level</a>
         </div>
       {% endif %}
+    </div>
+    <div class="w-1/2 text-center">
+      <div class="mb-8">
+        <img src="{% static "course.svg" %}" alt="Teacher contemplating lesson plans">
+      </div>
     </div>
   </div>
 {% endblock %}

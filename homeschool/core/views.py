@@ -411,4 +411,8 @@ class StartGradeLevelView(LoginRequiredMixin, CreateView):
 
 
 class StartCourseView(LoginRequiredMixin, TemplateView):
-    template_name = "core/start_grade_level.html"
+    template_name = "core/start_course.html"
+
+
+class StartCourseTaskView(LoginRequiredMixin, TemplateView):
+    template_name = "core/start_course.html"
