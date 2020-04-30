@@ -2,6 +2,10 @@
     display: none;
 }
 
+.print-no-color {
+    background-color: unset;
+}
+
 .print-no-max-width {
     max-width: none;
 }
