@@ -14,7 +14,7 @@ User = get_user_model()
 COURSE_DAYS = {
     "Art 2": 1,
     "Art K": 1,
-    "Bible 2": 10,
+    "Bible 2": 0,
     "Bible K": 21,
     "Bible OT": 21,
     "Handwriting 2": 18,
