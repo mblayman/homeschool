@@ -5,11 +5,7 @@
         <a href="{% url "core:app" %}" class="block sm:-ml-2 p-2 flex items-center hover:bg-gray-200">
           <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M8 20H3V10H0L10 0l10 10h-3v10h-5v-6H8v6z"/></svg>
           <div class="text-base pl-1 font-light">
-            {% if user.first_name %}
-              {{ user.first_name }}’s School
-            {% else %}
-              Home
-            {% endif %}
+            Week
           </div>
         </a>
         <a href="{% url "core:daily" %}" class="block p-2 flex items-center hover:bg-gray-200">
