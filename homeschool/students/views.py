@@ -12,6 +12,10 @@ from homeschool.schools.models import SchoolYear
 from homeschool.students.models import Coursework, Grade
 
 
+class StudentIndexView(LoginRequiredMixin, TemplateView):
+    template_name = "students/index.html"
+
+
 class StudentCourseView(LoginRequiredMixin, TemplateView):
     template_name = "students/course.html"
 

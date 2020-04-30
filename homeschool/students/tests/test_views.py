@@ -19,6 +19,17 @@ from homeschool.students.tests.factories import (
 from homeschool.test import TestCase
 
 
+class TestStudentsIndexView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("students:index")
+
+    def test_get(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("students:index")
+
+
 class TestStudentCourseView(TestCase):
     def test_unauthenticated_access(self):
         student = StudentFactory()
