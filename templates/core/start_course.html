@@ -6,7 +6,7 @@
 {% block main %}
   {% include "core/start_banner.html" with step="course" %}
 
-  <div class="flex flex-row {% if course or not grad_level %}items-center{% endif %} w-full">
+  <div class="flex flex-row {% if course or not grade_level %}items-center{% endif %} w-full">
     <div class="w-1/2 mr-8 text-blue-900 font-light">
       {% if grade_level %}
         <p class="mb-8">
