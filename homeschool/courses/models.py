@@ -11,9 +11,7 @@ class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
 
     name = models.CharField(max_length=256)
-    grade_level = models.ForeignKey(
-        "schools.GradeLevel", on_delete=models.CASCADE, related_name="courses"
-    )
+    grade_levels = models.ManyToManyField("schools.GradeLevel", related_name="courses")
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     def get_task_count_in_range(self, start_date, end_date):

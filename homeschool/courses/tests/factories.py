@@ -6,9 +6,14 @@ class CourseFactory(factory.django.DjangoModelFactory):
         model = "courses.Course"
 
     name = factory.Sequence(lambda n: f"Course {n}")
-    grade_level = factory.SubFactory(
-        "homeschool.schools.tests.factories.GradeLevelFactory"
-    )
+
+    @factory.post_generation
+    def grade_levels(course, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            course.grade_levels.set(extracted)
 
 
 class CourseTaskFactory(factory.django.DjangoModelFactory):

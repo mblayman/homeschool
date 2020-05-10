@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from homeschool.courses.models import Course, CourseTask
@@ -17,6 +18,11 @@ class TestCourse(TestCase):
         self.assertIsNotNone(course)
         self.assertNotEqual(course.name, "")
 
+    def test_str(self):
+        course = CourseFactory()
+
+        self.assertEqual(str(course), course.name)
+
     def test_has_uuid(self):
         course_uuid = uuid.uuid4()
         course = CourseFactory(uuid=course_uuid)
@@ -31,15 +37,24 @@ class TestCourse(TestCase):
 
     def test_has_grade_level(self):
         grade_level = GradeLevelFactory()
-        course = CourseFactory(grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
 
-        self.assertEqual(course.grade_level, grade_level)
+        self.assertEqual(list(course.grade_levels.all()), [grade_level])
 
     def test_has_days_of_week(self):
         days_of_week = Course.MONDAY + Course.TUESDAY
         course = CourseFactory(days_of_week=days_of_week)
 
         self.assertEqual(course.days_of_week, days_of_week)
+
+    def test_start_after_end(self):
+        course = CourseFactory()
+        start_date = datetime.date(2020, 5, 7)
+        end_date = datetime.date(2020, 5, 5)
+
+        count = course.get_task_count_in_range(start_date, end_date)
+
+        self.assertEqual(count, 1)
 
 
 class TestGradedWork(TestCase):
@@ -52,11 +67,18 @@ class TestGradedWork(TestCase):
 class TestCourseTask(TestCase):
     def test_factory(self):
         task = CourseTaskFactory()
+        other_task = CourseTaskFactory.build()
 
         self.assertIsNotNone(task)
         self.assertNotEqual(str(task.uuid), "")
         self.assertNotEqual(task.description, "")
         self.assertFalse(hasattr(task, "graded_work"))
+        self.assertIsNone(other_task.id)
+
+    def test_str(self):
+        task = CourseTaskFactory()
+
+        self.assertEqual(str(task), task.description)
 
     def test_has_course(self):
         course = CourseFactory()
@@ -90,8 +112,9 @@ class TestCourseTask(TestCase):
 
     def test_order_with_respect_to_course(self):
         """Moving a task will only affect tasks within a individual course."""
-        course_1 = CourseFactory()
-        course_2 = CourseFactory(grade_level=course_1.grade_level)
+        grade_level = GradeLevelFactory()
+        course_1 = CourseFactory(grade_levels=[grade_level])
+        course_2 = CourseFactory(grade_levels=[grade_level])
         task_1 = CourseTaskFactory(course=course_1)
         task_2 = CourseTaskFactory(course=course_2)
         task_3 = CourseTaskFactory(course=course_1)

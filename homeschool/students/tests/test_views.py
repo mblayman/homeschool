@@ -9,7 +9,7 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.schools.tests.factories import GradeLevelFactory
 from homeschool.students.models import Grade
 from homeschool.students.tests.factories import (
     CourseworkFactory,
@@ -41,7 +41,8 @@ class TestStudentCourseView(TestCase):
     def test_get(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        course = CourseFactory(grade_level__school_year__school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get_check_200(
@@ -63,7 +64,8 @@ class TestStudentCourseView(TestCase):
     def test_has_student(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        course = CourseFactory(grade_level__school_year__school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get_check_200(
@@ -75,7 +77,8 @@ class TestStudentCourseView(TestCase):
     def test_has_course(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        course = CourseFactory(grade_level__school_year__school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get_check_200(
@@ -88,9 +91,9 @@ class TestStudentCourseView(TestCase):
     def test_has_tasks(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(
-            grade_level__school_year__school=user.school,
-            days_of_week=Course.WEDNESDAY + Course.THURSDAY,
+            grade_levels=[grade_level], days_of_week=Course.WEDNESDAY + Course.THURSDAY
         )
         task_1 = CourseTaskFactory(course=course)
         CourseworkFactory(course_task=task_1, student=student)
@@ -112,9 +115,9 @@ class TestStudentCourseView(TestCase):
     def test_has_tasks_with_completed(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(
-            grade_level__school_year__school=user.school,
-            days_of_week=Course.WEDNESDAY + Course.THURSDAY,
+            grade_levels=[grade_level], days_of_week=Course.WEDNESDAY + Course.THURSDAY
         )
         task_1 = CourseTaskFactory(course=course)
         coursework = CourseworkFactory(course_task=task_1, student=student)
@@ -181,15 +184,12 @@ class TestGradeView(TestCase):
     def test_fetch_graded_work(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(school=user.school)
-        graded_work_1 = GradedWorkFactory(
-            course_task__course__grade_level__school_year=school_year
-        )
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        graded_work_1 = GradedWorkFactory(course_task__course=course)
         CourseworkFactory(student=student, course_task=graded_work_1.course_task)
         GradeFactory(student=student, graded_work=graded_work_1)
-        graded_work_2 = GradedWorkFactory(
-            course_task__course__grade_level__school_year=school_year
-        )
+        graded_work_2 = GradedWorkFactory(course_task__course=course)
         CourseworkFactory(student=student, course_task=graded_work_2.course_task)
 
         with self.login(user):
@@ -202,10 +202,9 @@ class TestGradeView(TestCase):
     def test_not_graded_work_from_other_school(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(school=user.school)
-        graded_work_1 = GradedWorkFactory(
-            course_task__course__grade_level__school_year=school_year
-        )
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        graded_work_1 = GradedWorkFactory(course_task__course=course)
         CourseworkFactory(student=student, course_task=graded_work_1.course_task)
         graded_work_2 = GradedWorkFactory()
         CourseworkFactory(course_task=graded_work_2.course_task)
@@ -220,13 +219,10 @@ class TestGradeView(TestCase):
     def test_grade(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(school=user.school)
-        graded_work = GradedWorkFactory(
-            course_task__course__grade_level__school_year=school_year
-        )
-        graded_work_2 = GradedWorkFactory(
-            course_task__course__grade_level__school_year=school_year
-        )
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        graded_work = GradedWorkFactory(course_task__course=course)
+        graded_work_2 = GradedWorkFactory(course_task__course=course)
         data = {
             f"graded_work-{student.id}-{graded_work.id}": "100",
             f"graded_work-{student.id}-{graded_work_2.id}": "",

@@ -66,7 +66,8 @@ class TestStudent(TestCase):
         student = enrollment.student
         school_year = enrollment.grade_level.school_year
         GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_level=enrollment.grade_level)
+        course = CourseFactory()
+        course.grade_levels.add(enrollment.grade_level)
 
         courses = student.get_courses(school_year)
 
@@ -83,7 +84,8 @@ class TestStudent(TestCase):
         student = enrollment.student
         school_year = enrollment.grade_level.school_year
         GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_level=enrollment.grade_level)
+        course = CourseFactory()
+        course.grade_levels.add(enrollment.grade_level)
         coursework_1 = CourseworkFactory(
             student=student, course_task__course=course, completed_date=monday
         )
@@ -106,7 +108,8 @@ class TestStudent(TestCase):
         student = enrollment.student
         school_year = enrollment.grade_level.school_year
         GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_level=enrollment.grade_level)
+        course = CourseFactory()
+        course.grade_levels.add(enrollment.grade_level)
         coursework_1 = CourseworkFactory(
             student=student, course_task__course=course, completed_date=monday
         )

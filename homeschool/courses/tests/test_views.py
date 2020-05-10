@@ -8,7 +8,7 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.test import TestCase
 
 
@@ -28,18 +28,20 @@ class TestCourseListView(TestCase):
     def test_courses_from_current_school_year(self):
         today = timezone.now().date()
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         old_school_year = SchoolYearFactory(
             school=user.school,
             start_date=today - datetime.timedelta(days=600),
             end_date=today - datetime.timedelta(days=550),
         )
-        CourseFactory(grade_level__school_year=old_school_year)
+        old_grade_level = GradeLevelFactory(school_year=old_school_year)
+        CourseFactory(grade_levels=[old_grade_level])
 
         with self.login(user):
             self.get("courses:list")
 
-        self.assertContext("courses_by_grade_level", {course.grade_level: [course]})
+        self.assertContext("courses_by_grade_level", {grade_level: [course]})
 
 
 class TestCourseDetailView(TestCase):
@@ -49,7 +51,8 @@ class TestCourseDetailView(TestCase):
 
     def test_get(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get_check_200("courses:detail", uuid=course.uuid)
@@ -62,14 +65,16 @@ class TestCourseEditView(TestCase):
 
     def test_get(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get_check_200("courses:edit", uuid=course.uuid)
 
     def test_post(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         data = {"name": "New course name", "wednesday": "on", "friday": "on"}
 
         with self.login(user):
@@ -87,14 +92,16 @@ class TestCourseTaskCreateView(TestCase):
 
     def test_get(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get_check_200("courses:task_create", uuid=course.uuid)
 
     def test_post(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         data = {"course": str(course.id), "description": "A new task", "duration": "30"}
 
         with self.login(user):
@@ -112,7 +119,8 @@ class TestCourseTaskCreateView(TestCase):
 
     def test_has_create(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get("courses:task_create", uuid=course.uuid)
@@ -122,7 +130,8 @@ class TestCourseTaskCreateView(TestCase):
     def test_redirect_next(self):
         next_url = "/another/location/"
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         data = {
             "course": str(course.id),
             "description": "new description",
@@ -139,7 +148,8 @@ class TestCourseTaskCreateView(TestCase):
 
     def test_has_course(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
             self.get("courses:task_create", uuid=course.uuid)
@@ -148,7 +158,8 @@ class TestCourseTaskCreateView(TestCase):
 
     def test_after_task(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         data = {"course": str(course.id), "description": "A new task", "duration": "30"}
         task_1 = CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
@@ -163,7 +174,8 @@ class TestCourseTaskCreateView(TestCase):
 
     def test_is_graded(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         data = {
             "course": str(course.id),
             "description": "A new task",
@@ -186,7 +198,9 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_get(self):
         user = self.make_user()
-        task = CourseTaskFactory(course__grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
 
         with self.login(user):
             self.get_check_200("courses:task_edit", uuid=task.uuid)
@@ -202,10 +216,10 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_post(self):
         user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(
-            description="some description",
-            duration=30,
-            course__grade_level__school_year__school__admin=user,
+            description="some description", duration=30, course=course
         )
         data = {
             "course": str(task.course.id),
@@ -223,7 +237,9 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_has_course(self):
         user = self.make_user()
-        task = CourseTaskFactory(course__grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
 
         with self.login(user):
             self.get("courses:task_edit", uuid=task.uuid)
@@ -233,7 +249,9 @@ class TestCourseTaskUpdateView(TestCase):
     def test_redirect_next(self):
         next_url = "/another/location/"
         user = self.make_user()
-        task = CourseTaskFactory(course__grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
         data = {
             "course": str(task.course.id),
             "description": "new description",
@@ -250,10 +268,10 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_is_graded(self):
         user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(
-            description="some description",
-            duration=30,
-            course__grade_level__school_year__school__admin=user,
+            description="some description", duration=30, course=course
         )
         data = {
             "course": str(task.course.id),
@@ -270,10 +288,10 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_keep_graded(self):
         user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(
-            description="some description",
-            duration=30,
-            course__grade_level__school_year__school__admin=user,
+            description="some description", duration=30, course=course
         )
         GradedWorkFactory(course_task=task)
         data = {
@@ -292,13 +310,12 @@ class TestCourseTaskUpdateView(TestCase):
 
     def test_remove_graded(self):
         user = self.make_user()
-        graded_work = GradedWorkFactory()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(
-            description="some description",
-            duration=30,
-            course__grade_level__school_year__school__admin=user,
-            graded_work=graded_work,
+            description="some description", duration=30, course=course
         )
+        GradedWorkFactory(course_task=task)
         data = {
             "course": str(task.course.id),
             "description": "new description",
@@ -322,7 +339,8 @@ class TestCourseTaskDeleteView(TestCase):
 
     def test_post(self):
         user = self.make_user()
-        course = CourseFactory(grade_level__school_year__school__admin=user)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(course=course)
 
         with self.login(user):

@@ -265,9 +265,12 @@ class DailyView(LoginRequiredMixin, TemplateView):
         if tasks_by_student:
             for student_id, tasks in tasks_by_student.items():
                 student = request.user.school.students.filter(id=student_id).first()
-                has_work_to_grade = self.mark_completion(student, tasks, completed_date)
-                if has_work_to_grade:
-                    work_to_grade = True
+                if student:
+                    has_work_to_grade = self.mark_completion(
+                        student, tasks, completed_date
+                    )
+                    if has_work_to_grade:
+                        work_to_grade = True
 
         if work_to_grade:
             success_url = self.get_grade_url()
@@ -299,9 +302,6 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def mark_completion(self, student, tasks, completed_date):
         """Mark completed tasks or clear already complete tasks."""
-        if not student:
-            return
-
         has_work_to_grade = self.process_complete_tasks(
             student, tasks["complete"], completed_date
         )

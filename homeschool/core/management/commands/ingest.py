@@ -145,10 +145,9 @@ class Command(BaseCommand):
                     "Failed to find course days for {}".format(course_dict["name"])
                 )
             course = Course.objects.create(
-                name=course_dict["name"],
-                grade_level=grade_level,
-                days_of_week=days_of_week,
+                name=course_dict["name"], days_of_week=days_of_week
             )
+            course.grade_levels.add(grade_level)
 
             for task in course_dict["tasks"]:
                 course_task = CourseTask.objects.create(

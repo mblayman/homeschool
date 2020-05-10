@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.generic.base import TemplateView
 
 from homeschool.courses.models import Course, GradedWork
-from homeschool.schools.models import SchoolYear
+from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Grade
 
 
@@ -37,10 +37,9 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
         return get_object_or_404(user.school.students.all(), uuid=self.kwargs["uuid"])
 
     def get_course(self, user):
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return get_object_or_404(
-            Course.objects.filter(
-                grade_level__school_year__school__admin=user
-            ).select_related("grade_level"),
+            Course.objects.filter(grade_levels__in=grade_levels),
             uuid=self.kwargs["course_uuid"],
         )
 
@@ -107,8 +106,10 @@ class GradeView(LoginRequiredMixin, TemplateView):
         if not school_year:
             return []
 
+        grade_levels = GradeLevel.objects.filter(school_year=school_year)
+        courses = Course.objects.filter(grade_levels__in=grade_levels)
         completed_task_ids = Coursework.objects.filter(
-            student=student, course_task__course__grade_level__school_year=school_year
+            student=student, course_task__course__in=courses
         ).values_list("course_task_id", flat=True)
 
         graded_work = GradedWork.objects.filter(
@@ -135,10 +136,11 @@ class GradeView(LoginRequiredMixin, TemplateView):
         grades = []
         students = self.request.user.school.students.filter(id__in=scores.keys())
         for student in students:
+            grade_levels = GradeLevel.objects.filter(school_year__school=school)
+            courses = Course.objects.filter(grade_levels__in=grade_levels)
             graded_work_ids = set(
                 GradedWork.objects.filter(
-                    id__in=scores[student.id].keys(),
-                    course_task__course__grade_level__school_year__school=school,
+                    id__in=scores[student.id].keys(), course_task__course__in=courses
                 ).values_list("id", flat=True)
             )
             already_graded_work_ids = set(

@@ -132,6 +132,11 @@ class TestGradeLevel(TestCase):
         self.assertIsNotNone(grade_level)
         self.assertNotEqual(grade_level.name, "")
 
+    def test_str(self):
+        grade_level = GradeLevelFactory()
+
+        self.assertEqual(str(grade_level), grade_level.name)
+
     def test_has_name(self):
         name = "Kindergarten"
         grade_level = GradeLevelFactory(name=name)
@@ -146,6 +151,7 @@ class TestGradeLevel(TestCase):
 
     def test_has_courses(self):
         grade_level = GradeLevelFactory()
-        course = CourseFactory(grade_level=grade_level)
+        course = CourseFactory()
+        grade_level.courses.add(course)
 
         self.assertEqual(list(grade_level.courses.all()), [course])

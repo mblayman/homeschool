@@ -131,7 +131,7 @@ class TestApp(TestCase):
             + SchoolYear.FRIDAY,
         )
         grade_level = GradeLevelFactory(school_year=school_year)
-        CourseFactory(grade_level=grade_level)
+        CourseFactory(grade_levels=[grade_level])
         EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user):
@@ -160,7 +160,7 @@ class TestApp(TestCase):
         )
         grade_level = GradeLevelFactory(school_year=school_year)
         course = CourseFactory(
-            grade_level=grade_level,
+            grade_levels=[grade_level],
             days_of_week=Course.MONDAY
             + Course.WEDNESDAY
             + Course.THURSDAY
@@ -259,7 +259,7 @@ class TestApp(TestCase):
         )
         grade_level = GradeLevelFactory(school_year=school_year)
         course = CourseFactory(
-            grade_level=grade_level,
+            grade_levels=[grade_level],
             days_of_week=Course.MONDAY
             + Course.WEDNESDAY
             + Course.THURSDAY
@@ -333,7 +333,7 @@ class TestApp(TestCase):
         )
         grade_level = GradeLevelFactory(school_year=school_year)
         course = CourseFactory(
-            grade_level=grade_level,
+            grade_levels=[grade_level],
             days_of_week=Course.MONDAY
             + Course.WEDNESDAY
             + Course.THURSDAY
@@ -441,12 +441,12 @@ class TestDaily(TestCase):
             days_of_week=SchoolYear.FRIDAY,
         )
         grade_level = GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_level=grade_level, days_of_week=Course.FRIDAY)
+        course = CourseFactory(grade_levels=[grade_level], days_of_week=Course.FRIDAY)
         task_1 = CourseTaskFactory(course=course)
         coursework = CourseworkFactory(
             student=student, course_task=task_1, completed_date=friday
         )
-        course_2 = CourseFactory(grade_level=grade_level, days_of_week=Course.FRIDAY)
+        course_2 = CourseFactory(grade_levels=[grade_level], days_of_week=Course.FRIDAY)
         task_2a = CourseTaskFactory(course=course_2)
         CourseworkFactory(
             student=student,
@@ -454,9 +454,11 @@ class TestDaily(TestCase):
             completed_date=friday - datetime.timedelta(days=1),
         )
         task_2b = CourseTaskFactory(course=course_2)
-        course_3 = CourseFactory(grade_level=grade_level, days_of_week=Course.THURSDAY)
+        course_3 = CourseFactory(
+            grade_levels=[grade_level], days_of_week=Course.THURSDAY
+        )
         CourseTaskFactory(course=course_3)
-        course_4 = CourseFactory(grade_level=grade_level, days_of_week=Course.FRIDAY)
+        course_4 = CourseFactory(grade_levels=[grade_level], days_of_week=Course.FRIDAY)
         EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user):
@@ -485,7 +487,8 @@ class TestDaily(TestCase):
             start_date=thursday - datetime.timedelta(days=90),
             end_date=thursday + datetime.timedelta(days=90),
         )
-        course = CourseFactory(grade_level__school_year=school_year)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_levels=[grade_level])
         CourseworkFactory(
             student=student,
             course_task__course=course,
@@ -494,7 +497,7 @@ class TestDaily(TestCase):
         CourseTaskFactory(course=course)  # current task for thursday
         CourseTaskFactory(course=course)  # projected task for friday
         task = CourseTaskFactory(course=course)
-        EnrollmentFactory(student=student, grade_level=course.grade_level)
+        EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user):
             self.get("core:daily_for_date", year=2020, month=1, day=27)
@@ -555,7 +558,8 @@ class TestDaily(TestCase):
         today = timezone.now().date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        task = CourseTaskFactory(course__grade_level__school_year__school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        task = CourseTaskFactory(course__grade_levels=[grade_level])
         data = {
             "completed_date": "{:%Y-%m-%d}".format(today),
             f"task-{student.id}-{task.id}": "on",
@@ -574,7 +578,8 @@ class TestDaily(TestCase):
         today = timezone.now().date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        task = CourseTaskFactory(course__grade_level__school_year__school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        task = CourseTaskFactory(course__grade_levels=[grade_level])
         CourseworkFactory(student=student, course_task=task)
         data = {
             "completed_date": "{:%Y-%m-%d}".format(today),
@@ -592,9 +597,8 @@ class TestDaily(TestCase):
         today = timezone.now().date()
         user = self.make_user()
         student = StudentFactory(school=user.school)
-        graded_work = GradedWorkFactory(
-            course_task__course__grade_level__school_year__school=user.school
-        )
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        graded_work = GradedWorkFactory(course_task__course__grade_levels=[grade_level])
         data = {
             "completed_date": "{:%Y-%m-%d}".format(today),
             f"task-{student.id}-{graded_work.course_task.id}": "on",
@@ -612,9 +616,10 @@ class TestDaily(TestCase):
         user = self.make_user()
         school = user.school
         student = StudentFactory(school=school)
+        grade_level = GradeLevelFactory(school_year__school=school)
         grade = GradeFactory(
             student=student,
-            graded_work__course_task__course__grade_level__school_year__school=school,
+            graded_work__course_task__course__grade_levels=[grade_level],
         )
         data = {
             "completed_date": "{:%Y-%m-%d}".format(today),
