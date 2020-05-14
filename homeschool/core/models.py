@@ -16,6 +16,7 @@ class DaysOfWeekModel(models.Model):
 
     # Instead of bringing in django-bitfield, do this directly
     # since the use case is constrained to seven values.
+    NO_DAYS = 0
     MONDAY = 1
     TUESDAY = 2
     WEDNESDAY = 4

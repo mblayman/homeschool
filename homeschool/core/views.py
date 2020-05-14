@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, TemplateView
 
-from homeschool.courses.models import GradedWork
+from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Grade
@@ -106,6 +106,9 @@ class AppView(LoginRequiredMixin, TemplateView):
         task_limit = len(week_dates)
         schedule = {"student": student, "courses": []}
         for course in courses:
+            if course.days_of_week == Course.NO_DAYS:
+                continue
+
             course_schedule = {"course": course, "days": []}
 
             course_tasks = []

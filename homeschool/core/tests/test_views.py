@@ -33,6 +33,19 @@ class TestIndex(TestCase):
 
 
 class TestApp(TestCase):
+    def make_student_enrolled_in_grade_level(self, user, week_date):
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__school=user.school,
+            grade_level__school_year__start_date=(
+                week_date - datetime.timedelta(days=90)
+            ),
+            grade_level__school_year__end_date=(
+                week_date + datetime.timedelta(days=90)
+            ),
+            student__school=user.school,
+        )
+        return enrollment.student, enrollment.grade_level
+
     def test_ok(self):
         user = self.make_user()
 
@@ -115,24 +128,12 @@ class TestApp(TestCase):
         sunday = now.date()
         timezone.localdate.return_value = now.date()
         user = self.make_user()
-        student = StudentFactory(school=user.school)
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
         SchoolYearFactory(
             start_date=sunday - datetime.timedelta(days=90),
             end_date=sunday + datetime.timedelta(days=90),
         )
-        school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.MONDAY
-            + SchoolYear.TUESDAY
-            + SchoolYear.WEDNESDAY
-            + SchoolYear.THURSDAY
-            + SchoolYear.FRIDAY,
-        )
-        grade_level = GradeLevelFactory(school_year=school_year)
         CourseFactory(grade_levels=[grade_level])
-        EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user):
             self.get("core:app")
@@ -147,18 +148,7 @@ class TestApp(TestCase):
         monday = sunday - datetime.timedelta(days=6)
         timezone.localdate.return_value = now.date()
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.MONDAY
-            + SchoolYear.TUESDAY
-            + SchoolYear.WEDNESDAY
-            + SchoolYear.THURSDAY
-            + SchoolYear.FRIDAY,
-        )
-        grade_level = GradeLevelFactory(school_year=school_year)
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
         course = CourseFactory(
             grade_levels=[grade_level],
             days_of_week=Course.MONDAY
@@ -172,7 +162,6 @@ class TestApp(TestCase):
         coursework = CourseworkFactory(
             student=student, course_task=task_1, completed_date=monday
         )
-        EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user), self.assertNumQueries(11):
             self.get("core:app")
@@ -246,18 +235,7 @@ class TestApp(TestCase):
         monday = sunday - datetime.timedelta(days=6)
         timezone.localdate.return_value = now.date()
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.MONDAY
-            + SchoolYear.TUESDAY
-            + SchoolYear.WEDNESDAY
-            + SchoolYear.THURSDAY
-            + SchoolYear.FRIDAY,
-        )
-        grade_level = GradeLevelFactory(school_year=school_year)
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
         course = CourseFactory(
             grade_levels=[grade_level],
             days_of_week=Course.MONDAY
@@ -271,7 +249,6 @@ class TestApp(TestCase):
         CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
         CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
-        EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user), self.assertNumQueries(12):
             self.get("core:weekly", year=2020, month=1, day=27)
@@ -320,18 +297,7 @@ class TestApp(TestCase):
         monday = sunday - datetime.timedelta(days=6)
         timezone.localdate.return_value = now.date()
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.MONDAY
-            + SchoolYear.TUESDAY
-            + SchoolYear.WEDNESDAY
-            + SchoolYear.THURSDAY
-            + SchoolYear.FRIDAY,
-        )
-        grade_level = GradeLevelFactory(school_year=school_year)
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
         course = CourseFactory(
             grade_levels=[grade_level],
             days_of_week=Course.MONDAY
@@ -346,7 +312,6 @@ class TestApp(TestCase):
             course_task=task_1,
             completed_date=monday - datetime.timedelta(days=7),
         )
-        EnrollmentFactory(student=student, grade_level=grade_level)
 
         with self.login(user):
             self.get("core:weekly", year=2020, month=1, day=13)
@@ -354,6 +319,22 @@ class TestApp(TestCase):
         schedules = self.get_context("schedules")
         # Day 0 has coursework. Day 1 should show no task.
         self.assertNotIn("task", schedules[0]["courses"][0]["days"][1])
+
+    @mock.patch("homeschool.users.models.timezone")
+    def test_do_not_show_course_when_no_days(self, timezone):
+        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        sunday = now.date()
+        timezone.localdate.return_value = now.date()
+        user = self.make_user()
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
+        course = CourseFactory(grade_levels=[grade_level], days_of_week=Course.NO_DAYS)
+        CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get("core:app")
+
+        schedules = self.get_context("schedules")
+        self.assertEqual(schedules[0]["courses"], [])
 
 
 class TestDaily(TestCase):
