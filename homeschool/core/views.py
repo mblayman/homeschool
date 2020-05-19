@@ -1,7 +1,6 @@
 import datetime
 
 from dateutil.parser import parse
-from dateutil.relativedelta import MO, SU, relativedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -10,7 +9,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, TemplateView
 
-from homeschool.courses.models import Course, GradedWork
+from homeschool.core.schedules import Week
+from homeschool.courses.models import GradedWork
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Grade
@@ -36,15 +36,15 @@ class AppView(LoginRequiredMixin, TemplateView):
             day = today
         context["day"] = day
 
-        week = self.get_week_boundaries(day)
+        week = Week(day)
 
         # Fix the corner case when the weekly view is used and today falls in the week.
         # In that scenario, don't point at the first day of the week
         # since it messes with the UI.
-        if week[0] <= today <= week[1]:
+        if week.monday <= today <= week.sunday:
             context["day"] = today
 
-        context["monday"], context["sunday"] = week
+        context["monday"], context["sunday"] = week.monday, week.sunday
         context["previous_week_date"] = context["monday"] - datetime.timedelta(days=7)
         context["next_week_date"] = context["monday"] + datetime.timedelta(days=7)
 
@@ -63,110 +63,20 @@ class AppView(LoginRequiredMixin, TemplateView):
             week_dates = school_year.get_week_dates_for(week)
         context["week_dates"] = week_dates
 
-        context["schedules"] = self.get_schedules(school_year, today, week, week_dates)
+        context["schedules"] = self.get_schedules(school_year, today, week)
         return context
 
-    def get_week_boundaries(self, today):
-        """Get the Monday and Sunday that bound today."""
-        monday = today + relativedelta(weekday=MO(-1))
-        sunday = today + relativedelta(weekday=SU(+1))
-        return monday, sunday
-
-    def get_schedules(self, school_year, today, week, week_dates):
+    def get_schedules(self, school_year, today, week):
         """Get the schedules for each student."""
         schedules = []
         if school_year is None:
             return schedules
 
         for student in self.request.user.school.students.all():
-            courses = student.get_courses(school_year)
-            week_coursework = student.get_week_coursework(week)
-            schedule = self.get_student_schedule(
-                student, today, week, week_dates, courses, week_coursework
-            )
+            schedule = student.get_week_schedule(school_year, today, week)
             schedules.append(schedule)
 
         return schedules
-
-    def get_student_schedule(
-        self, student, today, week, week_dates, courses, week_coursework
-    ):
-        """Get the schedule.
-
-        Each student will get a list of courses, filled with each day.
-        Empty slots will contain None.
-        """
-        week_start_date = week[0]
-        week_end_date = week[1]
-        completed_task_ids = list(
-            Coursework.objects.filter(
-                student=student, course_task__course__in=courses
-            ).values_list("course_task_id", flat=True)
-        )
-        task_limit = len(week_dates)
-        schedule = {"student": student, "courses": []}
-        for course in courses:
-            if course.days_of_week == Course.NO_DAYS:
-                continue
-
-            course_schedule = {"course": course, "days": []}
-
-            course_tasks = []
-            # Only show tasks on current or future weeks.
-            if week_end_date >= today:
-                task_index = 0
-                if week_start_date > today:
-                    task_index = self.get_future_course_task_index(
-                        student, course, today, week_start_date
-                    )
-
-                # Doing this query in a loop is definitely an N+1 bug.
-                # If it's possible to do a single query of all tasks
-                # that groups by course then that would be better.
-                # No need to over-optimize until that's a real issue.
-                # I brought this up on the forum. It doesn't look like it's easy to fix.
-                # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
-                course_tasks = list(
-                    course.course_tasks.exclude(id__in=completed_task_ids)[
-                        task_index : task_index + task_limit
-                    ]
-                )
-                course_tasks.reverse()  # for the performance of pop below.
-
-            for week_date in week_dates:
-                course_schedule_item = {"week_date": week_date}
-                if (
-                    course.id in week_coursework
-                    and week_date in week_coursework[course.id]
-                ):
-                    coursework_list = week_coursework[course.id][week_date]
-                    course_schedule_item["coursework"] = coursework_list
-                elif course.runs_on(week_date) and course_tasks:
-                    course_schedule_item["task"] = course_tasks.pop()
-                course_schedule["days"].append(course_schedule_item)
-            schedule["courses"].append(course_schedule)
-        return schedule
-
-    def get_future_course_task_index(self, student, course, today, week_start_date):
-        """Get the db index of course tasks for future weeks.
-
-        This is based on the last completed coursework for the course.
-        """
-        this_week = self.get_week_boundaries(today)
-        latest_coursework = (
-            Coursework.objects.filter(student=student, course_task__course=course)
-            .order_by("-completed_date")
-            .first()
-        )
-        if latest_coursework and (this_week[0] <= latest_coursework.completed_date):
-            start_date = latest_coursework.completed_date + datetime.timedelta(days=1)
-        else:
-            # When the student has no coursework yet, the counting should start
-            # from the week start date relative to today.
-            start_date = this_week[0]
-        return course.get_task_count_in_range(
-            start_date, week_start_date - datetime.timedelta(days=1)
-        )
 
 
 class DailyView(LoginRequiredMixin, TemplateView):

@@ -1,5 +1,6 @@
 import datetime
 
+from homeschool.core.schedules import Week
 from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import (
@@ -109,9 +110,7 @@ class TestSchoolYear(TestCase):
 
     def test_get_week_dates_for(self):
         school_year = SchoolYearFactory()
-        monday = datetime.date(2020, 1, 20)
-        sunday = datetime.date(2020, 1, 26)
-        week = (monday, sunday)
+        week = Week(datetime.date(2020, 1, 20))
 
         self.assertEqual(
             school_year.get_week_dates_for(week),

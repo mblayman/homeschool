@@ -56,6 +56,13 @@ class TestCourse(TestCase):
 
         self.assertEqual(count, 1)
 
+    def test_is_running(self):
+        running_course = CourseFactory()
+        not_running_course = CourseFactory(days_of_week=Course.NO_DAYS)
+
+        self.assertTrue(running_course.is_running)
+        self.assertFalse(not_running_course.is_running)
+
 
 class TestGradedWork(TestCase):
     def test_factory(self):

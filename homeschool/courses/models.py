@@ -31,6 +31,11 @@ class Course(DaysOfWeekModel):
 
         return task_count
 
+    @property
+    def is_running(self):
+        """Check if the course is running on any days of the week."""
+        return self.days_of_week != self.NO_DAYS
+
     def __str__(self):
         return self.name
 

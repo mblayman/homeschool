@@ -43,11 +43,8 @@ class DaysOfWeekModel(models.Model):
     }
 
     def get_week_dates_for(self, week):
-        """Get the list of week dates that the record runs on for the given week.
-
-        Week is a range tuple in the form of (monday, sunday).
-        """
-        week_date = week[0]
+        """Get the list of week dates that the record runs on for the given week. """
+        week_date = week.monday
         week_dates = []
         for day in self.WEEK:
             if self.runs_on(day):

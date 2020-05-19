@@ -1,6 +1,9 @@
+import datetime
 import uuid
 
 from django.db import models
+
+from homeschool.core.schedules import Week
 
 
 class Student(models.Model):
@@ -19,6 +22,67 @@ class Student(models.Model):
 
     def __str__(self):
         return self.full_name
+
+    def get_week_schedule(self, school_year, today, week):
+        """Get the student's week schedule for a given week.
+
+        The schedule is calculated from the user's point of view in time
+        as of today. The week is not necessarily *this* week.
+        """
+        week_dates = school_year.get_week_dates_for(week)
+        courses = self.get_courses(school_year)
+        week_coursework = self.get_week_coursework(week)
+
+        week_start_date = week.monday
+        week_end_date = week.sunday
+        completed_task_ids = list(
+            Coursework.objects.filter(
+                student=self, course_task__course__in=courses
+            ).values_list("course_task_id", flat=True)
+        )
+        task_limit = len(week_dates)
+        schedule = {"student": self, "courses": []}
+        for course in courses:
+            if not course.is_running:
+                continue
+
+            course_schedule = {"course": course, "days": []}
+
+            course_tasks = []
+            # Only show tasks on current or future weeks.
+            if week_end_date >= today:
+                task_index = 0
+                if week_start_date > today:
+                    task_index = self.get_future_course_task_index(
+                        course, today, week_start_date
+                    )
+
+                # Doing this query in a loop is definitely an N+1 bug.
+                # If it's possible to do a single query of all tasks
+                # that groups by course then that would be better.
+                # No need to over-optimize until that's a real issue.
+                # I brought this up on the forum. It doesn't look like it's easy to fix.
+                # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
+                course_tasks = list(
+                    course.course_tasks.exclude(id__in=completed_task_ids)[
+                        task_index : task_index + task_limit
+                    ]
+                )
+                course_tasks.reverse()  # for the performance of pop below.
+
+            for week_date in week_dates:
+                course_schedule_item = {"week_date": week_date}
+                if (
+                    course.id in week_coursework
+                    and week_date in week_coursework[course.id]
+                ):
+                    coursework_list = week_coursework[course.id][week_date]
+                    course_schedule_item["coursework"] = coursework_list
+                elif course.runs_on(week_date) and course_tasks:
+                    course_schedule_item["task"] = course_tasks.pop()
+                course_schedule["days"].append(course_schedule_item)
+            schedule["courses"].append(course_schedule)
+        return schedule
 
     def get_courses(self, school_year):
         """Get the courses from the school year."""
@@ -40,7 +104,7 @@ class Student(models.Model):
         """
         week_coursework = {}
         coursework_qs = Coursework.objects.filter(
-            student=self, completed_date__range=week
+            student=self, completed_date__range=(week.monday, week.sunday)
         ).select_related("course_task")
         for coursework in coursework_qs:
             course_id = coursework.course_task.course_id
@@ -55,6 +119,27 @@ class Student(models.Model):
             week_coursework[course_id][coursework.completed_date].append(coursework)
 
         return week_coursework
+
+    def get_future_course_task_index(self, course, today, week_start_date):
+        """Get the db index of course tasks for future weeks.
+
+        This is based on the last completed coursework for the course.
+        """
+        this_week = Week(today)
+        latest_coursework = (
+            Coursework.objects.filter(student=self, course_task__course=course)
+            .order_by("-completed_date")
+            .first()
+        )
+        if latest_coursework and (this_week.monday <= latest_coursework.completed_date):
+            start_date = latest_coursework.completed_date + datetime.timedelta(days=1)
+        else:
+            # When the student has no coursework yet, the counting should start
+            # from the week start date relative to today.
+            start_date = this_week.monday
+        return course.get_task_count_in_range(
+            start_date, week_start_date - datetime.timedelta(days=1)
+        )
 
     def get_day_coursework(self, day):
         """Get the coursework completed in the week.
