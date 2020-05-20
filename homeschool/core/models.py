@@ -52,8 +52,20 @@ class DaysOfWeekModel(models.Model):
             week_date += datetime.timedelta(days=1)
         return week_dates
 
+    def last_school_day_for(self, week):
+        """Get that last school day that this model runs.
+
+        If the model isn't running any week days, fall back to Monday.
+        """
+        week_date = week.sunday
+        for day in reversed(self.WEEK):
+            if self.runs_on(week_date):
+                return week_date
+            week_date -= datetime.timedelta(days=1)
+        return week.monday
+
     def runs_on(self, day):
-        """Check if a school year runs on the given day.
+        """Check if the model runs on the given day.
 
         Days of week is a bit field and day acts as a bitmask.
         """

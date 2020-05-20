@@ -34,7 +34,7 @@ class Student(models.Model):
         week_coursework = self.get_week_coursework(week)
 
         week_start_date = week.monday
-        week_end_date = week.sunday
+        week_end_date = school_year.last_school_day_for(week)
         completed_task_ids = list(
             Coursework.objects.filter(
                 student=self, course_task__course__in=courses

@@ -143,12 +143,12 @@ class TestApp(TestCase):
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        sunday = now.date()
-        monday = sunday - datetime.timedelta(days=6)
+        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
+        friday = now.date()
+        monday = friday - datetime.timedelta(days=4)
         timezone.localdate.return_value = now.date()
         user = self.make_user()
-        student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, friday)
         course = CourseFactory(
             grade_levels=[grade_level],
             days_of_week=Course.MONDAY

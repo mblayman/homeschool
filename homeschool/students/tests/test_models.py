@@ -74,6 +74,31 @@ class TestStudent(TestCase):
 
         self.assertEqual(list(courses), [course])
 
+    def test_week_schedule_no_tasks_end_of_week(self):
+        """A student has no tasks to complete if the school week is over."""
+        today = datetime.date(2020, 5, 23)  # A Saturday
+        week = Week(today)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__start_date=today - datetime.timedelta(days=30)
+        )
+        student = enrollment.student
+        school_year = enrollment.grade_level.school_year
+        CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+
+        week_schedule = student.get_week_schedule(school_year, today, week)
+
+        self.assertNotIn("task", week_schedule["courses"][0]["days"][0])
+
+    def test_week_schedule_future_after_school_week(self):
+        """Looking at future weeks pulls in unfinished tasks after the school week.
+
+        This is a corner case. When the school week is over (typically a weekend
+        date like Saturday or Sunday), all unfinished task work should be
+        "pulled forward" to the next school week.
+        This will enable users to plan for the following week.
+        """
+        # TODO: Issue #71
+
     def test_get_week_coursework(self):
         today = timezone.now().date()
         week = Week(today)

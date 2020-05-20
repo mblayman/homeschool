@@ -1,5 +1,7 @@
 import datetime
 
+from dateutil.relativedelta import MO, relativedelta
+
 from homeschool.core.schedules import Week
 from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.models import SchoolYear
@@ -122,6 +124,25 @@ class TestSchoolYear(TestCase):
                 datetime.date(2020, 1, 24),
             ],
         )
+
+    def test_last_school_day_for_week(self):
+        school_year = SchoolYearFactory()
+        monday = datetime.date.today() + relativedelta(weekday=MO(-1))
+        friday = monday + datetime.timedelta(days=4)
+        week = Week(monday)
+
+        last_school_day = school_year.last_school_day_for(week)
+
+        self.assertEqual(last_school_day, friday)
+
+    def test_last_school_day_for_no_days(self):
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.NO_DAYS)
+        monday = datetime.date.today() + relativedelta(weekday=MO(-1))
+        week = Week(monday)
+
+        last_school_day = school_year.last_school_day_for(week)
+
+        self.assertEqual(last_school_day, monday)
 
 
 class TestGradeLevel(TestCase):
