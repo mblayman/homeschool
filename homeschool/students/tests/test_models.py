@@ -24,43 +24,43 @@ class TestStudent(TestCase):
     def test_factory(self):
         student = StudentFactory()
 
-        self.assertIsNotNone(student)
-        self.assertNotEqual(student.first_name, "")
-        self.assertNotEqual(student.last_name, "")
+        assert student is not None
+        assert student.first_name != ""
+        assert student.last_name != ""
 
     def test_has_school(self):
         school = SchoolFactory()
         student = StudentFactory(school=school)
 
-        self.assertEqual(student.school, school)
+        assert student.school == school
 
     def test_has_first_name(self):
         first_name = "James"
         student = StudentFactory(first_name=first_name)
 
-        self.assertEqual(student.first_name, first_name)
+        assert student.first_name == first_name
 
     def test_has_last_name(self):
         last_name = "Bond"
         student = StudentFactory(last_name=last_name)
 
-        self.assertEqual(student.last_name, last_name)
+        assert student.last_name == last_name
 
     def test_has_uuid(self):
         student_uuid = uuid.uuid4()
         student = CourseFactory(uuid=student_uuid)
 
-        self.assertEqual(student.uuid, student_uuid)
+        assert student.uuid == student_uuid
 
     def test_full_name(self):
         student = StudentFactory()
 
-        self.assertEqual(student.full_name, f"{student.first_name} {student.last_name}")
+        assert student.full_name == f"{student.first_name} {student.last_name}"
 
     def test_str(self):
         student = StudentFactory()
 
-        self.assertEqual(str(student), student.full_name)
+        assert str(student) == student.full_name
 
     def test_get_courses(self):
         enrollment = EnrollmentFactory()
@@ -72,7 +72,7 @@ class TestStudent(TestCase):
 
         courses = student.get_courses(school_year)
 
-        self.assertEqual(list(courses), [course])
+        assert list(courses) == [course]
 
     def test_week_schedule_no_tasks_end_of_week(self):
         """A student has no tasks to complete if the school week is over."""
@@ -87,7 +87,7 @@ class TestStudent(TestCase):
 
         week_schedule = student.get_week_schedule(school_year, today, week)
 
-        self.assertNotIn("task", week_schedule["courses"][0]["days"][0])
+        assert "task" not in week_schedule["courses"][0]["days"][0]
 
     def test_week_schedule_future_after_school_week(self):
         """Looking at future weeks pulls in unfinished tasks after the school week.
@@ -119,9 +119,9 @@ class TestStudent(TestCase):
 
         week_coursework = student.get_week_coursework(week)
 
-        self.assertEqual(
-            week_coursework, {course.id: {week.monday: [coursework_1, coursework_2]}}
-        )
+        assert week_coursework == {
+            course.id: {week.monday: [coursework_1, coursework_2]}
+        }
 
     def test_get_day_coursework(self):
         today = timezone.now().date()
@@ -143,79 +143,79 @@ class TestStudent(TestCase):
 
         day_coursework = student.get_day_coursework(monday)
 
-        self.assertEqual(day_coursework, {course.id: [coursework_1, coursework_2]})
+        assert day_coursework == {course.id: [coursework_1, coursework_2]}
 
 
 class TestEnrollment(TestCase):
     def test_factory(self):
         enrollment = EnrollmentFactory()
 
-        self.assertIsNotNone(enrollment)
+        assert enrollment is not None
 
     def test_has_student(self):
         student = StudentFactory()
         enrollment = EnrollmentFactory(student=student)
 
-        self.assertEqual(enrollment.student, student)
+        assert enrollment.student == student
 
     def test_has_grade_level(self):
         grade_level = GradeLevelFactory()
         enrollment = EnrollmentFactory(grade_level=grade_level)
 
-        self.assertEqual(enrollment.grade_level, grade_level)
+        assert enrollment.grade_level == grade_level
 
 
 class TestCoursework(TestCase):
     def test_factory(self):
         coursework = CourseworkFactory()
 
-        self.assertIsNotNone(coursework)
+        assert coursework is not None
 
     def test_has_student(self):
         student = StudentFactory()
         coursework = CourseworkFactory(student=student)
 
-        self.assertEqual(coursework.student, student)
+        assert coursework.student == student
 
     def test_has_course_task(self):
         course_task = CourseTaskFactory()
         coursework = CourseworkFactory(course_task=course_task)
 
-        self.assertEqual(coursework.course_task, course_task)
+        assert coursework.course_task == course_task
 
     def test_completed_date(self):
         completed_date = datetime.date.today()
         coursework = CourseworkFactory(completed_date=completed_date)
 
-        self.assertEqual(coursework.completed_date, completed_date)
+        assert coursework.completed_date == completed_date
 
 
 class TestGrade(TestCase):
     def test_factory(self):
         grade = GradeFactory()
 
-        self.assertIsNotNone(grade)
+        assert grade is not None
 
     def test_has_student(self):
         student = StudentFactory()
         grade = GradeFactory(student=student)
 
-        self.assertEqual(grade.student, student)
+        assert grade.student == student
 
     def test_has_graded_work(self):
         graded_work = GradedWorkFactory()
         grade = GradeFactory(graded_work=graded_work)
 
-        self.assertEqual(grade.graded_work, graded_work)
+        assert grade.graded_work == graded_work
 
     def test_has_uuid(self):
         grade_uuid = uuid.uuid4()
         grade = GradeFactory(uuid=grade_uuid)
 
-        self.assertEqual(grade.uuid, grade_uuid)
+        assert grade.uuid == grade_uuid
 
     def test_has_score(self):
         score = 99
         grade = GradeFactory(score=score)
 
-        self.assertEqual(grade.score, score)
+        assert grade.score == score

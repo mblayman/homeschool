@@ -13,5 +13,5 @@ graph:
 		-o models.png
 
 coverage:
-	coverage run --source='homeschool' manage.py test
+	coverage run --source='homeschool' -m pytest
 	coverage report

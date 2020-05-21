@@ -15,37 +15,37 @@ class TestCourse(TestCase):
     def test_factory(self):
         course = CourseFactory()
 
-        self.assertIsNotNone(course)
-        self.assertNotEqual(course.name, "")
+        assert course is not None
+        assert course.name != ""
 
     def test_str(self):
         course = CourseFactory()
 
-        self.assertEqual(str(course), course.name)
+        assert str(course) == course.name
 
     def test_has_uuid(self):
         course_uuid = uuid.uuid4()
         course = CourseFactory(uuid=course_uuid)
 
-        self.assertEqual(course.uuid, course_uuid)
+        assert course.uuid == course_uuid
 
     def test_has_name(self):
         name = "Calculus I"
         course = CourseFactory(name=name)
 
-        self.assertEqual(course.name, name)
+        assert course.name == name
 
     def test_has_grade_level(self):
         grade_level = GradeLevelFactory()
         course = CourseFactory(grade_levels=[grade_level])
 
-        self.assertEqual(list(course.grade_levels.all()), [grade_level])
+        assert list(course.grade_levels.all()) == [grade_level]
 
     def test_has_days_of_week(self):
         days_of_week = Course.MONDAY + Course.TUESDAY
         course = CourseFactory(days_of_week=days_of_week)
 
-        self.assertEqual(course.days_of_week, days_of_week)
+        assert course.days_of_week == days_of_week
 
     def test_start_after_end(self):
         course = CourseFactory()
@@ -54,21 +54,21 @@ class TestCourse(TestCase):
 
         count = course.get_task_count_in_range(start_date, end_date)
 
-        self.assertEqual(count, 1)
+        assert count == 1
 
     def test_is_running(self):
         running_course = CourseFactory()
         not_running_course = CourseFactory(days_of_week=Course.NO_DAYS)
 
-        self.assertTrue(running_course.is_running)
-        self.assertFalse(not_running_course.is_running)
+        assert running_course.is_running
+        assert not not_running_course.is_running
 
 
 class TestGradedWork(TestCase):
     def test_factory(self):
         graded_work = GradedWorkFactory()
 
-        self.assertIsNotNone(graded_work)
+        assert graded_work is not None
 
 
 class TestCourseTask(TestCase):
@@ -76,46 +76,46 @@ class TestCourseTask(TestCase):
         task = CourseTaskFactory()
         other_task = CourseTaskFactory.build()
 
-        self.assertIsNotNone(task)
-        self.assertNotEqual(str(task.uuid), "")
-        self.assertNotEqual(task.description, "")
-        self.assertFalse(hasattr(task, "graded_work"))
-        self.assertIsNone(other_task.id)
+        assert task is not None
+        assert str(task.uuid) != ""
+        assert task.description != ""
+        assert not hasattr(task, "graded_work")
+        assert other_task.id is None
 
     def test_str(self):
         task = CourseTaskFactory()
 
-        self.assertEqual(str(task), task.description)
+        assert str(task) == task.description
 
     def test_has_course(self):
         course = CourseFactory()
         task = CourseTaskFactory(course=course)
 
-        self.assertEqual(task.course, course)
+        assert task.course == course
 
     def test_has_uuid(self):
         task_uuid = uuid.uuid4()
         task = CourseTaskFactory(uuid=task_uuid)
 
-        self.assertEqual(task.uuid, task_uuid)
+        assert task.uuid == task_uuid
 
     def test_has_description(self):
         description = "Chapter 1 from SICP"
         task = CourseTaskFactory(description=description)
 
-        self.assertEqual(task.description, description)
+        assert task.description == description
 
     def test_has_duration(self):
         duration = 30
         task = CourseTaskFactory(duration=duration)
 
-        self.assertEqual(task.duration, duration)
+        assert task.duration == duration
 
     def test_has_graded_work(self):
         graded_work = GradedWorkFactory()
         task = CourseTaskFactory(graded_work=graded_work)
 
-        self.assertEqual(task.graded_work, graded_work)
+        assert task.graded_work == graded_work
 
     def test_order_with_respect_to_course(self):
         """Moving a task will only affect tasks within a individual course."""
@@ -128,4 +128,4 @@ class TestCourseTask(TestCase):
 
         task_3.below(task_1)
 
-        self.assertEqual(list(CourseTask.objects.all()), [task_1, task_2, task_3])
+        assert list(CourseTask.objects.all()) == [task_1, task_2, task_3]

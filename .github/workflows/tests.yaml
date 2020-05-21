@@ -38,6 +38,6 @@ jobs:
         run: pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Test it
-        run: python manage.py test
+        run: pytest
         env:
           SECRET_KEY: 'a secret to everybody'

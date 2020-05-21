@@ -232,6 +232,6 @@ class TestGradeView(TestCase):
             response = self.post("students:grade", data=data)
 
         self.response_302(response)
-        self.assertEqual(response.get("Location"), self.reverse("core:daily"))
+        assert response.get("Location") == self.reverse("core:daily")
         grade = Grade.objects.get(student=student, graded_work=graded_work)
-        self.assertEqual(grade.score, 100)
+        assert grade.score == 100

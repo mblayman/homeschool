@@ -9,10 +9,10 @@ class TestUser(TestCase):
         SchoolFactory(admin=user)
         school = SchoolFactory(admin=user)
 
-        self.assertEqual(user.school, school)
+        assert user.school == school
 
     def test_create_school(self):
         """A new user automatically has a school created."""
         user = self.make_user()
 
-        self.assertEqual(user.school, School.objects.get(admin=user))
+        assert user.school == School.objects.get(admin=user)

@@ -139,7 +139,7 @@ class TestApp(TestCase):
             self.get("core:app")
 
         schedules = self.get_context("schedules")
-        self.assertTrue(len(schedules[0]["courses"]) > 0)
+        assert len(schedules[0]["courses"]) > 0
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
@@ -187,7 +187,8 @@ class TestApp(TestCase):
                 }
             ],
         }
-        self.assertContext("schedules", [expected_schedule])
+        schedules = self.get_context("schedules")
+        assert schedules == [expected_schedule]
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_week_dates(self, timezone):
@@ -318,7 +319,7 @@ class TestApp(TestCase):
 
         schedules = self.get_context("schedules")
         # Day 0 has coursework. Day 1 should show no task.
-        self.assertNotIn("task", schedules[0]["courses"][0]["days"][1])
+        assert "task" not in schedules[0]["courses"][0]["days"][1]
 
     @mock.patch("homeschool.users.models.timezone")
     def test_do_not_show_course_when_no_days(self, timezone):
@@ -334,7 +335,7 @@ class TestApp(TestCase):
             self.get("core:app")
 
         schedules = self.get_context("schedules")
-        self.assertEqual(schedules[0]["courses"], [])
+        assert schedules[0]["courses"] == []
 
 
 class TestDaily(TestCase):
@@ -354,7 +355,7 @@ class TestDaily(TestCase):
         with self.login(user):
             self.get("core:daily")
 
-        self.assertContext("day", today)
+        assert self.get_context("day") == today
 
     def test_no_school_year(self):
         user = self.make_user()
@@ -406,7 +407,7 @@ class TestDaily(TestCase):
             self.get("core:daily")
 
         schedules = self.get_context("schedules")
-        self.assertNotEqual(schedules, [])
+        assert schedules != []
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
@@ -549,11 +550,9 @@ class TestDaily(TestCase):
         with self.login(user):
             self.post("core:daily", data=data)
 
-        self.assertTrue(
-            Coursework.objects.filter(
-                student=student, course_task=task, completed_date=today
-            ).exists()
-        )
+        assert Coursework.objects.filter(
+            student=student, course_task=task, completed_date=today
+        ).exists()
 
     def test_incomplete_daily(self):
         today = timezone.now().date()
@@ -570,9 +569,7 @@ class TestDaily(TestCase):
         with self.login(user):
             self.post("core:daily", data=data)
 
-        self.assertFalse(
-            Coursework.objects.filter(student=student, course_task=task).exists()
-        )
+        assert not Coursework.objects.filter(student=student, course_task=task).exists()
 
     def test_to_grade(self):
         today = timezone.now().date()
@@ -590,7 +587,7 @@ class TestDaily(TestCase):
 
         self.response_302(response)
         url = self.reverse("students:grade")
-        self.assertIn(url, response.get("Location"))
+        assert url in response.get("Location")
 
     def test_no_grade_when_already_graded(self):
         today = timezone.now().date()
@@ -611,7 +608,7 @@ class TestDaily(TestCase):
             response = self.post("core:daily", data=data)
 
         self.response_302(response)
-        self.assertEqual(response.get("Location"), self.reverse("core:daily"))
+        assert response.get("Location") == self.reverse("core:daily")
 
 
 class TestStartView(TestCase):
@@ -648,9 +645,7 @@ class TestStartSchoolYearView(TestCase):
 
         self.assertEqual(SchoolYear.objects.filter(school=user.school).count(), 1)
         self.response_302(response)
-        self.assertEqual(
-            response.get("Location"), self.reverse("core:start-grade-level")
-        )
+        assert response.get("Location") == self.reverse("core:start-grade-level")
 
     def test_start_date_before_end_date(self):
         user = self.make_user()
@@ -665,9 +660,9 @@ class TestStartSchoolYearView(TestCase):
 
         self.response_200(response)
         form = self.get_context("form")
-        self.assertEqual(
-            form.non_field_errors(), ["The start date must be before the end date."]
-        )
+        assert form.non_field_errors() == [
+            "The start date must be before the end date."
+        ]
 
     def test_only_school_for_user(self):
         school = SchoolFactory()
@@ -683,10 +678,9 @@ class TestStartSchoolYearView(TestCase):
 
         self.response_200(response)
         form = self.get_context("form")
-        self.assertEqual(
-            form.non_field_errors(),
-            ["A school year cannot be created for a different school."],
-        )
+        assert form.non_field_errors() == [
+            "A school year cannot be created for a different school."
+        ]
 
     def test_has_school_year(self):
         user = self.make_user()
@@ -736,7 +730,7 @@ class TestStartGradeLevelView(TestCase):
 
         self.assertEqual(GradeLevel.objects.filter(school_year=school_year).count(), 1)
         self.response_302(response)
-        self.assertEqual(response.get("Location"), self.reverse("core:start-course"))
+        assert response.get("Location") == self.reverse("core:start-course")
 
     def test_only_school_year_for_user(self):
         user = self.make_user()
@@ -748,10 +742,9 @@ class TestStartGradeLevelView(TestCase):
 
         self.response_200(response)
         form = self.get_context("form")
-        self.assertEqual(
-            form.non_field_errors(),
-            ["A grade level cannot be created for a different user's school year."],
-        )
+        assert form.non_field_errors() == [
+            "A grade level cannot be created for a different user's school year."
+        ]
 
     def test_bogus_school_year(self):
         user = self.make_user()
@@ -762,4 +755,4 @@ class TestStartGradeLevelView(TestCase):
 
         self.response_200(response)
         form = self.get_context("form")
-        self.assertEqual(form.non_field_errors(), ["Invalid school year."])
+        assert form.non_field_errors() == ["Invalid school year."]

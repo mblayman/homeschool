@@ -23,7 +23,7 @@ class TestCourseListView(TestCase):
             self.get_check_200("courses:list")
 
         object_list = self.get_context("object_list")
-        self.assertEqual(list(object_list), [])
+        assert list(object_list) == []
 
     def test_courses_from_current_school_year(self):
         today = timezone.now().date()
@@ -81,8 +81,8 @@ class TestCourseEditView(TestCase):
             self.post("courses:edit", uuid=course.uuid, data=data)
 
         course.refresh_from_db()
-        self.assertEqual(course.name, "New course name")
-        self.assertEqual(course.days_of_week, Course.WEDNESDAY + Course.FRIDAY)
+        assert course.name == "New course name"
+        assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
 
 
 class TestCourseTaskCreateView(TestCase):
@@ -107,15 +107,15 @@ class TestCourseTaskCreateView(TestCase):
         with self.login(user):
             response = self.post("courses:task_create", uuid=course.uuid, data=data)
 
-        self.assertEqual(CourseTask.objects.count(), 1)
+        assert CourseTask.objects.count() == 1
         task = CourseTask.objects.get(course=course)
-        self.assertEqual(task.description, data["description"])
-        self.assertEqual(task.duration, int(data["duration"]))
+        assert task.description == data["description"]
+        assert task.duration == int(data["duration"])
         self.response_302(response)
-        self.assertEqual(
-            response.get("Location"), self.reverse("courses:detail", uuid=course.uuid)
+        assert response.get("Location") == self.reverse(
+            "courses:detail", uuid=course.uuid
         )
-        self.assertFalse(hasattr(task, "graded_work"))
+        assert not hasattr(task, "graded_work")
 
     def test_has_create(self):
         user = self.make_user()
@@ -144,7 +144,7 @@ class TestCourseTaskCreateView(TestCase):
             response = self.post(url, data=data)
 
         self.response_302(response)
-        self.assertIn(next_url, response.get("Location"))
+        assert next_url in response.get("Location")
 
     def test_has_course(self):
         user = self.make_user()
@@ -170,7 +170,7 @@ class TestCourseTaskCreateView(TestCase):
             self.post(url, data=data)
 
         task_3 = CourseTask.objects.get(description="A new task")
-        self.assertEqual(list(CourseTask.objects.all()), [task_1, task_3, task_2])
+        assert list(CourseTask.objects.all()) == [task_1, task_3, task_2]
 
     def test_is_graded(self):
         user = self.make_user()
@@ -186,9 +186,9 @@ class TestCourseTaskCreateView(TestCase):
         with self.login(user):
             self.post("courses:task_create", uuid=course.uuid, data=data)
 
-        self.assertEqual(CourseTask.objects.count(), 1)
+        assert CourseTask.objects.count() == 1
         task = CourseTask.objects.get(course=course)
-        self.assertIsNotNone(task.graded_work)
+        assert task.graded_work is not None
 
 
 class TestCourseTaskUpdateView(TestCase):
@@ -231,8 +231,8 @@ class TestCourseTaskUpdateView(TestCase):
             response = self.post("courses:task_edit", uuid=task.uuid, data=data)
 
         task.refresh_from_db()
-        self.assertEqual(task.description, data["description"])
-        self.assertEqual(task.duration, data["duration"])
+        assert task.description == data["description"]
+        assert task.duration == data["duration"]
         self.response_302(response)
 
     def test_has_course(self):
@@ -264,7 +264,7 @@ class TestCourseTaskUpdateView(TestCase):
             response = self.post(url, data=data)
 
         self.response_302(response)
-        self.assertIn(next_url, response.get("Location"))
+        assert next_url in response.get("Location")
 
     def test_is_graded(self):
         user = self.make_user()
@@ -284,7 +284,7 @@ class TestCourseTaskUpdateView(TestCase):
             self.post("courses:task_edit", uuid=task.uuid, data=data)
 
         task.refresh_from_db()
-        self.assertIsNotNone(task.graded_work)
+        assert task.graded_work is not None
 
     def test_keep_graded(self):
         user = self.make_user()
@@ -305,8 +305,8 @@ class TestCourseTaskUpdateView(TestCase):
             self.post("courses:task_edit", uuid=task.uuid, data=data)
 
         task.refresh_from_db()
-        self.assertIsNotNone(task.graded_work)
-        self.assertEqual(GradedWork.objects.count(), 1)
+        assert task.graded_work is not None
+        assert GradedWork.objects.count() == 1
 
     def test_remove_graded(self):
         user = self.make_user()
@@ -326,7 +326,7 @@ class TestCourseTaskUpdateView(TestCase):
             self.post("courses:task_edit", uuid=task.uuid, data=data)
 
         task.refresh_from_db()
-        self.assertFalse(hasattr(task, "graded_work"))
+        assert not hasattr(task, "graded_work")
 
 
 class TestCourseTaskDeleteView(TestCase):
@@ -348,10 +348,10 @@ class TestCourseTaskDeleteView(TestCase):
                 "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
             )
 
-        self.assertEqual(CourseTask.objects.count(), 0)
+        assert CourseTask.objects.count() == 0
         self.response_302(response)
-        self.assertEqual(
-            response.get("Location"), self.reverse("courses:detail", uuid=course.uuid)
+        assert response.get("Location") == self.reverse(
+            "courses:detail", uuid=course.uuid
         )
 
     def test_post_other_user(self):
