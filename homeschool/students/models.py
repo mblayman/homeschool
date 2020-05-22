@@ -54,7 +54,7 @@ class Student(models.Model):
                 task_index = 0
                 if week_start_date > today:
                     task_index = self.get_future_course_task_index(
-                        course, today, week_start_date
+                        course, today, week_start_date, school_year
                     )
 
                 # Doing this query in a loop is definitely an N+1 bug.
@@ -120,7 +120,7 @@ class Student(models.Model):
 
         return week_coursework
 
-    def get_future_course_task_index(self, course, today, week_start_date):
+    def get_future_course_task_index(self, course, today, week_start_date, school_year):
         """Get the db index of course tasks for future weeks.
 
         This is based on the last completed coursework for the course.
@@ -137,8 +137,20 @@ class Student(models.Model):
             # When the student has no coursework yet, the counting should start
             # from the week start date relative to today.
             start_date = this_week.monday
-        return course.get_task_count_in_range(
-            start_date, week_start_date - datetime.timedelta(days=1)
+
+        # Adjust the starting index for future weeks to account for any unfinished tasks
+        # from the current week.
+        unfinished_task_count_this_week = 0
+        if school_year.last_school_day_for(this_week) < today:
+            unfinished_task_count_this_week = course.get_task_count_in_range(
+                start_date, today
+            )
+
+        return (
+            course.get_task_count_in_range(
+                start_date, week_start_date - datetime.timedelta(days=1)
+            )
+            - unfinished_task_count_this_week
         )
 
     def get_day_coursework(self, day):

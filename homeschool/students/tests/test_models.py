@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from dateutil.relativedelta import MO, relativedelta
+from dateutil.relativedelta import MO, SA, relativedelta
 from django.utils import timezone
 
 from homeschool.core.schedules import Week
@@ -97,7 +97,17 @@ class TestStudent(TestCase):
         "pulled forward" to the next school week.
         This will enable users to plan for the following week.
         """
-        # TODO: Issue #71
+        today = timezone.now().date()
+        saturday = today + relativedelta(weekday=SA(1))
+        next_week = Week(saturday + datetime.timedelta(days=2))
+        enrollment = EnrollmentFactory()
+        student = enrollment.student
+        school_year = enrollment.grade_level.school_year
+        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+
+        week_schedule = student.get_week_schedule(school_year, saturday, next_week)
+
+        assert week_schedule["courses"][0]["days"][0]["task"] == task
 
     def test_get_week_coursework(self):
         today = timezone.now().date()

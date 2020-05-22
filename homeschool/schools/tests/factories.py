@@ -16,9 +16,11 @@ class SchoolYearFactory(factory.django.DjangoModelFactory):
         model = "schools.SchoolYear"
 
     school = factory.SubFactory(SchoolFactory)
-    start_date = factory.LazyFunction(lambda: timezone.now().date())
+    start_date = factory.LazyFunction(
+        lambda: timezone.now().date() - datetime.timedelta(days=30)
+    )
     end_date = factory.LazyFunction(
-        lambda: timezone.now().date() + datetime.timedelta(days=365)
+        lambda: timezone.now().date() + datetime.timedelta(days=335)
     )
 
 
