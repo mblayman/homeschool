@@ -158,12 +158,11 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 # I brought this up on the forum. It doesn't look like it's easy to fix.
                 # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
                 try:
-                    course_task = course.course_tasks.exclude(
+                    course_schedule["task"] = course.course_tasks.exclude(
                         id__in=completed_task_ids
                     )[task_index]
                 except IndexError:
-                    course_task = None
-                course_schedule["task"] = course_task
+                    course_schedule["no_scheduled_task"] = True
             schedule["courses"].append(course_schedule)
         return schedule
 

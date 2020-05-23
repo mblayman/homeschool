@@ -29,7 +29,7 @@
       <div class="text-sm text-center uppercase tracking-wide font-thin py-2 w-20">Complete?</div>
     </div>
     {% for course_schedule in schedule.courses %}
-      {% if course_schedule.task or course_schedule.coursework %}
+      {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
         <div class="flex flex-row border-t border-yellow-400 max-w-3xl">
           <div class="w-3/12 text-sm uppercase tracking-wide font-thin py-2 pr-4">
             <a class="hover:underline" href="{% url "students:course" schedule.student.uuid course_schedule.course.uuid %}">{{ course_schedule.course.name }}</a>
@@ -66,6 +66,14 @@
                   <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
                 </a>
               {% endfor %}
+            </div>
+          {% elif course_schedule.no_scheduled_task %}
+            <div class="w-1/12 text-sm text-center py-2"></div>
+            <div class="w-7/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll">No scheduled task</div>
+            <div class="w-1/12 py-2 flex justify-center items-center print-hide">
+              <a href="{% url "courses:task_create" uuid=course_schedule.course.uuid %}?next={{ request.path|urlencode }}" class="block mx-4 text-gray-300 hover:text-gray-600">
+                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/></svg>
+              </a>
             </div>
           {% endif %}
         </div>

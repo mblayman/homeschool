@@ -452,10 +452,28 @@ class TestDaily(TestCase):
                 {"course": course, "coursework": [coursework]},
                 {"course": course_2, "task": task_2b},
                 {"course": course_3},
-                {"course": course_4, "task": None},
+                {"course": course_4, "no_scheduled_task": True},
             ],
         }
         self.assertContext("schedules", [expected_schedule])
+
+    @mock.patch("homeschool.users.models.timezone")
+    def test_no_scheduled_task_for_course(self, mock_timezone):
+        """A course scheduled to run for a day that has no task messages the user."""
+        now = timezone.now()
+        monday = now.date() + relativedelta(weekday=MO(-1))
+        mock_timezone.localdate.return_value = monday
+        user = self.make_user()
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__school=user.school, student__school=user.school
+        )
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+
+        with self.login(user):
+            self.get("core:daily")
+
+        expected_schedule = {"course": course, "no_scheduled_task": True}
+        assert self.get_context("schedules")[0]["courses"][0] == expected_schedule
 
     @mock.patch("homeschool.users.models.timezone")
     def test_far_future_day_schedule(self, timezone):
