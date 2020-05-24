@@ -43,12 +43,6 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
             uuid=self.kwargs["course_uuid"],
         )
 
-    def get_course_work_by_task(self, student, course):
-        coursework = Coursework.objects.filter(
-            student=student, course_task__course=course
-        ).select_related("course_task")
-        return {c.course_task: c for c in coursework}
-
     def get_task_items(self, student, course):
         today = timezone.now().date()
         if course.runs_on(today):
@@ -57,8 +51,7 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
             next_course_day = course.get_next_day_from(today)
 
         coursework_by_task = self.get_course_work_by_task(student, course)
-
-        course_tasks = course.course_tasks.all().select_related("graded_work")
+        course_tasks = student.get_tasks_for(course).select_related("graded_work")
         task_items = []
         for course_task in course_tasks:
             task_item = {
@@ -73,6 +66,12 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
             task_items.append(task_item)
 
         return task_items
+
+    def get_course_work_by_task(self, student, course):
+        coursework = Coursework.objects.filter(
+            student=student, course_task__course=course
+        ).select_related("course_task")
+        return {c.course_task: c for c in coursework}
 
 
 class GradeView(LoginRequiredMixin, TemplateView):

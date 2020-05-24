@@ -155,6 +155,29 @@ class TestStudent(TestCase):
 
         assert day_coursework == {course.id: [coursework_1, coursework_2]}
 
+    def test_get_tasks_enrolled(self):
+        """A student enrolled in a course gets all the correct tasks for that course."""
+        enrollment = EnrollmentFactory()
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        general_task = CourseTaskFactory(course=course)
+        grade_level_task = CourseTaskFactory(
+            course=course, grade_level=enrollment.grade_level
+        )
+        CourseTaskFactory(course=course, grade_level=GradeLevelFactory())
+
+        course_tasks = enrollment.student.get_tasks_for(course)
+
+        assert list(course_tasks) == [general_task, grade_level_task]
+
+    def test_get_tasks_unenrolled(self):
+        """A student not enrolled in a course gets no tasks."""
+        student = StudentFactory()
+        course_task = CourseTaskFactory()
+
+        course_tasks = student.get_tasks_for(course_task.course)
+
+        assert list(course_tasks) == []
+
 
 class TestEnrollment(TestCase):
     def test_factory(self):

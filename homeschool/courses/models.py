@@ -14,6 +14,11 @@ class Course(DaysOfWeekModel):
     grade_levels = models.ManyToManyField("schools.GradeLevel", related_name="courses")
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    @property
+    def is_running(self):
+        """Check if the course is running on any days of the week."""
+        return self.days_of_week != self.NO_DAYS
+
     def get_task_count_in_range(self, start_date, end_date):
         """Get the number of tasks for the date range.
 
@@ -30,11 +35,6 @@ class Course(DaysOfWeekModel):
             date_to_check += datetime.timedelta(days=1)
 
         return task_count
-
-    @property
-    def is_running(self):
-        """Check if the course is running on any days of the week."""
-        return self.days_of_week != self.NO_DAYS
 
     def __str__(self):
         return self.name

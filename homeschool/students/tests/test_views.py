@@ -13,6 +13,7 @@ from homeschool.schools.tests.factories import GradeLevelFactory
 from homeschool.students.models import Grade
 from homeschool.students.tests.factories import (
     CourseworkFactory,
+    EnrollmentFactory,
     GradeFactory,
     StudentFactory,
 )
@@ -90,8 +91,11 @@ class TestStudentCourseView(TestCase):
     @freeze_time("2020-02-10")  # Monday
     def test_has_tasks(self):
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        student = enrollment.student
+        grade_level = enrollment.grade_level
         course = CourseFactory(
             grade_levels=[grade_level], days_of_week=Course.WEDNESDAY + Course.THURSDAY
         )
@@ -114,8 +118,11 @@ class TestStudentCourseView(TestCase):
     @freeze_time("2020-02-10")  # Monday
     def test_has_tasks_with_completed(self):
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        student = enrollment.student
+        grade_level = enrollment.grade_level
         course = CourseFactory(
             grade_levels=[grade_level], days_of_week=Course.WEDNESDAY + Course.THURSDAY
         )
@@ -144,6 +151,29 @@ class TestStudentCourseView(TestCase):
                 {"course_task": task_2, "planned_date": today, "has_graded_work": True},
             ],
         )
+
+    def test_only_task_for_grade_level(self):
+        """Only general tasks and tasks for the student's grade level appear."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        general_task = CourseTaskFactory(course=course)
+        grade_level_task = CourseTaskFactory(
+            course=course, grade_level=enrollment.grade_level
+        )
+        CourseTaskFactory(course=course, grade_level=GradeLevelFactory())
+
+        with self.login(user):
+            self.get_check_200(
+                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+            )
+
+        task_items = self.get_context("task_items")
+        assert len(task_items) == 2
+        assert task_items[0]["course_task"] == general_task
+        assert task_items[1]["course_task"] == grade_level_task
 
 
 class TestGradeView(TestCase):

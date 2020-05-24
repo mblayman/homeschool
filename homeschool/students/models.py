@@ -2,6 +2,7 @@ import datetime
 import uuid
 
 from django.db import models
+from django.db.models import Q
 
 from homeschool.core.schedules import Week
 
@@ -172,6 +173,25 @@ class Student(models.Model):
             day_coursework[course_id].append(coursework)
 
         return day_coursework
+
+    def get_tasks_for(self, course):
+        """Get all the tasks for the provided course.
+
+        This includes any general or grade level specific task.
+        """
+        enrollment = (
+            Enrollment.objects.filter(
+                student=self, grade_level__in=course.grade_levels.all()
+            )
+            .select_related("grade_level")
+            .first()
+        )
+        if enrollment:
+            return course.course_tasks.filter(
+                Q(grade_level__isnull=True) | Q(grade_level=enrollment.grade_level)
+            )
+        else:
+            return course.course_tasks.none()
 
 
 class Enrollment(models.Model):
