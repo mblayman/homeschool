@@ -47,7 +47,7 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return Course.objects.filter(grade_levels__in=grade_levels).prefetch_related(
-            "course_tasks__graded_work"
+            "course_tasks__grade_level", "course_tasks__graded_work"
         )
 
 

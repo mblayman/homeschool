@@ -57,6 +57,18 @@ class TestCourseDetailView(TestCase):
         with self.login(user):
             self.get_check_200("courses:detail", uuid=course.uuid)
 
+    def test_grade_level_name_with_task(self):
+        """Any grade level specific task has the grade level's name next to it."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course, grade_level=grade_level)
+
+        with self.login(user):
+            self.get("courses:detail", uuid=course.uuid)
+
+        self.assertResponseContains(grade_level.name)
+
 
 class TestCourseEditView(TestCase):
     def test_unauthenticated_access(self):
