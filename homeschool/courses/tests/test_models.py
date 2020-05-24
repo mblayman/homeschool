@@ -81,6 +81,7 @@ class TestCourseTask(TestCase):
         assert task.description != ""
         assert not hasattr(task, "graded_work")
         assert other_task.id is None
+        assert task.grade_level is None
 
     def test_str(self):
         task = CourseTaskFactory()
@@ -116,6 +117,12 @@ class TestCourseTask(TestCase):
         task = CourseTaskFactory(graded_work=graded_work)
 
         assert task.graded_work == graded_work
+
+    def test_has_grade_level(self):
+        grade_level = GradeLevelFactory()
+        task = CourseTaskFactory(grade_level=grade_level)
+
+        assert task.grade_level == grade_level
 
     def test_order_with_respect_to_course(self):
         """Moving a task will only affect tasks within a individual course."""

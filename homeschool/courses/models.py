@@ -58,6 +58,14 @@ class CourseTask(OrderedModel):
     duration = models.PositiveIntegerField(
         help_text="The expected length of the task in minutes"
     )
+    grade_level = models.ForeignKey(
+        "schools.GradeLevel",
+        on_delete=models.SET_NULL,
+        related_name="+",
+        null=True,
+        blank=True,
+        help_text="A grade level when a task is specific to a grade",
+    )
 
     objects = CourseTaskManager()
     order_with_respect_to = "course"
