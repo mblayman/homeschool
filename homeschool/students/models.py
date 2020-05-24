@@ -65,7 +65,7 @@ class Student(models.Model):
                 # I brought this up on the forum. It doesn't look like it's easy to fix.
                 # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
                 course_tasks = list(
-                    course.course_tasks.exclude(id__in=completed_task_ids)[
+                    self.get_tasks_for(course).exclude(id__in=completed_task_ids)[
                         task_index : task_index + task_limit
                     ]
                 )
