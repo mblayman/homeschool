@@ -47,7 +47,7 @@ class CourseForm(forms.ModelForm):
 class CourseTaskForm(forms.ModelForm):
     class Meta:
         model = CourseTask
-        fields = ["course", "description", "duration", "is_graded"]
+        fields = ["course", "description", "duration", "is_graded", "grade_level"]
 
     is_graded = forms.BooleanField(required=False)
 

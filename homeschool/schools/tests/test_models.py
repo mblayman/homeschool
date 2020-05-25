@@ -32,6 +32,23 @@ class TestSchool(TestCase):
 
         assert list(school.students.all()) == [student]
 
+    def test_current_grade_levels(self):
+        """The school gets any current grade levels for the school year."""
+        school = SchoolFactory()
+        grade_level = GradeLevelFactory(school_year__school=school)
+
+        grade_levels = school.get_current_grade_levels()
+
+        assert list(grade_levels) == [grade_level]
+
+    def test_current_grade_levels_no_school_year(self):
+        """When there is no school year, no grade levels are returned."""
+        school = SchoolFactory()
+
+        grade_levels = school.get_current_grade_levels()
+
+        assert list(grade_levels) == []
+
 
 class TestSchoolYear(TestCase):
     def test_factory(self):

@@ -19,6 +19,11 @@ class Course(DaysOfWeekModel):
         """Check if the course is running on any days of the week."""
         return self.days_of_week != self.NO_DAYS
 
+    @property
+    def has_many_grade_levels(self):
+        """Check if multiple grade levels are associated with the course."""
+        return self.grade_levels.count() > 1
+
     def get_task_count_in_range(self, start_date, end_date):
         """Get the number of tasks for the date range.
 

@@ -63,6 +63,15 @@ class TestCourse(TestCase):
         assert running_course.is_running
         assert not not_running_course.is_running
 
+    def test_has_many_grade_levels(self):
+        course = CourseFactory()
+        course_multiple_grade_levels = CourseFactory(
+            grade_levels=[GradeLevelFactory(), GradeLevelFactory()]
+        )
+
+        assert not course.has_many_grade_levels
+        assert course_multiple_grade_levels.has_many_grade_levels
+
 
 class TestGradedWork(TestCase):
     def test_factory(self):

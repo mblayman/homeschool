@@ -46,8 +46,10 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return Course.objects.filter(grade_levels__in=grade_levels).prefetch_related(
-            "course_tasks__grade_level", "course_tasks__graded_work"
+        return (
+            Course.objects.filter(grade_levels__in=grade_levels)
+            .prefetch_related("course_tasks__grade_level", "course_tasks__graded_work")
+            .distinct()
         )
 
 
@@ -60,7 +62,7 @@ class CourseEditView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return Course.objects.filter(grade_levels__in=grade_levels)
+        return Course.objects.filter(grade_levels__in=grade_levels).distinct()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -89,15 +91,16 @@ class CourseTaskCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["create"] = True
+        user = self.request.user
 
         course_uuid = self.kwargs["uuid"]
-        grade_levels = GradeLevel.objects.filter(
-            school_year__school__admin=self.request.user
-        )
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         course = get_object_or_404(
-            Course.objects.filter(grade_levels__in=grade_levels), uuid=course_uuid
+            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
+            uuid=course_uuid,
         )
         context["course"] = course
+        context["current_grade_levels"] = user.school.get_current_grade_levels()
         return context
 
     def get_success_url(self):
@@ -130,13 +133,17 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return CourseTask.objects.filter(
-            course__grade_levels__in=grade_levels
-        ).select_related("course")
+        return (
+            CourseTask.objects.filter(course__grade_levels__in=grade_levels)
+            .select_related("course")
+            .distinct()
+        )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        user = self.request.user
         context["course"] = self.object.course
+        context["current_grade_levels"] = user.school.get_current_grade_levels()
         return context
 
     def get_success_url(self):
@@ -153,7 +160,9 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return CourseTask.objects.filter(course__grade_levels__in=grade_levels)
+        return CourseTask.objects.filter(
+            course__grade_levels__in=grade_levels
+        ).distinct()
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})

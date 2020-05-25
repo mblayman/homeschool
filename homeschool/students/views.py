@@ -39,7 +39,7 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
     def get_course(self, user):
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return get_object_or_404(
-            Course.objects.filter(grade_levels__in=grade_levels),
+            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
             uuid=self.kwargs["course_uuid"],
         )
 
