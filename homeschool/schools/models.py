@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -43,6 +45,7 @@ class SchoolYear(DaysOfWeekModel):
     school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
 
 class GradeLevel(models.Model):

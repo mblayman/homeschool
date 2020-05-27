@@ -23,6 +23,7 @@ class CourseListView(LoginRequiredMixin, ListView):
             Course.objects.filter(grade_levels__in=grade_levels)
             .order_by("grade_levels")
             .prefetch_related("grade_levels")
+            .distinct()
         )
 
     def get_context_data(self, *args, **kwargs):
@@ -33,7 +34,8 @@ class CourseListView(LoginRequiredMixin, ListView):
             for grade_level in course.grade_levels.all():
                 if grade_level not in courses_by_grade_level:
                     courses_by_grade_level[grade_level] = []
-                courses_by_grade_level[grade_level].append(course)
+                if course not in courses_by_grade_level[grade_level]:
+                    courses_by_grade_level[grade_level].append(course)
         context["courses_by_grade_level"] = courses_by_grade_level
 
         return context

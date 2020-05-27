@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from dateutil.relativedelta import MO, relativedelta
 
@@ -75,6 +76,12 @@ class TestSchoolYear(TestCase):
         grade_level = GradeLevelFactory(school_year=school_year)
 
         assert list(school_year.grade_levels.all()) == [grade_level]
+
+    def test_has_uuid(self):
+        school_year_uuid = uuid.uuid4()
+        school_year = SchoolYearFactory(uuid=school_year_uuid)
+
+        assert school_year.uuid == school_year_uuid
 
     def test_runs_on(self):
         school_year = SchoolYearFactory(days_of_week=SchoolYear.MONDAY)

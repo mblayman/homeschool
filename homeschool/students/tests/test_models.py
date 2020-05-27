@@ -48,7 +48,7 @@ class TestStudent(TestCase):
 
     def test_has_uuid(self):
         student_uuid = uuid.uuid4()
-        student = CourseFactory(uuid=student_uuid)
+        student = StudentFactory(uuid=student_uuid)
 
         assert student.uuid == student_uuid
 
