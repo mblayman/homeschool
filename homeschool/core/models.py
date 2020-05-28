@@ -42,6 +42,59 @@ class DaysOfWeekModel(models.Model):
         7: SUNDAY,
     }
 
+    # Lookup table to get displayable name.
+    day_to_display_day = {
+        MONDAY: "Monday",
+        TUESDAY: "Tuesday",
+        WEDNESDAY: "Wednesday",
+        THURSDAY: "Thursday",
+        FRIDAY: "Friday",
+        SATURDAY: "Saturday",
+        SUNDAY: "Sunday",
+    }
+
+    # Lookup table to get abbreviated displayable name.
+    day_to_display_day_abbreviation = {
+        MONDAY: "M",
+        TUESDAY: "T",
+        WEDNESDAY: "W",
+        THURSDAY: "R",
+        FRIDAY: "F",
+        SATURDAY: "Sa",
+        SUNDAY: "Su",
+    }
+
+    @property
+    def display_days(self):
+        """Display the week days this model runs on."""
+        display_days = [self.day_to_display_day[day] for day in self._running_days]
+        day_count = len(display_days)
+        # More than 2 days - Monday, Tuesday, and Wednesday
+        if day_count > 2:
+            display_days[-1] = "and {}".format(display_days[-1])
+            return ", ".join(display_days)
+        # 2 days - Monday and Tuesday
+        elif day_count == 2:
+            return " and ".join(display_days)
+        # 1 day - Monday
+        elif day_count == 1:
+            return display_days[0]
+        # 0 days - show nothing
+        else:
+            return ""
+
+    @property
+    def display_abbreviated_days(self):
+        """Display the abbreviated week days this model runs on."""
+        return "".join(
+            [self.day_to_display_day_abbreviation[day] for day in self._running_days]
+        )
+
+    @property
+    def _running_days(self):
+        """Get all the days that this model runs on."""
+        return [day for day in self.WEEK if self.runs_on(day)]
+
     def get_week_dates_for(self, week):
         """Get the list of week dates that the record runs on for the given week. """
         week_date = week.monday

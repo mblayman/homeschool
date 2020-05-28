@@ -47,6 +47,11 @@ class SchoolYear(DaysOfWeekModel):
     end_date = models.DateField()
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    def __str__(self):
+        if self.start_date.year == self.end_date.year:
+            return str(self.start_date.year)
+        return f"{self.start_date.year}–{self.end_date.year}"
+
 
 class GradeLevel(models.Model):
     """A student is in a grade level in a given school year"""

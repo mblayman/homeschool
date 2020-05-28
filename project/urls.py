@@ -21,6 +21,7 @@ urlpatterns = [
     path("", include("homeschool.core.urls")),
     path("courses/", include("homeschool.courses.urls")),
     path("office/", admin.site.urls),
+    path("schools/", include("homeschool.schools.urls")),
     path("students/", include("homeschool.students.urls")),
     path("accounts/", include("allauth.urls")),
     path("tz_detect/", include("tz_detect.urls")),

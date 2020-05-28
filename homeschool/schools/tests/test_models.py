@@ -59,6 +59,21 @@ class TestSchoolYear(TestCase):
         assert school_year.start_date is not None
         assert school_year.end_date is not None
 
+    def test_str(self):
+        same_year_start_date = datetime.date(2020, 1, 1)
+        same_year_end_date = datetime.date(2020, 12, 31)
+        same_year_school_year = SchoolYearFactory(
+            start_date=same_year_start_date, end_date=same_year_end_date
+        )
+        academic_year_start_date = datetime.date(2020, 9, 1)
+        academic_year_end_date = datetime.date(2021, 6, 15)
+        academic_year_school_year = SchoolYearFactory(
+            start_date=academic_year_start_date, end_date=academic_year_end_date
+        )
+
+        assert str(same_year_school_year) == "2020"
+        assert str(academic_year_school_year) == "2020–2021"
+
     def test_has_school(self):
         school = SchoolFactory()
         school_year = SchoolYearFactory(school=school)
@@ -164,6 +179,27 @@ class TestSchoolYear(TestCase):
         last_school_day = school_year.last_school_day_for(week)
 
         assert last_school_day == monday
+
+    def test_display_days(self):
+        school_year = SchoolYearFactory.build()
+        assert (
+            school_year.display_days
+            == "Monday, Tuesday, Wednesday, Thursday, and Friday"
+        )
+
+        school_year.days_of_week = SchoolYear.MONDAY + SchoolYear.TUESDAY
+        assert school_year.display_days == "Monday and Tuesday"
+
+        school_year.days_of_week = SchoolYear.MONDAY
+        assert school_year.display_days == "Monday"
+
+        school_year.days_of_week = SchoolYear.NO_DAYS
+        assert school_year.display_days == ""
+
+    def test_display_days_abbreviated(self):
+        school_year = SchoolYearFactory.build(days_of_week=sum(SchoolYear.WEEK))
+
+        assert school_year.display_abbreviated_days == "MTWRFSaSu"
 
 
 class TestGradeLevel(TestCase):
