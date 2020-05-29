@@ -2,6 +2,38 @@ from homeschool.schools.tests.factories import SchoolYearFactory
 from homeschool.test import TestCase
 
 
+class TestCurrentSchoolYearView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("schools:current_school_year")
+
+    def test_get(self):
+        user = self.make_user()
+        SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:current_school_year")
+
+    def test_no_current_school_year(self):
+        """With no current school year, the user sees the school year list page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("schools:current_school_year")
+
+        self.response_302(response)
+        assert self.reverse("schools:school_year_list") in response.get("Location")
+
+    def test_only_school_year_for_user(self):
+        """A user may only view their own school years."""
+        user = self.make_user()
+        SchoolYearFactory()
+
+        with self.login(user):
+            response = self.get("schools:current_school_year")
+
+        self.response_302(response)
+
+
 class TestSchoolYearDetailView(TestCase):
     def test_unauthenticated_access(self):
         school_year = SchoolYearFactory()
