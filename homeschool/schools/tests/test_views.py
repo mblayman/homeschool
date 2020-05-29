@@ -1,3 +1,5 @@
+import datetime
+
 from homeschool.schools.tests.factories import SchoolYearFactory
 from homeschool.test import TestCase
 
@@ -8,10 +10,32 @@ class TestCurrentSchoolYearView(TestCase):
 
     def test_get(self):
         user = self.make_user()
-        SchoolYearFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
 
         with self.login(user):
             self.get_check_200("schools:current_school_year")
+
+        assert school_year == self.get_context("schoolyear")
+
+    def test_future_school_year(self):
+        """Go to a future school year if there is no current one.
+
+        The user may be new and have no currently active school year.
+        It would be pretty lame to send them to the list
+        when they may be building out their first school year.
+        """
+        user = self.make_user()
+        today = user.get_local_today()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + datetime.timedelta(days=1),
+            end_date=today + datetime.timedelta(days=200),
+        )
+
+        with self.login(user):
+            self.get_check_200("schools:current_school_year")
+
+        assert school_year == self.get_context("schoolyear")
 
     def test_no_current_school_year(self):
         """With no current school year, the user sees the school year list page."""
