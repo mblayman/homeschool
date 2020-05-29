@@ -23,3 +23,27 @@ class TestSchoolYearDetailView(TestCase):
             response = self.get("schools:school_year_detail", uuid=school_year.uuid)
 
         self.response_404(response)
+
+
+class TestSchoolYearListView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("schools:school_year_list")
+
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:school_year_list")
+
+        assert school_year in self.get_context("schoolyear_list")
+
+    def test_only_school_year_for_user(self):
+        """A user may only view their own school years."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            self.get("schools:school_year_list")
+
+        assert school_year not in self.get_context("schoolyear_list")

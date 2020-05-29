@@ -1,0 +1,22 @@
+{% extends "app_base.html" %}
+
+{% block head_title%}School Years{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-4">
+    School Years
+  </h1>
+
+  <p class="mb-8">
+    <a href="#"
+      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+      Add School Year
+    </a>
+  </p>
+
+  <ul>
+    {% for school_year in schoolyear_list %}
+    <li><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">School Year for {{ school_year }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

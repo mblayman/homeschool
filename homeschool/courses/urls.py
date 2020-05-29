@@ -4,7 +4,6 @@ from . import views
 
 app_name = "courses"
 urlpatterns = [
-    path("", views.CourseListView.as_view(), name="list"),
     path("<uuid:uuid>/", views.CourseDetailView.as_view(), name="detail"),
     path("<uuid:uuid>/edit/", views.CourseEditView.as_view(), name="edit"),
     path(

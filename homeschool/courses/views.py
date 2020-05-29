@@ -1,44 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.views.generic.list import ListView
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
-from homeschool.schools.models import GradeLevel, SchoolYear
+from homeschool.schools.models import GradeLevel
 
 from .forms import CourseForm, CourseTaskForm
 from .models import Course, CourseTask
-
-
-class CourseListView(LoginRequiredMixin, ListView):
-    def get_queryset(self):
-        user = self.request.user
-        today = user.get_local_today()
-        school_year = SchoolYear.objects.filter(
-            school=user.school, start_date__lte=today, end_date__gte=today
-        ).first()
-        grade_levels = GradeLevel.objects.filter(school_year=school_year)
-        return (
-            Course.objects.filter(grade_levels__in=grade_levels)
-            .order_by("grade_levels")
-            .prefetch_related("grade_levels")
-            .distinct()
-        )
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
-        courses_by_grade_level = {}
-        for course in context["object_list"]:
-            for grade_level in course.grade_levels.all():
-                if grade_level not in courses_by_grade_level:
-                    courses_by_grade_level[grade_level] = []
-                if course not in courses_by_grade_level[grade_level]:
-                    courses_by_grade_level[grade_level].append(course)
-        context["courses_by_grade_level"] = courses_by_grade_level
-
-        return context
 
 
 class CourseDetailView(LoginRequiredMixin, DetailView):

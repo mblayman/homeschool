@@ -8,5 +8,6 @@ urlpatterns = [
         "school-years/<uuid:uuid>/",
         views.SchoolYearDetailView.as_view(),
         name="school_year_detail",
-    )
+    ),
+    path("school-years/", views.SchoolYearListView.as_view(), name="school_year_list"),
 ]

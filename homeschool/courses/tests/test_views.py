@@ -1,47 +1,11 @@
-import datetime
-
-from django.utils import timezone
-
 from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
     CourseFactory,
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
+from homeschool.schools.tests.factories import GradeLevelFactory
 from homeschool.test import TestCase
-
-
-class TestCourseListView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("courses:list")
-
-    def test_get(self):
-        user = self.make_user()
-
-        with self.login(user):
-            self.get_check_200("courses:list")
-
-        object_list = self.get_context("object_list")
-        assert list(object_list) == []
-
-    def test_courses_from_current_school_year(self):
-        today = timezone.now().date()
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-        old_school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=today - datetime.timedelta(days=600),
-            end_date=today - datetime.timedelta(days=550),
-        )
-        old_grade_level = GradeLevelFactory(school_year=old_school_year)
-        CourseFactory(grade_levels=[old_grade_level])
-
-        with self.login(user):
-            self.get("courses:list")
-
-        self.assertContext("courses_by_grade_level", {grade_level: [course]})
 
 
 class TestCourseDetailView(TestCase):
