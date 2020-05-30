@@ -27,7 +27,7 @@
   <div class="flex flex-col w-full">
     {% for grade_level in schoolyear.grade_levels.all %}
       <div class="bg-gray-100 rounded-lg py-4 mb-8">
-        <h2 class="font-thin text-2xl text-blue-900 ml-3">{{ grade_level.name }}</h2>
+        <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level.name }}</h2>
 
         <div class="flex flex-row flex-wrap">
           {% for course in grade_level.courses.all %}
