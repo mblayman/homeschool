@@ -1,8 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, View
+from django.views.generic import CreateView, DetailView, ListView, View
 
+from .forms import GradeLevelForm
 from .models import SchoolYear
 
 
@@ -51,3 +53,24 @@ class SchoolYearListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         return SchoolYear.objects.filter(school__admin=user)
+
+
+class GradeLevelCreateView(LoginRequiredMixin, CreateView):
+    form_class = GradeLevelForm
+    template_name = "schools/gradelevel_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["school_year"] = get_object_or_404(
+            SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
+        )
+        return context
+
+    def get_success_url(self):
+        return reverse("schools:school_year_detail", args=[self.kwargs["uuid"]])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs

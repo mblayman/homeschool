@@ -15,4 +15,9 @@ urlpatterns = [
         name="school_year_detail",
     ),
     path("school-years/", views.SchoolYearListView.as_view(), name="school_year_list"),
+    path(
+        "school-years/<uuid:uuid>/grade-levels/",
+        views.GradeLevelCreateView.as_view(),
+        name="grade_level_create",
+    ),
 ]

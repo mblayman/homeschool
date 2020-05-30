@@ -1,5 +1,6 @@
 import datetime
 
+from homeschool.schools.models import GradeLevel
 from homeschool.schools.tests.factories import SchoolYearFactory
 from homeschool.test import TestCase
 
@@ -103,3 +104,46 @@ class TestSchoolYearListView(TestCase):
             self.get("schools:school_year_list")
 
         assert school_year not in self.get_context("schoolyear_list")
+
+
+class TestGradeLevelCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        self.assertLoginRequired("schools:grade_level_create", uuid=school_year.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:grade_level_create", uuid=school_year.uuid)
+
+        assert school_year == self.get_context("school_year")
+
+    def test_post(self):
+        """A user can create a grade level for their school year."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        data = {"school_year": str(school_year.id), "name": "3rd Grade"}
+
+        with self.login(user):
+            response = self.post(
+                "schools:grade_level_create", uuid=school_year.uuid, data=data
+            )
+
+        grade_level = GradeLevel.objects.get(school_year=school_year)
+        assert grade_level.name == "3rd Grade"
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=school_year.uuid
+        )
+
+    def test_not_found_for_other_school(self):
+        """A user cannot add a grade level to another user's school year."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            response = self.get("schools:grade_level_create", uuid=school_year.uuid)
+
+        self.response_404(response)
