@@ -68,6 +68,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "waffle.middleware.WaffleMiddleware",
     "tz_detect.middleware.TimezoneMiddleware",
+    "homeschool.middleware.SqueakyCleanMiddleware",
 ]
 
 # Enable the debug toolbar only in DEBUG mode.

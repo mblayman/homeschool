@@ -6,6 +6,7 @@
 #
 asgiref==3.2.3            # via django
 beautifulsoup4==4.8.2
+bleach==3.1.5
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 defusedxml==0.6.0         # via python3-openid
@@ -22,16 +23,19 @@ freezegun==0.3.14
 gunicorn==20.0.4
 idna==2.8                 # via requests
 oauthlib==3.1.0           # via requests-oauthlib
+packaging==20.4           # via bleach
 psycopg2==2.8.4           # via django-heroku
+pyparsing==2.4.7          # via packaging
 python-dateutil==2.8.1
 python3-openid==3.1.0     # via django-allauth
 pytz==2019.3              # via django, django-tz-detect
 requests-oauthlib==1.3.0  # via django-allauth
 requests==2.22.0          # via django-allauth, requests-oauthlib
-six==1.14.0               # via django-tz-detect, django-waffle, freezegun, python-dateutil
+six==1.14.0               # via bleach, django-tz-detect, django-waffle, freezegun, packaging, python-dateutil
 soupsieve==1.9.5          # via beautifulsoup4
 sqlparse==0.3.0           # via django, django-debug-toolbar
 urllib3==1.25.7           # via requests
+webencodings==0.5.1       # via bleach
 whitenoise==4.1.4         # via django-heroku
 
 # The following packages are considered to be unsafe in a requirements file:
