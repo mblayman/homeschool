@@ -661,7 +661,14 @@ class TestStartSchoolYearView(TestCase):
         with self.login(user):
             response = self.post("core:start-school-year", data=data)
 
-        self.assertEqual(SchoolYear.objects.filter(school=user.school).count(), 1)
+        school_year = SchoolYear.objects.get(school=user.school)
+        assert school_year.days_of_week == (
+            SchoolYear.MONDAY
+            + SchoolYear.TUESDAY
+            + SchoolYear.WEDNESDAY
+            + SchoolYear.THURSDAY
+            + SchoolYear.FRIDAY
+        )
         self.response_302(response)
         assert response.get("Location") == self.reverse("core:start-grade-level")
 

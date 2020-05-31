@@ -8,7 +8,7 @@
   </h1>
 
   <p class="mb-8">
-    <a href="#"
+    <a href="{% url "schools:school_year_create" %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
       Add School Year
     </a>
@@ -16,7 +16,7 @@
 
   <ul>
     {% for school_year in schoolyear_list %}
-    <li><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">School Year for {{ school_year }}</a></li>
+    <li class="mb-2"><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">School Year for {{ school_year }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}

@@ -1,6 +1,6 @@
 import datetime
 
-from homeschool.schools.models import GradeLevel
+from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.schools.tests.factories import SchoolYearFactory
 from homeschool.test import TestCase
 
@@ -80,6 +80,35 @@ class TestSchoolYearDetailView(TestCase):
             response = self.get("schools:school_year_detail", uuid=school_year.uuid)
 
         self.response_404(response)
+
+
+class TestSchoolYearCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("schools:school_year_create")
+
+    def test_get(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("schools:school_year_create")
+
+    def test_post(self):
+        """A user can create a school year."""
+        user = self.make_user()
+        data = {
+            "school": str(user.school.id),
+            "start_date": "1/1/20",
+            "end_date": "12/31/20",
+            "monday": True,
+        }
+
+        with self.login(user):
+            response = self.post("schools:school_year_create", data=data)
+
+        school_year = SchoolYear.objects.get(school=user.school)
+        assert school_year.days_of_week == SchoolYear.MONDAY
+        self.response_302(response)
+        assert response.get("Location") == self.reverse("schools:school_year_list")
 
 
 class TestSchoolYearListView(TestCase):

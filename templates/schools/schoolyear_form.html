@@ -1,0 +1,109 @@
+{% extends "app_base.html" %}
+
+{% block head_title%}Add School Year{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">
+    <a href="{% url "schools:school_year_list" %}" class="hover:underline">School Years</a>
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+    Add School Year
+  </h1>
+  {% for error_message in form.non_field_errors %}
+    <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
+  {% endfor %}
+  <form method="post" class="w-full max-w-2xl">
+    {% csrf_token %}
+    <input type="hidden" name="school" value="{{ user.school.id }}">
+    <div class="md:flex md:items-center {% if not form.errors.start_date %}mb-6{% endif %}">
+      <div class="md:w-1/4">
+        <label class="block text-blue-900 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_start_date">
+          Start Date
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
+                     {% if form.errors.start_date %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
+               id="id_start_date" type="text" name="start_date" {% if form.start_date.value %}value="{{ form.start_date.value }}"{% endif %}
+               placeholder="9/1/2020" autofocus required>
+      </div>
+    </div>
+    {% if form.errors.start_date %}
+      <div class="md:flex md:items-center mt-2 mb-6">
+        <div class="md:w-1/4"></div>
+        <div class="md:w-3/4">
+          {% for error_message in form.errors.start_date %}
+            <p class="text-red-500 text-xs italic">{{ error_message }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    <div class="md:flex md:items-center {% if not form.errors.end_date %}mb-6{% endif %}">
+      <div class="md:w-1/4">
+        <label class="block text-blue-900 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_end_date">
+          End Date
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
+                     {% if form.errors.end_date %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
+               id="id_end_date" type="text" name="end_date" {% if form.end_date.value %}value="{{ form.end_date.value }}"{% endif %}
+              placeholder="6/1/2021"  required>
+      </div>
+    </div>
+    {% if form.errors.end_date %}
+      <div class="md:flex md:items-center mt-2 mb-6">
+        <div class="md:w-1/4"></div>
+        <div class="md:w-3/4">
+          {% for error_message in form.errors.end_date %}
+            <p class="text-red-500 text-xs italic">{{ error_message }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <div class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4">
+          Days of week
+        </div>
+      </div>
+      <div class="md:w-3/4">
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="monday" {% if form.monday.value %}checked{% endif %}>
+          Mon.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="tuesday" {% if form.tuesday.value %}checked{% endif %}>
+          Tues.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="wednesday" {% if form.wednesday.value %}checked{% endif %}>
+          Wed.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="thursday" {% if form.thursday.value %}checked{% endif %}>
+          Thurs.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="friday" {% if form.friday.value %}checked{% endif %}>
+          Fri.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="saturday" {% if form.saturday.value %}checked{% endif %}>
+          Sat.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="sunday" {% if form.sunday.value %}checked{% endif %}>
+          Sun.
+        </label>
+      </div>
+    </div>
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      <div class="md:w-3/4 text-right">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Add School Year
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

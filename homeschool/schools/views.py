@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView, View
 
-from .forms import GradeLevelForm
+from .forms import GradeLevelForm, SchoolYearForm
 from .models import SchoolYear
 
 
@@ -38,6 +38,26 @@ class CurrentSchoolYearView(LoginRequiredMixin, View):
         return SchoolYearDetailView.as_view()(request, uuid=school_year.uuid)
 
 
+class SchoolYearCreateView(LoginRequiredMixin, CreateView):
+    template_name = "schools/schoolyear_form.html"
+    form_class = SchoolYearForm
+    initial = {
+        "monday": True,
+        "tuesday": True,
+        "wednesday": True,
+        "thursday": True,
+        "friday": True,
+    }
+
+    def get_success_url(self):
+        return reverse("schools:school_year_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
 class SchoolYearDetailView(LoginRequiredMixin, DetailView):
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
@@ -52,7 +72,7 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
 class SchoolYearListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
-        return SchoolYear.objects.filter(school__admin=user)
+        return SchoolYear.objects.filter(school__admin=user).order_by("-start_date")
 
 
 class GradeLevelCreateView(LoginRequiredMixin, CreateView):

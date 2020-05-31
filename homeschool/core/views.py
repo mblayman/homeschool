@@ -296,6 +296,22 @@ class StartSchoolYearView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+
+        if "data" in kwargs:
+            # Since this view is for easy onboarding,
+            # set a reasonable standard week.
+            # The QueryDict is immutable so it must be copied to update it.
+            data = kwargs["data"].copy()
+            data.update(
+                {
+                    "monday": True,
+                    "tuesday": True,
+                    "wednesday": True,
+                    "thursday": True,
+                    "friday": True,
+                }
+            )
+            kwargs["data"] = data
         return kwargs
 
 
