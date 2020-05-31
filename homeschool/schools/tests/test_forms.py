@@ -83,6 +83,23 @@ class TestSchoolYearForm(TestCase):
                     in form.non_field_errors()[0]
                 )
 
+    def test_school_year_overlap_with_itself(self):
+        """A school year is permitted to overlap with itself when updating."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+
+        data = {
+            "school": str(school.id),
+            "start_date": str(school_year.start_date - datetime.timedelta(days=1)),
+            "end_date": str(school_year.end_date),
+            "monday": True,
+        }
+        form = SchoolYearForm(user=school.admin, instance=school_year, data=data)
+
+        is_valid = form.is_valid()
+
+        assert is_valid
+
     def test_validate_one_week_day(self):
         """A school year must run on at least one day per week."""
         school = SchoolFactory()

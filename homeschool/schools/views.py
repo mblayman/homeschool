@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, View
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
 
 from .forms import GradeLevelForm, SchoolYearForm
 from .models import SchoolYear
@@ -49,6 +49,11 @@ class SchoolYearCreateView(LoginRequiredMixin, CreateView):
         "friday": True,
     }
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["create"] = True
+        return context
+
     def get_success_url(self):
         return reverse("schools:school_year_list")
 
@@ -66,6 +71,38 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
         user = self.request.user
         return SchoolYear.objects.filter(school__admin=user).prefetch_related(
             "grade_levels", "grade_levels__courses"
+        )
+
+
+class SchoolYearEditView(LoginRequiredMixin, UpdateView):
+    form_class = SchoolYearForm
+    template_name = "schools/schoolyear_form.html"
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        user = self.request.user
+        return SchoolYear.objects.filter(school=user.school)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_initial(self):
+        return {
+            "monday": self.object.runs_on(SchoolYear.MONDAY),
+            "tuesday": self.object.runs_on(SchoolYear.TUESDAY),
+            "wednesday": self.object.runs_on(SchoolYear.WEDNESDAY),
+            "thursday": self.object.runs_on(SchoolYear.THURSDAY),
+            "friday": self.object.runs_on(SchoolYear.FRIDAY),
+            "saturday": self.object.runs_on(SchoolYear.SATURDAY),
+            "sunday": self.object.runs_on(SchoolYear.SUNDAY),
+        }
+
+    def get_success_url(self):
+        return reverse(
+            "schools:school_year_detail", kwargs={"uuid": self.kwargs["uuid"]}
         )
 
 

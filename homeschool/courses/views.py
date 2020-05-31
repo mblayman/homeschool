@@ -36,19 +36,18 @@ class CourseEditView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        course = kwargs["instance"]
-        kwargs["initial"].update(
-            {
-                "monday": course.runs_on(Course.MONDAY),
-                "tuesday": course.runs_on(Course.TUESDAY),
-                "wednesday": course.runs_on(Course.WEDNESDAY),
-                "thursday": course.runs_on(Course.THURSDAY),
-                "friday": course.runs_on(Course.FRIDAY),
-                "saturday": course.runs_on(Course.SATURDAY),
-                "sunday": course.runs_on(Course.SUNDAY),
-            }
-        )
         return kwargs
+
+    def get_initial(self):
+        return {
+            "monday": self.object.runs_on(Course.MONDAY),
+            "tuesday": self.object.runs_on(Course.TUESDAY),
+            "wednesday": self.object.runs_on(Course.WEDNESDAY),
+            "thursday": self.object.runs_on(Course.THURSDAY),
+            "friday": self.object.runs_on(Course.FRIDAY),
+            "saturday": self.object.runs_on(Course.SATURDAY),
+            "sunday": self.object.runs_on(Course.SUNDAY),
+        }
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})

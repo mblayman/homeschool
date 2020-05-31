@@ -69,9 +69,18 @@ class SchoolYearForm(DaysOfWeekModelForm):
 
     def check_overlap(self, start_date, end_date):
         """Check if the dates overlap with any of the user's existing school years."""
-        school_year = SchoolYear.objects.filter(
+        overlapping_school_years = SchoolYear.objects.filter(
             school=self.user.school, start_date__lte=end_date, end_date__gte=start_date
-        ).first()
+        )
+
+        # When updating, be sure to exclude the existing school year
+        # or it will overlap with itself.
+        if self.instance:
+            overlapping_school_years = overlapping_school_years.exclude(
+                id=self.instance.id
+            )
+
+        school_year = overlapping_school_years.first()
         if school_year:
             self.add_error(
                 None,
