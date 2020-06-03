@@ -10,8 +10,16 @@
     School Year for {{ schoolyear }}
   </h1>
 
-  <p class="font-thin text-base text-gray-800 mb-2">This school year starts on <strong>{{ schoolyear.start_date|date:"F j, Y" }}</strong> and ends on <strong>{{ schoolyear.end_date|date:"F j, Y" }}</strong>.</p>
-  <p class="font-thin text-base text-gray-800 mb-8">School weeks run on <strong>{{ schoolyear.display_days }}</strong>.</p>
+  <p class="font-thin text-base text-gray-800 mb-2">
+    This school year {% if user.get_local_today > schoolyear.start_date %}started{% else %}starts{% endif %} on
+    <strong>{{ schoolyear.start_date|date:"F j, Y" }}</strong>
+    and {% if user.get_local_today > schoolyear.end_date %}ended{% else %}ends{% endif %} on
+    <strong>{{ schoolyear.end_date|date:"F j, Y" }}</strong>.
+  </p>
+  <p class="font-thin text-base text-gray-800 mb-8">
+    School weeks {% if user.get_local_today > schoolyear.end_date %}ran{% else %}run{% endif %} on
+    <strong>{{ schoolyear.display_days }}</strong>.
+  </p>
 
   <p class="mb-8">
     <a href="{% url "schools:grade_level_create" schoolyear.uuid %}"
