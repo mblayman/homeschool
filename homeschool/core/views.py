@@ -68,7 +68,7 @@ class AppView(LoginRequiredMixin, TemplateView):
 
     def get_schedules(self, school_year, today, week):
         """Get the schedules for each student."""
-        schedules = []
+        schedules: list = []
         if school_year is None:
             return schedules
 
@@ -122,7 +122,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def get_schedules(self, school_year, today, day):
         """Get the schedules for each student."""
-        schedules = []
+        schedules: list = []
         if not school_year:
             return schedules
 
@@ -192,7 +192,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def get_task_completions_by_student(self, post_data):
         """Parse out the tasks."""
-        tasks = {}
+        tasks: dict = {}
         for key, value in post_data.items():
             if not key.startswith("task"):
                 continue

@@ -12,7 +12,7 @@ class Command(BaseCommand):
     url = "http://www.homeschoolskedtrack.com/HomeSchool"
 
     def handle(self, *args, **kwargs):
-        self.students = {}
+        self.students: dict = {}
         self.get_authenticated_session()
 
         out_dir = "courses_exports"

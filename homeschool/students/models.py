@@ -42,7 +42,7 @@ class Student(models.Model):
             ).values_list("course_task_id", flat=True)
         )
         task_limit = len(week_dates)
-        schedule = {"student": self, "courses": []}
+        schedule: dict = {"student": self, "courses": []}
         for course in courses:
             if not course.is_running:
                 continue
@@ -103,7 +103,7 @@ class Student(models.Model):
 
         The data is in a dictionary for fast lookups.
         """
-        week_coursework = {}
+        week_coursework: dict = {}
         coursework_qs = Coursework.objects.filter(
             student=self, completed_date__range=(week.monday, week.sunday)
         ).select_related("course_task")
@@ -159,7 +159,7 @@ class Student(models.Model):
 
         The data is in a dictionary for fast lookups.
         """
-        day_coursework = {}
+        day_coursework: dict = {}
         coursework_qs = Coursework.objects.filter(
             student=self, completed_date=day
         ).select_related("course_task")

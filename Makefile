@@ -15,3 +15,6 @@ graph:
 coverage:
 	coverage run --source='homeschool' -m pytest
 	coverage report
+
+mypy:
+	mypy homeschool project manage.py

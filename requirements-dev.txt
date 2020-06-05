@@ -4,6 +4,7 @@ django-test-plus==1.4.0
 factory-boy
 flake8==3.7.9
 isort==4.3.21
+mypy==0.780
 pip-tools
 pre-commit
 pygraphviz==1.5

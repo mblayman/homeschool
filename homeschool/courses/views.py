@@ -1,12 +1,64 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
-from homeschool.schools.models import GradeLevel
+from homeschool.schools.exceptions import NoSchoolYearError
+from homeschool.schools.models import GradeLevel, SchoolYear
 
 from .forms import CourseForm, CourseTaskForm
 from .models import Course, CourseTask
+
+
+class CourseCreateView(LoginRequiredMixin, CreateView):
+    template_name = "courses/course_form.html"
+    form_class = CourseForm
+    initial = {
+        "monday": True,
+        "tuesday": True,
+        "wednesday": True,
+        "thursday": True,
+        "friday": True,
+    }
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            return super().dispatch(*args, **kwargs)
+        except NoSchoolYearError:
+            return HttpResponseRedirect(reverse("schools:school_year_list"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["create"] = True
+        return context
+
+    def get_success_url(self):
+        return reverse("courses:detail", args=[self.object.uuid])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        school_year_uuid = self.request.GET.get("school_year")
+
+        school_year = None
+        if school_year_uuid:
+            try:
+                school_year = SchoolYear.objects.filter(
+                    school__admin=self.request.user, uuid=school_year_uuid
+                ).first()
+            except ValidationError:
+                # Bogus uuid. Let it slide.
+                pass
+
+        if not school_year:
+            school_year = SchoolYear.get_current_year_for(self.request.user)
+
+        if not school_year:
+            raise NoSchoolYearError()
+
+        kwargs["school_year"] = school_year
+        return kwargs
 
 
 class CourseDetailView(LoginRequiredMixin, DetailView):
@@ -25,7 +77,7 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
 class CourseEditView(LoginRequiredMixin, UpdateView):
     form_class = CourseForm
-    template_name = "courses/course_edit.html"
+    template_name = "courses/course_form.html"
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
 
@@ -36,6 +88,9 @@ class CourseEditView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        # The Course queryset should protect against this ever being an index error.
+        grade_level = self.object.grade_levels.all().select_related("school_year")[0]
+        kwargs["school_year"] = grade_level.school_year
         return kwargs
 
     def get_initial(self):

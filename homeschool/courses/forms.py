@@ -1,6 +1,7 @@
 from django import forms
 
 from homeschool.core.forms import DaysOfWeekModelForm
+from homeschool.schools.models import GradeLevel
 
 from .models import Course, CourseTask, GradedWork
 
@@ -8,7 +9,18 @@ from .models import Course, CourseTask, GradedWork
 class CourseForm(DaysOfWeekModelForm):
     class Meta:
         model = Course
-        fields = ["name"] + DaysOfWeekModelForm.days_of_week_fields
+        fields = ["name", "grade_levels"] + DaysOfWeekModelForm.days_of_week_fields
+
+    grade_levels = forms.ModelMultipleChoiceField(queryset=GradeLevel.objects.none())
+
+    def __init__(self, school_year, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Saving this to an attribute isn't really needed,
+        # but it's useful for verification.
+        self.school_year = school_year
+        self.fields["grade_levels"].queryset = GradeLevel.objects.filter(
+            school_year=school_year
+        )
 
 
 class CourseTaskForm(forms.ModelForm):

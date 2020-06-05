@@ -1,11 +1,113 @@
+import datetime
+
 from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
     CourseFactory,
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.tests.factories import GradeLevelFactory
+from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.test import TestCase
+
+
+class TestCourseCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("courses:create")
+
+    def test_get(self):
+        user = self.make_user()
+        SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            self.get_check_200("courses:create")
+
+        assert self.get_context("create")
+
+    def test_school_year_uuid(self):
+        """A school year is fetched from the querystring."""
+        user = self.make_user()
+        today = user.get_local_today()
+        # Use dates in the past so the school year won't be a "current" school year.
+        school_year = SchoolYearFactory(
+            school__admin=user,
+            start_date=today - datetime.timedelta(days=365),
+            end_date=today - datetime.timedelta(days=1),
+        )
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:create", data={"school_year": str(school_year.uuid)}
+            )
+
+        form = self.get_context("form")
+        assert form.school_year == school_year
+
+    def test_school_year_only_user_school_years(self):
+        """A school year from the querystring can only be a user's school years."""
+        user = self.make_user()
+        user_school_year = SchoolYearFactory(school__admin=user)
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:create", data={"school_year": str(school_year.uuid)}
+            )
+
+        form = self.get_context("form")
+        assert form.school_year == user_school_year
+
+    def test_school_year_from_user(self):
+        """A school year is fetched from the user if not provided on the querystring."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            self.get_check_200("courses:create")
+
+        form = self.get_context("form")
+        assert form.school_year == school_year
+
+    def test_school_year_uuid_bogus(self):
+        """A malformed school year uuid in the querystring is ignored."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            self.get_check_200("courses:create", data={"school_year": "bogus"})
+
+        form = self.get_context("form")
+        assert form.school_year == school_year
+
+    def test_no_school_year(self):
+        """When no school year is provided, the user is redirected to the list page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("courses:create")
+
+        self.response_302(response)
+        assert self.reverse("schools:school_year_list") in response.get("Location")
+
+    def test_post(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        data = {
+            "name": "Course name",
+            "wednesday": "on",
+            "friday": "on",
+            "grade_levels": str(grade_level.id),
+        }
+
+        with self.login(user):
+            response = self.post("courses:create", data=data)
+
+        course = Course.objects.get(grade_levels=grade_level.id)
+        assert course.name == "Course name"
+        assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
+        self.response_302(response)
+        assert self.reverse("courses:detail", uuid=course.uuid) in response.get(
+            "Location"
+        )
 
 
 class TestCourseDetailView(TestCase):
@@ -51,7 +153,12 @@ class TestCourseEditView(TestCase):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(grade_levels=[grade_level])
-        data = {"name": "New course name", "wednesday": "on", "friday": "on"}
+        data = {
+            "name": "New course name",
+            "wednesday": "on",
+            "friday": "on",
+            "grade_levels": str(grade_level.id),
+        }
 
         with self.login(user):
             self.post("courses:edit", uuid=course.uuid, data=data)
