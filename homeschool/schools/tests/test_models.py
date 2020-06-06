@@ -232,3 +232,9 @@ class TestGradeLevel(TestCase):
         grade_level.courses.add(course)
 
         assert list(grade_level.courses.all()) == [course]
+
+    def test_has_uuid(self):
+        grade_level_uuid = uuid.uuid4()
+        grade_level = GradeLevelFactory(uuid=grade_level_uuid)
+
+        assert grade_level.uuid == grade_level_uuid

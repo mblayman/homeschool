@@ -82,6 +82,7 @@ class GradeLevel(models.Model):
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="grade_levels"
     )
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     def __str__(self):
         return self.name
