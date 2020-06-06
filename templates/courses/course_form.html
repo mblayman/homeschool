@@ -1,10 +1,14 @@
 {% extends "app_base.html" %}
 
-{% block head_title %}Edit {{ course.name }}{% endblock %}
+{% block head_title %}{% if create %}Add Course{% else %}Edit {{ course.name }}{% endif %}{% endblock %}
 
 {% block main %}
   <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
-    {{ course.name }}
+    {% if create %}
+      Add Course
+    {% else %}
+      {{ course.name }}
+    {% endif %}
   </h1>
 
   {% for error_message in form.non_field_errors %}
@@ -74,6 +78,8 @@
               name="grade_levels"
               {% if selectable_grade_level.data.selected %}
                 checked
+              {% elif grade_level and grade_level.id == selectable_grade_level.data.value %}
+                checked
               {% endif %}
               >
             {{ selectable_grade_level.choice_label }}
@@ -106,7 +112,7 @@
           </a>
         {% endif %}
         <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
-          Update
+          {% if create %}Add Course{% else %}Update{% endif %}
         </button>
       </div>
     </div>
