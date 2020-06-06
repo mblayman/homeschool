@@ -22,10 +22,12 @@
   </p>
 
   <p class="mb-8">
-    <a href="{% url "schools:grade_level_create" schoolyear.uuid %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
-      Add Grade Level
-    </a>
+    {% if schoolyear.grade_levels.all %}
+      <a href="{% url "schools:grade_level_create" schoolyear.uuid %}"
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+        Add Grade Level
+      </a>
+    {% endif %}
     <a href="{% url "schools:school_year_edit" schoolyear.uuid %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
       Edit School Year
@@ -99,6 +101,24 @@
               </div>
             </div>
           {% endfor %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="flex flex-row justify-center items-center p-8">
+        <div class="w-2/5 font-thin mr-8">
+          <p class="mb-8">
+            Let’s get started!
+            Create a grade level for your school year.
+          </p>
+          <div class="text-center">
+            <a href="{% url "schools:grade_level_create" schoolyear.uuid %}"
+              class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+              Add Grade Level
+            </a>
+          </div>
+        </div>
+        <div class="w-2/5">
+          <img src="{% static "blank-canvas.svg" %}" alt="Stare at blank canvas">
         </div>
       </div>
     {% endfor %}
