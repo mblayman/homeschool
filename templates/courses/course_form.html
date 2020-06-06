@@ -7,9 +7,9 @@
     {{ course.name }}
   </h1>
 
-  {% if form.errors %}
-    <div class="pb-8">{{ form.errors }}</div>
-  {% endif %}
+  {% for error_message in form.non_field_errors %}
+    <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
+  {% endfor %}
 
   <form method="POST" class="w-full max-w-2xl">
     {% csrf_token %}
@@ -61,6 +61,36 @@
         </label>
       </div>
     </div>
+    <div class="md:flex md:items-center {% if not form.errors.grade_levels %}mb-6{% endif %}">
+      <div class="md:w-1/4">
+        <div class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4">
+          Grade Level
+        </div>
+      </div>
+      <div class="md:w-3/4">
+        {% for selectable_grade_level in form.grade_levels %}
+          <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+            <input type="checkbox" value="{{ selectable_grade_level.data.value }}"
+              name="grade_levels"
+              {% if selectable_grade_level.data.selected %}
+                checked
+              {% endif %}
+              >
+            {{ selectable_grade_level.choice_label }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% if form.errors.grade_levels %}
+      <div class="md:flex md:items-center mt-2 mb-6">
+        <div class="md:w-1/4"></div>
+        <div class="md:w-3/4">
+          {% for error_message in form.errors.grade_levels %}
+            <p class="text-red-500 text-xs italic">{{ error_message }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
