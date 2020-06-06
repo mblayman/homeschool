@@ -44,7 +44,7 @@ class SchoolYearCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("schools:school_year_list")
+        return reverse("schools:school_year_detail", args=[self.object.uuid])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

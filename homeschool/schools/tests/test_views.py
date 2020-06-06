@@ -117,7 +117,9 @@ class TestSchoolYearCreateView(TestCase):
         school_year = SchoolYear.objects.get(school=user.school)
         assert school_year.days_of_week == SchoolYear.MONDAY
         self.response_302(response)
-        assert response.get("Location") == self.reverse("schools:school_year_list")
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=school_year.uuid
+        )
 
 
 class TestSchoolYearEditView(TestCase):
