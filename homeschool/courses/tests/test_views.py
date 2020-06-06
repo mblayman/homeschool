@@ -88,6 +88,41 @@ class TestCourseCreateView(TestCase):
         self.response_302(response)
         assert self.reverse("schools:school_year_list") in response.get("Location")
 
+    def test_has_grade_level(self):
+        """A grade level put in the querystring is available as context."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school__admin=user)
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:create", data={"grade_level": str(grade_level.uuid)}
+            )
+
+        assert self.get_context("grade_level") == grade_level
+
+    def test_not_other_grade_level(self):
+        """A different user's grade level cannot be in the context."""
+        user = self.make_user()
+        SchoolYearFactory(school__admin=user)
+        grade_level = GradeLevelFactory()
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:create", data={"grade_level": str(grade_level.uuid)}
+            )
+
+        assert self.get_context("grade_level") is None
+
+    def test_bogus_grade_level(self):
+        """A bogus grade level is ignored and not in the context"""
+        user = self.make_user()
+        SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            self.get_check_200("courses:create", data={"grade_level": "bogus"})
+
+        assert self.get_context("grade_level") is None
+
     def test_post(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)

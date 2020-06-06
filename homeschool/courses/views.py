@@ -32,6 +32,17 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["create"] = True
+
+        grade_level_uuid = self.request.GET.get("grade_level")
+        if grade_level_uuid:
+            try:
+                context["grade_level"] = GradeLevel.objects.filter(
+                    school_year__school__admin=self.request.user, uuid=grade_level_uuid
+                ).first()
+            except ValidationError:
+                # Bogus uuid. Let it slide.
+                context["grade_level"] = None
+
         return context
 
     def get_success_url(self):
