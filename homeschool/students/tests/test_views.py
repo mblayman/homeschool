@@ -89,6 +89,26 @@ class TestStudentCourseView(TestCase):
         self.assertContext("course", course)
 
     @freeze_time("2020-02-10")  # Monday
+    def test_has_tasks_today(self):
+        """A course that runs today shows its tasks."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        student = enrollment.student
+        grade_level = enrollment.grade_level
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        today = timezone.now().date()
+
+        with self.login(user):
+            self.get("students:course", uuid=student.uuid, course_uuid=course.uuid)
+
+        assert self.get_context("task_items") == [
+            {"course_task": task, "planned_date": today, "has_graded_work": False}
+        ]
+
+    @freeze_time("2020-02-10")  # Monday
     def test_has_tasks(self):
         user = self.make_user()
         enrollment = EnrollmentFactory(
