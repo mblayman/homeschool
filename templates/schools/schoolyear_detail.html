@@ -63,6 +63,24 @@
                 </div>
               </div>
             </div>
+            {% if forloop.last %}
+              <div class="w-3/12">
+                <div class="rounded overflow-hidden bg-white shadow-md m-3">
+                  <div class="px-4 py-4">
+                    <div class="font-light text-lg border-b border-yellow-400 pb-1 mb-3">
+                      <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level.uuid }}" class="hover:underline">
+                        Add Course
+                      </a>
+                    </div>
+                    <div class="flex flex-row justify-between">
+                      <p class="text-gray-500 text-sm">
+                      Create a {{ grade_level.name }} course
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
           {% empty %}
             <div class="flex flex-row items-center font-thin">
               <div class="w-2/5">
