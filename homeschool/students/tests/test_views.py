@@ -10,7 +10,7 @@ from homeschool.courses.tests.factories import (
     GradedWorkFactory,
 )
 from homeschool.schools.tests.factories import GradeLevelFactory
-from homeschool.students.models import Grade
+from homeschool.students.models import Grade, Student
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
@@ -29,6 +29,32 @@ class TestStudentsIndexView(TestCase):
 
         with self.login(user):
             self.get_check_200("students:index")
+
+
+class TestStudentsCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("students:create")
+
+    def test_get(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("students:create")
+
+        assert self.get_context("create")
+
+    def test_post(self):
+        user = self.make_user()
+        data = {"first_name": "Johnny", "last_name": "Smith"}
+
+        with self.login(user):
+            response = self.post("students:create", data=data)
+
+        self.response_302(response)
+        assert self.reverse("students:index") in response.get("Location")
+        student = Student.objects.get(school=user.school)
+        assert student.first_name == "Johnny"
+        assert student.last_name == "Smith"
 
 
 class TestStudentCourseView(TestCase):

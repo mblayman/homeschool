@@ -1,0 +1,63 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}{% if create %}Add Student{% else %}Edit {{ student.full_name }}{% endif %}{% endblock %}
+
+{% block main %}
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+    {% if create %}
+      Add Student
+    {% else %}
+      {{ student.full_name }}
+    {% endif %}
+  </h1>
+
+  {% for error_message in form.non_field_errors %}
+    <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
+  {% endfor %}
+
+  <form method="POST" class="w-full max-w-2xl">
+    {% csrf_token %}
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_first_name">
+          First Name
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          id="id_first_name" type="text" name="first_name" {% if form.first_name.value %}value="{{ form.first_name.value }}"{% endif %} required autofocus>
+      </div>
+    </div>
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_last_name">
+          Last Name
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          id="id_last_name" type="text" name="last_name" {% if form.last_name.value %}value="{{ form.last_name.value }}"{% endif %} required>
+      </div>
+    </div>
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
+        {% if create %}
+          <a href="{% url "students:index" %}"
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Cancel
+          </a>
+        {% else %}
+          {# FIXME: Point to the edit page. #}
+          <a href="{% url "courses:detail" course.uuid %}"
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Cancel
+          </a>
+        {% endif %}
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+          {% if create %}Add Student{% else %}Update{% endif %}
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

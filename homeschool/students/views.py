@@ -7,15 +7,37 @@ from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic.base import TemplateView
+from django.views.generic import CreateView, TemplateView
 
 from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
-from homeschool.students.models import Coursework, Grade
+from homeschool.students.models import Coursework, Grade, Student
 
 
 class StudentIndexView(LoginRequiredMixin, TemplateView):
     template_name = "students/index.html"
+
+
+class StudentCreateView(LoginRequiredMixin, CreateView):
+    template_name = "students/student_form.html"
+    model = Student
+    fields = ("school", "first_name", "last_name")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["create"] = True
+        return context
+
+    def get_success_url(self):
+        return reverse("students:index")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if "data" in kwargs:
+            data = kwargs["data"].copy()
+            data["school"] = self.request.user.school
+            kwargs["data"] = data
+        return kwargs
 
 
 class StudentCourseView(LoginRequiredMixin, TemplateView):
