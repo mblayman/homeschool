@@ -17,28 +17,8 @@
 
   <form method="POST" class="w-full max-w-2xl">
     {% csrf_token %}
-    <div class="md:flex md:items-center mb-6">
-      <div class="md:w-1/4">
-        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_first_name">
-          First Name
-        </label>
-      </div>
-      <div class="md:w-3/4">
-        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-          id="id_first_name" type="text" name="first_name" {% if form.first_name.value %}value="{{ form.first_name.value }}"{% endif %} required autofocus>
-      </div>
-    </div>
-    <div class="md:flex md:items-center mb-6">
-      <div class="md:w-1/4">
-        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_last_name">
-          Last Name
-        </label>
-      </div>
-      <div class="md:w-3/4">
-        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-          id="id_last_name" type="text" name="last_name" {% if form.last_name.value %}value="{{ form.last_name.value }}"{% endif %} required>
-      </div>
-    </div>
+    {% include "forms/field.html" with field=form.first_name autofocus=True %}
+    {% include "forms/field.html" with field=form.last_name %}
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">

@@ -13,29 +13,7 @@
   <form method="post" class="w-full max-w-lg">
     {% csrf_token %}
     <input type="hidden" name="school_year" value="{{ school_year.id }}">
-    <div class="md:flex md:items-center {% if not form.errors.name %}mb-6{% endif %}">
-      <div class="md:w-1/4">
-        <label class="block text-blue-900 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_name">
-          Name
-        </label>
-      </div>
-      <div class="md:w-3/4">
-        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
-               {% if form.errors.name %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
-               id="id_name" type="text" name="name" {% if form.name.value %}value="{{ form.name.value }}"{% endif %}
-               placeholder='e.g., "Kindergarten" or "6th Grade"' autofocus required>
-      </div>
-    </div>
-    {% if form.errors.name %}
-      <div class="md:flex md:items-center mt-2 mb-6">
-        <div class="md:w-1/4"></div>
-        <div class="md:w-3/4">
-          {% for error_message in form.errors.name %}
-            <p class="text-red-500 text-xs italic">{{ error_message }}</p>
-          {% endfor %}
-        </div>
-      </div>
-    {% endif %}
+    {% include "forms/field.html" with field=form.name placeholder="e.g., “Kindergarten” or “6th Grade”" autofocus=True %}
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 text-right">

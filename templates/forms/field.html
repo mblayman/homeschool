@@ -21,7 +21,7 @@
       {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
       {% if autofocus %}autofocus{% endif %}
       {% include "django/forms/widgets/attrs.html" %}
-      {% if field.required %}required{% endif %}
+      {% if field.field.required %}required{% endif %}
     >
   </div>
 </div>
