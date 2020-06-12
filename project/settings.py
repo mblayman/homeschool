@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.forms",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -111,6 +112,10 @@ DATABASES = {
 
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# Forms
+# This setting lets Django form widget templates be used or overridden.
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
