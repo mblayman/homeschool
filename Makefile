@@ -1,7 +1,7 @@
 .PHONY: local
 
 local:
-	heroku local -f Procfile.local
+	heroku local
 
 graph:
 	./manage.py graph_models \
