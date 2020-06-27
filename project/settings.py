@@ -157,6 +157,14 @@ SITE_ID = 1
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}
 
 # django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
@@ -172,4 +180,4 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
 WAFFLE_FLAG_MODEL = "core.Flag"
 WAFFLE_CREATE_MISSING_FLAGS = True
 
-django_heroku.settings(locals(), secret_key=False, test_runner=False)
+django_heroku.settings(locals(), secret_key=False, test_runner=False, logging=False)
