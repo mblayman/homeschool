@@ -11,11 +11,27 @@ from django.views.generic import CreateView, TemplateView
 
 from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
-from homeschool.students.models import Coursework, Grade, Student
+from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 
 class StudentIndexView(LoginRequiredMixin, TemplateView):
     template_name = "students/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["school_year"] = SchoolYear.get_current_year_for(user)
+        context["roster"] = []
+        for student in Student.objects.filter(school=user.school):
+            context["roster"].append(
+                {
+                    "student": student,
+                    "is_enrolled": Enrollment.is_student_enrolled(
+                        student, context["school_year"]
+                    ),
+                }
+            )
+        return context
 
 
 class StudentCreateView(LoginRequiredMixin, CreateView):
@@ -204,3 +220,8 @@ class GradeView(LoginRequiredMixin, TemplateView):
             scores[student_id][graded_work_id] = score
 
         return scores
+
+
+class EnrollmentCreateView(LoginRequiredMixin, CreateView):
+    model = Enrollment
+    fields = ("student", "grade_level")

@@ -1,0 +1,35 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}{% if create %}Add Student{% else %}Edit {{ student.full_name }}{% endif %}{% endblock %}
+
+{% block main %}
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+    {% if create %}
+      Add Student
+    {% else %}
+      {{ student.full_name }}
+    {% endif %}
+  </h1>
+
+  {% for error_message in form.non_field_errors %}
+    <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
+  {% endfor %}
+
+  <form method="POST" class="w-full max-w-2xl">
+    {% csrf_token %}
+    {% include "forms/field.html" with field=form.first_name autofocus=True %}
+    {% include "forms/field.html" with field=form.last_name %}
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
+        <a href="{% url "students:index" %}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Cancel
+        </a>
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+          {% if create %}Add Student{% else %}Update{% endif %}
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

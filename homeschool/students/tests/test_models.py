@@ -10,7 +10,12 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.tests.factories import GradeLevelFactory, SchoolFactory
+from homeschool.schools.tests.factories import (
+    GradeLevelFactory,
+    SchoolFactory,
+    SchoolYearFactory,
+)
+from homeschool.students.models import Enrollment
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
@@ -196,6 +201,34 @@ class TestEnrollment(TestCase):
         enrollment = EnrollmentFactory(grade_level=grade_level)
 
         assert enrollment.grade_level == grade_level
+
+    def test_student_is_enrolled(self):
+        """A student is tested for enrollment in a school year."""
+        enrollment = EnrollmentFactory()
+
+        is_enrolled = Enrollment.is_student_enrolled(
+            enrollment.student, enrollment.grade_level.school_year
+        )
+
+        assert is_enrolled
+
+    def test_student_is_not_enrolled(self):
+        """A student is not in a given school year."""
+        student = StudentFactory()
+        school_year = SchoolYearFactory()
+
+        is_enrolled = Enrollment.is_student_enrolled(student, school_year)
+
+        assert not is_enrolled
+
+    def test_is_student_enrolled_none_school_year(self):
+        """When a school year is None, a student isn't enrollment."""
+        student = StudentFactory()
+        school_year = None
+
+        is_enrolled = Enrollment.is_student_enrolled(student, school_year)
+
+        assert not is_enrolled
 
 
 class TestCoursework(TestCase):

@@ -1,10 +1,14 @@
 import datetime
 import uuid
+from typing import TYPE_CHECKING, Optional
 
 from django.db import models
 from django.db.models import Q
 
 from homeschool.core.schedules import Week
+
+if TYPE_CHECKING:
+    from homeschool.schools.models import SchoolYear  # pragma: no cover  # noqa
 
 
 class Student(models.Model):
@@ -199,6 +203,15 @@ class Enrollment(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
+
+    @classmethod
+    def is_student_enrolled(cls, student: Student, school_year: Optional["SchoolYear"]):
+        """Check if the student is enrolled in the school year."""
+        if school_year is None:
+            return False
+        return Enrollment.objects.filter(
+            student=student, grade_level__school_year=school_year
+        ).exists()
 
 
 class Coursework(models.Model):

@@ -12,4 +12,9 @@ urlpatterns = [
         name="course",
     ),
     path("grade/", views.GradeView.as_view(), name="grade"),
+    path(
+        "<uuid:uuid>/enroll/<uuid:school_year_uuid>/",
+        views.EnrollmentCreateView.as_view(),
+        name="enrollment_create",
+    ),
 ]

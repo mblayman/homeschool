@@ -9,7 +9,7 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.tests.factories import GradeLevelFactory
+from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.students.models import Grade, Student
 from homeschool.students.tests.factories import (
     CourseworkFactory,
@@ -29,6 +29,41 @@ class TestStudentsIndexView(TestCase):
 
         with self.login(user):
             self.get_check_200("students:index")
+
+    def test_has_school_year(self):
+        """The current school year is in the context."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("students:index")
+
+        assert self.get_context("school_year") == school_year
+
+    def test_has_roster(self):
+        """The user's students are available in the context."""
+        user = self.make_user()
+        StudentFactory()
+        student = StudentFactory(school=user.school)
+        EnrollmentFactory(student=student, grade_level__school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("students:index")
+
+        roster = self.get_context("roster")
+        assert roster == [{"student": student, "is_enrolled": True}]
+
+    def test_unenrolled_student(self):
+        """A student is unenrolled in the current school year."""
+        user = self.make_user()
+        StudentFactory()
+        student = StudentFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("students:index")
+
+        roster = self.get_context("roster")
+        assert roster == [{"student": student, "is_enrolled": False}]
 
 
 class TestStudentsCreateView(TestCase):
@@ -311,3 +346,27 @@ class TestGradeView(TestCase):
         assert response.get("Location") == self.reverse("core:daily")
         grade = Grade.objects.get(student=student, graded_work=graded_work)
         assert grade.score == 100
+
+
+class TestEnrollmentCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        student = StudentFactory()
+        school_year = SchoolYearFactory()
+
+        self.assertLoginRequired(
+            "students:enrollment_create",
+            uuid=student.uuid,
+            school_year_uuid=school_year.uuid,
+        )
+
+    def test_get(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=school_year.uuid,
+            )
