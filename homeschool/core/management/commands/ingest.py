@@ -24,10 +24,12 @@ COURSE_DAYS = {
     "History K": 25,
     "Math 2": 31,
     "Math K": 31,
+    "Math 1": 31,
     "Music 2": 19,
     "Music K": 2,
     "PE 2": 4,
     "PE K": 4,
+    "Penmanship 1": 18,
     "Reading 2": 31,
     "Reading Aloud K": 31,
     "Reading Instruction K": 31,
@@ -87,6 +89,10 @@ class Command(BaseCommand):
                 if row and row[0] == "Sequence":
                     searching_tasks = False
                     row_length = len(row)
+                continue
+
+            # Skip rows that are totally empty.
+            if not row:
                 continue
 
             try:
