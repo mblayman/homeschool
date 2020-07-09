@@ -13,7 +13,7 @@ graph:
 		-o models.png
 
 coverage:
-	coverage run --source='homeschool' -m pytest
+	coverage run --source='homeschool' -m pytest --migrations
 	coverage report
 
 mypy:

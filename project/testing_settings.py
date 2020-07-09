@@ -6,18 +6,6 @@ from .settings import *  # noqa
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
 
 
-# Migrations are slow to run for tests. Disable them.
-class DisableMigrations(object):
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return None
-
-
-MIGRATION_MODULES = DisableMigrations()
-
-
 # The password hasher is deliberately slow on the real site. Use a dumb and fast one.
 class SimplePasswordHasher(BasePasswordHasher):
     """A simple hasher inspired by django-plainpasswordhasher"""
