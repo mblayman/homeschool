@@ -397,6 +397,10 @@ class TestEnrollmentCreateView(TestCase):
         """The POST contains a valid grade level for the user."""
         # TODO: Write the custom form to do this validation.
 
+    def test_no_double_enrollment(self):
+        """A user can not enroll a student twice."""
+        # TODO: Write the custom form to do this validation.
+
     def test_has_student(self):
         """The student is in the context."""
         user = self.make_user()
