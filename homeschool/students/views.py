@@ -225,3 +225,23 @@ class GradeView(LoginRequiredMixin, TemplateView):
 class EnrollmentCreateView(LoginRequiredMixin, CreateView):
     model = Enrollment
     fields = ("student", "grade_level")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student_uuid = self.kwargs["uuid"]
+        context["student"] = get_object_or_404(
+            Student, uuid=student_uuid, school__admin=self.request.user
+        )
+
+        school_year_uuid = self.kwargs["school_year_uuid"]
+        context["school_year"] = get_object_or_404(
+            SchoolYear, uuid=school_year_uuid, school__admin=self.request.user
+        )
+
+        context["grade_levels"] = GradeLevel.objects.filter(
+            school_year=context["school_year"]
+        )
+        return context
+
+    def get_success_url(self):
+        return reverse("students:index")

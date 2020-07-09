@@ -10,7 +10,7 @@ from homeschool.courses.tests.factories import (
     GradedWorkFactory,
 )
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
-from homeschool.students.models import Grade, Student
+from homeschool.students.models import Enrollment, Grade, Student
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
@@ -370,3 +370,105 @@ class TestEnrollmentCreateView(TestCase):
                 uuid=student.uuid,
                 school_year_uuid=school_year.uuid,
             )
+
+    def test_post(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        data = {"student": str(student.id), "grade_level": str(grade_level.id)}
+
+        with self.login(user):
+            self.post(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+                data=data,
+            )
+
+        assert Enrollment.objects.filter(
+            student=student, grade_level=grade_level
+        ).exists()
+
+    def test_valid_student_submission(self):
+        """The POST contains a valid student for the user."""
+        # TODO: Write the custom form to do this validation.
+
+    def test_valid_grade_level_submission(self):
+        """The POST contains a valid grade level for the user."""
+        # TODO: Write the custom form to do this validation.
+
+    def test_has_student(self):
+        """The student is in the context."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+            )
+
+        assert self.get_context("student") == student
+
+    def test_not_other_students(self):
+        """Another student is not viewable."""
+        user = self.make_user()
+        student = StudentFactory()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            response = self.get(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+            )
+
+        self.response_404(response)
+
+    def test_has_school_year(self):
+        """The school year is in the context."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+            )
+
+        assert self.get_context("school_year") == grade_level.school_year
+
+    def test_has_grade_levels(self):
+        """The grade levels for the school year are in the context."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+            )
+
+        grade_levels = self.get_context("grade_levels")
+        assert list(grade_levels) == [grade_level]
+
+    def test_user_access_their_school_years(self):
+        """The user can only access their school years."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory()
+
+        with self.login(user):
+            response = self.get(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+            )
+
+        self.response_404(response)
