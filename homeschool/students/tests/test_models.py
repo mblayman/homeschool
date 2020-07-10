@@ -1,7 +1,9 @@
 import datetime
 import uuid
 
+import pytest
 from dateutil.relativedelta import MO, SA, relativedelta
+from django.db import IntegrityError
 from django.utils import timezone
 
 from homeschool.core.schedules import Week
@@ -229,6 +231,15 @@ class TestEnrollment(TestCase):
         is_enrolled = Enrollment.is_student_enrolled(student, school_year)
 
         assert not is_enrolled
+
+    def test_unique_student_per_grade_level(self):
+        """A student enrollment is unique per grade level."""
+        enrollment = EnrollmentFactory()
+
+        with pytest.raises(IntegrityError):
+            Enrollment.objects.create(
+                student=enrollment.student, grade_level=enrollment.grade_level
+            )
 
 
 class TestCoursework(TestCase):

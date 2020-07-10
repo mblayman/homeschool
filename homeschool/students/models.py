@@ -204,6 +204,13 @@ class Enrollment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["student", "grade_level"], name="student_per_grade_level"
+            )
+        ]
+
     @classmethod
     def is_student_enrolled(cls, student: Student, school_year: Optional["SchoolYear"]):
         """Check if the student is enrolled in the school year."""
