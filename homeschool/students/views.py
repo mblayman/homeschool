@@ -13,6 +13,8 @@ from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
+from .forms import EnrollmentForm
+
 
 class StudentIndexView(LoginRequiredMixin, TemplateView):
     template_name = "students/index.html"
@@ -223,8 +225,8 @@ class GradeView(LoginRequiredMixin, TemplateView):
 
 
 class EnrollmentCreateView(LoginRequiredMixin, CreateView):
-    model = Enrollment
-    fields = ("student", "grade_level")
+    template_name = "students/enrollment_form.html"
+    form_class = EnrollmentForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -245,3 +247,8 @@ class EnrollmentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("students:index")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs

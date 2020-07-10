@@ -389,17 +389,62 @@ class TestEnrollmentCreateView(TestCase):
             student=student, grade_level=grade_level
         ).exists()
 
-    def test_valid_student_submission(self):
-        """The POST contains a valid student for the user."""
-        # TODO: Write the custom form to do this validation.
+    def test_invalid_student_submission(self):
+        """An invalid POST for a student is rejected."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        other_student = StudentFactory()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        data = {"student": str(other_student.id), "grade_level": str(grade_level.id)}
 
-    def test_valid_grade_level_submission(self):
-        """The POST contains a valid grade level for the user."""
-        # TODO: Write the custom form to do this validation.
+        with self.login(user):
+            self.post(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+                data=data,
+            )
+
+        form = self.get_context("form")
+        assert "You may not enroll that student." in form.errors["__all__"][0]
+
+    def test_invalid_grade_level_submission(self):
+        """An invalid POST for a grade level is rejected."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        other_grade_level = GradeLevelFactory()
+        data = {"student": str(student.id), "grade_level": str(other_grade_level.id)}
+
+        with self.login(user):
+            self.post(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+                data=data,
+            )
+
+        form = self.get_context("form")
+        assert "You may not enroll to that grade level." in form.errors["__all__"][0]
 
     def test_no_double_enrollment(self):
         """A user can not enroll a student twice."""
-        # TODO: Write the custom form to do this validation.
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        data = {"student": str(student.id), "grade_level": str(grade_level.id)}
+
+        with self.login(user):
+            self.post(
+                "students:enrollment_create",
+                uuid=student.uuid,
+                school_year_uuid=grade_level.school_year.uuid,
+                data=data,
+            )
+
+        form = self.get_context("form")
+        assert "already exists" in form.errors["__all__"][0]
 
     def test_has_student(self):
         """The student is in the context."""
