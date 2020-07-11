@@ -85,6 +85,13 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
             .distinct()
         )
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        grade_level = self.object.grade_levels.select_related("school_year").first()
+        if grade_level:
+            context["school_year"] = grade_level.school_year
+        return context
+
 
 class CourseEditView(LoginRequiredMixin, UpdateView):
     form_class = CourseForm

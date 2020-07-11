@@ -16,7 +16,7 @@
 
   <ul>
     {% for school_year in schoolyear_list %}
-    <li class="mb-2"><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">School Year for {{ school_year }}</a></li>
+    <li class="mb-2"><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">{{ school_year }} School Year</a></li>
     {% endfor %}
   </ul>
 {% endblock %}

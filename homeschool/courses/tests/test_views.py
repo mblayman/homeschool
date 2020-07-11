@@ -158,6 +158,8 @@ class TestCourseDetailView(TestCase):
         with self.login(user):
             self.get_check_200("courses:detail", uuid=course.uuid)
 
+        assert self.get_context("school_year") == grade_level.school_year
+
     def test_grade_level_name_with_task(self):
         """Any grade level specific task has the grade level's name next to it."""
         user = self.make_user()
