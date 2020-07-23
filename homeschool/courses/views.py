@@ -145,10 +145,12 @@ class CourseTaskCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["create"] = True
-        user = self.request.user
 
         context["course"] = self.course
-        context["current_grade_levels"] = user.school.get_current_grade_levels()
+        grade_level = self.course.grade_levels.first()
+        context["grade_levels"] = GradeLevel.objects.filter(
+            school_year=grade_level.school_year_id
+        )
         return context
 
     def get_initial(self):
@@ -192,9 +194,11 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        user = self.request.user
         context["course"] = self.object.course
-        context["current_grade_levels"] = user.school.get_current_grade_levels()
+        grade_level = self.object.course.grade_levels.first()
+        context["grade_levels"] = GradeLevel.objects.filter(
+            school_year=grade_level.school_year_id
+        )
         return context
 
     def get_success_url(self):

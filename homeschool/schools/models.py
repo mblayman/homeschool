@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils import timezone
 
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.users.models import User
@@ -19,16 +18,6 @@ class School(models.Model):
         on_delete=models.CASCADE,
         help_text="The school administrator",
     )
-
-    def get_current_grade_levels(self):
-        """Get the grade levels for the current school year."""
-        today = timezone.localdate()
-        school_year = SchoolYear.objects.filter(
-            school=self, start_date__lte=today, end_date__gte=today
-        ).first()
-        if school_year:
-            return GradeLevel.objects.filter(school_year=school_year)
-        return GradeLevel.objects.none()
 
 
 @receiver(post_save, sender=User)

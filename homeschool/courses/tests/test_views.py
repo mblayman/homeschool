@@ -284,6 +284,18 @@ class TestCourseTaskCreateView(TestCase):
 
         self.assertContext("course", course)
 
+    def test_has_grade_levels(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        other_grade_level = GradeLevelFactory(school_year=grade_level.school_year)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get("courses:task_create", uuid=course.uuid)
+
+        grade_levels = set(self.get_context("grade_levels"))
+        assert grade_levels == {grade_level, other_grade_level}
+
     def test_after_task(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -373,6 +385,19 @@ class TestCourseTaskUpdateView(TestCase):
             self.get("courses:task_edit", uuid=task.uuid)
 
         self.assertContext("course", task.course)
+
+    def test_has_grade_levels(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        other_grade_level = GradeLevelFactory(school_year=grade_level.school_year)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get("courses:task_edit", uuid=task.uuid)
+
+        grade_levels = set(self.get_context("grade_levels"))
+        assert grade_levels == {grade_level, other_grade_level}
 
     def test_redirect_next(self):
         next_url = "/another/location/"

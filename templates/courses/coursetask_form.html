@@ -42,7 +42,7 @@
           <div class="relative">
             <select class="block appearance-none w-full bg-gray-200 border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500" id="id_grade_level" name="grade_level">
               <option value="">All grade levels</option>
-              {% for grade_level in current_grade_levels %}
+              {% for grade_level in grade_levels %}
                 <option value="{{ grade_level.id }}"
                 {% if grade_level == coursetask.grade_level %}
                   selected
