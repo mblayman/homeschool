@@ -17,6 +17,7 @@ class TestCourse(TestCase):
 
         assert course is not None
         assert course.name != ""
+        assert course.default_task_duration == 30
 
     def test_str(self):
         course = CourseFactory()
@@ -34,6 +35,12 @@ class TestCourse(TestCase):
         course = CourseFactory(name=name)
 
         assert course.name == name
+
+    def test_has_default_task_duration(self):
+        default_task_duration = 45
+        course = CourseFactory(default_task_duration=default_task_duration)
+
+        assert course.default_task_duration == default_task_duration
 
     def test_has_grade_level(self):
         grade_level = GradeLevelFactory()

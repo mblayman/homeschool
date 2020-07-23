@@ -9,7 +9,11 @@ from .models import Course, CourseTask, GradedWork
 class CourseForm(DaysOfWeekModelForm):
     class Meta:
         model = Course
-        fields = ["name", "grade_levels"] + DaysOfWeekModelForm.days_of_week_fields
+        fields = [
+            "name",
+            "default_task_duration",
+            "grade_levels",
+        ] + DaysOfWeekModelForm.days_of_week_fields
 
     grade_levels = forms.ModelMultipleChoiceField(queryset=GradeLevel.objects.none())
 

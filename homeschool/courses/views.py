@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 from homeschool.schools.exceptions import NoSchoolYearError
@@ -130,20 +131,28 @@ class CourseTaskCreateView(LoginRequiredMixin, CreateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
 
+    @cached_property
+    def course(self):
+        course_uuid = self.kwargs["uuid"]
+        grade_levels = GradeLevel.objects.filter(
+            school_year__school__admin=self.request.user
+        )
+        return get_object_or_404(
+            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
+            uuid=course_uuid,
+        )
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["create"] = True
         user = self.request.user
 
-        course_uuid = self.kwargs["uuid"]
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        course = get_object_or_404(
-            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
-            uuid=course_uuid,
-        )
-        context["course"] = course
+        context["course"] = self.course
         context["current_grade_levels"] = user.school.get_current_grade_levels()
         return context
+
+    def get_initial(self):
+        return {"duration": self.course.default_task_duration}
 
     def get_success_url(self):
         next_url = self.request.GET.get("next")

@@ -131,6 +131,7 @@ class TestCourseCreateView(TestCase):
             "wednesday": "on",
             "friday": "on",
             "grade_levels": str(grade_level.id),
+            "default_task_duration": 45,
         }
 
         with self.login(user):
@@ -195,6 +196,7 @@ class TestCourseEditView(TestCase):
             "wednesday": "on",
             "friday": "on",
             "grade_levels": str(grade_level.id),
+            "default_task_duration": 45,
         }
 
         with self.login(user):
@@ -213,10 +215,16 @@ class TestCourseTaskCreateView(TestCase):
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
+        course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
 
         with self.login(user):
             self.get_check_200("courses:task_create", uuid=course.uuid)
+
+        form = self.get_context("form")
+        assert (
+            form.get_initial_for_field(form.fields["duration"], "duration")
+            == course.default_task_duration
+        )
 
     def test_post(self):
         user = self.make_user()

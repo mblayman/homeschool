@@ -13,6 +13,9 @@ class Course(DaysOfWeekModel):
     name = models.CharField(max_length=256)
     grade_levels = models.ManyToManyField("schools.GradeLevel", related_name="courses")
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
+    default_task_duration = models.IntegerField(
+        default=30, help_text="The default task duration in minutes"
+    )
 
     @property
     def is_running(self):

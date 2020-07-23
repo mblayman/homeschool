@@ -18,6 +18,7 @@
   <form method="POST" class="w-full max-w-2xl">
     {% csrf_token %}
     {% include "forms/field.html" with field=form.name autofocus=True %}
+    {% include "forms/field.html" with field=form.default_task_duration %}
     <div class="md:flex md:items-center mb-6">
       <div class="md:w-1/4">
         <div class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4">

@@ -19,17 +19,7 @@
           >{% if form.description.value %}{{ form.description.value|safe|escape }}{% endif %}</textarea>
       </div>
     </div>
-    <div class="md:flex md:items-center mb-6">
-      <div class="md:w-1/4">
-        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_duration">
-          Duration
-        </label>
-      </div>
-      <div class="md:w-3/4">
-        <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-          id="id_duration" type="number" min="0" name="duration" {% if form.duration.value %}value="{{ form.duration.value }}"{% endif %} autocomplete="off" required>
-      </div>
-    </div>
+    {% include "forms/field.html" with field=form.duration %}
     <div class="md:flex md:items-center mb-6">
       <div class="md:w-1/4">
         <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_is_graded">
