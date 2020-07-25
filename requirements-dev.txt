@@ -3,7 +3,7 @@ django-extensions==2.2.6
 django-test-plus==1.4.0
 factory-boy
 flake8==3.7.9
-isort==4.3.21
+isort==5.1.4
 mypy==0.780
 pip-tools
 pre-commit
