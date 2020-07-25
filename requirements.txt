@@ -18,7 +18,7 @@ django-heroku==0.3.1      # via -r requirements.in
 django-ordered-model==3.3.0  # via -r requirements.in
 django-tz-detect==0.3.0   # via -r requirements.in
 django-waffle==0.19.0     # via -r requirements.in
-django==3.0.2             # via -r requirements.in, django-allauth, django-debug-toolbar, django-heroku, django-tz-detect
+django==3.0.7             # via -r requirements.in, django-allauth, django-debug-toolbar, django-heroku, django-tz-detect
 freezegun==0.3.14         # via -r requirements.in
 gunicorn==20.0.4          # via -r requirements.in
 idna==2.8                 # via requests
