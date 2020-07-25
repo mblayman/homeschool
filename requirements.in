@@ -5,7 +5,7 @@ django-allauth==0.41.0
 django-debug-toolbar==2.2
 django-environ==0.4.5
 django-heroku==0.3.1
-django-ordered-model==3.3.0
+django-ordered-model==3.4.1
 django-tz-detect==0.3.0
 django-waffle==0.19.0
 freezegun==0.3.14
