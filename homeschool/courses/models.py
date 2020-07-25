@@ -2,8 +2,9 @@ import datetime
 import uuid
 
 from django.db import models
-from ordered_model.models import OrderedModel, OrderedModelManager
+from ordered_model.models import OrderedModel
 
+from homeschool.core.compatibility import OrderedModelQuerySet
 from homeschool.core.models import DaysOfWeekModel
 
 
@@ -11,7 +12,11 @@ class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
 
     name = models.CharField(max_length=256)
-    grade_levels = models.ManyToManyField("schools.GradeLevel", related_name="courses")
+    grade_levels = models.ManyToManyField(
+        "schools.GradeLevel",
+        related_name="courses",
+        through="courses.GradeLevelCoursesThroughModel",
+    )
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
     default_task_duration = models.IntegerField(
         default=30, help_text="The default task duration in minutes"
@@ -48,8 +53,15 @@ class Course(DaysOfWeekModel):
         return self.name
 
 
-class CourseTaskManager(OrderedModelManager):
-    pass
+class GradeLevelCoursesThroughModel(OrderedModel):
+    grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
+    course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
+    order_with_respect_to = "grade_level"
+
+    objects = models.Manager.from_queryset(OrderedModelQuerySet)()
+
+    class Meta:
+        ordering = ("grade_level", "order")
 
 
 class CourseTask(OrderedModel):
@@ -75,7 +87,6 @@ class CourseTask(OrderedModel):
         help_text="A grade level when a task is specific to a grade",
     )
 
-    objects = CourseTaskManager()
     order_with_respect_to = "course"
 
     def __str__(self):
