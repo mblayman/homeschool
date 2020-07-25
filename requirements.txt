@@ -5,28 +5,28 @@
 #    pip-compile --output-file=requirements.txt requirements.in
 #
 asgiref==3.2.3            # via django
-beautifulsoup4==4.8.2
-bleach==3.1.5
+beautifulsoup4==4.8.2     # via -r requirements.in
+bleach==3.1.5             # via -r requirements.in
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 defusedxml==0.6.0         # via python3-openid
 dj-database-url==0.5.0    # via django-heroku
-django-allauth==0.41.0
-django-debug-toolbar==2.1
-django-environ==0.4.5
-django-heroku==0.3.1
-django-ordered-model==3.3.0
-django-tz-detect==0.3.0
-django-waffle==0.19.0
-django==3.0.2
-freezegun==0.3.14
-gunicorn==20.0.4
+django-allauth==0.41.0    # via -r requirements.in
+django-debug-toolbar==2.2  # via -r requirements.in
+django-environ==0.4.5     # via -r requirements.in
+django-heroku==0.3.1      # via -r requirements.in
+django-ordered-model==3.3.0  # via -r requirements.in
+django-tz-detect==0.3.0   # via -r requirements.in
+django-waffle==0.19.0     # via -r requirements.in
+django==3.0.2             # via -r requirements.in, django-allauth, django-debug-toolbar, django-heroku, django-tz-detect
+freezegun==0.3.14         # via -r requirements.in
+gunicorn==20.0.4          # via -r requirements.in
 idna==2.8                 # via requests
 oauthlib==3.1.0           # via requests-oauthlib
 packaging==20.4           # via bleach
 psycopg2==2.8.4           # via django-heroku
 pyparsing==2.4.7          # via packaging
-python-dateutil==2.8.1
+python-dateutil==2.8.1    # via -r requirements.in, freezegun
 python3-openid==3.1.0     # via django-allauth
 pytz==2019.3              # via django, django-tz-detect
 requests-oauthlib==1.3.0  # via django-allauth
