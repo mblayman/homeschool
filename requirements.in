@@ -2,7 +2,7 @@ beautifulsoup4==4.8.2
 bleach==3.1.5
 Django==3.0.2
 django-allauth==0.41.0
-django-debug-toolbar==2.1
+django-debug-toolbar==2.2
 django-environ==0.4.5
 django-heroku==0.3.1
 django-ordered-model==3.3.0
