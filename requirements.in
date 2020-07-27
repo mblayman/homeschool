@@ -1,7 +1,7 @@
 beautifulsoup4==4.9.1
 bleach==3.1.5
 Django==3.0.7
-django-allauth==0.41.0
+django-allauth==0.42.0
 django-debug-toolbar==2.2
 django-environ==0.4.5
 django-heroku==0.3.1
