@@ -8,6 +8,6 @@ django-heroku==0.3.1
 django-ordered-model==3.4.1
 django-tz-detect==0.3.0
 django-waffle==0.19.0
-freezegun==0.3.14
+freezegun==0.3.15
 gunicorn==20.0.4
 python-dateutil==2.8.1
