@@ -27,6 +27,9 @@
     <div class="flex flex-row max-w-3xl print-hide">
       <div class="w-3/12 pr-4"></div>
       <div class="text-sm text-center uppercase tracking-wide font-thin py-2 w-20">Complete?</div>
+      <div class="text-sm p-2">
+        <input type="checkbox" onclick="checkTasks(this, '{{ schedule.student.id }}')">
+      </div>
     </div>
     {% for course_schedule in schedule.courses %}
       {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
@@ -38,7 +41,7 @@
           {% if course_schedule.task %}
             <div class="w-1/12 text-sm text-center py-2">
               <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
-              <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
+              <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
             </div>
             <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">{{ course_schedule.task.description|linebreaksbr }}</div>
 
@@ -51,7 +54,7 @@
             <div class="w-1/12 text-sm text-center py-2">
               {% for coursework in course_schedule.coursework %}
                 <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
-                <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked><br>
+                <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked><br>
               {% endfor %}
             </div>
             <div class="w-7/12 p-2">
@@ -91,4 +94,15 @@
     </div>
   {% endif %}
   </form>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function checkTasks(checkBox, studentId) {
+      let tasks = document.getElementsByClassName(`task-${studentId}`);
+      for (let task of tasks) {
+        task.checked = checkBox.checked;
+      }
+    }
+  </script>
 {% endblock %}
