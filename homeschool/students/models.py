@@ -48,7 +48,7 @@ class Student(models.Model):
         task_limit = len(week_dates)
         schedule: dict = {"student": self, "courses": []}
         for course in courses:
-            if not course.is_running:
+            if week_end_date > today and not course.is_running:
                 continue
 
             course_schedule = {"course": course, "days": []}
