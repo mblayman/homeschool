@@ -23,7 +23,7 @@ $ pip install -r requirements-dev.txt
 $ pip install -r requirements.txt
 ```
 
-Install [Herok CLI tools](https://devcenter.heroku.com/articles/heroku-cli).
+Install [Heroku CLI tools](https://devcenter.heroku.com/articles/heroku-cli).
 
 Bootstrap the local database.
 
