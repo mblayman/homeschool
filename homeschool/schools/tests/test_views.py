@@ -2,6 +2,7 @@ import datetime
 
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.students.tests.factories import EnrollmentFactory
 from homeschool.test import TestCase
 
 
@@ -236,3 +237,34 @@ class TestGradeLevelCreateView(TestCase):
             response = self.get("schools:grade_level_create", uuid=school_year.uuid)
 
         self.response_404(response)
+
+
+class TestReportsIndex(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("reports:index")
+
+    def test_get(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("reports:index")
+
+    def test_has_enrollments(self):
+        """The enrollments are in the context."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("reports:index")
+
+        assert list(self.get_context("enrollments")) == [enrollment]
+
+    def test_no_other_enrollments(self):
+        """Another user's enrollments are not in the context."""
+        user = self.make_user()
+        EnrollmentFactory()
+
+        with self.login(user):
+            self.get_check_200("reports:index")
+
+        assert list(self.get_context("enrollments")) == []

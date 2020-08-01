@@ -2,7 +2,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+    View,
+)
+
+from homeschool.students.models import Enrollment
 
 from .forms import GradeLevelForm, SchoolYearForm
 from .models import SchoolYear
@@ -120,3 +129,17 @@ class GradeLevelCreateView(LoginRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+
+class ReportsIndexView(LoginRequiredMixin, TemplateView):
+    template_name = "schools/reports_index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["enrollments"] = (
+            Enrollment.objects.filter(grade_level__school_year__school__admin=user)
+            .select_related("student", "grade_level", "grade_level__school_year")
+            .order_by("-grade_level__school_year__start_date", "student")
+        )
+        return context
