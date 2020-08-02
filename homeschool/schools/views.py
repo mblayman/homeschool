@@ -11,7 +11,7 @@ from django.views.generic import (
     View,
 )
 
-from homeschool.students.models import Enrollment
+from homeschool.students.models import Enrollment, Grade
 
 from .forms import GradeLevelForm, SchoolYearForm
 from .models import SchoolYear
@@ -141,5 +141,37 @@ class ReportsIndexView(LoginRequiredMixin, TemplateView):
             Enrollment.objects.filter(grade_level__school_year__school__admin=user)
             .select_related("student", "grade_level", "grade_level__school_year")
             .order_by("-grade_level__school_year__start_date", "student")
+        )
+        return context
+
+
+class ProgressReportView(LoginRequiredMixin, TemplateView):
+    template_name = "schools/progress_report.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        enrollment = get_object_or_404(
+            Enrollment.objects.select_related(
+                "student", "grade_level", "grade_level__school_year"
+            ),
+            student__uuid=self.kwargs["student_uuid"],
+            grade_level__school_year__uuid=self.kwargs["uuid"],
+            grade_level__school_year__school=user.school,
+        )
+        context["grade_level"] = enrollment.grade_level
+        context["school_year"] = enrollment.grade_level.school_year
+        context["student"] = enrollment.student
+        context["grades"] = (
+            Grade.objects.filter(
+                student=enrollment.student,
+                graded_work__course_task__course__grade_levels__in=[
+                    enrollment.grade_level
+                ],
+            )
+            .order_by("graded_work__course_task__course")
+            .select_related(
+                "graded_work__course_task", "graded_work__course_task__course"
+            )
         )
         return context

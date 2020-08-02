@@ -2,7 +2,11 @@ import datetime
 
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.schools.tests.factories import SchoolYearFactory
-from homeschool.students.tests.factories import EnrollmentFactory
+from homeschool.students.tests.factories import (
+    EnrollmentFactory,
+    GradeFactory,
+    StudentFactory,
+)
 from homeschool.test import TestCase
 
 
@@ -268,3 +272,62 @@ class TestReportsIndex(TestCase):
             self.get_check_200("reports:index")
 
         assert list(self.get_context("enrollments")) == []
+
+
+class TestProgressReportView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        student = StudentFactory()
+        self.assertLoginRequired(
+            "reports:progress", uuid=school_year.uuid, student_uuid=student.uuid
+        )
+
+    def test_get(self):
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200(
+                "reports:progress",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        assert self.get_context("grade_level") == enrollment.grade_level
+        assert self.get_context("school_year") == enrollment.grade_level.school_year
+        assert self.get_context("student") == enrollment.student
+
+    def test_not_found_for_other_school(self):
+        """A user cannot access a progress report that is not from their school."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.get(
+                "reports:progress",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        self.response_404(response)
+
+    def test_only_students_grades(self):
+        """Only grades from the student are included."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        grade = GradeFactory(
+            student=enrollment.student,
+            graded_work__course_task__course__grade_levels=[enrollment.grade_level],
+        )
+        GradeFactory(
+            graded_work__course_task__course__grade_levels=[enrollment.grade_level]
+        )
+
+        with self.login(user):
+            self.get_check_200(
+                "reports:progress",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        assert list(self.get_context("grades")) == [grade]

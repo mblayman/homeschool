@@ -1,0 +1,26 @@
+{% extends "app_base.html" %}
+
+{% block head_title%}Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+  {% if grades %}
+    {% regroup grades by graded_work.course_task.course as course_list %}
+
+    {% for course, grades in course_list %}
+      <h2 class="font-thin text-xl text-blue-900 mb-2">{{ course }}</h2>
+      <div class="flex flex-col max-w-2xl mb-8">
+        <div class="flex flex-row">
+          <div class="w-5/6 text-sm uppercase tracking-wide font-thin py-2">Task</div>
+          <div class="w-1/6 text-sm uppercase tracking-wide font-thin py-2">Score</div>
+        </div>
+        {% for grade in grades %}
+          <div class="flex flex-row">
+            <div class="w-5/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ grade.graded_work.course_task.description }}</div>
+            <div class="w-1/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ grade.score }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
