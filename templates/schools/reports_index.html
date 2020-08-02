@@ -8,15 +8,15 @@
     <div class="flex flex-col max-w-2xl">
       <div class="flex flex-row">
         <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">School Year</div>
-        <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Grade Level</div>
         <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Student</div>
+        <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Grade Level</div>
         <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Progress Report</div>
       </div>
     {% for enrollment in enrollments %}
       <div class="flex flex-row">
         <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level.school_year }}</div>
-        <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level }}</div>
         <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.student }}</div>
+        <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level }}</div>
         <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted pl-8">
           <a class="block sm:-m-2 p-2 flex items-center hover:text-gray-600"
              href="{% url "reports:progress" enrollment.grade_level.school_year.uuid enrollment.student.uuid %}">
