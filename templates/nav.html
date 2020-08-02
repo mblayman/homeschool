@@ -1,8 +1,9 @@
-{% load waffle_tags %}
+{% load static waffle_tags %}
 <nav class="flex bg-blue-700 text-white border-b-4 border-gray-400 sm:h-16 items-center print-hide">
   <div class="w-full max-w-6xl relative mx-auto px-6">
     <div class="flex flex-col sm:flex-row sm:items-center">
-      <a href="/" class="block mr-4 py-1">
+      <a href="/" class="block mr-4 py-1 flex items-center">
+        <img class="h-10 w-10 mr-2" src="{% static "logo.svg" %}" alt="School Desk">
         <h1 class="text-lg uppercase tracking-wider font-hairline hover:underline">Homeschool App</h1>
       </a>
       <div class="flex-grow"></div>

@@ -114,3 +114,6 @@ courses_exports/
 
 # Django
 staticfiles/
+
+# macOS
+.DS_Store
