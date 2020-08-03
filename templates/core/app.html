@@ -1,6 +1,6 @@
 {% extends "app_base.html" %}
 
-{% block head_title %}{% if user.first_name %}{{ user.first_name }}’s School{% else %}Homeschool App{% endif %}{% endblock %}
+{% block head_title %}{% if user.first_name %}{{ user.first_name }}’s School{% else %}Week of {{ monday|date:"l, M j" }} &ndash; {{ sunday|date:"l, M j" }}{% endif %}{% endblock %}
 
 {% block main %}
   <div class="flex flex-row items-center mb-8 print-hide">
