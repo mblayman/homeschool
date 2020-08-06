@@ -30,5 +30,5 @@ class GradeLevelAdmin(OrderedInlineModelAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(SchoolBreak)
-class SchoolBreak(admin.ModelAdmin):
+class SchoolBreakAdmin(admin.ModelAdmin):
     list_display = ("school_year", "day")
