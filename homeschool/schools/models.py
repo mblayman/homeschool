@@ -75,3 +75,17 @@ class GradeLevel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class SchoolBreak(models.Model):
+    """A break day in the schedule."""
+
+    day = models.DateField()
+    description = models.TextField()
+    school_year = models.ForeignKey(
+        "schools.SchoolYear", on_delete=models.CASCADE, related_name="break_days"
+    )
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
+
+    def __str__(self):
+        return f"School Break {self.day}"

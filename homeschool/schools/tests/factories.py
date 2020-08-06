@@ -30,3 +30,12 @@ class GradeLevelFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"{n} Grade")
     school_year = factory.SubFactory(SchoolYearFactory)
+
+
+class SchoolBreakFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "schools.SchoolBreak"
+
+    day = factory.LazyFunction(datetime.date.today)
+    description = factory.Faker("sentence")
+    school_year = factory.SubFactory(SchoolYearFactory)

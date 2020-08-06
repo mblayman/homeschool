@@ -2,7 +2,7 @@ from django import forms
 
 from homeschool.core.forms import DaysOfWeekModelForm
 
-from .models import GradeLevel, SchoolYear
+from .models import GradeLevel, SchoolBreak, SchoolYear
 
 
 class GradeLevelForm(forms.ModelForm):
@@ -24,6 +24,30 @@ class GradeLevelForm(forms.ModelForm):
         ).exists():
             raise forms.ValidationError(
                 "A grade level cannot be created for a different user's school year."
+            )
+
+        return self.cleaned_data
+
+
+class SchoolBreakForm(forms.ModelForm):
+    class Meta:
+        model = SchoolBreak
+        fields = ["school_year", "description", "day"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        school_year = self.cleaned_data.get("school_year")
+        if not school_year:
+            raise forms.ValidationError("Invalid school year.")
+
+        if not SchoolYear.objects.filter(
+            id=school_year.id, school__admin=self.user
+        ).exists():
+            raise forms.ValidationError(
+                "A school break cannot be created for a different user's school year."
             )
 
         return self.cleaned_data

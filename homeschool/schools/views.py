@@ -13,7 +13,7 @@ from django.views.generic import (
 
 from homeschool.students.models import Enrollment, Grade
 
-from .forms import GradeLevelForm, SchoolYearForm
+from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
 from .models import SchoolYear
 
 
@@ -113,6 +113,27 @@ class SchoolYearListView(LoginRequiredMixin, ListView):
 class GradeLevelCreateView(LoginRequiredMixin, CreateView):
     form_class = GradeLevelForm
     template_name = "schools/gradelevel_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["school_year"] = get_object_or_404(
+            SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
+        )
+        return context
+
+    def get_success_url(self):
+        return reverse("schools:school_year_detail", args=[self.kwargs["uuid"]])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
+    form_class = SchoolBreakForm
+    template_name = "schools/schoolbreak_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

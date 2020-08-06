@@ -1,6 +1,6 @@
 import datetime
 
-from homeschool.schools.models import GradeLevel, SchoolYear
+from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import SchoolYearFactory
 from homeschool.students.tests.factories import (
     EnrollmentFactory,
@@ -241,6 +241,91 @@ class TestGradeLevelCreateView(TestCase):
             response = self.get("schools:grade_level_create", uuid=school_year.uuid)
 
         self.response_404(response)
+
+
+class TestSchoolBreakCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        self.assertLoginRequired("schools:school_break_create", uuid=school_year.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:school_break_create", uuid=school_year.uuid)
+
+        assert school_year == self.get_context("school_year")
+
+    def test_post(self):
+        """A user can create a school break for their school year."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        data = {
+            "school_year": str(school_year.id),
+            "description": "Christmas",
+            "day": "2020-08-05",
+        }
+
+        with self.login(user):
+            response = self.post(
+                "schools:school_break_create", uuid=school_year.uuid, data=data
+            )
+
+        school_break = SchoolBreak.objects.get(school_year=school_year)
+        assert school_break.description == "Christmas"
+        assert school_break.day == datetime.date(2020, 8, 5)
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=school_year.uuid
+        )
+
+    def test_not_found_for_other_school(self):
+        """A user cannot add a school break to another user's school year."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            response = self.get("schools:school_break_create", uuid=school_year.uuid)
+
+        self.response_404(response)
+
+    def test_no_school(self):
+        """A missing school is an error."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        data = {"school_day": "0", "description": "Christmas", "day": "2020-08-05"}
+
+        with self.login(user):
+            response = self.post(
+                "schools:school_break_create", uuid=school_year.uuid, data=data
+            )
+
+        form = self.get_context("form")
+        assert form.non_field_errors() == ["Invalid school year."]
+        self.response_200(response)
+
+    def test_no_other_school_post(self):
+        """A user may not create a school break with data from another school."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        another_school_year = SchoolYearFactory()
+        data = {
+            "school_year": str(another_school_year.id),
+            "description": "Christmas",
+            "day": "2020-08-05",
+        }
+
+        with self.login(user):
+            response = self.post(
+                "schools:school_break_create", uuid=school_year.uuid, data=data
+            )
+
+        form = self.get_context("form")
+        assert form.non_field_errors() == [
+            "A school break cannot be created for a different user's school year."
+        ]
+        self.response_200(response)
 
 
 class TestReportsIndex(TestCase):

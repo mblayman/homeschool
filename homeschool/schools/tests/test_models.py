@@ -8,6 +8,7 @@ from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
+    SchoolBreakFactory,
     SchoolFactory,
     SchoolYearFactory,
 )
@@ -221,3 +222,18 @@ class TestGradeLevel(TestCase):
         grade_level = GradeLevelFactory(uuid=grade_level_uuid)
 
         assert grade_level.uuid == grade_level_uuid
+
+
+class TestSchoolBreak(TestCase):
+    def test_factory(self):
+        school_break = SchoolBreakFactory()
+
+        assert school_break.day is not None
+        assert school_break.description != ""
+        assert school_break.school_year is not None
+        assert school_break.uuid is not None
+
+    def test_str(self):
+        school_break = SchoolBreakFactory()
+
+        assert str(school_break) == f"School Break {school_break.day}"

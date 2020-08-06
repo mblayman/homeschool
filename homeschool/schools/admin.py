@@ -2,7 +2,7 @@ from django.contrib import admin
 from ordered_model.admin import OrderedInlineModelAdminMixin, OrderedTabularInline
 
 from homeschool.courses.models import GradeLevelCoursesThroughModel
-from homeschool.schools.models import GradeLevel, School, SchoolYear
+from homeschool.schools.models import GradeLevel, School, SchoolBreak, SchoolYear
 
 
 @admin.register(School)
@@ -27,3 +27,8 @@ class GradeLevelCoursesThroughModelTabularInline(OrderedTabularInline):
 class GradeLevelAdmin(OrderedInlineModelAdminMixin, admin.ModelAdmin):
     list_display = ("school_year", "name")
     inlines = (GradeLevelCoursesThroughModelTabularInline,)
+
+
+@admin.register(SchoolBreak)
+class SchoolBreak(admin.ModelAdmin):
+    list_display = ("school_year", "day")
