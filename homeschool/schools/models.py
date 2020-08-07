@@ -80,12 +80,21 @@ class GradeLevel(models.Model):
 class SchoolBreak(models.Model):
     """A break day in the schedule."""
 
-    day = models.DateField()
-    description = models.TextField()
+    day = models.DateField(db_index=True)
+    description = models.TextField(blank=True)
     school_year = models.ForeignKey(
-        "schools.SchoolYear", on_delete=models.CASCADE, related_name="break_days"
+        "schools.SchoolYear", on_delete=models.CASCADE, related_name="breaks"
     )
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["school_year", "day"],
+                name="%(app_label)s__%(class)s__school_year__day",
+            )
+        ]
+        ordering = ["day"]
 
     def __str__(self):
         return f"School Break {self.day}"

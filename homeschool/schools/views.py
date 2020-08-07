@@ -68,7 +68,7 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         user = self.request.user
         return SchoolYear.objects.filter(school__admin=user).prefetch_related(
-            "grade_levels", "grade_levels__courses"
+            "breaks", "grade_levels", "grade_levels__courses"
         )
 
 

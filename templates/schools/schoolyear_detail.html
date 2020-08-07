@@ -38,6 +38,23 @@
     </a>
   </p>
 
+  {% if schoolyear.breaks.all %}
+    <h2 class="font-thin text-2xl text-blue-900 mb-4">Break Days</h2>
+
+    <ol class="pl-8 mb-8 list-decimal">
+      {% for school_break in schoolyear.breaks.all %}
+        <li class="font-thin text-base text-gray-800 mb-2">
+          <a href="#" class="hover:underline">
+            {{ school_break.day }}
+            {% if school_break.description %}
+              - {{ school_break.description }}
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
+
   <div class="flex flex-col w-full">
     {% for grade_level in schoolyear.grade_levels.all %}
       <div class="bg-gray-100 rounded-lg py-4 mb-8">
