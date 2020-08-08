@@ -1,7 +1,7 @@
 import datetime
 
 from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
-from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.schools.tests.factories import SchoolBreakFactory, SchoolYearFactory
 from homeschool.students.tests.factories import (
     EnrollmentFactory,
     GradeFactory,
@@ -255,7 +255,8 @@ class TestSchoolBreakCreateView(TestCase):
         with self.login(user):
             self.get_check_200("schools:school_break_create", uuid=school_year.uuid)
 
-        assert school_year == self.get_context("school_year")
+        assert self.get_context("school_year") == school_year
+        assert self.get_context("create")
 
     def test_post(self):
         """A user can create a school break for their school year."""
@@ -326,6 +327,54 @@ class TestSchoolBreakCreateView(TestCase):
             "A school break cannot be created for a different user's school year."
         ]
         self.response_200(response)
+
+
+class TestSchoolBreakUpdateView(TestCase):
+    def test_unauthenticated_access(self):
+        school_break = SchoolBreakFactory()
+        self.assertLoginRequired("schools:school_break_edit", uuid=school_break.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        school_break = SchoolBreakFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:school_break_edit", uuid=school_break.uuid)
+
+        assert self.get_context("school_year") == school_break.school_year
+
+    def test_post(self):
+        """A user can update a school break for their school year."""
+        user = self.make_user()
+        school_break = SchoolBreakFactory(school_year__school=user.school)
+        data = {
+            "school_year": str(school_break.school_year.id),
+            "description": "Christmas",
+            "day": "2020-08-05",
+        }
+
+        with self.login(user):
+            response = self.post(
+                "schools:school_break_edit", uuid=school_break.uuid, data=data
+            )
+
+        school_break.refresh_from_db()
+        assert school_break.description == "Christmas"
+        assert school_break.day == datetime.date(2020, 8, 5)
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=school_break.school_year.uuid
+        )
+
+    def test_only_users_breaks(self):
+        """A user can only edit their own school breaks."""
+        user = self.make_user()
+        school_break = SchoolBreakFactory()
+
+        with self.login(user):
+            response = self.get("schools:school_break_edit", uuid=school_break.uuid)
+
+        self.response_404(response)
 
 
 class TestReportsIndex(TestCase):

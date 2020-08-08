@@ -14,7 +14,7 @@ from django.views.generic import (
 from homeschool.students.models import Enrollment, Grade
 
 from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
-from .models import SchoolYear
+from .models import SchoolBreak, SchoolYear
 
 
 class CurrentSchoolYearView(LoginRequiredMixin, View):
@@ -137,6 +137,7 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["create"] = True
         user = self.request.user
         context["school_year"] = get_object_or_404(
             SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
@@ -145,6 +146,34 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("schools:school_year_detail", args=[self.kwargs["uuid"]])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = SchoolBreakForm
+    template_name = "schools/schoolbreak_form.html"
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        user = self.request.user
+        return SchoolBreak.objects.filter(
+            school_year__school=user.school
+        ).select_related("school_year")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["school_year"] = self.object.school_year
+        return context
+
+    def get_success_url(self):
+        return reverse(
+            "schools:school_year_detail", args=[self.object.school_year.uuid]
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

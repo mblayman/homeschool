@@ -35,4 +35,9 @@ urlpatterns = [
         views.SchoolBreakCreateView.as_view(),
         name="school_break_create",
     ),
+    path(
+        "school-years/breaks/<uuid:uuid>/",
+        views.SchoolBreakUpdateView.as_view(),
+        name="school_break_edit",
+    ),
 ]

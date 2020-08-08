@@ -1,14 +1,16 @@
 {% extends "app_base.html" %}
 
-{% block head_title%}Add Break Day{% endblock %}
+{% block head_title%}{% if create %}Add{% else %}Edit{% endif %} Break Day{% endblock %}
 
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">
     <a href="{% url "schools:school_year_list" %}" class="hover:underline">School Years</a>
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-    School Year for {{ school_year }}
+    <a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">
+      School Year for {{ school_year }}
+    </a>
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-    Add Break Day
+    {% if create %}Add{% else %}Edit{% endif %} Break Day
   </h1>
   <form method="post" class="w-full max-w-lg">
     {% csrf_token %}
@@ -18,8 +20,12 @@
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 text-right">
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-          Add Break Day
+        <a href="{% url "schools:school_year_detail" school_year.uuid %}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Cancel
+        </a>
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+          {% if create %}Add{% else %}Update{% endif %} Break Day
         </button>
       </div>
     </div>

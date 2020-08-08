@@ -44,7 +44,7 @@
     <ol class="pl-8 mb-8 list-decimal">
       {% for school_break in schoolyear.breaks.all %}
         <li class="font-thin text-base text-gray-800 mb-2">
-          <a href="#" class="hover:underline">
+          <a href="{% url "schools:school_break_edit" school_break.uuid %}" class="hover:underline">
             {{ school_break.day }}
             {% if school_break.description %}
               - {{ school_break.description }}
