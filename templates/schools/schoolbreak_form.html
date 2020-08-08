@@ -1,6 +1,6 @@
 {% extends "app_base.html" %}
 
-{% block head_title%}{% if create %}Add{% else %}Edit{% endif %} Break Day{% endblock %}
+{% block head_title%}{% if create %}Add{% else %}Edit{% endif %} Break{% endblock %}
 
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">
@@ -10,13 +10,15 @@
       School Year for {{ school_year }}
     </a>
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-    {% if create %}Add{% else %}Edit{% endif %} Break Day
+    {% if create %}Add{% else %}Edit{% endif %} Break
   </h1>
+  {% include "forms/non_field_errors.html" %}
   <form method="post" class="w-full max-w-lg">
     {% csrf_token %}
     <input type="hidden" name="school_year" value="{{ school_year.id }}">
-    {% include "forms/field.html" with field=form.day placeholder="7/4/2020" autofocus=True %}
-    {% include "forms/field.html" with field=form.description placeholder="e.g., “Fireworks show”" %}
+    {% include "forms/field.html" with field=form.start_date placeholder="7/4/2020" autofocus=True %}
+    {% include "forms/field.html" with field=form.end_date placeholder="7/8/2020" %}
+    {% include "forms/field.html" with field=form.description placeholder="e.g., “Independence Day getaway”" %}
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 text-right">
@@ -25,7 +27,7 @@
           Cancel
         </a>
         <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
-          {% if create %}Add{% else %}Update{% endif %} Break Day
+          {% if create %}Add{% else %}Update{% endif %} Break
         </button>
       </div>
     </div>

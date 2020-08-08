@@ -265,7 +265,8 @@ class TestSchoolBreakCreateView(TestCase):
         data = {
             "school_year": str(school_year.id),
             "description": "Christmas",
-            "day": "2020-08-05",
+            "start_date": "2020-08-05",
+            "end_date": "2020-08-05",
         }
 
         with self.login(user):
@@ -275,7 +276,8 @@ class TestSchoolBreakCreateView(TestCase):
 
         school_break = SchoolBreak.objects.get(school_year=school_year)
         assert school_break.description == "Christmas"
-        assert school_break.day == datetime.date(2020, 8, 5)
+        assert school_break.start_date == datetime.date(2020, 8, 5)
+        assert school_break.end_date == datetime.date(2020, 8, 5)
         self.response_302(response)
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", uuid=school_year.uuid
@@ -295,7 +297,12 @@ class TestSchoolBreakCreateView(TestCase):
         """A missing school is an error."""
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
-        data = {"school_day": "0", "description": "Christmas", "day": "2020-08-05"}
+        data = {
+            "school_day": "0",
+            "description": "Christmas",
+            "start_date": "2020-08-05",
+            "end_date": "2020-08-05",
+        }
 
         with self.login(user):
             response = self.post(
@@ -314,7 +321,8 @@ class TestSchoolBreakCreateView(TestCase):
         data = {
             "school_year": str(another_school_year.id),
             "description": "Christmas",
-            "day": "2020-08-05",
+            "start_date": "2020-08-05",
+            "end_date": "2020-08-05",
         }
 
         with self.login(user):
@@ -350,7 +358,8 @@ class TestSchoolBreakUpdateView(TestCase):
         data = {
             "school_year": str(school_break.school_year.id),
             "description": "Christmas",
-            "day": "2020-08-05",
+            "start_date": "2020-08-05",
+            "end_date": "2020-08-05",
         }
 
         with self.login(user):
@@ -360,7 +369,8 @@ class TestSchoolBreakUpdateView(TestCase):
 
         school_break.refresh_from_db()
         assert school_break.description == "Christmas"
-        assert school_break.day == datetime.date(2020, 8, 5)
+        assert school_break.start_date == datetime.date(2020, 8, 5)
+        assert school_break.end_date == datetime.date(2020, 8, 5)
         self.response_302(response)
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", uuid=school_break.school_year.uuid

@@ -35,9 +35,7 @@
         <p class="mb-6">
           Please tell us what you want to call your grade level.
         </p>
-        {% for error_message in form.non_field_errors %}
-          <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
-        {% endfor %}
+        {% include "forms/non_field_errors.html" %}
         <form method="post" class="w-full max-w-lg">
           {% csrf_token %}
           <input type="hidden" name="school_year" value="{{ school_year.id }}">

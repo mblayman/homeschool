@@ -32,7 +32,7 @@ class GradeLevelForm(forms.ModelForm):
 class SchoolBreakForm(forms.ModelForm):
     class Meta:
         model = SchoolBreak
-        fields = ["school_year", "description", "day"]
+        fields = ["school_year", "description", "start_date", "end_date"]
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -50,7 +50,57 @@ class SchoolBreakForm(forms.ModelForm):
                 "A school break cannot be created for a different user's school year."
             )
 
+        start_date = self.cleaned_data.get("start_date")
+        end_date = self.cleaned_data.get("end_date")
+        if start_date and end_date:
+            if start_date > end_date:
+                self.add_error(None, "The start date must be before the end date.")
+            else:
+                self.check_in_school_year(school_year, start_date, end_date)
+                self.check_overlap(school_year, start_date, end_date)
+
         return self.cleaned_data
+
+    def check_in_school_year(self, school_year, start_date, end_date):
+        """Check that the break fits in the school year."""
+
+        if start_date < school_year.start_date:
+            self.add_error(
+                None,
+                "A break must be in the school year. "
+                f"{start_date} is before the school year's start "
+                f"of {school_year.start_date}.",
+            )
+
+        if end_date > school_year.end_date:
+            self.add_error(
+                None,
+                "A break must be in the school year. "
+                f"{end_date} is after the school year's end "
+                f"of {school_year.end_date}.",
+            )
+
+    def check_overlap(self, school_year, start_date, end_date):
+        """Check if the dates overlap with any of the user's existing school breaks."""
+        overlapping_school_breaks = SchoolBreak.objects.filter(
+            school_year=school_year, start_date__lte=end_date, end_date__gte=start_date
+        )
+
+        # When updating, be sure to exclude the existing school break
+        # or it will overlap with itself.
+        if self.instance:
+            overlapping_school_breaks = overlapping_school_breaks.exclude(
+                id=self.instance.id
+            )
+
+        school_break = overlapping_school_breaks.first()
+        if school_break:
+            self.add_error(
+                None,
+                "School breaks may not have overlapping dates. "
+                "The dates provided overlap with the school break "
+                f"from {school_break.start_date} to {school_break.end_date}.",
+            )
 
 
 class SchoolYearForm(DaysOfWeekModelForm):
@@ -78,7 +128,8 @@ class SchoolYearForm(DaysOfWeekModelForm):
         if start_date and end_date:
             if start_date >= end_date:
                 self.add_error(None, "The start date must be before the end date.")
-            self.check_overlap(start_date, end_date)
+            else:
+                self.check_overlap(start_date, end_date)
 
         has_week_days = any(
             [

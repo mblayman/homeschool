@@ -1,7 +1,11 @@
 import datetime
 
-from homeschool.schools.forms import SchoolYearForm
-from homeschool.schools.tests.factories import SchoolFactory, SchoolYearFactory
+from homeschool.schools.forms import SchoolBreakForm, SchoolYearForm
+from homeschool.schools.tests.factories import (
+    SchoolBreakFactory,
+    SchoolFactory,
+    SchoolYearFactory,
+)
 from homeschool.test import TestCase
 
 
@@ -117,3 +121,112 @@ class TestSchoolYearForm(TestCase):
             "A school year must run on at least one week day."
             in form.non_field_errors()
         )
+
+
+class TestSchoolBreakForm(TestCase):
+    def test_start_before_end(self):
+        """The start date must be before the end date."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        data = {
+            "school_year": str(school_year.id),
+            "start_date": str(school_year.end_date + datetime.timedelta(days=3)),
+            "end_date": str(school_year.start_date),
+        }
+        form = SchoolBreakForm(user=school.admin, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "The start date must be before the end date." in form.non_field_errors()
+
+    def test_no_overlapping_breaks(self):
+        """Two school breaks may not overlap."""
+        school = SchoolFactory()
+        school_break = SchoolBreakFactory(school_year__school=school)
+        cases = [
+            (
+                "surround",
+                str(school_break.start_date - datetime.timedelta(days=1)),
+                str(school_break.end_date + datetime.timedelta(days=1)),
+            ),
+            (
+                "inside",
+                str(school_break.start_date + datetime.timedelta(days=1)),
+                str(school_break.end_date - datetime.timedelta(days=1)),
+            ),
+            (
+                "overlap_start",
+                str(school_break.start_date - datetime.timedelta(days=1)),
+                str(school_break.end_date - datetime.timedelta(days=1)),
+            ),
+            (
+                "overlap_end",
+                str(school_break.start_date + datetime.timedelta(days=1)),
+                str(school_break.end_date + datetime.timedelta(days=1)),
+            ),
+        ]
+
+        for case in cases:
+            with self.subTest(case[0]):
+                data = {
+                    "school_year": str(school_break.school_year.id),
+                    "start_date": case[1],
+                    "end_date": case[2],
+                }
+                form = SchoolBreakForm(user=school.admin, data=data)
+
+                is_valid = form.is_valid()
+
+                assert not is_valid
+                assert (
+                    "School breaks may not have overlapping dates."
+                    in form.non_field_errors()[0]
+                )
+
+    def test_school_break_overlap_with_itself(self):
+        """A school break is permitted to overlap with itself when updating."""
+        school = SchoolFactory()
+        school_break = SchoolBreakFactory(school_year__school=school)
+        data = {
+            "school_year": str(school_break.school_year.id),
+            "start_date": str(school_break.start_date - datetime.timedelta(days=1)),
+            "end_date": str(school_break.end_date),
+        }
+        form = SchoolBreakForm(user=school.admin, instance=school_break, data=data)
+
+        is_valid = form.is_valid()
+
+        assert is_valid
+
+    def test_break_in_school_year(self):
+        """The school break must fit in the school year."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        cases = [
+            (
+                "before",
+                str(school_year.start_date - datetime.timedelta(days=1)),
+                str(school_year.start_date + datetime.timedelta(days=1)),
+            ),
+            (
+                "after",
+                str(school_year.end_date - datetime.timedelta(days=1)),
+                str(school_year.end_date + datetime.timedelta(days=1)),
+            ),
+        ]
+        for case in cases:
+            with self.subTest(case[0]):
+                data = {
+                    "school_year": str(school_year.id),
+                    "start_date": case[1],
+                    "end_date": case[2],
+                }
+                form = SchoolBreakForm(user=school.admin, data=data)
+
+                is_valid = form.is_valid()
+
+                assert not is_valid
+                assert (
+                    "A break must be in the school year." in form.non_field_errors()[0]
+                )

@@ -228,7 +228,8 @@ class TestSchoolBreak(TestCase):
     def test_factory(self):
         school_break = SchoolBreakFactory()
 
-        assert school_break.day is not None
+        assert school_break.start_date is not None
+        assert school_break.end_date is not None
         assert school_break.description != ""
         assert school_break.school_year is not None
         assert school_break.uuid is not None
@@ -236,4 +237,4 @@ class TestSchoolBreak(TestCase):
     def test_str(self):
         school_break = SchoolBreakFactory()
 
-        assert str(school_break) == f"School Break {school_break.day}"
+        assert str(school_break) == f"School Break {school_break.start_date}"

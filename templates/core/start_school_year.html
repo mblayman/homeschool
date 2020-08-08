@@ -26,9 +26,7 @@
           Please tell us when your school year will start and end.
           You can pick a range in the future and adjust the dates later if you are unsure.
         </p>
-        {% for error_message in form.non_field_errors %}
-          <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
-        {% endfor %}
+        {% include "forms/non_field_errors.html" %}
         <form method="post" class="w-full max-w-lg">
           {% csrf_token %}
           <input type="hidden" name="school" value="{{ user.school.id }}">

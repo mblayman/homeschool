@@ -7,9 +7,7 @@
     Enroll {{ student.full_name }} for the {{ school_year }} school year
   </h1>
 
-  {% for error_message in form.non_field_errors %}
-    <p class="ml-10 mb-4 text-red-500 text-sm">{{ error_message }}</p>
-  {% endfor %}
+  {% include "forms/non_field_errors.html" %}
 
   <form method="POST" class="w-full max-w-2xl">
     {% csrf_token %}
