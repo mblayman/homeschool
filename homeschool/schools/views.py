@@ -15,6 +15,7 @@ from homeschool.students.models import Enrollment, Grade
 
 from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
 from .models import SchoolBreak, SchoolYear
+from .year_calendar import YearCalendar
 
 
 class CurrentSchoolYearView(LoginRequiredMixin, View):
@@ -70,6 +71,12 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
         return SchoolYear.objects.filter(school__admin=user).prefetch_related(
             "breaks", "grade_levels", "grade_levels__courses"
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = self.request.user.get_local_today()
+        context["calendar"] = YearCalendar(self.object, today).build()
+        return context
 
 
 class SchoolYearEditView(LoginRequiredMixin, UpdateView):

@@ -44,3 +44,8 @@ jobs:
         run: make coverage
         env:
           SECRET_KEY: 'a secret to everybody'
+
+      - name: Check deploy configuration
+        run: ./manage.py check --deploy
+        env:
+          SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'

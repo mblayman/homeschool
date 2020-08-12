@@ -27,514 +27,55 @@
         class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
         Add Grade Level
       </a>
+      <a href="{% url "schools:school_break_create" schoolyear.uuid %}"
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+        Add Break
+      </a>
     {% endif %}
-    <a href="{% url "schools:school_break_create" schoolyear.uuid %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
-      Add Break
-    </a>
     <a href="{% url "schools:school_year_edit" schoolyear.uuid %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
       Edit School Year
     </a>
   </p>
 
-  {# <h2 class="font-thin text-2xl text-blue-900 mb-4">Break Days</h2> #}
-  {# <table class="text-center mb-8"> #}
-  {#   <tr class="font-thin"> #}
-  {#     <td></td> #}
-  {#     <td class="w-6 pb-1">M</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">W</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">F</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">M</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">W</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">F</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">M</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">W</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">F</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">M</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">W</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">F</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">M</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">W</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#     <td class="w-6 pb-1">F</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">S</td> #}
-  {#     <td class="w-6 pb-1">M</td> #}
-  {#     <td class="w-6 pb-1">T</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="font-thin text-left pb-1">January</td> #}
-  {#     <td class="w-6 pb-1"></td> #}
-  {#     <td class="w-6 pb-1"></td> #}
-  {#     <td class="w-6 pb-1">1</td> #}
-  {#     <td class="w-6 pb-1">2</td> #}
-  {#     <td class="w-6 pb-1">3</td> #}
-  {#     <td class="w-6 pb-1">4</td> #}
-  {#     <td class="w-6 pb-1">5</td> #}
-  {#     <td class="w-6 pb-1">6</td> #}
-  {#     <td class="w-6 pb-1">7</td> #}
-  {#     <td class="w-6 pb-1">8</td> #}
-  {#     <td class="w-6 pb-1">9</td> #}
-  {#     <td class="w-6 pb-1">10</td> #}
-  {#     <td class="w-6 pb-1">11</td> #}
-  {#     <td class="w-6 pb-1">12</td> #}
-  {#     <td class="w-6 pb-1">13</td> #}
-  {#     <td class="w-6 pb-1">14</td> #}
-  {#     <td class="w-6 pb-1">15</td> #}
-  {#     <td class="w-6 pb-1">16</td> #}
-  {#     <td class="w-6 pb-1">17</td> #}
-  {#     <td class="w-6 pb-1">18</td> #}
-  {#     <td class="w-6 pb-1">19</td> #}
-  {#     <td class="w-6 pb-1">20</td> #}
-  {#     <td class="w-6 pb-1">21</td> #}
-  {#     <td class="w-6 pb-1">22</td> #}
-  {#     <td class="w-6 pb-1">23</td> #}
-  {#     <td class="w-6 pb-1">24</td> #}
-  {#     <td class="w-6 pb-1">25</td> #}
-  {#     <td class="w-6 pb-1">26</td> #}
-  {#     <td class="w-6 pb-1">27</td> #}
-  {#     <td class="w-6 pb-1">28</td> #}
-  {#     <td class="w-6 pb-1">29</td> #}
-  {#     <td class="w-6 pb-1">30</td> #}
-  {#     <td class="w-6 pb-1">31</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">February</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">March</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#     <td class="pb-1 w-6">31</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">April</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">May</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#     <td class="pb-1 w-6">31</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">June</td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1"><div class="w-6 rounded-full bg-yellow-300">4</div></td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">July</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1"><div class="w-6 rounded-full bg-yellow-300">8</div></td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#     <td class="pb-1 w-6">31</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">August</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#     <td class="pb-1 w-6">31</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">September</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1"><div class="w-6 rounded-full bg-yellow-300">20</div></td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">October</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#     <td class="pb-1 w-6">31</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">November</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1 w-6">25</td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1"><div class="w-6 rounded-full bg-yellow-300">28</div></td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#   </tr> #}
-  {#   <tr> #}
-  {#     <td class="pb-1 font-thin text-left">December</td> #}
-  {#     <td class="pb-1 w-6"></td> #}
-  {#     <td class="pb-1 w-6">1</td> #}
-  {#     <td class="pb-1 w-6">2</td> #}
-  {#     <td class="pb-1 w-6">3</td> #}
-  {#     <td class="pb-1 w-6">4</td> #}
-  {#     <td class="pb-1 w-6">5</td> #}
-  {#     <td class="pb-1 w-6">6</td> #}
-  {#     <td class="pb-1 w-6">7</td> #}
-  {#     <td class="pb-1 w-6">8</td> #}
-  {#     <td class="pb-1 w-6">9</td> #}
-  {#     <td class="pb-1 w-6">10</td> #}
-  {#     <td class="pb-1 w-6">11</td> #}
-  {#     <td class="pb-1 w-6">12</td> #}
-  {#     <td class="pb-1 w-6">13</td> #}
-  {#     <td class="pb-1 w-6">14</td> #}
-  {#     <td class="pb-1 w-6">15</td> #}
-  {#     <td class="pb-1 w-6">16</td> #}
-  {#     <td class="pb-1 w-6">17</td> #}
-  {#     <td class="pb-1 w-6">18</td> #}
-  {#     <td class="pb-1 w-6">19</td> #}
-  {#     <td class="pb-1 w-6">20</td> #}
-  {#     <td class="pb-1 w-6">21</td> #}
-  {#     <td class="pb-1 w-6">22</td> #}
-  {#     <td class="pb-1 w-6">23</td> #}
-  {#     <td class="pb-1 w-6">24</td> #}
-  {#     <td class="pb-1"><div class="w-6 rounded-full bg-yellow-300">25</div></td> #}
-  {#     <td class="pb-1 w-6">26</td> #}
-  {#     <td class="pb-1 w-6">27</td> #}
-  {#     <td class="pb-1 w-6">28</td> #}
-  {#     <td class="pb-1 w-6">29</td> #}
-  {#     <td class="pb-1 w-6">30</td> #}
-  {#     <td class="pb-1"><div class="w-6 rounded-full bg-yellow-300">31</div></td> #}
-  {#   </tr> #}
-  {# </table> #}
-  {# {% if schoolyear.breaks.all %} #}
-  {#   <h2 class="font-thin text-2xl text-blue-900 mb-4">Break Days</h2> #}
+  {% if schoolyear.grade_levels.all %}
+    <h2 class="font-thin text-2xl text-blue-900 mb-4">Calendar</h2>
+    <div class="mb-8 max-w-5xl">
+      <div class="flex flex-row py-2">
+        <div class="w-24"></div>
+        {% for label in calendar.header_labels %}
+          <div class="font-thin w-6 text-center">{{ label }}</div>
+        {% endfor %}
+      </div>
+      {% for month in calendar.months %}
+        <div class="flex flex-row py-2 border-t border-yellow-400">
+          <div class="font-thin w-24">{{ month.name }}</div>
+          {% for month_date in month.dates %}
+            {% if month_date.in_school_year and month_date.is_school_day %}
+            <a href="{% url "core:daily_for_date" month_date.date.year month_date.date.month month_date.date.day %}"
+              class="rounded-full hover:bg-yellow-400 hover:text-white">
+            {% endif %}
 
-  {#   <ol class="pl-8 mb-8 list-decimal"> #}
-  {#     {% for school_break in schoolyear.breaks.all %} #}
-  {#       <li class="font-thin text-base text-gray-800 mb-2"> #}
-  {#         <a href="{% url "schools:school_break_edit" school_break.uuid %}" class="hover:underline"> #}
-  {#           {{ school_break.day }} #}
-  {#           {% if school_break.description %} #}
-  {#             - {{ school_break.description }} #}
-  {#           {% endif %} #}
-  {#         </a> #}
-  {#       </li> #}
-  {#     {% endfor %} #}
-  {#   </ol> #}
-  {# {% endif %} #}
+              <div class="w-6 text-center
+                {% if month_date.is_today %}
+                  bg-yellow-400 text-white rounded-full
+                {% elif not month_date.in_school_year or not month_date.is_school_day %}
+                  text-gray-300
+                {% elif month_date.show_as_past %}
+                  text-gray-600 hover:text-white
+                {% endif %}
+                ">
+                {{ month_date.day }}
+              </div>
+
+            {% if month_date.in_school_year and month_date.is_school_day %}
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   <div class="flex flex-col w-full">
     {% for grade_level in schoolyear.grade_levels.all %}

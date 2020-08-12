@@ -19,7 +19,13 @@ import environ
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-env = environ.Env(DEBUG=(bool, False), DEBUG_TOOLBAR=(bool, False))
+env = environ.Env(
+    CSRF_COOKIE_SECURE=(bool, True),
+    DEBUG=(bool, False),
+    DEBUG_TOOLBAR=(bool, False),
+    SECURE_SSL_REDIRECT=(bool, True),
+    SESSION_COOKIE_SECURE=(bool, True),
+)
 env_file = os.path.join(BASE_DIR, ".env")
 if os.path.exists(env_file):
     environ.Env.read_env(env_file)
@@ -150,6 +156,21 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# Security
+# Some of these are configurable settings because local development is done
+# over HTTP. If local development is ever switched to HTTPS, then it would
+# be good to enable the settings all the time.
+CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_REFERRER_POLICY = "same-origin"
+SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
+SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
+
+SILENCED_SYSTEM_CHECKS = [
+    # SECURE_HSTS_SECONDS will need to wait until the domains are set up. Issue #132
+    "security.W004"
+]
 
 # django.contrib.sites
 SITE_ID = 1
