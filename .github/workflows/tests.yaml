@@ -44,6 +44,7 @@ jobs:
         run: make coverage
         env:
           SECRET_KEY: 'a secret to everybody'
+          SECURE_SSL_REDIRECT: 'off'
 
       - name: Check deploy configuration
         run: ./manage.py check --deploy
