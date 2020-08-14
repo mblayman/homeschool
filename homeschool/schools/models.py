@@ -1,10 +1,12 @@
+import datetime
 import uuid
-from typing import Optional
+from typing import Dict, Optional
 
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.functional import cached_property
 
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.users.models import User
@@ -57,6 +59,21 @@ class SchoolYear(DaysOfWeekModel):
             ).first()
 
         return school_year
+
+    def get_break(self, break_date) -> Optional["SchoolBreak"]:
+        """Get a school break if the date is contained in the break."""
+        return self._school_breaks_by_date.get(break_date)
+
+    @cached_property
+    def _school_breaks_by_date(self) -> Dict[datetime.date, "SchoolBreak"]:
+        """Get the school breaks grouped by the dates."""
+        breaks_by_date = {}
+        for school_break in self.breaks.all():
+            current_date = school_break.start_date
+            while current_date <= school_break.end_date:
+                breaks_by_date[current_date] = school_break
+                current_date = current_date + datetime.timedelta(days=1)
+        return breaks_by_date
 
     def __str__(self):
         if self.start_date.year == self.end_date.year:

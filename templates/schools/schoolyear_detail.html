@@ -4,7 +4,7 @@
 {% block head_title%}{{ schoolyear }} School Year{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-4">
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">
     <a href="{% url "schools:school_year_list" %}" class="hover:underline">School Years</a>
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
     <a href="{% url "schools:school_year_detail" schoolyear.uuid %}" class="hover:underline">{{ schoolyear }} School Year</a>
@@ -42,16 +42,19 @@
     <h2 class="font-thin text-2xl text-blue-900 mb-4">Calendar</h2>
     <div class="mb-8 max-w-5xl">
       <div class="flex flex-row py-2">
-        <div class="w-24"></div>
+        <div class="w-20"></div>
         {% for label in calendar.header_labels %}
           <div class="font-thin w-6 text-center">{{ label }}</div>
         {% endfor %}
       </div>
       {% for month in calendar.months %}
         <div class="flex flex-row py-2 border-t border-yellow-400">
-          <div class="font-thin w-24">{{ month.name }}</div>
+          <div class="font-thin w-20">{{ month.name }}</div>
           {% for month_date in month.dates %}
-            {% if month_date.in_school_year and month_date.is_school_day %}
+            {% if month_date.school_break %}
+            <a href="{% url "schools:school_break_edit" month_date.school_break.uuid %}"
+              class="rounded-full hover:bg-yellow-400 hover:text-white">
+            {% elif month_date.in_school_year and month_date.is_school_day %}
             <a href="{% url "core:daily_for_date" month_date.date.year month_date.date.month month_date.date.day %}"
               class="rounded-full hover:bg-yellow-400 hover:text-white">
             {% endif %}
@@ -59,6 +62,15 @@
               <div class="w-6 text-center
                 {% if month_date.is_today %}
                   bg-yellow-400 text-white rounded-full
+                {% elif month_date.school_break %}
+                  bg-blue-600 text-white hover:bg-blue-400
+                  {% if month_date.break_style == "single" %}
+                    rounded-full
+                  {% elif month_date.break_style == "start" %}
+                    rounded-l-full
+                  {% elif month_date.break_style == "end" %}
+                    rounded-r-full
+                  {% endif %}
                 {% elif not month_date.in_school_year or not month_date.is_school_day %}
                   text-gray-300
                 {% elif month_date.show_as_past %}
@@ -68,7 +80,7 @@
                 {{ month_date.day }}
               </div>
 
-            {% if month_date.in_school_year and month_date.is_school_day %}
+            {% if month_date.school_break or month_date.in_school_year and month_date.is_school_day %}
               </a>
             {% endif %}
           {% endfor %}

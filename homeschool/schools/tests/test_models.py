@@ -185,6 +185,23 @@ class TestSchoolYear(TestCase):
 
         assert school_year.display_abbreviated_days == "MTWRFSaSu"
 
+    def test_has_school_break(self):
+        """A date can return an existing school break."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+
+        school_break = school_year.get_break(expected_school_break.start_date)
+
+        assert school_break == expected_school_break
+
+    def test_no_school_break(self):
+        """A data with no break is a null result."""
+        school_year = SchoolYearFactory()
+
+        school_break = school_year.get_break(school_year.start_date)
+
+        assert school_break is None
+
 
 class TestGradeLevel(TestCase):
     def test_factory(self):

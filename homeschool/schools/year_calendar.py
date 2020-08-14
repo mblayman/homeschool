@@ -45,6 +45,7 @@ class YearCalendar:
 
     def _build_date(self, current_date):
         """Build a date dictionary with all the data to render."""
+        school_break = self.school_year.get_break(current_date)
         return {
             "date": current_date,
             "day": current_date.day,
@@ -54,7 +55,25 @@ class YearCalendar:
             "is_school_day": self.school_year.runs_on(current_date),
             "is_today": current_date == self.today,
             "show_as_past": self.is_current_school_year and current_date < self.today,
+            "school_break": school_break,
+            "break_style": self._get_break_style(current_date, school_break),
         }
+
+    def _get_break_style(self, current_date, school_break):
+        """Get the break style of the current date.
+
+        This is the hint for the template to determine
+        where to put the rounded corners on the calendar.
+        """
+        if school_break is None:
+            return ""
+        if school_break.start_date == school_break.end_date:
+            return "single"
+        if current_date == school_break.start_date:
+            return "start"
+        if current_date == school_break.end_date:
+            return "end"
+        return "middle"
 
     def _build_header_labels(self, months):
         """Build the list of display labels for the header."""
