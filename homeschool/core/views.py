@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
@@ -351,3 +352,8 @@ class StartCourseTaskView(LoginRequiredMixin, TemplateView):
 def boom(request):
     """This is for checking error handling (like Rollbar)."""
     raise Exception("Is this thing on?")
+
+
+def handle_500(request):
+    """Handle 500 errors and display them."""
+    return render(request, "500.html", {})

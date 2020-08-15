@@ -821,3 +821,8 @@ class TestBoom(TestCase):
             self.get("boom")
 
         assert str(excinfo.value) == "Is this thing on?"
+
+
+class TestHandle500(TestCase):
+    def test_get(self):
+        self.get_check_200("handle_500")

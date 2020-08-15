@@ -36,7 +36,7 @@
     <a href="#" class="mx-1 hover:text-gray-900">Terms</a>
     <a href="#" class="mx-1 hover:text-gray-900">Privacy</a>
   </footer>
-  {% tz_detect %}
+  {% block tz %}{% tz_detect %}{% endblock %}
   {% block scripts %}{% endblock %}
 </body>
 </html>
