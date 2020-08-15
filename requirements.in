@@ -4,6 +4,7 @@ Django==3.0.7
 django-allauth==0.42.0
 django-debug-toolbar==2.2
 django-environ==0.4.5
+django-extensions==3.0.3
 django-heroku==0.3.1
 django-ordered-model==3.4.1
 django-tz-detect==0.3.0
