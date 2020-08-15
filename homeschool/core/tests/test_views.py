@@ -1,6 +1,7 @@
 import datetime
 from unittest import mock
 
+import pytest
 import pytz
 from dateutil.relativedelta import MO, SU, relativedelta
 from django.utils import timezone
@@ -798,3 +799,25 @@ class TestStartGradeLevelView(TestCase):
         self.response_200(response)
         form = self.get_context("form")
         assert form.non_field_errors() == ["Invalid school year."]
+
+
+class TestBoom(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot trigger the error page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("boom")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can trigger the error page."""
+        user = self.make_user()
+        user.is_staff = True
+        user.save()
+
+        with self.login(user), pytest.raises(Exception) as excinfo:
+            self.get("boom")
+
+        assert str(excinfo.value) == "Is this thing on?"

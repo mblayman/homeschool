@@ -23,6 +23,8 @@ env = environ.Env(
     CSRF_COOKIE_SECURE=(bool, True),
     DEBUG=(bool, False),
     DEBUG_TOOLBAR=(bool, False),
+    ROLLBAR_ENABLED=(bool, True),
+    ROLLBAR_ENVIRONMENT=(str, "production"),
     SECURE_SSL_REDIRECT=(bool, True),
     SESSION_COOKIE_SECURE=(bool, True),
 )
@@ -78,6 +80,7 @@ MIDDLEWARE = [
     "waffle.middleware.WaffleMiddleware",
     "tz_detect.middleware.TimezoneMiddleware",
     "homeschool.middleware.SqueakyCleanMiddleware",
+    "rollbar.contrib.django.middleware.RollbarNotifierMiddleware",
 ]
 
 # Enable the debug toolbar only in DEBUG mode.
@@ -201,5 +204,14 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
 # django-waffle
 WAFFLE_FLAG_MODEL = "core.Flag"
 WAFFLE_CREATE_MISSING_FLAGS = True
+
+# rollbar
+ROLLBAR = {
+    "enabled": env("ROLLBAR_ENABLED"),
+    "access_token": env("ROLLBAR_ACCESS_TOKEN"),
+    "environment": env("ROLLBAR_ENVIRONMENT"),
+    "branch": "master",
+    "root": BASE_DIR,
+}
 
 django_heroku.settings(locals(), secret_key=False, test_runner=False, logging=False)

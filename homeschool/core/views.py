@@ -2,6 +2,7 @@ import datetime
 
 from dateutil.parser import parse
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import pluralize
@@ -344,3 +345,9 @@ class StartCourseView(LoginRequiredMixin, TemplateView):
 
 class StartCourseTaskView(LoginRequiredMixin, TemplateView):
     template_name = "core/start_course.html"
+
+
+@staff_member_required
+def boom(request):
+    """This is for checking error handling (like Rollbar)."""
+    raise Exception("Is this thing on?")

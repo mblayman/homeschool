@@ -17,10 +17,13 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
+from homeschool.core.views import boom
+
 urlpatterns = [
     path("", include("homeschool.core.urls")),
     path("courses/", include("homeschool.courses.urls")),
     path("office/", admin.site.urls),
+    path("office/boom/", boom, name="boom"),
     path("reports/", include("homeschool.schools.report_urls")),
     path("schools/", include("homeschool.schools.urls")),
     path("students/", include("homeschool.students.urls")),
