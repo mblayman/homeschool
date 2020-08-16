@@ -356,4 +356,4 @@ def boom(request):
 
 def handle_500(request):
     """Handle 500 errors and display them."""
-    return render(request, "500.html", {})
+    return render(request, "500.html", {}, status=500)

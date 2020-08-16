@@ -825,4 +825,6 @@ class TestBoom(TestCase):
 
 class TestHandle500(TestCase):
     def test_get(self):
-        self.get_check_200("handle_500")
+        response = self.get("handle_500")
+
+        assert response.status_code == 500
