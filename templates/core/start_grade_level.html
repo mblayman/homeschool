@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head_title %}Create A Grade Level{% endblock %}
+{% block head_title %}Create a Grade Level{% endblock %}
 
 {% block main %}
   {% include "core/start_banner.html" with step="grade-level" %}
@@ -19,18 +19,14 @@
           The next step is to create a course.
         </p>
         <div class="text-center">
-          <a href="{% url "core:start-course" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add A Course</a>
+          <a href="{% url "core:start-course" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add a Course</a>
         </div>
       {% elif school_year %}
         <p class="mb-2">
           Each of your students will be enrolled in a grade level for the school year.
+          Let’s set up your first grade level.
           If you have more than one student in your school,
-          you will be able to add more grade levels in the future.
-        </p>
-        <p class="mb-2">
-          These starting steps are designed to show you all the parts needed
-          for one grade,
-          and you may add more later.
+          you will be able to add more grade levels after this walkthrough.
         </p>
         <p class="mb-6">
           Please tell us what you want to call your grade level.
