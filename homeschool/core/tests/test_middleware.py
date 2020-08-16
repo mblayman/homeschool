@@ -16,6 +16,7 @@ def test_cleans_fields(rf):
             'Oh no! <script>alert("boom");</script>',
             "Another <style>body { color: red; }</style> tag.",
         ],
+        "with_html_entities": "War & Peace",
     }
     request = rf.post("/somewhere/", data=data)
     middleware = SqueakyCleanMiddleware(get_response)
@@ -28,3 +29,4 @@ def test_cleans_fields(rf):
         'Oh no! alert("boom");',
         "Another body { color: red; } tag.",
     ]
+    assert request.POST["with_html_entities"] == "War & Peace"

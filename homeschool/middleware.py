@@ -1,8 +1,17 @@
-import functools
+import html
 
 import bleach
 
-strip_clean = functools.partial(bleach.clean, strip=True)
+
+def strip_clean(input_text):
+    """Strip out undesired tags.
+
+    This removes tags like <script>, but leaves characters like & unescaped.
+    The goal is to store the raw text in the database with the XSS nastiness.
+    By doing this, the content in the database is raw
+    and Django can continue to assume that it's unsafe by default.
+    """
+    return html.unescape(bleach.clean(input_text, strip=True))
 
 
 class SqueakyCleanMiddleware:
