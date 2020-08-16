@@ -30,3 +30,12 @@ class GradedWorkFactory(factory.django.DjangoModelFactory):
         model = "courses.GradedWork"
 
     course_task = factory.SubFactory(CourseTaskFactory)
+
+
+class CourseResourceFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "courses.CourseResource"
+
+    course = factory.SubFactory(CourseFactory)
+    title = factory.Faker("sentence")
+    details = factory.Faker("paragraph")

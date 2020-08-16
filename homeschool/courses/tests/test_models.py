@@ -4,6 +4,7 @@ import uuid
 from homeschool.courses.models import Course, CourseTask
 from homeschool.courses.tests.factories import (
     CourseFactory,
+    CourseResourceFactory,
     CourseTaskFactory,
     GradedWorkFactory,
 )
@@ -80,13 +81,6 @@ class TestCourse(TestCase):
         assert course_multiple_grade_levels.has_many_grade_levels
 
 
-class TestGradedWork(TestCase):
-    def test_factory(self):
-        graded_work = GradedWorkFactory()
-
-        assert graded_work is not None
-
-
 class TestCourseTask(TestCase):
     def test_factory(self):
         task = CourseTaskFactory()
@@ -152,3 +146,25 @@ class TestCourseTask(TestCase):
         task_3.below(task_1)
 
         assert list(CourseTask.objects.all()) == [task_1, task_2, task_3]
+
+
+class TestGradedWork(TestCase):
+    def test_factory(self):
+        graded_work = GradedWorkFactory()
+
+        assert graded_work is not None
+
+
+class TestCourseResource(TestCase):
+    def test_factory(self):
+        resource = CourseResourceFactory()
+
+        assert resource.uuid is not None
+        assert resource.title != ""
+        assert resource.details != ""
+        assert resource.course is not None
+
+    def test_str(self):
+        resource = CourseResourceFactory()
+
+        assert str(resource) == resource.title

@@ -99,3 +99,17 @@ class GradedWork(models.Model):
     course_task = models.OneToOneField(
         "courses.CourseTask", on_delete=models.CASCADE, related_name="graded_work"
     )
+
+
+class CourseResource(models.Model):
+    """A resource related to a course (e.g., a book or workbook)"""
+
+    course = models.ForeignKey(
+        "courses.Course", on_delete=models.CASCADE, related_name="resources"
+    )
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
+    title = models.CharField(max_length=512)
+    details = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.title
