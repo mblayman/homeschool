@@ -17,6 +17,10 @@
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
       Add New Task
     </a>
+    <a href="{% url "courses:resource_create" uuid=course.uuid %}"
+      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+      Add New Resource
+    </a>
     <a href="{% url "courses:edit" uuid=course.uuid %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
       Edit Course
@@ -86,4 +90,19 @@
       </div>
     </div>
   {% endfor %}
+  {% if course.resources.all %}
+    <h1 class="font-thin text-2xl text-blue-900 mt-8 mb-4">Resources</h1>
+    <ul class="max-w-2xl">
+      {% for resource in course.resources.all %}
+        <li class="border-t border-yellow-400">
+          <a class="block px-2 py-4 hover:bg-yellow-200" href="#">
+            <div class="font-light">{{ resource.title }}</div>
+            <div class="text-sm text-gray-700 font-light">{{ resource.details|linebreaksbr }}</div>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    PUT SOMETHING HERE.
+  {% endif %}
 {% endblock %}

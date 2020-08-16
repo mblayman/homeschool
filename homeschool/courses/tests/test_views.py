@@ -1,6 +1,6 @@
 import datetime
 
-from homeschool.courses.models import Course, CourseTask, GradedWork
+from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
     CourseFactory,
     CourseTaskFactory,
@@ -518,3 +518,42 @@ class TestCourseTaskDeleteView(TestCase):
             )
 
         self.response_404(response)
+
+
+class TestCourseResourceCreateView(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        self.assertLoginRequired("courses:resource_create", uuid=course.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("courses:resource_create", uuid=course.uuid)
+
+        assert self.get_context("create")
+        assert self.get_context("course") == course
+
+    def test_post(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "course": str(course.id),
+            "title": "Charlotte's Web",
+            "details": "That's some pig.",
+        }
+
+        with self.login(user):
+            response = self.post("courses:resource_create", uuid=course.uuid, data=data)
+
+        assert CourseResource.objects.count() == 1
+        resource = CourseResource.objects.get(course=course)
+        assert resource.title == data["title"]
+        assert resource.details == data["details"]
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "courses:detail", uuid=course.uuid
+        )

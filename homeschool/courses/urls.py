@@ -16,4 +16,9 @@ urlpatterns = [
         name="task_delete",
     ),
     path("tasks/<uuid:uuid>/", views.CourseTaskUpdateView.as_view(), name="task_edit"),
+    path(
+        "<uuid:uuid>/resources/",
+        views.CourseResourceCreateView.as_view(),
+        name="resource_create",
+    ),
 ]

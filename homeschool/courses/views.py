@@ -1,6 +1,8 @@
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -10,7 +12,26 @@ from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.models import GradeLevel, SchoolYear
 
 from .forms import CourseForm, CourseTaskForm
-from .models import Course, CourseTask
+from .models import Course, CourseResource, CourseTask
+
+
+class CourseMixin:
+    """Get a course from the uuid URL arg."""
+
+    if TYPE_CHECKING:  # pragma: no cover
+        kwargs: dict = {}
+        request = HttpRequest()
+
+    @cached_property
+    def course(self):
+        course_uuid = self.kwargs["uuid"]
+        grade_levels = GradeLevel.objects.filter(
+            school_year__school__admin=self.request.user
+        )
+        return get_object_or_404(
+            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
+            uuid=course_uuid,
+        )
 
 
 class CourseCreateView(LoginRequiredMixin, CreateView):
@@ -82,7 +103,9 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return (
             Course.objects.filter(grade_levels__in=grade_levels)
-            .prefetch_related("course_tasks__grade_level", "course_tasks__graded_work")
+            .prefetch_related(
+                "resources", "course_tasks__grade_level", "course_tasks__graded_work"
+            )
             .distinct()
         )
 
@@ -127,20 +150,9 @@ class CourseEditView(LoginRequiredMixin, UpdateView):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
 
 
-class CourseTaskCreateView(LoginRequiredMixin, CreateView):
+class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
-
-    @cached_property
-    def course(self):
-        course_uuid = self.kwargs["uuid"]
-        grade_levels = GradeLevel.objects.filter(
-            school_year__school__admin=self.request.user
-        )
-        return get_object_or_404(
-            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
-            uuid=course_uuid,
-        )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -218,6 +230,21 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
         return CourseTask.objects.filter(
             course__grade_levels__in=grade_levels
         ).distinct()
+
+    def get_success_url(self):
+        return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+
+
+class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
+    model = CourseResource
+    fields = ["course", "title", "details"]
+    template_name = "courses/courseresource_form.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["create"] = True
+        context["course"] = self.course
+        return context
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})

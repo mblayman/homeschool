@@ -1,0 +1,45 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}{% if create %}Add{% else %}Edit{% endif %} Resource{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">{% if create %}Add{% else %}Edit{% endif %} Resource for {{ course }}</h1>
+  <form method="post" class="w-full max-w-lg">
+    {% csrf_token %}
+    <input type="hidden" name="course" value="{{ course.id }}">
+    {% include "forms/field.html" with field=form.title autofocus=True %}
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/4">
+        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_details">
+          Details
+        </label>
+      </div>
+      <div class="md:w-3/4">
+        <textarea class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          rows="4" id="id_details" name="details"
+          >{% if form.details.value %}{{ form.details.value|safe|escape }}{% endif %}</textarea>
+      </div>
+    </div>
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      {% if create %}
+        <div class="md:w-3/4 text-right">
+          <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            Add
+          </button>
+        </div>
+      {% else %}
+        <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
+          {# <a href="{% url "courses:resource_delete" courseresource.course.uuid courseresource.uuid %}" #}
+          {#   class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit"> #}
+          {#   Delete #}
+          {# </a> #}
+          <div class="flex-grow"></div>
+          <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+            Update
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </form>
+{% endblock %}
