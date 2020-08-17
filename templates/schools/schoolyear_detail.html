@@ -122,18 +122,22 @@
             </div>
             {% if forloop.last %}
               <div class="w-3/12">
-                <div class="rounded overflow-hidden bg-white shadow-md m-3">
-                  <div class="px-4 py-4">
-                    <div class="font-light text-lg border-b border-yellow-400 pb-1 mb-3">
-                      <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level.uuid }}" class="hover:underline">
-                        Add Course
-                      </a>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                      <p class="text-gray-500 text-sm">
-                      Create a {{ grade_level.name }} course
-                      </p>
-                    </div>
+                <div class="m-3">
+                  <div class="px-8 text-center">
+                    <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level.uuid }}"
+                      class="block rounded-md text-yellow-500 border border-gray-100 hover:border-yellow-400 hover:bg-gray-200 px-3 xl:px-4 py-4">
+                      <div class="flex items-center justify-center border-b border-yellow-400 mb-3 pb-1">
+                        <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                          <path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/>
+                        </svg>
+                        <div class="font-light text-black text-lg pl-1">
+                            Add Course
+                        </div>
+                      </div>
+                        <p class="text-gray-600 text-sm">
+                        For {{ grade_level.name }}
+                        </p>
+                    </a>
                   </div>
                 </div>
               </div>
