@@ -3,7 +3,7 @@ from django import forms
 from homeschool.core.forms import DaysOfWeekModelForm
 from homeschool.schools.models import GradeLevel
 
-from .models import Course, CourseTask, GradedWork
+from .models import Course, CourseResource, CourseTask, GradedWork
 
 
 class CourseForm(DaysOfWeekModelForm):
@@ -27,12 +27,48 @@ class CourseForm(DaysOfWeekModelForm):
         )
 
 
+class CourseResourceForm(forms.ModelForm):
+    class Meta:
+        model = CourseResource
+        fields = ["course", "title", "details"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        course = self.cleaned_data.get("course")
+        if not course:
+            raise forms.ValidationError("Invalid course.")
+
+        if not course.belongs_to(self.user):
+            raise forms.ValidationError(
+                "You may not add a resource to another user's course."
+            )
+        return self.cleaned_data
+
+
 class CourseTaskForm(forms.ModelForm):
     class Meta:
         model = CourseTask
         fields = ["course", "description", "duration", "is_graded", "grade_level"]
 
     is_graded = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        course = self.cleaned_data.get("course")
+        if not course:
+            raise forms.ValidationError("Invalid course.")
+
+        if not course.belongs_to(self.user):
+            raise forms.ValidationError(
+                "You may not add a task to another user's course."
+            )
+        return self.cleaned_data
 
     def save(self, *args, **kwargs):
         task = super().save(*args, **kwargs)

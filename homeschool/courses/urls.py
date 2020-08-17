@@ -21,4 +21,9 @@ urlpatterns = [
         views.CourseResourceCreateView.as_view(),
         name="resource_create",
     ),
+    path(
+        "resources/<uuid:uuid>/",
+        views.CourseResourceUpdateView.as_view(),
+        name="resource_edit",
+    ),
 ]

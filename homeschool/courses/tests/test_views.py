@@ -3,6 +3,7 @@ import datetime
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
     CourseFactory,
+    CourseResourceFactory,
     CourseTaskFactory,
     GradedWorkFactory,
 )
@@ -556,4 +557,53 @@ class TestCourseResourceCreateView(TestCase):
         self.response_302(response)
         assert response.get("Location") == self.reverse(
             "courses:detail", uuid=course.uuid
+        )
+
+
+class TestCourseResourceUpdateView(TestCase):
+    def test_unauthenticated_access(self):
+        resource = CourseResourceFactory()
+        self.assertLoginRequired("courses:resource_edit", uuid=resource.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        resource = CourseResourceFactory(course__grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("courses:resource_edit", uuid=resource.uuid)
+
+        assert not self.get_context("create")
+        assert self.get_context("course") == resource.course
+
+    def test_get_other_user(self):
+        """A user may not edit another user's resource."""
+        user = self.make_user()
+        resource = CourseResourceFactory()
+
+        with self.login(user):
+            response = self.get("courses:resource_edit", uuid=resource.uuid)
+
+        self.response_404(response)
+
+    def test_post(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        resource = CourseResourceFactory(course__grade_levels=[grade_level])
+        data = {
+            "course": str(resource.course.id),
+            "title": "Charlotte's Web",
+            "details": "That's some pig.",
+        }
+
+        with self.login(user):
+            response = self.post("courses:resource_edit", uuid=resource.uuid, data=data)
+
+        assert CourseResource.objects.count() == 1
+        resource = CourseResource.objects.get(course=resource.course)
+        assert resource.title == data["title"]
+        assert resource.details == data["details"]
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "courses:detail", uuid=resource.course.uuid
         )

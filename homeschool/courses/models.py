@@ -6,6 +6,7 @@ from ordered_model.models import OrderedModel
 
 from homeschool.core.compatibility import OrderedModelQuerySet
 from homeschool.core.models import DaysOfWeekModel
+from homeschool.schools.models import GradeLevel
 
 
 class Course(DaysOfWeekModel):
@@ -31,6 +32,13 @@ class Course(DaysOfWeekModel):
     def has_many_grade_levels(self):
         """Check if multiple grade levels are associated with the course."""
         return self.grade_levels.count() > 1
+
+    def belongs_to(self, user):
+        """Check if the course belongs to the user."""
+        grade_levels = GradeLevel.objects.filter(
+            school_year__school__admin=user
+        ).values_list("id", flat=True)
+        return Course.objects.filter(id=self.id, grade_levels__in=grade_levels).exists()
 
     def get_task_count_in_range(self, start_date, end_date):
         """Get the number of tasks for the date range.

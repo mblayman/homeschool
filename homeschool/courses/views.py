@@ -11,7 +11,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.models import GradeLevel, SchoolYear
 
-from .forms import CourseForm, CourseTaskForm
+from .forms import CourseForm, CourseResourceForm, CourseTaskForm
 from .models import Course, CourseResource, CourseTask
 
 
@@ -188,6 +188,11 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
                 self.object.below(task)
         return response
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
 
 class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CourseTaskForm
@@ -219,6 +224,11 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
             return next_url
         return reverse("courses:task_edit", kwargs={"uuid": self.object.uuid})
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
 
 class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
     slug_field = "uuid"
@@ -236,8 +246,7 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
-    model = CourseResource
-    fields = ["course", "title", "details"]
+    form_class = CourseResourceForm
     template_name = "courses/courseresource_form.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -248,3 +257,38 @@ class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = CourseResourceForm
+    template_name = "courses/courseresource_form.html"
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        user = self.request.user
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        return (
+            CourseResource.objects.filter(course__grade_levels__in=grade_levels)
+            .select_related("course")
+            .distinct()
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["create"] = False
+        context["course"] = self.object.course
+        return context
+
+    def get_success_url(self):
+        return reverse("courses:detail", kwargs={"uuid": self.object.course.uuid})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs

@@ -95,7 +95,8 @@
     <ul class="max-w-2xl">
       {% for resource in course.resources.all %}
         <li class="border-t border-yellow-400">
-          <a class="block px-2 py-4 hover:bg-yellow-200" href="#">
+          <a class="block px-2 py-4 hover:bg-yellow-200"
+            href="{% url "courses:resource_edit" resource.uuid %}">
             <div class="font-light">{{ resource.title }}</div>
             <div class="text-sm text-gray-700 font-light">{{ resource.details|linebreaksbr }}</div>
           </a>
