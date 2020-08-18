@@ -292,3 +292,20 @@ class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+
+class CourseResourceDeleteView(LoginRequiredMixin, DeleteView):
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        user = self.request.user
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        return (
+            CourseResource.objects.filter(course__grade_levels__in=grade_levels)
+            .select_related("course")
+            .distinct()
+        )
+
+    def get_success_url(self):
+        return reverse("courses:detail", kwargs={"uuid": self.object.course.uuid})

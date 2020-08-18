@@ -26,4 +26,9 @@ urlpatterns = [
         views.CourseResourceUpdateView.as_view(),
         name="resource_edit",
     ),
+    path(
+        "resources/<uuid:uuid>/delete/",
+        views.CourseResourceDeleteView.as_view(),
+        name="resource_delete",
+    ),
 ]

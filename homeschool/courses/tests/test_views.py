@@ -607,3 +607,35 @@ class TestCourseResourceUpdateView(TestCase):
         assert response.get("Location") == self.reverse(
             "courses:detail", uuid=resource.course.uuid
         )
+
+
+class TestCourseResourceDeleteView(TestCase):
+    def test_unauthenticated_access(self):
+        resource = CourseResourceFactory()
+        self.assertLoginRequired("courses:resource_delete", uuid=resource.uuid)
+
+    def test_post(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        resource = CourseResourceFactory(course=course)
+
+        with self.login(user):
+            response = self.post("courses:resource_delete", uuid=resource.uuid)
+
+        assert CourseResource.objects.count() == 0
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "courses:detail", uuid=course.uuid
+        )
+
+    def test_post_other_user(self):
+        """A user may not delete another user's resource."""
+        user = self.make_user()
+        course = CourseFactory()
+        resource = CourseResourceFactory(course=course)
+
+        with self.login(user):
+            response = self.get("courses:resource_delete", uuid=resource.uuid)
+
+        self.response_404(response)
