@@ -5,24 +5,32 @@
     </label>
   </div>
   <div class="md:w-3/4">
-    <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
-      {% if field.errors %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
-      id="{{ field.id_for_label }}"
-      type="{{ field.field.widget.input_type }}"
-      name="{{ field.name }}"
-      {% if field.value %}
-        {# This is basically a hack to determine the field type. #}
-        {% if field.field.widget.template_name == 'django/forms/widgets/date.html' %}
-          value="{{ field.value|date:"n/j/Y"|default:field.value }}"
-        {% else %}
-          value="{{ field.value }}"
+    {% if textarea %}
+      <textarea class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+        rows="4"
+        id="{{ field.id_for_label }}"
+        name="{{ field.name }}"
+        >{% if field.value %}{{ field.value|safe|escape }}{% endif %}</textarea>
+    {% else %}
+      <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white
+        {% if field.errors %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"
+        id="{{ field.id_for_label }}"
+        type="{{ field.field.widget.input_type }}"
+        name="{{ field.name }}"
+        {% if field.value %}
+          {# This is basically a hack to determine the field type. #}
+          {% if field.field.widget.template_name == 'django/forms/widgets/date.html' %}
+            value="{{ field.value|date:"n/j/Y"|default:field.value }}"
+          {% else %}
+            value="{{ field.value }}"
+          {% endif %}
         {% endif %}
-      {% endif %}
-      {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
-      {% if autofocus %}autofocus{% endif %}
-      {% include "django/forms/widgets/attrs.html" %}
-      {% if field.field.required %}required{% endif %}
-    >
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if autofocus %}autofocus{% endif %}
+        {% include "django/forms/widgets/attrs.html" %}
+        {% if field.field.required %}required{% endif %}
+      >
+    {% endif %}
   </div>
 </div>
 {% if field.errors %}
