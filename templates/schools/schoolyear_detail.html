@@ -63,14 +63,14 @@
                   class="rounded-full hover:text-white">
                 {% elif week_date.in_school_year and week_date.is_school_day %}
                 <a href="{% url "core:daily_for_date" week_date.date.year week_date.date.month week_date.date.day %}"
-                  class="rounded-full hover:bg-yellow-400 hover:text-white">
+                  class="rounded-full hover:bg-blue-400 hover:text-white">
                 {% endif %}
 
                   <div class="w-8 text-center
                     {% if week_date.is_today %}
-                      bg-yellow-400 text-white rounded-full
+                      bg-blue-600 text-white rounded-full
                     {% elif week_date.school_break %}
-                      bg-blue-600 text-white hover:bg-blue-400
+                      bg-yellow-500 text-white hover:bg-yellow-300
                       {% if week_date.break_style == "single" %}
                         rounded-full
                       {% elif week_date.break_style == "start" %}
@@ -81,9 +81,9 @@
                     {% elif not week_date.in_school_year or not week_date.is_school_day %}
                       text-gray-300
                     {% elif week_date.show_as_past %}
-                      rounded-full text-gray-600 hover:bg-yellow-400 hover:text-white
+                      rounded-full text-gray-600 hover:bg-blue-300 hover:text-white
                     {% else %}
-                      rounded-full hover:bg-yellow-400 hover:text-white
+                      rounded-full hover:bg-blue-300 hover:text-white
                     {% endif %}
                     ">
                     {{ week_date.day }}
