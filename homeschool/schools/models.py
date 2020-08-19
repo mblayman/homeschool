@@ -60,6 +60,10 @@ class SchoolYear(DaysOfWeekModel):
 
         return school_year
 
+    def contains(self, day: datetime.date) -> bool:
+        """Check if the day is in the school year."""
+        return self.start_date <= day <= self.end_date
+
     def get_break(self, break_date) -> Optional["SchoolBreak"]:
         """Get a school break if the date is contained in the break."""
         return self._school_breaks_by_date.get(break_date)

@@ -7,41 +7,49 @@ from dateutil.relativedelta import relativedelta
 class YearCalendar:
     """A calendar of information related to a school year."""
 
+    months_to_look_ahead = 4
+
     def __init__(self, school_year, today):
         self.school_year = school_year
         self.today = today
-        self.calendar = calendar.Calendar()
-        self.is_current_school_year = (
-            self.school_year.start_date <= self.today <= self.school_year.end_date
-        )
+        self.calendar = calendar.Calendar(firstweekday=6)  # Start on Sunday.
+        self.is_current_school_year = school_year.contains(today)
 
-    def build(self):
+    def build(self, *, show_all=False):
         """Build a calendar structure that can be rendered."""
-        # TODO: Test this.
         # Use the 1st so any school year ending on a 1st of the month isn't skipped.
-        current_date = self.school_year.start_date + relativedelta(day=1)
+        if self.is_current_school_year and not show_all:
+            current_date = self.today + relativedelta(day=1)
+            months_to_build = self.months_to_look_ahead
+        else:
+            current_date = self.school_year.start_date + relativedelta(day=1)
+            # Get the delta to be inclusive of the start and end months.
+            delta = relativedelta(
+                self.school_year.end_date + relativedelta(months=1, day=1),
+                self.school_year.start_date + relativedelta(months=-1, day=31),
+            )
+            months_to_build = delta.years * 12 + delta.months
 
         months: list = []
-        while current_date <= self.school_year.end_date:
+        while months_to_build != 0 and current_date <= self.school_year.end_date:
             months.append(self._build_month(current_date.year, current_date.month))
             current_date = current_date + relativedelta(months=1)
+            months_to_build -= 1
 
-        return {"months": months, "header_labels": self._build_header_labels(months)}
+        return {"months": months}
 
     def _build_month(self, year, month):
         """Initialize the month with any dates it should skip."""
-        dates: list = []
-        done_with_blanks = False
-        for day in self.calendar.itermonthdays(year, month):
-            if day == 0:
-                # Skip any trailing dates in the next month.
-                if done_with_blanks:
-                    break
-                dates.append({"day": ""})
-            else:
-                done_with_blanks = True
-                dates.append(self._build_date(datetime.date(year, month, day)))
-        return {"name": calendar.month_name[month], "dates": dates}
+        weeks: list = []
+        for week in self.calendar.monthdayscalendar(year, month):
+            week_dates: list = []
+            for day in week:
+                if day == 0:
+                    week_dates.append({"day": ""})
+                else:
+                    week_dates.append(self._build_date(datetime.date(year, month, day)))
+            weeks.append(week_dates)
+        return {"name": calendar.month_name[month], "weeks": weeks}
 
     def _build_date(self, current_date):
         """Build a date dictionary with all the data to render."""
@@ -74,10 +82,3 @@ class YearCalendar:
         if current_date == school_break.end_date:
             return "end"
         return "middle"
-
-    def _build_header_labels(self, months):
-        """Build the list of display labels for the header."""
-        labels = ["M", "T", "W", "T", "F", "S", "S"]
-        max_month_dates = max(len(month["dates"]) for month in months)
-        header_labels = labels * ((max_month_dates // 7) + 1)
-        return header_labels[:max_month_dates]

@@ -76,6 +76,8 @@ class TestSchoolYearDetailView(TestCase):
         with self.login(user):
             self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
 
+        assert self.get_context("is_in_school_year")
+
     def test_only_school_year_for_user(self):
         """A user may only view their own school years."""
         user = self.make_user()
@@ -85,6 +87,20 @@ class TestSchoolYearDetailView(TestCase):
             response = self.get("schools:school_year_detail", uuid=school_year.uuid)
 
         self.response_404(response)
+
+    def test_show_all_months(self):
+        """When the option is provided, the page shows all calendar months."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200(
+                "schools:school_year_detail",
+                uuid=school_year.uuid,
+                data={"show_all_months": "1"},
+            )
+
+        assert len(self.get_context("calendar")["months"]) == 13
 
 
 class TestSchoolYearCreateView(TestCase):

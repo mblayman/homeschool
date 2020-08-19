@@ -40,53 +40,76 @@
 
   {% if schoolyear.grade_levels.all %}
     <h2 class="font-thin text-2xl text-blue-900 mb-4">Calendar</h2>
-    <div class="mb-8 max-w-5xl">
-      <div class="flex flex-row py-2">
-        <div class="w-20"></div>
-        {% for label in calendar.header_labels %}
-          <div class="font-thin w-6 text-center">{{ label }}</div>
-        {% endfor %}
-      </div>
+    <div class="flex flex-row flex-wrap max-w-5xl {% if not is_in_school_year %}mb-8{% endif %}">
       {% for month in calendar.months %}
-        <div class="flex flex-row py-2 border-t border-yellow-400">
-          <div class="font-thin w-20">{{ month.name }}</div>
-          {% for month_date in month.dates %}
-            {% if month_date.school_break %}
-            <a href="{% url "schools:school_break_edit" month_date.school_break.uuid %}"
-              class="rounded-full hover:bg-yellow-400 hover:text-white">
-            {% elif month_date.in_school_year and month_date.is_school_day %}
-            <a href="{% url "core:daily_for_date" month_date.date.year month_date.date.month month_date.date.day %}"
-              class="rounded-full hover:bg-yellow-400 hover:text-white">
-            {% endif %}
-
-              <div class="w-6 text-center
-                {% if month_date.is_today %}
-                  bg-yellow-400 text-white rounded-full
-                {% elif month_date.school_break %}
-                  bg-blue-600 text-white hover:bg-blue-400
-                  {% if month_date.break_style == "single" %}
-                    rounded-full
-                  {% elif month_date.break_style == "start" %}
-                    rounded-l-full
-                  {% elif month_date.break_style == "end" %}
-                    rounded-r-full
-                  {% endif %}
-                {% elif not month_date.in_school_year or not month_date.is_school_day %}
-                  text-gray-300
-                {% elif month_date.show_as_past %}
-                  text-gray-600 hover:text-white
+        <div class="mr-4 mb-4">
+          <div class="font-base text-center mb-2">{{ month.name }}</div>
+          <div class="flex flex-col">
+            <div class="flex flex-row mb-2 pb-1 border-b border-yellow-400">
+              <div class="font-thin text-center w-8">S</div>
+              <div class="font-thin text-center w-8">M</div>
+              <div class="font-thin text-center w-8">T</div>
+              <div class="font-thin text-center w-8">W</div>
+              <div class="font-thin text-center w-8">T</div>
+              <div class="font-thin text-center w-8">F</div>
+              <div class="font-thin text-center w-8">S</div>
+            </div>
+            {% for week in month.weeks %}
+              <div class="flex flex-row">
+              {% for week_date in week %}
+                <div class="pb-1">
+                {% if week_date.school_break %}
+                <a href="{% url "schools:school_break_edit" week_date.school_break.uuid %}"
+                  class="rounded-full hover:text-white">
+                {% elif week_date.in_school_year and week_date.is_school_day %}
+                <a href="{% url "core:daily_for_date" week_date.date.year week_date.date.month week_date.date.day %}"
+                  class="rounded-full hover:bg-yellow-400 hover:text-white">
                 {% endif %}
-                ">
-                {{ month_date.day }}
-              </div>
 
-            {% if month_date.school_break or month_date.in_school_year and month_date.is_school_day %}
-              </a>
-            {% endif %}
-          {% endfor %}
+                  <div class="w-8 text-center
+                    {% if week_date.is_today %}
+                      bg-yellow-400 text-white rounded-full
+                    {% elif week_date.school_break %}
+                      bg-blue-600 text-white hover:bg-blue-400
+                      {% if week_date.break_style == "single" %}
+                        rounded-full
+                      {% elif week_date.break_style == "start" %}
+                        rounded-l-full
+                      {% elif week_date.break_style == "end" %}
+                        rounded-r-full
+                      {% endif %}
+                    {% elif not week_date.in_school_year or not week_date.is_school_day %}
+                      text-gray-300
+                    {% elif week_date.show_as_past %}
+                      rounded-full text-gray-600 hover:bg-yellow-400 hover:text-white
+                    {% else %}
+                      rounded-full hover:bg-yellow-400 hover:text-white
+                    {% endif %}
+                    ">
+                    {{ week_date.day }}
+                  </div>
+
+                {% if week_date.school_break or week_date.in_school_year and week_date.is_school_day %}
+                  </a>
+                {% endif %}
+                </div>
+              {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
         </div>
       {% endfor %}
     </div>
+
+    {% if is_in_school_year %}
+      <div class="text-sm text-gray-700 font-light mb-8">
+      {% if request.GET.show_all_months %}
+        <a class="hover:underline" href="{{ request.path }}">Hide months</a>
+      {% else %}
+        <a class="hover:underline" href="{{ request.path }}?show_all_months=1">Show all months</a>
+      {% endif %}
+      </div>
+    {% endif %}
   {% endif %}
 
   <div class="flex flex-col w-full">

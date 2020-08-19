@@ -75,7 +75,10 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = self.request.user.get_local_today()
-        context["calendar"] = YearCalendar(self.object, today).build()
+        context["calendar"] = YearCalendar(self.object, today).build(
+            show_all=bool(self.request.GET.get("show_all_months"))
+        )
+        context["is_in_school_year"] = self.object.contains(today)
         return context
 
 
