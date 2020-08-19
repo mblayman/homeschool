@@ -1,7 +1,12 @@
 import datetime
 
+from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
-from homeschool.schools.tests.factories import SchoolBreakFactory, SchoolYearFactory
+from homeschool.schools.tests.factories import (
+    GradeLevelFactory,
+    SchoolBreakFactory,
+    SchoolYearFactory,
+)
 from homeschool.students.tests.factories import (
     EnrollmentFactory,
     GradeFactory,
@@ -101,6 +106,20 @@ class TestSchoolYearDetailView(TestCase):
             )
 
         assert len(self.get_context("calendar")["months"]) == 13
+
+    def test_grade_level_info(self):
+        """The context has the grade level structure expected by the template."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
+
+        assert self.get_context("grade_levels") == [
+            {"grade_level": grade_level, "courses": [course]}
+        ]
 
 
 class TestSchoolYearCreateView(TestCase):

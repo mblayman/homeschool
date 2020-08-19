@@ -22,7 +22,7 @@
   </p>
 
   <p class="mb-8">
-    {% if schoolyear.grade_levels.all %}
+    {% if grade_levels %}
       <a href="{% url "schools:grade_level_create" schoolyear.uuid %}"
         class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
         Add Grade Level
@@ -38,7 +38,7 @@
     </a>
   </p>
 
-  {% if schoolyear.grade_levels.all %}
+  {% if grade_levels %}
     <h2 class="font-thin text-2xl text-blue-900 mb-4">Calendar</h2>
     <div class="flex flex-row flex-wrap max-w-5xl {% if not is_in_school_year %}mb-8{% endif %}">
       {% for month in calendar.months %}
@@ -113,12 +113,12 @@
   {% endif %}
 
   <div class="flex flex-col w-full">
-    {% for grade_level in schoolyear.grade_levels.all %}
+    {% for grade_level_info in grade_levels %}
       <div class="bg-gray-100 rounded-lg py-4 mb-8">
-        <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level.name }}</h2>
+        <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
 
         <div class="flex flex-row flex-wrap">
-          {% for course in grade_level.courses.all %}
+          {% for course in grade_level_info.courses %}
             <div class="w-3/12">
               <div class="rounded overflow-hidden bg-white shadow-md m-3">
                 <div class="px-4 py-4">
@@ -147,7 +147,7 @@
               <div class="w-3/12">
                 <div class="m-3">
                   <div class="px-8 text-center">
-                    <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level.uuid }}"
+                    <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level_info.grade_level.uuid }}"
                       class="block rounded-md text-yellow-500 border border-gray-100 hover:border-yellow-400 hover:bg-gray-200 px-3 xl:px-4 py-4">
                       <div class="flex items-center justify-center border-b border-yellow-400 mb-3 pb-1">
                         <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -158,7 +158,7 @@
                         </div>
                       </div>
                         <p class="text-gray-600 text-sm">
-                        For {{ grade_level.name }}
+                        For {{ grade_level_info.grade_level.name }}
                         </p>
                     </a>
                   </div>
@@ -175,7 +175,7 @@
               <div class="w-3/5">
                 <p class="mb-8">Your new grade level doesn’t have any courses yet. Let’s add your first one!</p>
                 <p class="mb-8">
-                  <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level.uuid }}"
+                  <a href="{% url "courses:create" %}?school_year={{ schoolyear.uuid }}&grade_level={{ grade_level_info.grade_level.uuid }}"
                     class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
                     Add Course
                   </a>

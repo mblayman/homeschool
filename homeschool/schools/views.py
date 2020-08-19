@@ -69,7 +69,7 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         user = self.request.user
         return SchoolYear.objects.filter(school__admin=user).prefetch_related(
-            "breaks", "grade_levels", "grade_levels__courses"
+            "breaks", "grade_levels"
         )
 
     def get_context_data(self, **kwargs):
@@ -79,6 +79,14 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
             show_all=bool(self.request.GET.get("show_all_months"))
         )
         context["is_in_school_year"] = self.object.contains(today)
+        context["grade_levels"] = []
+        for grade_level in self.object.grade_levels.all():
+            context["grade_levels"].append(
+                {
+                    "grade_level": grade_level,
+                    "courses": grade_level.get_ordered_courses(),
+                }
+            )
         return context
 
 

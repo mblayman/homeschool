@@ -94,6 +94,21 @@ class GradeLevel(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    def get_ordered_courses(self):
+        """Get the courses in their proper order.
+
+        Since ordering is defined on the through model, this is a reasonable
+        way to get the courses.
+        """
+        from homeschool.courses.models import GradeLevelCoursesThroughModel
+
+        return [
+            gc.course
+            for gc in GradeLevelCoursesThroughModel.objects.filter(
+                grade_level=self
+            ).select_related("course")
+        ]
+
     def __str__(self):
         return self.name
 
