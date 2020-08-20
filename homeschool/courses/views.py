@@ -111,9 +111,12 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        grade_level = self.object.grade_levels.select_related("school_year").first()
-        if grade_level:
-            context["school_year"] = grade_level.school_year
+        grade_levels = (
+            self.object.grade_levels.all().order_by("id").select_related("school_year")
+        )
+        context["grade_levels"] = grade_levels
+        if grade_levels:
+            context["school_year"] = grade_levels[0].school_year
         return context
 
 
