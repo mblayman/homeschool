@@ -17,14 +17,18 @@
   {% for task_item in task_items %}
     <div class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
       {% if task_item.coursework %}
-        <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.path|urlencode }}" class="block w-8/12 text-gray-400 hover:text-gray-600">
-          <div class="p-2 text-sm font-light overflow-x-scroll">{{ task_item.course_task.description|linebreaksbr }}</div>
-        </a>
+        <div class="w-8/12 p-2 text-sm font-light overflow-x-scroll">
+          <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.path|urlencode }}" class="text-gray-400 hover:text-gray-600">
+            {{ task_item.course_task.description|linebreaksbr }}
+          </a>
+        </div>
         <div class="w-3/12 p-2 pl-8 text-sm font-light text-gray-400">{{ task_item.coursework.completed_date|date:"Y-m-d" }}</div>
       {% else %}
-        <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.path|urlencode }}" class="block w-8/12 hover:text-gray-600">
-          <div class="p-2 text-sm font-light overflow-x-scroll">{{ task_item.course_task.description|linebreaksbr }}</div>
-        </a>
+        <div class="w-8/12 p-2 text-sm font-light overflow-x-scroll">
+          <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.path|urlencode }}" class="hover:text-gray-600">
+            {{ task_item.course_task.description|linebreaksbr }}
+          </a>
+        </div>
         <div class="w-3/12 p-2 pl-8 text-sm font-light">{{ task_item.planned_date|date:"Y-m-d" }}</div>
       {% endif %}
       <div class="p-2 flex items-center justify-center w-1/12">
