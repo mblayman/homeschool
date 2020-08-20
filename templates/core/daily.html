@@ -25,11 +25,11 @@
     <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
 
     <div class="flex flex-row max-w-3xl print-hide">
-      <div class="w-3/12 pr-4"></div>
-      <div class="text-sm text-center uppercase tracking-wide font-thin py-2 w-20">Complete?</div>
-      <div class="text-sm p-2">
+      <div class="w-3/12"></div>
+      <div class="w-1/12 text-sm text-center py-2">
         <input type="checkbox" onclick="checkTasks(this, '{{ schedule.student.id }}')">
       </div>
+      <div class="text-sm text-center uppercase tracking-wide font-thin -ml-2 py-2 w-20">Complete?</div>
     </div>
     {% for course_schedule in schedule.courses %}
       {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
