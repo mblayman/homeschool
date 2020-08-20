@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 import pytz
-from dateutil.relativedelta import FR, MO, SU, relativedelta
+from dateutil.relativedelta import FR, MO, SU, WE, relativedelta
 from django.utils import timezone
 
 from homeschool.courses.models import Course
@@ -107,16 +107,11 @@ class TestApp(TestCase):
         self.assertContext("next_week_date", next_monday)
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_has_today(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        timezone.localdate.return_value = now.date()
-        today = now.date()
+    def test_has_today(self, mock_timezone):
+        today = timezone.localdate() + relativedelta(weekday=SU)
+        mock_timezone.localdate.return_value = today
         user = self.make_user()
-        SchoolYearFactory(
-            school=user.school,
-            start_date=today - datetime.timedelta(days=90),
-            end_date=today + datetime.timedelta(days=90),
-        )
+        SchoolYearFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -124,16 +119,12 @@ class TestApp(TestCase):
         self.assertContext("day", today)
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_school_year_for_user_only(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        sunday = now.date()
-        timezone.localdate.return_value = now.date()
+    def test_school_year_for_user_only(self, mock_timezone):
+        sunday = timezone.localdate() + relativedelta(weekday=SU)
+        mock_timezone.localdate.return_value = sunday
         user = self.make_user()
         student, grade_level = self.make_student_enrolled_in_grade_level(user, sunday)
-        SchoolYearFactory(
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
-        )
+        SchoolYearFactory()
         CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
@@ -192,16 +183,13 @@ class TestApp(TestCase):
         assert schedules == [expected_schedule]
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_has_week_dates(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        sunday = now.date()
+    def test_has_week_dates(self, mock_timezone):
+        sunday = timezone.localdate() + relativedelta(weekday=SU)
         monday = sunday - datetime.timedelta(days=6)
-        timezone.localdate.return_value = now.date()
+        mock_timezone.localdate.return_value = sunday
         user = self.make_user()
         SchoolYearFactory(
             school=user.school,
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
             days_of_week=SchoolYear.MONDAY
             + SchoolYear.TUESDAY
             + SchoolYear.WEDNESDAY
@@ -212,14 +200,13 @@ class TestApp(TestCase):
         with self.login(user):
             self.get("core:app")
 
-        expected_week_dates = [
+        assert self.get_context("week_dates") == [
             monday,
             monday + datetime.timedelta(days=1),
             monday + datetime.timedelta(days=2),
             monday + datetime.timedelta(days=3),
             monday + datetime.timedelta(days=4),
         ]
-        self.assertContext("week_dates", expected_week_dates)
 
     def test_no_school_year(self):
         user = self.make_user()
@@ -276,19 +263,17 @@ class TestApp(TestCase):
         self.assertContext("schedules", [expected_schedule])
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_when_weekly_includes_today(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        timezone.localdate.return_value = now.date()
-        today = now.date()
+    def test_when_weekly_includes_today(self, mock_timezone):
+        today = timezone.localdate() + relativedelta(weekday=SU)
+        monday = today + relativedelta(weekday=MO(-1))
+        mock_timezone.localdate.return_value = today
         user = self.make_user()
-        SchoolYearFactory(
-            school=user.school,
-            start_date=today - datetime.timedelta(days=90),
-            end_date=today + datetime.timedelta(days=90),
-        )
+        SchoolYearFactory(school=user.school)
 
         with self.login(user):
-            self.get("core:weekly", year=2020, month=1, day=20)
+            self.get(
+                "core:weekly", year=monday.year, month=monday.month, day=monday.day
+            )
 
         self.assertContext("day", today)
 
@@ -401,17 +386,11 @@ class TestDaily(TestCase):
         self.assertContext("schedules", [])
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_school_not_run_on_day(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        sunday = now.date()
-        timezone.localdate.return_value = now.date()
+    def test_school_not_run_on_day(self, mock_timezone):
+        sunday = timezone.localdate() + relativedelta(weekday=SU)
+        mock_timezone.localdate.return_value = sunday
         user = self.make_user()
-        SchoolYearFactory(
-            school=user.school,
-            start_date=sunday - datetime.timedelta(days=90),
-            end_date=sunday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.MONDAY,
-        )
+        SchoolYearFactory(school=user.school, days_of_week=SchoolYear.MONDAY)
 
         with self.login(user):
             self.get("core:daily")
@@ -435,17 +414,13 @@ class TestDaily(TestCase):
         assert schedules != []
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_has_schedules(self, timezone):
-        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
-        friday = now.date()
-        timezone.localdate.return_value = now.date()
+    def test_has_schedules(self, mock_timezone):
+        friday = timezone.localdate() + relativedelta(weekday=FR)
+        mock_timezone.localdate.return_value = friday
         user = self.make_user()
         student = StudentFactory(school=user.school)
         school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=friday - datetime.timedelta(days=90),
-            end_date=friday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.FRIDAY,
+            school=user.school, days_of_week=SchoolYear.FRIDAY
         )
         grade_level = GradeLevelFactory(school_year=school_year)
         course = CourseFactory(grade_levels=[grade_level], days_of_week=Course.FRIDAY)
@@ -555,15 +530,12 @@ class TestDaily(TestCase):
         self.assertContext("overmorrow", today + datetime.timedelta(days=2))
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_surrounding_dates(self, timezone):
-        now = datetime.datetime(2020, 1, 22, tzinfo=pytz.utc)
-        wednesday = now.date()
-        timezone.localdate.return_value = wednesday
+    def test_surrounding_dates(self, mock_timezone):
+        wednesday = timezone.localdate() + relativedelta(weekday=WE)
+        mock_timezone.localdate.return_value = wednesday
         user = self.make_user()
         SchoolYearFactory(
             school=user.school,
-            start_date=wednesday - datetime.timedelta(days=90),
-            end_date=wednesday + datetime.timedelta(days=90),
             days_of_week=SchoolYear.TUESDAY
             + SchoolYear.WEDNESDAY
             + SchoolYear.THURSDAY,
