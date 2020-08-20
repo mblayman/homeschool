@@ -81,6 +81,15 @@ class TestStudent(TestCase):
 
         assert list(courses) == [course]
 
+    def test_get_courses_no_enrollment(self):
+        """An unenrolled student has no course for a school year."""
+        student = StudentFactory()
+        school_year = SchoolYearFactory()
+
+        courses = student.get_courses(school_year)
+
+        assert courses == []
+
     def test_week_schedule_no_tasks_end_of_week(self):
         """A student has no tasks to complete if the school week is over."""
         today = datetime.date(2020, 5, 23)  # A Saturday

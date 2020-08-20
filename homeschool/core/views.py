@@ -15,7 +15,7 @@ from homeschool.core.schedules import Week
 from homeschool.courses.models import GradedWork
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
-from homeschool.students.models import Coursework, Grade
+from homeschool.students.models import Coursework, Grade, Student
 
 
 class IndexView(TemplateView):
@@ -74,7 +74,7 @@ class AppView(LoginRequiredMixin, TemplateView):
         if school_year is None:
             return schedules
 
-        for student in self.request.user.school.students.all():
+        for student in Student.get_students_for(school_year):
             schedule = student.get_week_schedule(school_year, today, week)
             schedules.append(schedule)
 
@@ -131,7 +131,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
         if not school_year.runs_on(day):
             return schedules
 
-        for student in self.request.user.school.students.all():
+        for student in Student.get_students_for(school_year):
             courses = student.get_courses(school_year)
             schedule = self.get_student_schedule(student, today, day, courses)
             schedules.append(schedule)

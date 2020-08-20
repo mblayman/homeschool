@@ -21,6 +21,16 @@ class Student(models.Model):
     last_name = models.CharField(max_length=64)
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    @classmethod
+    def get_students_for(cls, school_year):
+        """Get all the enrolled students for the school year."""
+        enrollments = (
+            Enrollment.objects.filter(grade_level__school_year=school_year)
+            .order_by("grade_level")
+            .select_related("student")
+        )
+        return [enrollment.student for enrollment in enrollments]
+
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"

@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 import pytz
-from dateutil.relativedelta import MO, SU, relativedelta
+from dateutil.relativedelta import FR, MO, SU, relativedelta
 from django.utils import timezone
 
 from homeschool.courses.models import Course
@@ -355,6 +355,22 @@ class TestApp(TestCase):
         schedules = self.get_context("schedules")
         assert schedules[0]["courses"]
 
+    def test_schedules_in_grade_level_order(self):
+        """The schedules are in the same order as the grade levels."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        grade_level_2 = GradeLevelFactory(school_year=school_year)
+        enrollment = EnrollmentFactory(grade_level=grade_level_2)
+        enrollment_2 = EnrollmentFactory(grade_level=grade_level)
+
+        with self.login(user):
+            self.get("core:app")
+
+        schedules = self.get_context("schedules")
+        assert schedules[0]["student"] == enrollment_2.student
+        assert schedules[1]["student"] == enrollment.student
+
 
 class TestDaily(TestCase):
     def test_ok(self):
@@ -403,23 +419,14 @@ class TestDaily(TestCase):
         self.assertContext("schedules", [])
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_school_year_for_user_only(self, timezone):
-        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
-        friday = now.date()
-        timezone.localdate.return_value = now.date()
+    def test_school_year_for_user_only(self, mock_timezone):
+        """A user may only access their school year."""
+        friday = timezone.localdate() + relativedelta(weekday=FR)
+        mock_timezone.localdate.return_value = friday
         user = self.make_user()
-        StudentFactory(school=user.school)
-        SchoolYearFactory(
-            start_date=friday - datetime.timedelta(days=90),
-            end_date=friday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.MONDAY,
-        )
-        SchoolYearFactory(
-            school=user.school,
-            start_date=friday - datetime.timedelta(days=90),
-            end_date=friday + datetime.timedelta(days=90),
-            days_of_week=SchoolYear.FRIDAY,
-        )
+        SchoolYearFactory()
+        school_year = SchoolYearFactory(school=user.school)
+        EnrollmentFactory(grade_level__school_year=school_year)
 
         with self.login(user):
             self.get("core:daily")
@@ -571,6 +578,22 @@ class TestDaily(TestCase):
         self.assertContext("tomorrow", wednesday + datetime.timedelta(days=1))
         next_tuesday = wednesday + datetime.timedelta(days=6)
         self.assertContext("overmorrow", next_tuesday)
+
+    def test_schedules_in_grade_level_order(self):
+        """The schedules are in the same order as the grade levels."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        grade_level_2 = GradeLevelFactory(school_year=school_year)
+        enrollment = EnrollmentFactory(grade_level=grade_level_2)
+        enrollment_2 = EnrollmentFactory(grade_level=grade_level)
+
+        with self.login(user):
+            self.get("core:daily")
+
+        schedules = self.get_context("schedules")
+        assert schedules[0]["student"] == enrollment_2.student
+        assert schedules[1]["student"] == enrollment.student
 
     def test_complete_daily(self):
         today = timezone.now().date()
