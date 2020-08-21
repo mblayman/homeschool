@@ -15,17 +15,17 @@
   </div>
 
   {% for task_item in task_items %}
-    <div class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
+    <div id="task-{{ task_item.course_task.uuid }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
       {% if task_item.coursework %}
         <div class="w-8/12 p-2 text-sm font-light overflow-x-scroll">
-          <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.path|urlencode }}" class="text-gray-400 hover:text-gray-600">
+          <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.get_full_path|urlencode }}%23task-{{ task_item.course_task.uuid }}" class="text-gray-400 hover:text-gray-600">
             {{ task_item.course_task.description|linebreaksbr }}
           </a>
         </div>
         <div class="w-3/12 p-2 pl-8 text-sm font-light text-gray-400">{{ task_item.coursework.completed_date|date:"Y-m-d" }}</div>
       {% else %}
         <div class="w-8/12 p-2 text-sm font-light overflow-x-scroll">
-          <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.path|urlencode }}" class="hover:text-gray-600">
+          <a href="{% url "courses:task_edit" uuid=task_item.course_task.uuid %}?next={{ request.get_full_path|urlencode }}%23task-{{ task_item.course_task.uuid }}" class="hover:text-gray-600">
             {{ task_item.course_task.description|linebreaksbr }}
           </a>
         </div>
