@@ -106,6 +106,21 @@
       {% endfor %}
     </ul>
   {% else %}
-    PUT SOMETHING HERE.
+    <div class="flex flex-row mt-8">
+      <div class="w-3/5">
+        <div class="">
+          <h2 class="font-thin text-xl text-blue-900 mb-2">Add a Resource</h2>
+          <p class="mb-8 font-light">
+            Keep track of your textbooks, workbooks,
+            or any other materials
+            related to this course.
+          </p>
+          <a href="{% url "courses:resource_create" uuid=course.uuid %}"
+            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+            Add Resource
+          </a>
+        </div>
+      </div>
+    </div>
   {% endif %}
 {% endblock %}
