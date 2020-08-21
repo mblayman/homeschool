@@ -8,7 +8,7 @@
     {% csrf_token %}
     <input type="hidden" name="course" value="{{ course.id }}">
     {% include "forms/field.html" with field=form.title autofocus=True %}
-    {% include "forms/field.html" with field=form.details textarea=True%}
+    {% include "forms/field.html" with field=form.details textarea=True %}
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       {% if create %}

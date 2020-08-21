@@ -7,18 +7,7 @@
   <form method="post" class="w-full max-w-lg">
     {% csrf_token %}
     <input type="hidden" name="course" value="{{ course.id }}">
-    <div class="md:flex md:items-center mb-6">
-      <div class="md:w-1/4">
-        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_description">
-          Description
-        </label>
-      </div>
-      <div class="md:w-3/4">
-        <textarea class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-          rows="4" id="id_description" name="description" autofocus
-          >{% if form.description.value %}{{ form.description.value|safe|escape }}{% endif %}</textarea>
-      </div>
-    </div>
+    {% include "forms/field.html" with field=form.description textarea=True %}
     {% include "forms/field.html" with field=form.duration %}
     <div class="md:flex md:items-center mb-6">
       <div class="md:w-1/4">
@@ -40,7 +29,7 @@
         </div>
         <div class="md:w-3/4">
           <div class="relative">
-            <select class="block appearance-none w-full bg-gray-200 border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500" id="id_grade_level" name="grade_level">
+            <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500" id="id_grade_level" name="grade_level">
               <option value="">All grade levels</option>
               {% for grade_level in grade_levels %}
                 <option value="{{ grade_level.id }}"
