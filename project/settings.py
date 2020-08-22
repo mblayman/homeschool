@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "django_extensions",
+    "hijack",
+    "compat",  # For django-hijack
     "ordered_model",
     "tz_detect",
     "waffle",
@@ -200,6 +202,9 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_REDIRECT_URL = "core:index"
 ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
+
+# django-hijack
+HIJACK_LOGOUT_REDIRECT_URL = "/office/users/user/"
 
 # django-waffle
 WAFFLE_FLAG_MODEL = "core.Flag"

@@ -29,6 +29,7 @@ urlpatterns = [
     path("schools/", include("homeschool.schools.urls")),
     path("students/", include("homeschool.students.urls")),
     path("accounts/", include("allauth.urls")),
+    path("hijack/", include("hijack.urls")),
     path("tz_detect/", include("tz_detect.urls")),
 ]
 

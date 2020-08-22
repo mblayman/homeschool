@@ -26,6 +26,7 @@ from homeschool.students.tests.factories import (
     StudentFactory,
 )
 from homeschool.test import TestCase
+from homeschool.users.tests.factories import UserFactory
 
 
 class TestIndex(TestCase):
@@ -835,9 +836,7 @@ class TestBoom(TestCase):
 
     def test_staff(self):
         """A staff user can trigger the error page."""
-        user = self.make_user()
-        user.is_staff = True
-        user.save()
+        user = UserFactory(is_staff=True)
 
         with self.login(user), pytest.raises(Exception) as excinfo:
             self.get("boom")
