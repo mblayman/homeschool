@@ -105,6 +105,12 @@ class DailyView(LoginRequiredMixin, TemplateView):
             .first()
         )
 
+        # When the school year isn't in progress yet,
+        # the offset calculations should come
+        # relative to the start of the school year.
+        if school_year and today < school_year.start_date:
+            today = school_year.start_date
+
         # Set previous and next days navigation.
         if school_year:
             context["yesterday"] = school_year.get_previous_day_from(day)

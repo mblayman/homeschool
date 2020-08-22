@@ -551,8 +551,11 @@ class TestDaily(TestCase):
         next_tuesday = wednesday + datetime.timedelta(days=6)
         self.assertContext("overmorrow", next_tuesday)
 
-    def test_schedules_in_grade_level_order(self):
+    @mock.patch("homeschool.users.models.timezone")
+    def test_schedules_in_grade_level_order(self, mock_timezone):
         """The schedules are in the same order as the grade levels."""
+        wednesday = timezone.localdate() + relativedelta(weekday=WE)
+        mock_timezone.localdate.return_value = wednesday
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
         grade_level = GradeLevelFactory(school_year=school_year)
@@ -640,6 +643,30 @@ class TestDaily(TestCase):
 
         self.response_302(response)
         assert response.get("Location") == self.reverse("core:daily")
+
+    def test_future_school_year(self):
+        """A future school year displays the expected task on a day."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(years=1, month=1, day=1),
+            end_date=today + relativedelta(years=1, month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+
+        with self.login(user):
+            self.get(
+                "core:daily_for_date",
+                year=school_year.start_date.year,
+                month=school_year.start_date.month,
+                day=school_year.start_date.day,
+            )
+
+        schedule = self.get_context("schedules")[0]
+        assert schedule["courses"][0].get("task") == task
 
 
 class TestStartView(TestCase):

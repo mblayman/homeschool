@@ -25,6 +25,7 @@ class DaysOfWeekModel(models.Model):
     SATURDAY = 32
     SUNDAY = 64
     WEEK = (MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)
+    ALL_DAYS = sum(WEEK)
 
     days_of_week = models.PositiveIntegerField(
         help_text="The days of the week when this runs",
