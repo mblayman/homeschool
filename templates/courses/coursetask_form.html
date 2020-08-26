@@ -4,10 +4,18 @@
 
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">{% if create %}Add{% else %}Edit{% endif %} Course Task for {{ course }}</h1>
+
+  {% if create %}
+    <p class="font-thin text-base text-gray-800 mb-4">
+      Want to add more at once?
+      <a class="underline" href="{% url "courses:task_create_bulk" course.uuid %}{% if request.GET.previous_task %}?previous_task={{ request.GET.previous_task }}{% endif %}">Use Bulk Create</a>
+    </p>
+  {% endif %}
+
   <form method="post" class="w-full max-w-lg">
     {% csrf_token %}
     <input type="hidden" name="course" value="{{ course.id }}">
-    {% include "forms/field.html" with field=form.description textarea=True %}
+    {% include "forms/field.html" with field=form.description textarea=True autofocus=True %}
     {% include "forms/field.html" with field=form.duration %}
     <div class="md:flex md:items-center mb-6">
       <div class="md:w-1/4">

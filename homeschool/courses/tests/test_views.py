@@ -333,6 +333,87 @@ class TestCourseTaskCreateView(TestCase):
         assert task.graded_work is not None
 
 
+class TestBulkCreateCourseTasks(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        self.assertLoginRequired("courses:task_create_bulk", uuid=course.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
+
+        with self.login(user):
+            self.get_check_200("courses:task_create_bulk", uuid=course.uuid)
+
+        form = self.get_context("formset")[0]
+        assert form.user == user
+        assert (
+            form.get_initial_for_field(form.fields["duration"], "duration")
+            == course.default_task_duration
+        )
+        assert self.get_context("course") == course
+        assert list(self.get_context("grade_levels")) == [grade_level]
+
+    def test_post(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "form-TOTAL_FORMS": "1",
+            "form-INITIAL_FORMS": "0",
+            "form-MIN_NUM_FORMS": "0",
+            "form-MAX_NUM_FORMS": "1000",
+            "form-0-course": str(course.id),
+            "form-0-description": "A new task",
+            "form-0-duration": "42",
+        }
+
+        with self.login(user):
+            response = self.post(
+                "courses:task_create_bulk", uuid=course.uuid, data=data
+            )
+
+        assert CourseTask.objects.count() == 1
+        task = CourseTask.objects.get(course=course)
+        assert task.description == data["form-0-description"]
+        assert task.duration == int(data["form-0-duration"])
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "courses:detail", uuid=course.uuid
+        )
+        assert not hasattr(task, "graded_work")
+
+    def test_after_task(self):
+        """Tasks are placed after a specified task."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "form-TOTAL_FORMS": "2",
+            "form-INITIAL_FORMS": "0",
+            "form-MIN_NUM_FORMS": "0",
+            "form-MAX_NUM_FORMS": "1000",
+            "form-0-course": str(course.id),
+            "form-0-description": "A new task",
+            "form-0-duration": "42",
+            "form-1-course": str(course.id),
+            "form-1-description": "Another new task",
+            "form-1-duration": "42",
+        }
+        task_1 = CourseTaskFactory(course=course)
+        task_2 = CourseTaskFactory(course=course)
+        url = self.reverse("courses:task_create_bulk", uuid=course.uuid)
+        url += f"?previous_task={task_1.uuid}"
+
+        with self.login(user):
+            self.post(url, data=data)
+
+        task_3 = CourseTask.objects.get(description="A new task")
+        task_4 = CourseTask.objects.get(description="Another new task")
+        assert list(CourseTask.objects.all()) == [task_1, task_3, task_4, task_2]
+
+
 class TestCourseTaskUpdateView(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()

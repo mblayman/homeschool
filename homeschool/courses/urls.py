@@ -11,6 +11,11 @@ urlpatterns = [
         "<uuid:uuid>/tasks/", views.CourseTaskCreateView.as_view(), name="task_create"
     ),
     path(
+        "<uuid:uuid>/tasks/bulk/",
+        views.bulk_create_course_tasks,
+        name="task_create_bulk",
+    ),
+    path(
         "<uuid:uuid>/tasks/<uuid:task_uuid>/delete/",
         views.CourseTaskDeleteView.as_view(),
         name="task_delete",

@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.forms import modelformset_factory
 from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
@@ -32,6 +34,17 @@ class CourseMixin:
             Course.objects.filter(grade_levels__in=grade_levels).distinct(),
             uuid=course_uuid,
         )
+
+
+def get_course(user, uuid):
+    """Get the course if the user has access.
+
+    This is equivalent to the mixin and exists for use with the function-based view.
+    """
+    grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+    return get_object_or_404(
+        Course.objects.filter(grade_levels__in=grade_levels).distinct(), uuid=uuid
+    )
 
 
 class CourseCreateView(LoginRequiredMixin, CreateView):
@@ -179,22 +192,63 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        if self.request.GET.get("previous_task"):
-            grade_levels = GradeLevel.objects.filter(
-                school_year__school__admin=self.request.user
-            )
-            task = CourseTask.objects.filter(
-                course__grade_levels__in=grade_levels,
-                uuid=self.request.GET.get("previous_task"),
-            ).first()
-            if task:
-                self.object.below(task)
+        previous_task = CourseTask.get_by_uuid(
+            self.request.user, self.request.GET.get("previous_task", "")
+        )
+        if previous_task:
+            self.object.below(previous_task)
         return response
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+
+@login_required
+def bulk_create_course_tasks(request, uuid):
+    """Bulk create course tasks.
+
+    This is using a function-based view because the CBV beat me into submission.
+    For some reason, the function view worked where the CBV did not.
+    """
+    course = get_course(request.user, uuid)
+
+    CourseTaskFormSet = modelformset_factory(CourseTask, form=CourseTaskForm, extra=10)
+    form_kwargs = {
+        "user": request.user,
+        "initial": {"duration": course.default_task_duration},
+    }
+    if request.method == "POST":
+        formset = CourseTaskFormSet(
+            request.POST, form_kwargs=form_kwargs, queryset=CourseTask.objects.none()
+        )
+        if formset.is_valid():
+            previous_task = CourseTask.get_by_uuid(
+                request.user, request.GET.get("previous_task", "")
+            )
+            for form in formset:
+                task = form.save()
+                if previous_task:
+                    task.below(previous_task)
+                    previous_task = task
+
+            url = reverse("courses:detail", kwargs={"uuid": uuid})
+            return HttpResponseRedirect(url)
+    else:
+        formset = CourseTaskFormSet(
+            form_kwargs=form_kwargs, queryset=CourseTask.objects.none()
+        )
+
+    grade_level = course.grade_levels.first()
+    context = {
+        "course": course,
+        "formset": formset,
+        "grade_levels": GradeLevel.objects.filter(
+            school_year=grade_level.school_year_id
+        ),
+    }
+    return render(request, "courses/coursetask_form_bulk.html", context)
 
 
 class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):

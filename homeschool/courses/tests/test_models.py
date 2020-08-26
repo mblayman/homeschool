@@ -147,6 +147,34 @@ class TestCourseTask(TestCase):
 
         assert list(CourseTask.objects.all()) == [task_1, task_2, task_3]
 
+    def test_get_by_uuid(self):
+        """A user can get a task by its UUID for their courses."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        expected_task = CourseTaskFactory(course__grade_levels=[grade_level])
+
+        task = CourseTask.get_by_uuid(user, str(expected_task.uuid))
+
+        assert task == expected_task
+
+    def test_get_by_uuid_invalid_user(self):
+        """Another user cannot get a task that is inaccessible."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory()
+        other_task = CourseTaskFactory(course__grade_levels=[grade_level])
+
+        task = CourseTask.get_by_uuid(user, str(other_task.uuid))
+
+        assert task is None
+
+    def test_get_by_uuid_bad_uuid(self):
+        """A bad UUID returns no task."""
+        user = self.make_user()
+
+        task = CourseTask.get_by_uuid(user, "boom")
+
+        assert task is None
+
 
 class TestGradedWork(TestCase):
     def test_factory(self):

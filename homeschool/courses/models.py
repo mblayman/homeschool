@@ -1,12 +1,15 @@
 import datetime
 import uuid
+from typing import Optional
 
 from django.db import models
+from django.utils.functional import cached_property
 from ordered_model.models import OrderedModel
 
 from homeschool.core.compatibility import OrderedModelQuerySet
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.schools.models import GradeLevel
+from homeschool.users.models import User
 
 
 class Course(DaysOfWeekModel):
@@ -28,7 +31,7 @@ class Course(DaysOfWeekModel):
         """Check if the course is running on any days of the week."""
         return self.days_of_week != self.NO_DAYS
 
-    @property
+    @cached_property
     def has_many_grade_levels(self):
         """Check if multiple grade levels are associated with the course."""
         return self.grade_levels.count() > 1
@@ -96,6 +99,19 @@ class CourseTask(OrderedModel):
     )
 
     order_with_respect_to = "course"
+
+    @classmethod
+    def get_by_uuid(cls, user: User, uuid_str: str) -> Optional["CourseTask"]:
+        """Get a task for a user by a uuid."""
+        try:
+            task_uuid = uuid.UUID(uuid_str)
+        except ValueError:
+            # A bad UUID should be ignored.
+            return None
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        return CourseTask.objects.filter(
+            course__grade_levels__in=grade_levels, uuid=task_uuid
+        ).first()
 
     def __str__(self):
         return self.description
