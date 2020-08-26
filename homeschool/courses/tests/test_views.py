@@ -413,6 +413,30 @@ class TestBulkCreateCourseTasks(TestCase):
         task_4 = CourseTask.objects.get(description="Another new task")
         assert list(CourseTask.objects.all()) == [task_1, task_3, task_4, task_2]
 
+    def test_redirect_next(self):
+        """After creation, the user returns to the next URL."""
+        next_url = "/another/location/"
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "form-TOTAL_FORMS": "1",
+            "form-INITIAL_FORMS": "0",
+            "form-MIN_NUM_FORMS": "0",
+            "form-MAX_NUM_FORMS": "1000",
+            "form-0-course": str(course.id),
+            "form-0-description": "A new task",
+            "form-0-duration": "42",
+        }
+        url = self.reverse("courses:task_create_bulk", uuid=course.uuid)
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url, data=data)
+
+        self.response_302(response)
+        assert next_url in response.get("Location")
+
 
 class TestCourseTaskUpdateView(TestCase):
     def test_unauthenticated_access(self):

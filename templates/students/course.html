@@ -42,7 +42,7 @@
             <div class="h-4 w-4 mr-1"></div>
           {% endif %}
         </div>
-        <a href="{% url "courses:task_create" uuid=course.uuid %}?previous_task={{ task_item.course_task.uuid }}&next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600">
+        <a href="{% url "courses:task_create" uuid=course.uuid %}?previous_task={{ task_item.course_task.uuid }}&next={{ request.path|urlencode }}%23task-{{ task_item.course_task.uuid }}" class="block mx-1 text-gray-300 hover:text-gray-600">
           <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Create task after this task</title>
             <path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/>

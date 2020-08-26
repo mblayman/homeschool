@@ -234,6 +234,9 @@ def bulk_create_course_tasks(request, uuid):
                     previous_task = task
 
             url = reverse("courses:detail", kwargs={"uuid": uuid})
+            next_url = request.GET.get("next")
+            if next_url:
+                url = next_url
             return HttpResponseRedirect(url)
     else:
         formset = CourseTaskFormSet(

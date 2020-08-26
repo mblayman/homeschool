@@ -8,7 +8,7 @@
   {% if create %}
     <p class="font-thin text-base text-gray-800 mb-4">
       Want to add more at once?
-      <a class="underline" href="{% url "courses:task_create_bulk" course.uuid %}{% if request.GET.previous_task %}?previous_task={{ request.GET.previous_task }}{% endif %}">Use Bulk Create</a>
+      <a class="underline" href="{% url "courses:task_create_bulk" course.uuid %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">Use Bulk Create</a>
     </p>
   {% endif %}
 
