@@ -47,13 +47,15 @@ class TestStudentsIndexView(TestCase):
         user = self.make_user()
         StudentFactory()
         student = StudentFactory(school=user.school)
-        EnrollmentFactory(student=student, grade_level__school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student=student, grade_level__school_year__school=user.school
+        )
 
         with self.login(user):
             self.get_check_200("students:index")
 
         roster = self.get_context("roster")
-        assert roster == [{"student": student, "is_enrolled": True}]
+        assert roster == [{"student": student, "enrollment": enrollment}]
 
     def test_unenrolled_student(self):
         """A student is unenrolled in the current school year."""
@@ -65,7 +67,7 @@ class TestStudentsIndexView(TestCase):
             self.get_check_200("students:index")
 
         roster = self.get_context("roster")
-        assert roster == [{"student": student, "is_enrolled": False}]
+        assert roster == [{"student": student, "enrollment": None}]
 
 
 class TestStudentsCreateView(TestCase):

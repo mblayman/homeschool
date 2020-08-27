@@ -213,34 +213,6 @@ class TestEnrollment(TestCase):
 
         assert enrollment.grade_level == grade_level
 
-    def test_student_is_enrolled(self):
-        """A student is tested for enrollment in a school year."""
-        enrollment = EnrollmentFactory()
-
-        is_enrolled = Enrollment.is_student_enrolled(
-            enrollment.student, enrollment.grade_level.school_year
-        )
-
-        assert is_enrolled
-
-    def test_student_is_not_enrolled(self):
-        """A student is not in a given school year."""
-        student = StudentFactory()
-        school_year = SchoolYearFactory()
-
-        is_enrolled = Enrollment.is_student_enrolled(student, school_year)
-
-        assert not is_enrolled
-
-    def test_is_student_enrolled_none_school_year(self):
-        """When a school year is None, a student isn't enrollment."""
-        student = StudentFactory()
-        school_year = None
-
-        is_enrolled = Enrollment.is_student_enrolled(student, school_year)
-
-        assert not is_enrolled
-
     def test_unique_student_per_grade_level(self):
         """A student enrollment is unique per grade level."""
         enrollment = EnrollmentFactory()

@@ -28,9 +28,11 @@ class StudentIndexView(LoginRequiredMixin, TemplateView):
             context["roster"].append(
                 {
                     "student": student,
-                    "is_enrolled": Enrollment.is_student_enrolled(
-                        student, context["school_year"]
-                    ),
+                    "enrollment": Enrollment.objects.filter(
+                        student=student, grade_level__school_year=context["school_year"]
+                    )
+                    .select_related("grade_level")
+                    .first(),
                 }
             )
         return context
