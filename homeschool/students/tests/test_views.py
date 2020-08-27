@@ -1,5 +1,6 @@
 import datetime
 
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from freezegun import freeze_time
 
@@ -9,6 +10,7 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
+from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.students.models import Enrollment, Grade, Student
 from homeschool.students.tests.factories import (
@@ -255,6 +257,30 @@ class TestStudentCourseView(TestCase):
         assert len(task_items) == 2
         assert task_items[0]["course_task"] == general_task
         assert task_items[1]["course_task"] == grade_level_task
+
+    def test_planned_dates_for_future_school_years(self):
+        """The planned dates for a future school year match with the year."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(years=1, month=1, day=1),
+            end_date=today + relativedelta(years=1, month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year=school_year
+        )
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+            )
+
+        task_item = self.get_context("task_items")[0]
+        assert task_item["planned_date"] == school_year.start_date
 
 
 class TestGradeView(TestCase):

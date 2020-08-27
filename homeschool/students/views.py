@@ -86,7 +86,17 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
         )
 
     def get_task_items(self, student, course):
-        today = timezone.now().date()
+        today = timezone.localdate()
+
+        # When the school year isn't in progress yet,
+        # the offset calculations should come
+        # relative to the start of the school year.
+        grade_level = course.grade_levels.select_related("school_year").first()
+        if grade_level:
+            school_year = grade_level.school_year
+            if today < school_year.start_date:
+                today = school_year.start_date
+
         if course.runs_on(today):
             next_course_day = today
         else:
