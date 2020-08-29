@@ -6,6 +6,7 @@ import pytz
 from dateutil.relativedelta import FR, MO, SU, WE, relativedelta
 from django.utils import timezone
 
+from homeschool.core.schedules import Week
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import (
     CourseFactory,
@@ -359,23 +360,21 @@ class TestApp(TestCase):
 
 
 class TestDaily(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:daily")
+
     def test_ok(self):
         user = self.make_user()
+        today = timezone.localdate()
 
         with self.login(user):
             self.get_check_200("core:daily")
 
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:daily")
-
-    def test_has_day(self):
-        user = self.make_user()
-        today = timezone.now().date()
-
-        with self.login(user):
-            self.get("core:daily")
-
         assert self.get_context("day") == today
+        monday = Week(today).monday
+        assert self.get_context("weekly_url") == self.reverse(
+            "core:weekly", monday.year, monday.month, monday.day
+        )
 
     def test_no_school_year(self):
         user = self.make_user()

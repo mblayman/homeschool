@@ -97,6 +97,10 @@ class DailyView(LoginRequiredMixin, TemplateView):
             day = today
         context["day"] = day
 
+        monday = Week(day).monday
+        context["weekly_url"] = reverse(
+            "core:weekly", args=[monday.year, monday.month, monday.day]
+        )
         school_year = (
             SchoolYear.objects.filter(
                 school=self.request.user.school, start_date__lte=day, end_date__gte=day
