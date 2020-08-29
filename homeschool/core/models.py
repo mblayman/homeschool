@@ -24,7 +24,7 @@ class DaysOfWeekModel(models.Model):
     FRIDAY = 16
     SATURDAY = 32
     SUNDAY = 64
-    WEEK = (MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)
+    WEEK = (SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY)
     ALL_DAYS = sum(WEEK)
 
     days_of_week = models.PositiveIntegerField(
@@ -45,24 +45,24 @@ class DaysOfWeekModel(models.Model):
 
     # Lookup table to get displayable name.
     day_to_display_day = {
+        SUNDAY: "Sunday",
         MONDAY: "Monday",
         TUESDAY: "Tuesday",
         WEDNESDAY: "Wednesday",
         THURSDAY: "Thursday",
         FRIDAY: "Friday",
         SATURDAY: "Saturday",
-        SUNDAY: "Sunday",
     }
 
     # Lookup table to get abbreviated displayable name.
     day_to_display_day_abbreviation = {
+        SUNDAY: "Su",
         MONDAY: "M",
         TUESDAY: "T",
         WEDNESDAY: "W",
         THURSDAY: "R",
         FRIDAY: "F",
         SATURDAY: "Sa",
-        SUNDAY: "Su",
     }
 
     @property
@@ -98,7 +98,7 @@ class DaysOfWeekModel(models.Model):
 
     def get_week_dates_for(self, week):
         """Get the list of week dates that the record runs on for the given week. """
-        week_date = week.monday
+        week_date = week.first_day
         week_dates = []
         for day in self.WEEK:
             if self.runs_on(day):
@@ -109,14 +109,14 @@ class DaysOfWeekModel(models.Model):
     def last_school_day_for(self, week):
         """Get that last school day that this model runs.
 
-        If the model isn't running any week days, fall back to Monday.
+        If the model isn't running any week days, fall back to the first day.
         """
-        week_date = week.sunday
+        week_date = week.last_day
         for day in reversed(self.WEEK):
             if self.runs_on(week_date):
                 return week_date
             week_date -= datetime.timedelta(days=1)
-        return week.monday
+        return week.first_day
 
     def runs_on(self, day):
         """Check if the model runs on the given day.

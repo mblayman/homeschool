@@ -10,35 +10,35 @@ class DaysOfWeekModelForm(forms.ModelForm):
     and extend `fields` with days_of_week_fields.
     """
 
+    sunday = forms.BooleanField(required=False)
     monday = forms.BooleanField(required=False)
     tuesday = forms.BooleanField(required=False)
     wednesday = forms.BooleanField(required=False)
     thursday = forms.BooleanField(required=False)
     friday = forms.BooleanField(required=False)
     saturday = forms.BooleanField(required=False)
-    sunday = forms.BooleanField(required=False)
 
     days_of_week_fields = [
+        "sunday",
         "monday",
         "tuesday",
         "wednesday",
         "thursday",
         "friday",
         "saturday",
-        "sunday",
     ]
 
     def save(self, *args, **kwargs):
         """Save the model instance and the days of week."""
         days_of_week = 0
         day_field_to_model_day = {
+            "sunday": DaysOfWeekModel.SUNDAY,
             "monday": DaysOfWeekModel.MONDAY,
             "tuesday": DaysOfWeekModel.TUESDAY,
             "wednesday": DaysOfWeekModel.WEDNESDAY,
             "thursday": DaysOfWeekModel.THURSDAY,
             "friday": DaysOfWeekModel.FRIDAY,
             "saturday": DaysOfWeekModel.SATURDAY,
-            "sunday": DaysOfWeekModel.SUNDAY,
         }
         for day_field, model_day in day_field_to_model_day.items():
             if self.cleaned_data.get(day_field):

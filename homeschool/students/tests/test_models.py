@@ -137,16 +137,16 @@ class TestStudent(TestCase):
         course = CourseFactory()
         course.grade_levels.add(enrollment.grade_level)
         coursework_1 = CourseworkFactory(
-            student=student, course_task__course=course, completed_date=week.monday
+            student=student, course_task__course=course, completed_date=week.first_day
         )
         coursework_2 = CourseworkFactory(
-            student=student, course_task__course=course, completed_date=week.monday
+            student=student, course_task__course=course, completed_date=week.first_day
         )
 
         week_coursework = student.get_week_coursework(week)
 
         assert week_coursework == {
-            course.id: {week.monday: [coursework_1, coursework_2]}
+            course.id: {week.first_day: [coursework_1, coursework_2]}
         }
 
     def test_get_day_coursework(self):

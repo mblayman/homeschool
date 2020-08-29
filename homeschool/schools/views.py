@@ -107,13 +107,13 @@ class SchoolYearEditView(LoginRequiredMixin, UpdateView):
 
     def get_initial(self):
         return {
+            "sunday": self.object.runs_on(SchoolYear.SUNDAY),
             "monday": self.object.runs_on(SchoolYear.MONDAY),
             "tuesday": self.object.runs_on(SchoolYear.TUESDAY),
             "wednesday": self.object.runs_on(SchoolYear.WEDNESDAY),
             "thursday": self.object.runs_on(SchoolYear.THURSDAY),
             "friday": self.object.runs_on(SchoolYear.FRIDAY),
             "saturday": self.object.runs_on(SchoolYear.SATURDAY),
-            "sunday": self.object.runs_on(SchoolYear.SUNDAY),
         }
 
     def get_success_url(self):

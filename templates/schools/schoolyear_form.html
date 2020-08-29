@@ -22,6 +22,10 @@
       </div>
       <div class="md:w-3/4">
         <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <input type="checkbox" name="sunday" {% if form.sunday.value %}checked{% endif %}>
+          Sun.
+        </label>
+        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
           <input type="checkbox" name="monday" {% if form.monday.value %}checked{% endif %}>
           Mon.
         </label>
@@ -44,10 +48,6 @@
         <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
           <input type="checkbox" name="saturday" {% if form.saturday.value %}checked{% endif %}>
           Sat.
-        </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
-          <input type="checkbox" name="sunday" {% if form.sunday.value %}checked{% endif %}>
-          Sun.
         </label>
       </div>
     </div>

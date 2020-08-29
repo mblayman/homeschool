@@ -43,12 +43,14 @@ class AppView(LoginRequiredMixin, TemplateView):
         # Fix the corner case when the weekly view is used and today falls in the week.
         # In that scenario, don't point at the first day of the week
         # since it messes with the UI.
-        if week.monday <= today <= week.sunday:
+        if week.first_day <= today <= week.last_day:
             context["day"] = today
 
-        context["monday"], context["sunday"] = week.monday, week.sunday
-        context["previous_week_date"] = context["monday"] - datetime.timedelta(days=7)
-        context["next_week_date"] = context["monday"] + datetime.timedelta(days=7)
+        context["first_day"], context["last_day"] = week.first_day, week.last_day
+        context["previous_week_date"] = context["first_day"] - datetime.timedelta(
+            days=7
+        )
+        context["next_week_date"] = context["first_day"] + datetime.timedelta(days=7)
 
         school_year = (
             SchoolYear.objects.filter(
@@ -97,9 +99,9 @@ class DailyView(LoginRequiredMixin, TemplateView):
             day = today
         context["day"] = day
 
-        monday = Week(day).monday
+        first_day = Week(day).first_day
         context["weekly_url"] = reverse(
-            "core:weekly", args=[monday.year, monday.month, monday.day]
+            "core:weekly", args=[first_day.year, first_day.month, first_day.day]
         )
         school_year = (
             SchoolYear.objects.filter(

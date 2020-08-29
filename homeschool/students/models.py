@@ -44,7 +44,7 @@ class Student(models.Model):
         courses = self.get_courses(school_year)
         week_coursework = self.get_week_coursework(week)
 
-        week_start_date = week.monday
+        week_start_date = week.first_day
         week_end_date = school_year.last_school_day_for(week)
         completed_task_ids = list(
             Coursework.objects.filter(
@@ -115,7 +115,7 @@ class Student(models.Model):
         """
         week_coursework: dict = {}
         coursework_qs = Coursework.objects.filter(
-            student=self, completed_date__range=(week.monday, week.sunday)
+            student=self, completed_date__range=(week.first_day, week.last_day)
         ).select_related("course_task")
         for coursework in coursework_qs:
             course_id = coursework.course_task.course_id
@@ -142,12 +142,14 @@ class Student(models.Model):
             .order_by("-completed_date")
             .first()
         )
-        if latest_coursework and (this_week.monday <= latest_coursework.completed_date):
+        if latest_coursework and (
+            this_week.first_day <= latest_coursework.completed_date
+        ):
             start_date = latest_coursework.completed_date + datetime.timedelta(days=1)
         else:
             # When the student has no coursework yet, the counting should start
             # from the week start date relative to today.
-            start_date = this_week.monday
+            start_date = this_week.first_day
 
         # Adjust the starting index for future weeks to account for any unfinished tasks
         # from the current week.

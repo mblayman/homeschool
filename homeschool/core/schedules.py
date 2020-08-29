@@ -1,9 +1,9 @@
-from dateutil.relativedelta import MO, SU, relativedelta
+from dateutil.relativedelta import SA, SU, relativedelta
 
 
 class Week:
     """A basic data class to represent a week."""
 
     def __init__(self, day):
-        self.monday = day + relativedelta(weekday=MO(-1))
-        self.sunday = day + relativedelta(weekday=SU(+1))
+        self.first_day = day + relativedelta(weekday=SU(-1))
+        self.last_day = day + relativedelta(weekday=SA(+1))

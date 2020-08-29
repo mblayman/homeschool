@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from dateutil.relativedelta import MO, relativedelta
+from dateutil.relativedelta import MO, SU, relativedelta
 
 from homeschool.core.schedules import Week
 from homeschool.courses.tests.factories import CourseFactory
@@ -157,18 +157,18 @@ class TestSchoolYear(TestCase):
 
     def test_last_school_day_for_no_days(self):
         school_year = SchoolYearFactory(days_of_week=SchoolYear.NO_DAYS)
-        monday = datetime.date.today() + relativedelta(weekday=MO(-1))
-        week = Week(monday)
+        sunday = datetime.date.today() + relativedelta(weekday=SU(-1))
+        week = Week(sunday)
 
         last_school_day = school_year.last_school_day_for(week)
 
-        assert last_school_day == monday
+        assert last_school_day == sunday
 
     def test_display_days(self):
-        school_year = SchoolYearFactory.build()
+        school_year = SchoolYearFactory.build(days_of_week=SchoolYear.ALL_DAYS)
         assert (
             school_year.display_days
-            == "Monday, Tuesday, Wednesday, Thursday, and Friday"
+            == "Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday"
         )
 
         school_year.days_of_week = SchoolYear.MONDAY + SchoolYear.TUESDAY
@@ -183,7 +183,7 @@ class TestSchoolYear(TestCase):
     def test_display_days_abbreviated(self):
         school_year = SchoolYearFactory.build(days_of_week=sum(SchoolYear.WEEK))
 
-        assert school_year.display_abbreviated_days == "MTWRFSaSu"
+        assert school_year.display_abbreviated_days == "SuMTWRFSa"
 
     def test_has_school_break(self):
         """A date can return an existing school break."""
