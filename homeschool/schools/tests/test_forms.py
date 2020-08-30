@@ -122,6 +122,24 @@ class TestSchoolYearForm(TestCase):
             in form.non_field_errors()
         )
 
+    def test_max_length(self):
+        """A school year has a maximum allowed length."""
+        school = SchoolFactory()
+        data = {
+            "school": str(school.id),
+            "start_date": "1/1/2020",
+            "end_date": "12/31/2022",
+            "monday": True,
+        }
+        form = SchoolYearForm(user=school.admin, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert (
+            "A school year may not be longer than 500 days." in form.non_field_errors()
+        )
+
 
 class TestSchoolBreakForm(TestCase):
     def test_start_before_end(self):

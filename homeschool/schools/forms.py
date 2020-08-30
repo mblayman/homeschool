@@ -130,6 +130,7 @@ class SchoolYearForm(DaysOfWeekModelForm):
                 self.add_error(None, "The start date must be before the end date.")
             else:
                 self.check_overlap(start_date, end_date)
+                self.check_max_length(start_date, end_date)
 
         has_week_days = any(
             [
@@ -161,4 +162,13 @@ class SchoolYearForm(DaysOfWeekModelForm):
                 None,
                 "School years may not have overlapping dates. "
                 f"The dates provided overlap with the {school_year} school year.",
+            )
+
+    def check_max_length(self, start_date, end_date):
+        """Check that the school year is within the max allowed days."""
+        max_allowed_days = 500
+        delta = end_date - start_date
+        if abs(delta.days) > max_allowed_days:
+            self.add_error(
+                None, f"A school year may not be longer than {max_allowed_days} days."
             )
