@@ -54,33 +54,68 @@ class AppView(LoginRequiredMixin, TemplateView):
 
         school_year = (
             SchoolYear.objects.filter(
-                school=self.request.user.school,
-                start_date__lte=today,
-                end_date__gte=today,
+                school=self.request.user.school, start_date__lte=day, end_date__gte=day
             )
             .prefetch_related("grade_levels", "grade_levels__courses")
             .first()
         )
 
-        week_dates = []
         if school_year:
-            week_dates = school_year.get_week_dates_for(week)
-        context["week_dates"] = week_dates
+            # When the school year isn't in progress yet,
+            # the offset calculations should come
+            # relative to the start of the school year.
+            if today < school_year.start_date:
+                today = school_year.start_date
+
+            context["week_dates"] = school_year.get_week_dates_for(week)
+
+            # Check if this is the last week of the school year.
+            # If so, there might be another school year immediately following this one.
+            if school_year.end_date < week.last_day:
+                self.get_next_school_year(context, today, week)
+        else:
+            self.get_next_school_year(context, today, week)
 
         context["schedules"] = self.get_schedules(school_year, today, week)
         return context
 
     def get_schedules(self, school_year, today, week):
         """Get the schedules for each student."""
-        schedules: list = []
         if school_year is None:
-            return schedules
+            return []
 
-        for student in Student.get_students_for(school_year):
-            schedule = student.get_week_schedule(school_year, today, week)
-            schedules.append(schedule)
+        return [
+            student.get_week_schedule(school_year, today, week)
+            for student in Student.get_students_for(school_year)
+        ]
 
-        return schedules
+    def get_next_school_year(self, context, today, week):
+        """Get the next year.
+
+        This is needed at the boundaries of the school year.
+        """
+        # Check if this is the first week of the school year.
+        # If so, the first day of the week might be before the school years starts.
+        # In that scenario, try to get the school year by looking ahead.
+        next_school_year = (
+            SchoolYear.objects.filter(
+                school=self.request.user.school, start_date__range=week
+            )
+            .prefetch_related("grade_levels", "grade_levels__courses")
+            .first()
+        )
+        if next_school_year:
+            context["next_year_week_dates"] = next_school_year.get_week_dates_for(week)
+
+        # When the school year isn't in progress yet,
+        # the offset calculations should come
+        # relative to the start of the school year.
+        if next_school_year and today < next_school_year.start_date:
+            today = next_school_year.start_date
+
+        context["next_year_schedules"] = self.get_schedules(
+            next_school_year, today, week
+        )
 
 
 class DailyView(LoginRequiredMixin, TemplateView):

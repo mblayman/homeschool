@@ -14,41 +14,6 @@
     </div>
   </div>
 
-  {% for schedule in schedules %}
-  <div class="print-break-after-page">
-    <h2 class="font-thin text-xl text-blue-900">{{ schedule.student.first_name }}</h2>
-
-    <div class="flex flex-row">
-      <div class="flex-1 py-2 pr-4"></div>
-
-      {% for week_date in week_dates %}
-      <a href="{% url "core:daily_for_date" week_date.year week_date.month week_date.day %}"class="flex-1 text-sm text-center uppercase tracking-wide font-thin p-2 {% if week_date == day %}bg-gray-100 print-no-color rounded-t-lg{% endif %} hover:underline">{{ week_date|date:"l, n/j" }}</a>
-      {% endfor %}
-    </div>
-
-    {% for course_schedule in schedule.courses %}
-      <div class="flex flex-row border-t border-yellow-400 {% if forloop.last %}mb-16{% endif %}">
-        <div class="flex-1 text-sm uppercase tracking-wide font-thin py-2 pr-4">
-            <a class="hover:underline" href="{% url "students:course" schedule.student.uuid course_schedule.course.uuid %}">{{ course_schedule.course.name }}</a>
-        </div>
-
-        {% with last_row=forloop.last %}
-          {% for course_schedule_day in course_schedule.days %}
-            {% if course_schedule_day.task %}
-              <div class="flex-1 p-2 text-sm font-light overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ course_schedule_day.task.description|linebreaksbr }}</div>
-            {% elif course_schedule_day.coursework %}
-              <div class="flex-1 p-2 overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
-                {% for coursework in course_schedule_day.coursework %}
-                  <div class="text-sm font-light text-gray-400">{{ coursework.course_task.description|linebreaksbr }}</div>
-                {% endfor %}
-              </div>
-            {% else %}
-              <div class="flex-1 p-2 {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}"></div>
-            {% endif %}
-          {% endfor %}
-        {% endwith %}
-      </div>
-    {% endfor %}
-  </div>
-  {% endfor %}
+  {% include "core/week_schedules.html" with schedules=schedules week_dates=week_dates %}
+  {% include "core/week_schedules.html" with schedules=next_year_schedules week_dates=next_year_week_dates %}
 {% endblock %}

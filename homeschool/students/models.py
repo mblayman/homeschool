@@ -83,6 +83,13 @@ class Student(models.Model):
 
             for week_date in week_dates:
                 course_schedule_item = {"week_date": week_date}
+                course_schedule["days"].append(course_schedule_item)
+
+                # The first week of a school year should skip any days
+                # before the year officially starts.
+                if week_date < school_year.start_date:
+                    continue
+
                 if (
                     course.id in week_coursework
                     and week_date in week_coursework[course.id]
@@ -91,7 +98,6 @@ class Student(models.Model):
                     course_schedule_item["coursework"] = coursework_list
                 elif course.runs_on(week_date) and course_tasks:
                     course_schedule_item["task"] = course_tasks.pop()
-                course_schedule["days"].append(course_schedule_item)
             schedule["courses"].append(course_schedule)
         return schedule
 
@@ -150,6 +156,11 @@ class Student(models.Model):
             # When the student has no coursework yet, the counting should start
             # from the week start date relative to today.
             start_date = this_week.first_day
+
+            # Clamp the start to the school year's start.
+            # This is an edge case that appears when looking at future school years.
+            if start_date < school_year.start_date:
+                start_date = school_year.start_date
 
         # Adjust the starting index for future weeks to account for any unfinished tasks
         # from the current week.

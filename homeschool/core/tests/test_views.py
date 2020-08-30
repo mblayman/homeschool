@@ -358,6 +358,111 @@ class TestApp(TestCase):
         assert schedules[0]["student"] == enrollment_2.student
         assert schedules[1]["student"] == enrollment.student
 
+    def test_future_school_year(self):
+        """A future school year shows the task in a week at the school year start."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(years=1, month=1, day=1),
+            end_date=today + relativedelta(years=1, month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        week = Week(school_year.start_date)
+
+        with self.login(user):
+            self.get(
+                "core:weekly",
+                year=week.first_day.year,
+                month=week.first_day.month,
+                day=week.first_day.day,
+            )
+
+        schedule = self.get_context("next_year_schedules")[0]
+        course_day = {}
+        for course_schedule_item in schedule["courses"][0]["days"]:
+            if course_schedule_item["week_date"] == school_year.start_date:
+                course_day = course_schedule_item
+        assert course_day["task"] == task
+
+    def test_future_school_year_advanced_week(self):
+        """Looking ahead in a future school year calculates offsets from year start.
+
+        This is slightly different from looking at the first week of a school year
+        that has a starting day before the school year starts. The primary functional
+        difference is that the future school year will appear in the `schedules`
+        context instead of `next_year_schedules` context.
+        """
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(years=1, month=1, day=1),
+            end_date=today + relativedelta(years=1, month=12, day=31),
+            # Running only on the last possible day should guarantee 1 task/week.
+            days_of_week=SchoolYear.SATURDAY,
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        course = CourseFactory(
+            grade_levels=[enrollment.grade_level], days_of_week=Course.SATURDAY
+        )
+        CourseTaskFactory(course=course)
+        task = CourseTaskFactory(course=course)
+        week = Week(school_year.start_date)
+        first_day = week.first_day + datetime.timedelta(days=7)
+
+        with self.login(user):
+            self.get(
+                "core:weekly",
+                year=first_day.year,
+                month=first_day.month,
+                day=first_day.day,
+            )
+
+        schedule = self.get_context("schedules")[0]
+        assert schedule["courses"][0]["days"][0]["task"] == task
+
+    def test_two_school_years_same_week(self):
+        """When two school years are in the same week, both are in the context."""
+        today = timezone.localdate()
+        user = self.make_user()
+        current_school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(month=1, day=1),
+            end_date=today + relativedelta(month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=current_school_year)
+        CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        next_school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(years=1, month=1, day=1),
+            end_date=today + relativedelta(years=1, month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=next_school_year)
+        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        week = Week(next_school_year.start_date)
+
+        with self.login(user):
+            self.get(
+                "core:weekly",
+                year=week.first_day.year,
+                month=week.first_day.month,
+                day=week.first_day.day,
+            )
+
+        schedule = self.get_context("schedules")[0]
+        assert schedule
+        schedule = self.get_context("next_year_schedules")[0]
+        course_day = {}
+        for course_schedule_item in schedule["courses"][0]["days"]:
+            if course_schedule_item["week_date"] == next_school_year.start_date:
+                course_day = course_schedule_item
+        assert course_day["task"] == task
+
 
 class TestDaily(TestCase):
     def test_unauthenticated_access(self):
