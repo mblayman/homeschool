@@ -25,6 +25,7 @@ env = environ.Env(
     DEBUG_TOOLBAR=(bool, False),
     ROLLBAR_ENABLED=(bool, True),
     ROLLBAR_ENVIRONMENT=(str, "production"),
+    SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
     SECURE_SSL_REDIRECT=(bool, True),
     SESSION_COOKIE_SECURE=(bool, True),
 )
@@ -169,12 +170,15 @@ USE_TZ = True
 CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_REFERRER_POLICY = "same-origin"
+SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS")
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
 
 SILENCED_SYSTEM_CHECKS = [
-    # SECURE_HSTS_SECONDS will need to wait until the domains are set up. Issue #132
-    "security.W004"
+    # For now, since there is no custom domain, the site is not added
+    # to the HSTS preload list.
+    "security.W021"
 ]
 
 # django.contrib.sites
