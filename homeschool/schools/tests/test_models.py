@@ -181,9 +181,14 @@ class TestSchoolYear(TestCase):
         assert school_year.display_days == ""
 
     def test_display_days_abbreviated(self):
-        school_year = SchoolYearFactory.build(days_of_week=sum(SchoolYear.WEEK))
+        school_year = SchoolYearFactory.build(days_of_week=SchoolYear.ALL_DAYS)
 
         assert school_year.display_abbreviated_days == "SuMTWRFSa"
+
+    def test_display_days_abbreviated_no_days(self):
+        school_year = SchoolYearFactory.build(days_of_week=SchoolYear.NO_DAYS)
+
+        assert school_year.display_abbreviated_days == "Not Running"
 
     def test_has_school_break(self):
         """A date can return an existing school break."""

@@ -87,9 +87,10 @@ class DaysOfWeekModel(models.Model):
     @property
     def display_abbreviated_days(self):
         """Display the abbreviated week days this model runs on."""
-        return "".join(
+        abbreviated_days = "".join(
             [self.day_to_display_day_abbreviation[day] for day in self._running_days]
         )
+        return abbreviated_days if abbreviated_days else "Not Running"
 
     @property
     def _running_days(self):
