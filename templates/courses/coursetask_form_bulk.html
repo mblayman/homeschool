@@ -44,7 +44,7 @@
             {% endif %}
           </div>
           <div class="w-1/6 text-center items-center">
-            <input id="id_is_graded" type="checkbox" name="{{ form.is_graded.html_name }}">
+            {% include "forms/field.html" with field=form.is_graded no_label=True %}
           </div>
         </div>
       {% endfor %}

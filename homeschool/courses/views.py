@@ -289,6 +289,9 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
         kwargs["user"] = self.request.user
         return kwargs
 
+    def get_initial(self):
+        return {"is_graded": hasattr(self.object, "graded_work")}
+
 
 class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
     slug_field = "uuid"

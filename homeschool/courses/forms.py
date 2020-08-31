@@ -53,7 +53,7 @@ class CourseTaskForm(forms.ModelForm):
         model = CourseTask
         fields = ["course", "description", "duration", "is_graded", "grade_level"]
 
-    is_graded = forms.BooleanField(required=False)
+    is_graded = forms.BooleanField(required=False, label="Is graded?")
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")

@@ -16,6 +16,8 @@
         name="{{ field.html_name }}"
         {% if autofocus %}autofocus{% endif %}
         >{% if field.value %}{{ field.value|safe|escape }}{% endif %}</textarea>
+    {% elif field.field.widget.input_type == "checkbox" %}
+      <input type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
     {% else %}
       <input class="bg-white appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none
         {% if field.errors %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"

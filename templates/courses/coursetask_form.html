@@ -17,17 +17,7 @@
     <input type="hidden" name="course" value="{{ course.id }}">
     {% include "forms/field.html" with field=form.description textarea=True autofocus=True %}
     {% include "forms/field.html" with field=form.duration %}
-    <div class="md:flex md:items-center mb-6">
-      <div class="md:w-1/4">
-        <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_is_graded">
-          Is graded?
-        </label>
-      </div>
-      <div class="md:w-3/4">
-        <input
-          id="id_is_graded" type="checkbox" name="is_graded" {% if coursetask.graded_work %}checked{% endif %}>
-      </div>
-    </div>
+    {% include "forms/field.html" with field=form.is_graded %}
     {% if course.has_many_grade_levels %}
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/4">
