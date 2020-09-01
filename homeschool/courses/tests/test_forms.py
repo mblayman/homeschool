@@ -1,6 +1,33 @@
-from homeschool.courses.forms import CourseResourceForm, CourseTaskForm
+from homeschool.courses.forms import CourseForm, CourseResourceForm, CourseTaskForm
 from homeschool.courses.tests.factories import CourseFactory
+from homeschool.schools.models import SchoolYear
+from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.test import TestCase
+
+
+class TestCourseForm(TestCase):
+    def test_course_days_on_school_year_days(self):
+        """A course must run on days that are in the school year's set days."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school, days_of_week=SchoolYear.MONDAY
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        data = {
+            "name": "Will Not Work",
+            "default_task_duration": "30",
+            "grade_levels": [str(grade_level.id)],
+            "tuesday": "on",
+        }
+        form = CourseForm(school_year, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert (
+            "The course must run within school year days: Monday"
+            in form.non_field_errors()
+        )
 
 
 class TestCourseResourceForm(TestCase):

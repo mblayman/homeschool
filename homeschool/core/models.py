@@ -157,3 +157,17 @@ class DaysOfWeekModel(models.Model):
         while not self.runs_on(next_day):
             next_day += datetime.timedelta(days=1)
         return next_day
+
+    def is_superset(self, days_of_week):
+        """Check if the instance's days of week is a superset of days of week.
+
+        Use masking to make the determination. Example:
+            0011111 - Monday, Tuesday, Wednesday, Thursday, Friday
+            0100001 - Not a subset (Monday and Saturday)
+
+            1100000 - Negate possible superset
+          & 0100001 - AND with potential subset
+          ---------
+            0100000 - Value greater than 0, instance is not a superset
+        """
+        return (~self.days_of_week & days_of_week) == 0

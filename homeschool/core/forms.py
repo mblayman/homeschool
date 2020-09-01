@@ -27,21 +27,25 @@ class DaysOfWeekModelForm(forms.ModelForm):
         "friday",
         "saturday",
     ]
+    day_field_to_model_day = {
+        "sunday": DaysOfWeekModel.SUNDAY,
+        "monday": DaysOfWeekModel.MONDAY,
+        "tuesday": DaysOfWeekModel.TUESDAY,
+        "wednesday": DaysOfWeekModel.WEDNESDAY,
+        "thursday": DaysOfWeekModel.THURSDAY,
+        "friday": DaysOfWeekModel.FRIDAY,
+        "saturday": DaysOfWeekModel.SATURDAY,
+    }
 
     def save(self, *args, **kwargs):
         """Save the model instance and the days of week."""
+        self.instance.days_of_week = self.get_days_of_week()
+        return super().save(*args, **kwargs)
+
+    def get_days_of_week(self):
+        """Get the days of week from the cleaned data."""
         days_of_week = 0
-        day_field_to_model_day = {
-            "sunday": DaysOfWeekModel.SUNDAY,
-            "monday": DaysOfWeekModel.MONDAY,
-            "tuesday": DaysOfWeekModel.TUESDAY,
-            "wednesday": DaysOfWeekModel.WEDNESDAY,
-            "thursday": DaysOfWeekModel.THURSDAY,
-            "friday": DaysOfWeekModel.FRIDAY,
-            "saturday": DaysOfWeekModel.SATURDAY,
-        }
-        for day_field, model_day in day_field_to_model_day.items():
+        for day_field, model_day in self.day_field_to_model_day.items():
             if self.cleaned_data.get(day_field):
                 days_of_week += model_day
-        self.instance.days_of_week = days_of_week
-        return super().save(*args, **kwargs)
+        return days_of_week

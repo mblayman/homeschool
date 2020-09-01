@@ -26,6 +26,14 @@ class CourseForm(DaysOfWeekModelForm):
             school_year=school_year
         )
 
+    def clean(self):
+        if not self.school_year.is_superset(self.get_days_of_week()):
+            raise forms.ValidationError(
+                "The course must run within school year days:"
+                f" {self.school_year.display_days}"
+            )
+        return self.cleaned_data
+
 
 class CourseResourceForm(forms.ModelForm):
     class Meta:
