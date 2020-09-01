@@ -6,5 +6,5 @@ isort==5.2.2
 mypy==0.782
 pip-tools
 pre-commit
-pygraphviz==1.5
+pygraphviz==1.6
 pytest-django==3.9.0
