@@ -1,7 +1,10 @@
 import datetime
 
+from homeschool.courses.models import Course
+from homeschool.courses.tests.factories import CourseFactory
 from homeschool.schools.forms import SchoolBreakForm, SchoolYearForm
 from homeschool.schools.tests.factories import (
+    GradeLevelFactory,
     SchoolBreakFactory,
     SchoolFactory,
     SchoolYearFactory,
@@ -138,6 +141,31 @@ class TestSchoolYearForm(TestCase):
         assert not is_valid
         assert (
             "A school year may not be longer than 500 days." in form.non_field_errors()
+        )
+
+    def test_school_year_days_superset_of_courses_days(self):
+        """The days of a school year must be a superset of each course's days."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_levels=[grade_level], days_of_week=Course.MONDAY + Course.TUESDAY
+        )
+        data = {
+            "school": str(school.id),
+            "start_date": "1/1/2020",
+            "end_date": "12/31/2020",
+            "monday": True,
+        }
+        form = SchoolYearForm(user=school.admin, instance=school_year, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert (
+            "The school year days must include any days that a course runs."
+            " The following courses run on more days than the school year:"
+            f" {course}" in form.non_field_errors()
         )
 
 

@@ -1,6 +1,7 @@
 from django import forms
 
 from homeschool.core.forms import DaysOfWeekModelForm
+from homeschool.courses.models import Course
 
 from .models import GradeLevel, SchoolBreak, SchoolYear
 
@@ -132,14 +133,11 @@ class SchoolYearForm(DaysOfWeekModelForm):
                 self.check_overlap(start_date, end_date)
                 self.check_max_length(start_date, end_date)
 
-        has_week_days = any(
-            [
-                bool(self.cleaned_data.get(field))
-                for field in DaysOfWeekModelForm.days_of_week_fields
-            ]
-        )
-        if not has_week_days:
+        days_of_week = self.get_days_of_week()
+        if days_of_week == SchoolYear.NO_DAYS:
             self.add_error(None, "A school year must run on at least one week day.")
+
+        self.check_superset_of_courses(days_of_week)
 
         return self.cleaned_data
 
@@ -171,4 +169,27 @@ class SchoolYearForm(DaysOfWeekModelForm):
         if abs(delta.days) > max_allowed_days:
             self.add_error(
                 None, f"A school year may not be longer than {max_allowed_days} days."
+            )
+
+    def check_superset_of_courses(self, days_of_week):
+        """Check that the days of week are a superset of any existing courses days."""
+        if self.instance.id is None:
+            return
+
+        courses = Course.objects.filter(
+            grade_levels__school_year=self.instance
+        ).distinct()
+        self.instance.days_of_week = days_of_week
+        superset_courses = [
+            course
+            for course in courses
+            if not self.instance.is_superset(course.days_of_week)
+        ]
+        if superset_courses:
+            courses_str = ", ".join(map(str, superset_courses))
+            self.add_error(
+                None,
+                "The school year days must include any days that a course runs."
+                " The following courses run on more days than the school year:"
+                f" {courses_str}",
             )
