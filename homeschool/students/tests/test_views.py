@@ -455,25 +455,6 @@ class TestEnrollmentCreateView(TestCase):
         form = self.get_context("form")
         assert "You may not enroll to that grade level." in form.errors["__all__"][0]
 
-    def test_no_double_enrollment(self):
-        """A user can not enroll a student twice."""
-        user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        EnrollmentFactory(student=student, grade_level=grade_level)
-        data = {"student": str(student.id), "grade_level": str(grade_level.id)}
-
-        with self.login(user):
-            self.post(
-                "students:enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
-                data=data,
-            )
-
-        form = self.get_context("form")
-        assert "already exists" in form.errors["__all__"][0]
-
     def test_has_student(self):
         """The student is in the context."""
         user = self.make_user()

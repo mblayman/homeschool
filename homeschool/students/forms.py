@@ -22,4 +22,17 @@ class EnrollmentForm(forms.ModelForm):
         if grade_level and grade_level.school_year.school != self.user.school:
             raise forms.ValidationError("You may not enroll to that grade level.")
 
+        enrollment = (
+            Enrollment.objects.filter(
+                student=student, grade_level__school_year=grade_level.school_year
+            )
+            .select_related("student", "grade_level")
+            .first()
+        )
+        if enrollment:
+            raise forms.ValidationError(
+                "A student may not be enrolled in multiple grade levels in a school"
+                f" year. {enrollment.student} is enrolled in {enrollment.grade_level}."
+            )
+
         return self.cleaned_data
