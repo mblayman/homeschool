@@ -1,4 +1,5 @@
 {% extends "app_base.html" %}
+{% load static %}
 
 {% block head_title%}Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}{% endblock %}
 
@@ -22,5 +23,25 @@
         {% endfor %}
       </div>
     {% endfor %}
+  {% else %}
+    <div class="flex flex-row justify-between">
+      <div class="w-2/5">
+        <div class="m-8 mt-8 ml-12">
+          <img src="{% static "progress-graph.svg" %}" alt="Making progress">
+        </div>
+      </div>
+      <div class="w-3/5">
+        <div class="m-8 ml-12">
+          <h2 class="font-thin text-xl text-blue-900 mb-2">No Grades Yet</h2>
+          <p class="mb-1 font-light">
+            {{ student }} has no posted grades yet for {{ grade_level }}.
+          </p>
+          <p class="mb-8 font-light">
+            As soon as there are some grades,
+            they will appear on this report.
+          </p>
+        </div>
+      </div>
+    </div>
   {% endif %}
 {% endblock %}
