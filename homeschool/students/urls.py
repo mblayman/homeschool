@@ -13,8 +13,13 @@ urlpatterns = [
     ),
     path("grade/", views.GradeView.as_view(), name="grade"),
     path(
-        "<uuid:uuid>/enroll/<uuid:school_year_uuid>/",
+        "enroll/<uuid:school_year_uuid>/",
         views.EnrollmentCreateView.as_view(),
         name="enrollment_create",
+    ),
+    path(
+        "<uuid:uuid>/enroll/<uuid:school_year_uuid>/",
+        views.StudentEnrollmentCreateView.as_view(),
+        name="student_enrollment_create",
     ),
 ]

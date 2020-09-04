@@ -1,0 +1,38 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Enroll {{ student.full_name }} for the {{ school_year }} school year{% endblock %}
+
+{% block main %}
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+    Enroll {{ student.full_name }} for the {{ school_year }} school year
+  </h1>
+
+  {% include "forms/non_field_errors.html" %}
+
+  <form method="POST" class="w-full max-w-2xl">
+    {% csrf_token %}
+    <input type="hidden" name="student" value="{{ student.id }}">
+    <div class="mb-4">
+      {% for grade_level in grade_levels %}
+        <div class="py-1">
+          <label class="p-4 w-full inline-block hover:bg-gray-200 rounded" for="{{ grade_level.id }}">
+            <input class="mr-2" type="radio" value="{{ grade_level.id }}" id="{{ grade_level.id }}" name="grade_level">
+            {{ grade_level }}
+          </label>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="md:flex md:items-center">
+      <div class="md:w-1/4"></div>
+      <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
+        <a href="{% url "students:index" %}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Cancel
+        </a>
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Enroll
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

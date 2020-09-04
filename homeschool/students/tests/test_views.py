@@ -1,6 +1,7 @@
 import datetime
 
 from dateutil.relativedelta import relativedelta
+from django.contrib.messages import get_messages
 from django.utils import timezone
 from freezegun import freeze_time
 
@@ -378,11 +379,121 @@ class TestGradeView(TestCase):
 
 class TestEnrollmentCreateView(TestCase):
     def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+
+        self.assertLoginRequired(
+            "students:enrollment_create", school_year_uuid=school_year.uuid
+        )
+
+    def test_get(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        enrolled_student = StudentFactory(school=user.school)
+        EnrollmentFactory(student=enrolled_student, grade_level=grade_level)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:enrollment_create", school_year_uuid=school_year.uuid
+            )
+
+        assert list(self.get_context("grade_levels")) == [grade_level]
+        assert list(self.get_context("students")) == [student]
+
+    def test_post(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        data = {"student": str(student.id), "grade_level": str(grade_level.id)}
+
+        with self.login(user):
+            response = self.post(
+                "students:enrollment_create",
+                school_year_uuid=grade_level.school_year.uuid,
+                data=data,
+            )
+
+        assert Enrollment.objects.filter(
+            student=student, grade_level=grade_level
+        ).exists()
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=grade_level.school_year.uuid
+        )
+
+    def test_no_students(self):
+        """With no students, redirect to the student index page."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        GradeLevelFactory(school_year=school_year)
+
+        with self.login(user):
+            response = self.get(
+                "students:enrollment_create", school_year_uuid=school_year.uuid
+            )
+
+        assert response.get("Location") == self.reverse("students:index")
+        message = list(get_messages(response.wsgi_request))[0]
+        assert str(message) == "You need to add a student to enroll."
+
+    def test_no_enrollable_students(self):
+        """When all students are enrolled, redirect back to the school year."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        EnrollmentFactory(student__school=user.school, grade_level=grade_level)
+
+        with self.login(user):
+            response = self.get(
+                "students:enrollment_create", school_year_uuid=school_year.uuid
+            )
+
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=school_year.uuid
+        )
+        message = list(get_messages(response.wsgi_request))[0]
+        assert str(message) == "All students are enrolled in the school year."
+
+    def test_no_grade_levels(self):
+        """When no grade levels are available, redirect to create a grade level."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            response = self.get(
+                "students:enrollment_create", school_year_uuid=school_year.uuid
+            )
+
+        assert response.get("Location") == self.reverse(
+            "schools:grade_level_create", uuid=school_year.uuid
+        )
+        message = list(get_messages(response.wsgi_request))[0]
+        assert (
+            str(message)
+            == "You need to create a grade level for a student to enroll in."
+        )
+
+    def test_user_access_their_school_years(self):
+        """The user can only access their school years."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory()
+
+        with self.login(user):
+            response = self.get(
+                "students:enrollment_create",
+                school_year_uuid=grade_level.school_year.uuid,
+            )
+
+        self.response_404(response)
+
+
+class TestStudentEnrollmentCreateView(TestCase):
+    def test_unauthenticated_access(self):
         student = StudentFactory()
         school_year = SchoolYearFactory()
 
         self.assertLoginRequired(
-            "students:enrollment_create",
+            "students:student_enrollment_create",
             uuid=student.uuid,
             school_year_uuid=school_year.uuid,
         )
@@ -394,7 +505,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=school_year.uuid,
             )
@@ -407,7 +518,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.post(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
                 data=data,
@@ -427,7 +538,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.post(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
                 data=data,
@@ -446,7 +557,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.post(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
                 data=data,
@@ -463,7 +574,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.get(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
             )
@@ -478,7 +589,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
             )
@@ -493,7 +604,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.get(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
             )
@@ -508,7 +619,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.get(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
             )
@@ -524,7 +635,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:enrollment_create",
+                "students:student_enrollment_create",
                 uuid=student.uuid,
                 school_year_uuid=grade_level.school_year.uuid,
             )
