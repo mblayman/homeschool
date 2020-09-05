@@ -5,75 +5,88 @@
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">{% if create %}Add{% else %}Edit{% endif %} Course Task for {{ course }}</h1>
 
-  {% if create %}
-    <p class="font-thin text-base text-gray-800 mb-4">
-      Want to add more at once?
-      <a class="underline" href="{% url "courses:task_create_bulk" course.uuid %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">Use Bulk Create</a>
-    </p>
-  {% endif %}
+  <div class="max-w-lg">
+    {% if previous_task %}
+      <div class="bg-yellow-200 rounded p-2 mb-4">
+        <p class="font-thin text-base text-gray-800 mb-2">
+          <strong>Previous Task:</strong>
+        </p>
+        <p class="font-thin text-base text-gray-800">
+          {{ previous_task.description|linebreaksbr }}
+        </p>
+      </div>
+    {% endif %}
 
-  <form method="post" class="w-full max-w-lg">
-    {% csrf_token %}
-    <input type="hidden" name="course" value="{{ course.id }}">
-    {% include "forms/field.html" with field=form.description textarea=True autofocus=True %}
-    {% include "forms/field.html" with field=form.duration %}
-    {% include "forms/field.html" with field=form.is_graded %}
-    {% if course.has_many_grade_levels %}
-      <div class="md:flex md:items-center mb-6">
-        <div class="md:w-1/4">
-          <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_grade_level">
-            For
-          </label>
-        </div>
-        <div class="md:w-3/4">
-          <div class="relative">
-            <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500" id="id_grade_level" name="grade_level">
-              <option value="">All grade levels</option>
-              {% for grade_level in grade_levels %}
-                <option value="{{ grade_level.id }}"
-                {% if grade_level == coursetask.grade_level %}
-                  selected
-                {% endif %}
-                >{{ grade_level.name }}</option>
-              {% endfor %}
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+    {% if create %}
+      <p class="font-thin text-base text-gray-800 mb-4">
+        Want to add more at once?
+        <a class="underline" href="{% url "courses:task_create_bulk" course.uuid %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">Use Bulk Create</a>
+      </p>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="course" value="{{ course.id }}">
+      {% include "forms/field.html" with field=form.description textarea=True autofocus=True %}
+      {% include "forms/field.html" with field=form.duration %}
+      {% include "forms/field.html" with field=form.is_graded %}
+      {% if course.has_many_grade_levels %}
+        <div class="md:flex md:items-center mb-6">
+          <div class="md:w-1/4">
+            <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_grade_level">
+              For
+            </label>
+          </div>
+          <div class="md:w-3/4">
+            <div class="relative">
+              <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500" id="id_grade_level" name="grade_level">
+                <option value="">All grade levels</option>
+                {% for grade_level in grade_levels %}
+                  <option value="{{ grade_level.id }}"
+                  {% if grade_level == coursetask.grade_level %}
+                    selected
+                  {% endif %}
+                  >{{ grade_level.name }}</option>
+                {% endfor %}
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    {% else %}
-      <input type="hidden" name="grade_level" value="">
-    {% endif %}
-    <div class="md:flex md:items-center">
-      <div class="md:w-1/4"></div>
-      {% if create %}
-        <div class="md:w-3/4 text-right">
-          <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-            Add
-          </button>
-        </div>
       {% else %}
-        <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
-          <a href="{% url "courses:task_delete" coursetask.course.uuid coursetask.uuid %}"
-            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-            Delete
-          </a>
-          {% if request.GET.next %}
-            <div class="flex-grow"></div>
-            <a href="{{ request.GET.next }}"
-              class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-              Cancel
-            </a>
-          {% else %}
-            <div class="flex-grow"></div>
-          {% endif %}
-          <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
-            Update
-          </button>
-        </div>
+        <input type="hidden" name="grade_level" value="">
       {% endif %}
-    </div>
-  </form>
+      <div class="md:flex md:items-center">
+        <div class="md:w-1/4"></div>
+        {% if create %}
+          <div class="md:w-3/4 text-right">
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Add
+            </button>
+          </div>
+        {% else %}
+          <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
+            <a href="{% url "courses:task_delete" coursetask.course.uuid coursetask.uuid %}"
+              class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Delete
+            </a>
+            {% if request.GET.next %}
+              <div class="flex-grow"></div>
+              <a href="{{ request.GET.next }}"
+                class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancel
+              </a>
+            {% else %}
+              <div class="flex-grow"></div>
+            {% endif %}
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+              Update
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </form>
+  </div>
 {% endblock %}

@@ -247,6 +247,20 @@ class TestCourseTaskCreateView(TestCase):
         )
         assert not hasattr(task, "graded_work")
 
+    def test_has_previous_task(self):
+        """The previous task is in the context if the querystring is present."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        url = self.reverse("courses:task_create", uuid=course.uuid)
+        url += f"?previous_task={task.uuid}"
+
+        with self.login(user):
+            self.get(url)
+
+        assert self.get_context("previous_task") == task
+
     def test_has_create(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -436,6 +450,20 @@ class TestBulkCreateCourseTasks(TestCase):
 
         self.response_302(response)
         assert next_url in response.get("Location")
+
+    def test_has_previous_task(self):
+        """When the previous task is in the querystring, it's in the context."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
+        task = CourseTaskFactory(course=course)
+        url = self.reverse("courses:task_create_bulk", uuid=course.uuid)
+        url += f"?previous_task={task.uuid}"
+
+        with self.login(user):
+            self.get_check_200(url)
+
+        assert self.get_context("previous_task") == task
 
 
 class TestCourseTaskUpdateView(TestCase):

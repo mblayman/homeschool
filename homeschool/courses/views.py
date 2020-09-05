@@ -170,6 +170,12 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
 
+    @cached_property
+    def previous_task(self):
+        return CourseTask.get_by_uuid(
+            self.request.user, self.request.GET.get("previous_task", "")
+        )
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["create"] = True
@@ -179,6 +185,7 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         context["grade_levels"] = GradeLevel.objects.filter(
             school_year=grade_level.school_year_id
         )
+        context["previous_task"] = self.previous_task
         return context
 
     def get_initial(self):
@@ -192,11 +199,8 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        previous_task = CourseTask.get_by_uuid(
-            self.request.user, self.request.GET.get("previous_task", "")
-        )
-        if previous_task:
-            self.object.below(previous_task)
+        if self.previous_task:
+            self.object.below(self.previous_task)
         return response
 
     def get_form_kwargs(self):
@@ -213,6 +217,9 @@ def bulk_create_course_tasks(request, uuid):
     For some reason, the function view worked where the CBV did not.
     """
     course = get_course(request.user, uuid)
+    previous_task = CourseTask.get_by_uuid(
+        request.user, request.GET.get("previous_task", "")
+    )
 
     CourseTaskFormSet = modelformset_factory(CourseTask, form=CourseTaskForm, extra=10)
     form_kwargs = {
@@ -224,9 +231,6 @@ def bulk_create_course_tasks(request, uuid):
             request.POST, form_kwargs=form_kwargs, queryset=CourseTask.objects.none()
         )
         if formset.is_valid():
-            previous_task = CourseTask.get_by_uuid(
-                request.user, request.GET.get("previous_task", "")
-            )
             for form in formset:
                 task = form.save()
                 if previous_task:
@@ -250,6 +254,7 @@ def bulk_create_course_tasks(request, uuid):
         "grade_levels": GradeLevel.objects.filter(
             school_year=grade_level.school_year_id
         ),
+        "previous_task": previous_task,
     }
     return render(request, "courses/coursetask_form_bulk.html", context)
 

@@ -330,8 +330,8 @@ class TestSchoolBreakCreateView(TestCase):
         data = {
             "school_year": str(school_year.id),
             "description": "Christmas",
-            "start_date": "2020-08-05",
-            "end_date": "2020-08-05",
+            "start_date": str(school_year.start_date),
+            "end_date": str(school_year.start_date),
         }
 
         with self.login(user):
@@ -341,8 +341,8 @@ class TestSchoolBreakCreateView(TestCase):
 
         school_break = SchoolBreak.objects.get(school_year=school_year)
         assert school_break.description == "Christmas"
-        assert school_break.start_date == datetime.date(2020, 8, 5)
-        assert school_break.end_date == datetime.date(2020, 8, 5)
+        assert school_break.start_date == school_year.start_date
+        assert school_break.end_date == school_year.start_date
         self.response_302(response)
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", uuid=school_year.uuid
@@ -423,8 +423,8 @@ class TestSchoolBreakUpdateView(TestCase):
         data = {
             "school_year": str(school_break.school_year.id),
             "description": "Christmas",
-            "start_date": "2020-08-05",
-            "end_date": "2020-08-05",
+            "start_date": str(school_break.school_year.start_date),
+            "end_date": str(school_break.school_year.start_date),
         }
 
         with self.login(user):
@@ -434,8 +434,8 @@ class TestSchoolBreakUpdateView(TestCase):
 
         school_break.refresh_from_db()
         assert school_break.description == "Christmas"
-        assert school_break.start_date == datetime.date(2020, 8, 5)
-        assert school_break.end_date == datetime.date(2020, 8, 5)
+        assert school_break.start_date == school_break.school_year.start_date
+        assert school_break.end_date == school_break.school_year.start_date
         self.response_302(response)
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", uuid=school_break.school_year.uuid

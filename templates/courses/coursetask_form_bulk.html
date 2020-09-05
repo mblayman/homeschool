@@ -5,6 +5,19 @@
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Add Course Tasks for {{ course }}</h1>
 
+  {% if previous_task %}
+    <div class="max-w-lg">
+      <div class="bg-yellow-200 rounded p-2 mb-4">
+        <p class="font-thin text-base text-gray-800 mb-2">
+          <strong>Previous Task:</strong>
+        </p>
+        <p class="font-thin text-base text-gray-800">
+          {{ previous_task.description|linebreaksbr }}
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
   <div class="w-full max-w-3xl">
     <div class="flex flex-row text-sm uppercase tracking-wide font-thin mb-4">
       <div class="w-3/6">Description</div>

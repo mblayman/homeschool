@@ -17,10 +17,10 @@ class SchoolYearFactory(factory.django.DjangoModelFactory):
 
     school = factory.SubFactory(SchoolFactory)
     start_date = factory.LazyFunction(
-        lambda: timezone.now().date() - datetime.timedelta(days=30)
+        lambda: timezone.localdate() - datetime.timedelta(days=30)
     )
     end_date = factory.LazyFunction(
-        lambda: timezone.now().date() + datetime.timedelta(days=335)
+        lambda: timezone.localdate() + datetime.timedelta(days=335)
     )
 
 
@@ -36,9 +36,9 @@ class SchoolBreakFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = "schools.SchoolBreak"
 
-    start_date = factory.LazyFunction(lambda: timezone.now().date())
+    start_date = factory.LazyFunction(lambda: timezone.localdate())
     end_date = factory.LazyFunction(
-        lambda: timezone.now().date() + datetime.timedelta(days=5)
+        lambda: timezone.localdate() + datetime.timedelta(days=5)
     )
     description = factory.Faker("sentence")
     school_year = factory.SubFactory(SchoolYearFactory)
