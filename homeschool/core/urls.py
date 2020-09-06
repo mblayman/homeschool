@@ -7,6 +7,7 @@ app_name = "core"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
     path("about/", TemplateView.as_view(template_name="core/about.html"), name="about"),
+    path("terms/", TemplateView.as_view(template_name="core/terms.html"), name="terms"),
     path("app/", views.AppView.as_view(), name="app"),
     path(
         "weekly/<int:year>/<int:month>/<int:day>/",
