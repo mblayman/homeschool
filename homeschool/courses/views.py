@@ -130,6 +130,14 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         context["grade_levels"] = grade_levels
         if grade_levels:
             context["school_year"] = grade_levels[0].school_year
+
+        course_tasks = list(self.object.course_tasks.all())
+        context["course_tasks"] = course_tasks
+
+        last_task = None
+        if course_tasks:
+            last_task = course_tasks[-1]
+        context["last_task"] = last_task
         return context
 
 

@@ -162,6 +162,8 @@ class TestCourseDetailView(TestCase):
 
         assert list(self.get_context("grade_levels")) == [grade_level]
         assert self.get_context("school_year") == grade_level.school_year
+        assert self.get_context("course_tasks") == []
+        assert self.get_context("last_task") is None
 
     def test_grade_level_name_with_task(self):
         """Any grade level specific task has the grade level's name next to it."""
@@ -174,6 +176,19 @@ class TestCourseDetailView(TestCase):
             self.get("courses:detail", uuid=course.uuid)
 
         self.assertResponseContains(grade_level.name)
+
+    def test_last_task(self):
+        """The last task is added to the context."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+        last_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get("courses:detail", uuid=course.uuid)
+
+        assert self.get_context("last_task") == last_task
 
 
 class TestCourseEditView(TestCase):
