@@ -52,19 +52,28 @@
       </div>
       <div class="p-2 flex items-center justify-center w-2/12 text-gray-300">
         {% if task.graded_work %}
-          <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Graded Task</title>
             <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
           </svg>
         {% else %}
-          <div class="h-4 w-4 mr-1"></div>
+          <div class="h-4 w-4 mr-2"></div>
         {% endif %}
-        <a href="{% url "courses:task_create" uuid=course.uuid %}?previous_task={{ task.uuid }}&next={{ request.path|urlencode }}%23task-{{ task.uuid }}" class="block mx-1 hover:text-gray-600">
-          <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <a href="{% url "courses:task_create" uuid=course.uuid %}?previous_task={{ task.uuid }}&next={{ request.path|urlencode }}%23task-{{ task.uuid }}" class="block mr-2 hover:text-gray-600">
+          <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Add Task After This Task</title>
-            <path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/>
+            <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
           </svg>
         </a>
+        <form method="POST" action="{% url "courses:task_up" uuid=task.uuid %}">
+          {% csrf_token %}
+          <button type="submit" class="block mr-2 hover:text-gray-600">
+            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <title>Move Task Up</title>
+              <path d="M0 10a10 10 0 1 1 20 0 10 10 0 0 1-20 0zm10 8a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm.7-10.54L14.25 11l-1.41 1.41L10 9.6l-2.83 2.8L5.76 11 10 6.76l.7.7z"/>
+            </svg>
+          </button>
+        </form>
       </div>
     </div>
   {% empty %}

@@ -8,6 +8,7 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 from homeschool.schools.exceptions import NoSchoolYearError
@@ -319,6 +320,24 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+
+
+@login_required
+@require_POST
+def move_task_up(request, uuid):
+    """Move a task up in the ordering."""
+    user = request.user
+    grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+    task = get_object_or_404(
+        CourseTask.objects.filter(course__grade_levels__in=grade_levels)
+        .select_related("course")
+        .distinct(),
+        uuid=uuid,
+    )
+    task.up()
+    url = reverse("courses:detail", args=[task.course.uuid])
+    url += f"#task-{task.uuid}"
+    return HttpResponseRedirect(url)
 
 
 class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
