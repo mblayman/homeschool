@@ -34,7 +34,7 @@
     <span class="mx-1">&copy; {% now "Y" %} Matt Layman</span>
     <a href="{% url "core:about" %}" class="mx-1 hover:text-gray-900">About</a>
     <a href="{% url "core:terms" %}" class="mx-1 hover:text-gray-900">Terms</a>
-    <a href="#" class="mx-1 hover:text-gray-900">Privacy</a>
+    <a href="{% url "core:privacy" %}" class="mx-1 hover:text-gray-900">Privacy</a>
   </footer>
   {% block tz %}{% tz_detect %}{% endblock %}
   {% block scripts %}{% endblock %}

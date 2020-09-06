@@ -40,6 +40,11 @@ class TestAbout(TestCase):
         self.get_check_200("core:about")
 
 
+class TestPrivacy(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:privacy")
+
+
 class TestTerms(TestCase):
     def test_ok(self):
         self.get_check_200("core:terms")
