@@ -35,6 +35,11 @@ class TestIndex(TestCase):
         self.get_check_200("core:index")
 
 
+class TestAbout(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:about")
+
+
 class TestApp(TestCase):
     def make_student_enrolled_in_grade_level(self, user, week_date):
         enrollment = EnrollmentFactory(

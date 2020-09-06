@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title%}About Us{% endblock %}
+
+{% block main %}
+  <div class="mx-auto max-w-xl font-thin text-base text-gray-800">
+
+    <div class="mb-4 w-full">
+      <img class="w-32 mx-auto" src="{% static "logo.svg" %}" alt="School Desk logo">
+    </div>
+    <h1 class="font-thin text-2xl text-blue-900 mb-4">About Us</h1>
+    <p class="mb-2">
+      Hello!
+    </p>
+    <p class="mb-2">
+      I’m Matt Layman, the founder of School Desk.
+      I created School Desk
+      to provide an online tool
+      that my wife could use
+      to help manage how she homeschools our kids.
+    </p>
+    <p class="mb-2">
+      With my 10+ years
+      of professional software development experience
+      and her knowledge as an educator,
+      we built School Desk
+      to fit the needs
+      of homeschooling families
+      like our own.
+    </p>
+    <p class="mb-2">
+      We value simplicity.
+      The features in School Desk
+      make it possible to run your school at home
+      without a bunch of extra fluff.
+    </p>
+    <p class="mb-6">
+      If you decide to try School Desk
+      for your family,
+      I hope that it serves you
+      as well as it serves my family.
+    </p>
+    <p>
+      Regards,<br>
+      Matt
+    </p>
+  </div>
+{% endblock %}
