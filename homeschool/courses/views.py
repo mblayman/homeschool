@@ -48,6 +48,16 @@ def get_course(user, uuid):
     )
 
 
+def get_course_task_queryset(user):
+    """Get a task queryset for the user."""
+    grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+    return (
+        CourseTask.objects.filter(course__grade_levels__in=grade_levels)
+        .select_related("course")
+        .distinct()
+    )
+
+
 class CourseCreateView(LoginRequiredMixin, CreateView):
     template_name = "courses/course_form.html"
     form_class = CourseForm
@@ -275,13 +285,7 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
     slug_url_kwarg = "uuid"
 
     def get_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return (
-            CourseTask.objects.filter(course__grade_levels__in=grade_levels)
-            .select_related("course")
-            .distinct()
-        )
+        return get_course_task_queryset(self.request.user).select_related("course")
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -312,11 +316,7 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
     slug_url_kwarg = "task_uuid"
 
     def get_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return CourseTask.objects.filter(
-            course__grade_levels__in=grade_levels
-        ).distinct()
+        return get_course_task_queryset(self.request.user)
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
@@ -324,15 +324,23 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
 
 @login_required
 @require_POST
+def move_task_down(request, uuid):
+    """Move a task down in the ordering."""
+    task = get_object_or_404(
+        get_course_task_queryset(request.user).select_related("course"), uuid=uuid
+    )
+    task.down()
+    url = reverse("courses:detail", args=[task.course.uuid])
+    url += f"#task-{task.uuid}"
+    return HttpResponseRedirect(url)
+
+
+@login_required
+@require_POST
 def move_task_up(request, uuid):
     """Move a task up in the ordering."""
-    user = request.user
-    grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
     task = get_object_or_404(
-        CourseTask.objects.filter(course__grade_levels__in=grade_levels)
-        .select_related("course")
-        .distinct(),
-        uuid=uuid,
+        get_course_task_queryset(request.user).select_related("course"), uuid=uuid
     )
     task.up()
     url = reverse("courses:detail", args=[task.course.uuid])

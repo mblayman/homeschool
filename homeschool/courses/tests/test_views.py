@@ -670,10 +670,34 @@ class TestCourseTaskDeleteView(TestCase):
         self.response_404(response)
 
 
+class TestCourseTaskDown(TestCase):
+    def test_unauthenticated_access(self):
+        task = CourseTaskFactory()
+        self.assertLoginRequired("courses:task_down", uuid=task.uuid)
+
+    def test_post(self):
+        """A task is moved down."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        first_task = CourseTaskFactory(course=course)
+        second_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.post("courses:task_down", uuid=first_task.uuid)
+
+        assert (
+            response.get("Location")
+            == self.reverse("courses:detail", first_task.course.uuid)
+            + f"#task-{first_task.uuid}"
+        )
+        assert list(CourseTask.objects.all()) == [second_task, first_task]
+
+
 class TestCourseTaskUp(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_edit", uuid=task.uuid)
+        self.assertLoginRequired("courses:task_up", uuid=task.uuid)
 
     def test_post(self):
         """A task is moved up."""
