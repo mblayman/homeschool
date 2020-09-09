@@ -36,8 +36,13 @@ urlpatterns = [
         name="school_break_create",
     ),
     path(
-        "school-years/breaks/<uuid:uuid>/",
+        "breaks/<uuid:uuid>/",
         views.SchoolBreakUpdateView.as_view(),
         name="school_break_edit",
+    ),
+    path(
+        "breaks/<uuid:uuid>/delete/",
+        views.SchoolBreakDeleteView.as_view(),
+        name="school_break_delete",
     ),
 ]

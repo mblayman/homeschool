@@ -452,6 +452,35 @@ class TestSchoolBreakUpdateView(TestCase):
         self.response_404(response)
 
 
+class TestSchoolBreakDeleteView(TestCase):
+    def test_unauthenticated_access(self):
+        school_break = SchoolBreakFactory()
+        self.assertLoginRequired("schools:school_break_delete", uuid=school_break.uuid)
+
+    def test_post(self):
+        user = self.make_user()
+        school_break = SchoolBreakFactory(school_year__school=user.school)
+
+        with self.login(user):
+            response = self.post("schools:school_break_delete", uuid=school_break.uuid)
+
+        assert SchoolBreak.objects.count() == 0
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=school_break.school_year.uuid
+        )
+
+    def test_post_other_user(self):
+        """A user may not delete another user's break."""
+        user = self.make_user()
+        school_break = SchoolBreakFactory()
+
+        with self.login(user):
+            response = self.post("schools:school_break_delete", uuid=school_break.uuid)
+
+        self.response_404(response)
+
+
 class TestReportsIndex(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("reports:index")

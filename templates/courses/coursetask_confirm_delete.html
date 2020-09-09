@@ -4,8 +4,8 @@
 
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Delete Course Task</h1>
-    <p>Description:</p>
-    <div class="p-4 text-sm font-light">{{ coursetask.description|linebreaksbr }}</div>
+  <p>Description:</p>
+  <div class="p-4 text-sm font-light">{{ coursetask.description|linebreaksbr }}</div>
   <form method="POST">
     {% csrf_token %}
     <p class="mb-4">Are you sure you want to delete this task?

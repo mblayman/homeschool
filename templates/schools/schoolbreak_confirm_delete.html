@@ -1,0 +1,22 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Delete School Break{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">Delete School Break</h1>
+  <p class="mb-4">
+    {% if schoolbreak.start_date == schoolbreak.end_date %}
+      Date: {{ schoolbreak.start_date }}
+    {% else %}
+      Dates: {{ schoolbreak.start_date }} &ndash; {{ schoolbreak.end_date }}
+    {% endif %}
+  </p>
+  <form method="POST">
+    {% csrf_token %}
+    <p class="mb-4">Are you sure you want to delete this break?
+    </p>
+    <button class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+      Delete
+    </button>
+  </form>
+{% endblock %}

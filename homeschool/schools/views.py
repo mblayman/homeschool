@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import (
     CreateView,
+    DeleteView,
     DetailView,
     ListView,
     TemplateView,
@@ -217,6 +218,22 @@ class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+
+class SchoolBreakDeleteView(LoginRequiredMixin, DeleteView):
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        user = self.request.user
+        return SchoolBreak.objects.filter(
+            school_year__school=user.school
+        ).select_related("school_year")
+
+    def get_success_url(self):
+        return reverse(
+            "schools:school_year_detail", args=[self.object.school_year.uuid]
+        )
 
 
 class ReportsIndexView(LoginRequiredMixin, TemplateView):

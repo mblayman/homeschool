@@ -833,6 +833,6 @@ class TestCourseResourceDeleteView(TestCase):
         resource = CourseResourceFactory(course=course)
 
         with self.login(user):
-            response = self.get("courses:resource_delete", uuid=resource.uuid)
+            response = self.post("courses:resource_delete", uuid=resource.uuid)
 
         self.response_404(response)
