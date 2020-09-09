@@ -207,6 +207,16 @@ class TestSchoolYear(TestCase):
 
         assert school_break is None
 
+    def test_is_break(self):
+        """A school year can check if a date is a break day."""
+        school_break = SchoolBreakFactory()
+        school_year = school_break.school_year
+
+        assert school_year.is_break(school_break.start_date)
+        assert not school_year.is_break(
+            school_break.end_date + datetime.timedelta(days=1)
+        )
+
 
 class TestGradeLevel(TestCase):
     def test_factory(self):

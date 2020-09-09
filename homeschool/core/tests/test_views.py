@@ -16,6 +16,7 @@ from homeschool.courses.tests.factories import (
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
+    SchoolBreakFactory,
     SchoolFactory,
     SchoolYearFactory,
 )
@@ -787,6 +788,35 @@ class TestDaily(TestCase):
 
         schedule = self.get_context("schedules")[0]
         assert schedule["courses"][0].get("task") == task
+
+    def test_break_day(self):
+        """A break day is noted in the context and nothing is scheduled."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(month=1, day=1),
+            end_date=today + relativedelta(month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=school_year.start_date,
+            end_date=school_year.end_date,
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+
+        with self.login(user):
+            self.get(
+                "core:daily_for_date",
+                year=school_year.start_date.year,
+                month=school_year.start_date.month,
+                day=school_year.start_date.day,
+            )
+
+        assert self.get_context("is_break_day")
+        assert self.get_context("schedules") == []
 
 
 class TestStartView(TestCase):

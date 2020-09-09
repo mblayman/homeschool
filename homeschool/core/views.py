@@ -166,16 +166,14 @@ class DailyView(LoginRequiredMixin, TemplateView):
             context["tomorrow"] = day + datetime.timedelta(days=1)
             context["overmorrow"] = day + datetime.timedelta(days=2)
 
+        context["is_break_day"] = bool(school_year and school_year.is_break(day))
         context["schedules"] = self.get_schedules(school_year, today, day)
         return context
 
     def get_schedules(self, school_year, today, day):
         """Get the schedules for each student."""
         schedules: list = []
-        if not school_year:
-            return schedules
-
-        if not school_year.runs_on(day):
+        if not school_year or not school_year.runs_on(day) or school_year.is_break(day):
             return schedules
 
         for student in Student.get_students_for(school_year):

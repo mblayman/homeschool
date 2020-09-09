@@ -98,7 +98,11 @@
         <div class="m-8 ml-12">
           <h2 class="font-thin text-xl text-blue-900 mb-2">Nothing on the schedule for the day!</h2>
           <p class="mb-1 font-light">
-            Your students have no scheduled tasks today.
+            {% if is_break_day %}
+              Today is a school break.
+            {% else %}
+              Your students have no scheduled tasks today.
+            {% endif %}
           </p>
         </div>
       </div>

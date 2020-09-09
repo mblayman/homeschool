@@ -64,6 +64,10 @@ class SchoolYear(DaysOfWeekModel):
         """Check if the day is in the school year."""
         return self.start_date <= day <= self.end_date
 
+    def is_break(self, break_date):
+        """Check if the break date is a school break."""
+        return self.get_break(break_date) is not None
+
     def get_break(self, break_date) -> Optional["SchoolBreak"]:
         """Get a school break if the date is contained in the break."""
         return self._school_breaks_by_date.get(break_date)
