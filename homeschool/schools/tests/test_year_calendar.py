@@ -3,6 +3,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
+from homeschool.schools.models import SchoolBreak
 from homeschool.schools.tests.factories import SchoolBreakFactory, SchoolYearFactory
 from homeschool.schools.year_calendar import YearCalendar
 from homeschool.test import TestCase
@@ -96,13 +97,13 @@ class TestYearCalendar(TestCase):
                 first_day_index = index
                 break
         assert first_date_data["school_break"] is not None
-        assert first_date_data["break_style"] == "single"
+        assert first_date_data["date_type"] == SchoolBreak.DateType.SINGLE
         start_date_data = dates[first_day_index + 1]
         assert start_date_data["school_break"] is not None
-        assert start_date_data["break_style"] == "start"
+        assert start_date_data["date_type"] == SchoolBreak.DateType.START
         middle_date_data = dates[first_day_index + 2]
         assert middle_date_data["school_break"] is not None
-        assert middle_date_data["break_style"] == "middle"
+        assert middle_date_data["date_type"] == SchoolBreak.DateType.MIDDLE
         end_date_data = dates[first_day_index + 3]
         assert end_date_data["school_break"] is not None
-        assert end_date_data["break_style"] == "end"
+        assert end_date_data["date_type"] == SchoolBreak.DateType.END

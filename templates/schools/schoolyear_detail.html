@@ -77,11 +77,11 @@
                       bg-blue-600 text-white rounded-full
                     {% elif week_date.school_break %}
                       bg-yellow-500 text-white hover:bg-yellow-300
-                      {% if week_date.break_style == "single" %}
+                      {% if week_date.date_type == week_date.school_break.DateType.SINGLE %}
                         rounded-full
-                      {% elif week_date.break_style == "start" %}
+                      {% elif week_date.date_type == week_date.school_break.DateType.START %}
                         rounded-l-full
-                      {% elif week_date.break_style == "end" %}
+                      {% elif week_date.date_type == week_date.school_break.DateType.END %}
                         rounded-r-full
                       {% endif %}
                     {% elif not week_date.in_school_year or not week_date.is_school_day %}

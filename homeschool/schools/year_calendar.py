@@ -3,6 +3,8 @@ import datetime
 
 from dateutil.relativedelta import relativedelta
 
+from .models import SchoolBreak
+
 
 class YearCalendar:
     """A calendar of information related to a school year."""
@@ -64,21 +66,7 @@ class YearCalendar:
             "is_today": current_date == self.today,
             "show_as_past": self.is_current_school_year and current_date < self.today,
             "school_break": school_break,
-            "break_style": self._get_break_style(current_date, school_break),
+            "date_type": school_break.get_date_type(current_date)
+            if school_break
+            else SchoolBreak.DateType.NOT_A_BREAK,
         }
-
-    def _get_break_style(self, current_date, school_break):
-        """Get the break style of the current date.
-
-        This is the hint for the template to determine
-        where to put the rounded corners on the calendar.
-        """
-        if school_break is None:
-            return ""
-        if school_break.start_date == school_break.end_date:
-            return "single"
-        if current_date == school_break.start_date:
-            return "start"
-        if current_date == school_break.end_date:
-            return "end"
-        return "middle"
