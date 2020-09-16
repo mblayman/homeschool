@@ -2,10 +2,11 @@ import datetime
 import uuid
 
 from dateutil.relativedelta import MO, SU, relativedelta
+from django.utils import timezone
 
 from homeschool.core.schedules import Week
 from homeschool.courses.tests.factories import CourseFactory
-from homeschool.schools.models import SchoolYear
+from homeschool.schools.models import SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
     SchoolBreakFactory,
@@ -270,3 +271,23 @@ class TestSchoolBreak(TestCase):
         school_break = SchoolBreakFactory()
 
         assert str(school_break) == f"School Break {school_break.start_date}"
+
+    def test_get_date_type(self):
+        """Each date type has a representation."""
+        today = timezone.localdate()
+        single = SchoolBreakFactory.build(start_date=today, end_date=today)
+        multi_day = SchoolBreakFactory.build(
+            start_date=today, end_date=today + datetime.timedelta(days=2)
+        )
+
+        assert single.get_date_type(today) == SchoolBreak.DateType.SINGLE
+        assert multi_day.get_date_type(today) == SchoolBreak.DateType.START
+        assert (
+            multi_day.get_date_type(today + datetime.timedelta(days=1))
+            == SchoolBreak.DateType.MIDDLE
+        )
+        assert multi_day.get_date_type(multi_day.end_date) == SchoolBreak.DateType.END
+        assert (
+            multi_day.get_date_type(today - datetime.timedelta(days=1))
+            == SchoolBreak.DateType.NOT_A_BREAK
+        )

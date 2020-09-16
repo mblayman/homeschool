@@ -67,7 +67,7 @@ class AppView(LoginRequiredMixin, TemplateView):
             if today < school_year.start_date:
                 today = school_year.start_date
 
-            context["week_dates"] = school_year.get_week_dates_for(week)
+            context["week_dates"] = self.build_week_dates(school_year, week)
 
             # Check if this is the last week of the school year.
             # If so, there might be another school year immediately following this one.
@@ -78,6 +78,17 @@ class AppView(LoginRequiredMixin, TemplateView):
 
         context["schedules"] = self.get_schedules(school_year, today, week)
         return context
+
+    def build_week_dates(self, school_year, week):
+        """Build the week dates for the context."""
+        week_dates = []
+        for week_date in school_year.get_week_dates_for(week):
+            school_break = school_year.get_break(week_date)
+            week_date_data = {"date": week_date, "school_break": school_break}
+            if school_break:
+                week_date_data["date_type"] = school_break.get_date_type(week_date)
+            week_dates.append(week_date_data)
+        return week_dates
 
     def get_schedules(self, school_year, today, week):
         """Get the schedules for each student."""
@@ -105,7 +116,9 @@ class AppView(LoginRequiredMixin, TemplateView):
             .first()
         )
         if next_school_year:
-            context["next_year_week_dates"] = next_school_year.get_week_dates_for(week)
+            context["next_year_week_dates"] = self.build_week_dates(
+                next_school_year, week
+            )
 
         # When the school year isn't in progress yet,
         # the offset calculations should come

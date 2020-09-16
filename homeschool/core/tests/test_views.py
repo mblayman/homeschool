@@ -13,7 +13,7 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
-from homeschool.schools.models import GradeLevel, SchoolYear
+from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
     SchoolBreakFactory,
@@ -153,6 +153,7 @@ class TestApp(TestCase):
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
+        """The schedules are in the context."""
         now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
         friday = now.date()
         monday = friday - datetime.timedelta(days=4)
@@ -172,8 +173,13 @@ class TestApp(TestCase):
         coursework = CourseworkFactory(
             student=student, course_task=task_1, completed_date=monday
         )
+        school_break = SchoolBreakFactory(
+            school_year=grade_level.school_year,
+            start_date=monday + datetime.timedelta(days=4),
+            end_date=monday + datetime.timedelta(days=4),
+        )
 
-        with self.login(user), self.assertNumQueries(12):
+        with self.login(user), self.assertNumQueries(13):
             self.get("core:app")
 
         expected_schedule = {
@@ -182,17 +188,30 @@ class TestApp(TestCase):
                 {
                     "course": course,
                     "days": [
-                        {"week_date": monday, "coursework": [coursework]},
-                        {"week_date": monday + datetime.timedelta(days=1)},
+                        {
+                            "week_date": monday,
+                            "coursework": [coursework],
+                            "school_break": None,
+                        },
+                        {
+                            "week_date": monday + datetime.timedelta(days=1),
+                            "school_break": None,
+                        },
                         {
                             "week_date": monday + datetime.timedelta(days=2),
                             "task": task_2,
+                            "school_break": None,
                         },
                         {
                             "week_date": monday + datetime.timedelta(days=3),
                             "task": task_3,
+                            "school_break": None,
                         },
-                        {"week_date": monday + datetime.timedelta(days=4)},
+                        {
+                            "week_date": monday + datetime.timedelta(days=4),
+                            "school_break": school_break,
+                            "date_type": SchoolBreak.DateType.SINGLE,
+                        },
                     ],
                 }
             ],
@@ -219,11 +238,11 @@ class TestApp(TestCase):
             self.get("core:app")
 
         assert self.get_context("week_dates") == [
-            monday,
-            monday + datetime.timedelta(days=1),
-            monday + datetime.timedelta(days=2),
-            monday + datetime.timedelta(days=3),
-            monday + datetime.timedelta(days=4),
+            {"date": monday, "school_break": None},
+            {"date": monday + datetime.timedelta(days=1), "school_break": None},
+            {"date": monday + datetime.timedelta(days=2), "school_break": None},
+            {"date": monday + datetime.timedelta(days=3), "school_break": None},
+            {"date": monday + datetime.timedelta(days=4), "school_break": None},
         ]
 
     def test_no_school_year(self):
@@ -237,6 +256,7 @@ class TestApp(TestCase):
 
     @mock.patch("homeschool.users.models.timezone")
     def test_weekly(self, timezone):
+        """The weekly schedule is available in the context."""
         now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)  # A Friday
         friday = now.date()
         monday = friday - datetime.timedelta(days=4)
@@ -257,7 +277,7 @@ class TestApp(TestCase):
         task_2 = CourseTaskFactory(course=course)
         CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
 
-        with self.login(user), self.assertNumQueries(13):
+        with self.login(user), self.assertNumQueries(14):
             self.get("core:weekly", year=2020, month=1, day=27)
 
         expected_schedule = {
@@ -268,17 +288,30 @@ class TestApp(TestCase):
                     "days": [
                         {
                             "week_date": monday + datetime.timedelta(days=7),
+                            "school_break": None,
                             "task": task_2,
                         },
-                        {"week_date": monday + datetime.timedelta(days=8)},
-                        {"week_date": monday + datetime.timedelta(days=9)},
-                        {"week_date": monday + datetime.timedelta(days=10)},
-                        {"week_date": monday + datetime.timedelta(days=11)},
+                        {
+                            "week_date": monday + datetime.timedelta(days=8),
+                            "school_break": None,
+                        },
+                        {
+                            "week_date": monday + datetime.timedelta(days=9),
+                            "school_break": None,
+                        },
+                        {
+                            "week_date": monday + datetime.timedelta(days=10),
+                            "school_break": None,
+                        },
+                        {
+                            "week_date": monday + datetime.timedelta(days=11),
+                            "school_break": None,
+                        },
                     ],
                 }
             ],
         }
-        self.assertContext("schedules", [expected_schedule])
+        assert self.get_context("schedules") == [expected_schedule]
 
     @mock.patch("homeschool.users.models.timezone")
     def test_when_weekly_includes_today(self, mock_timezone):

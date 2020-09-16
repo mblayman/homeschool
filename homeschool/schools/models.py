@@ -128,8 +128,27 @@ class SchoolBreak(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    class DateType(models.IntegerChoices):
+        SINGLE = 1
+        START = 2
+        END = 3
+        MIDDLE = 4
+        NOT_A_BREAK = 5
+
     class Meta:
         ordering = ["start_date"]
 
     def __str__(self):
         return f"School Break {self.start_date}"
+
+    def get_date_type(self, break_date):
+        """Get what type a break date is."""
+        if break_date < self.start_date or break_date > self.end_date:
+            return self.DateType.NOT_A_BREAK
+        if self.start_date == self.end_date:
+            return self.DateType.SINGLE
+        if break_date == self.start_date:
+            return self.DateType.START
+        if break_date == self.end_date:
+            return self.DateType.END
+        return self.DateType.MIDDLE

@@ -82,8 +82,16 @@ class Student(models.Model):
                 course_tasks.reverse()  # for the performance of pop below.
 
             for week_date in week_dates:
-                course_schedule_item = {"week_date": week_date}
+                course_schedule_item = {
+                    "week_date": week_date,
+                    "school_break": school_year.get_break(week_date),
+                }
                 course_schedule["days"].append(course_schedule_item)
+
+                if course_schedule_item["school_break"]:
+                    course_schedule_item["date_type"] = course_schedule_item[
+                        "school_break"
+                    ].get_date_type(week_date)
 
                 # The first week of a school year should skip any days
                 # before the year officially starts.

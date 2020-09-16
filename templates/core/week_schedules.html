@@ -6,7 +6,20 @@
     <div class="flex-1 py-2 pr-4"></div>
 
     {% for week_date in week_dates %}
-    <a href="{% url "core:daily_for_date" week_date.year week_date.month week_date.day %}"class="flex-1 text-sm text-center uppercase tracking-wide font-thin p-2 {% if week_date == day %}bg-gray-100 print-no-color rounded-t-lg{% endif %} hover:underline">{{ week_date|date:"l, n/j" }}</a>
+    <a href="{% url "core:daily_for_date" week_date.date.year week_date.date.month week_date.date.day %}"class="flex-1 text-sm text-center uppercase tracking-wide font-thin p-2
+      {% if week_date.school_break %}
+        bg-yellow-200
+        {% if week_date.date_type == week_date.school_break.DateType.SINGLE %}
+          rounded-t-lg
+        {% elif week_date.date_type == week_date.school_break.DateType.START %}
+          rounded-tl-lg
+        {% elif week_date.date_type == week_date.school_break.DateType.END %}
+          rounded-tr-lg
+        {% endif %}
+      {% elif week_date.date == day %}
+        bg-gray-100 print-no-color rounded-t-lg
+      {% endif %}
+      hover:underline">{{ week_date.date|date:"l, n/j" }}{% if week_date.school_break %} <br>(Break){% endif %}</a>
     {% endfor %}
   </div>
 
@@ -18,7 +31,18 @@
 
       {% with last_row=forloop.last %}
         {% for course_schedule_day in course_schedule.days %}
-          {% if course_schedule_day.task %}
+          {% if course_schedule_day.school_break %}
+            <div class="flex-1 p-2 bg-yellow-200
+              {% if last_row %}
+                {% if course_schedule_day.date_type == course_schedule_day.school_break.DateType.SINGLE %}
+                  rounded-b-lg
+                {% elif course_schedule_day.date_type == course_schedule_day.school_break.DateType.START %}
+                  rounded-bl-lg
+                {% elif course_schedule_day.date_type == course_schedule_day.school_break.DateType.END %}
+                  rounded-br-lg
+                {% endif %}
+              {% endif %}"></div>
+          {% elif course_schedule_day.task %}
             <div class="flex-1 p-2 text-sm font-light overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ course_schedule_day.task.description|linebreaksbr }}</div>
           {% elif course_schedule_day.coursework %}
             <div class="flex-1 p-2 overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
