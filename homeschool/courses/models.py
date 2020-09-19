@@ -1,4 +1,3 @@
-import datetime
 import uuid
 from typing import Optional
 
@@ -42,23 +41,6 @@ class Course(DaysOfWeekModel):
             school_year__school__admin=user
         ).values_list("id", flat=True)
         return Course.objects.filter(id=self.id, grade_levels__in=grade_levels).exists()
-
-    def get_task_count_in_range(self, start_date, end_date):
-        """Get the number of tasks for the date range.
-
-        Be inclusive of start and end.
-        """
-        if start_date > end_date:
-            return 1 if self.runs_on(start_date) else 0
-
-        task_count = 0
-        date_to_check = start_date
-        while date_to_check <= end_date:
-            if self.runs_on(date_to_check):
-                task_count += 1
-            date_to_check += datetime.timedelta(days=1)
-
-        return task_count
 
     def __str__(self):
         return self.name

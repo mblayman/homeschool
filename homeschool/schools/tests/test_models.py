@@ -5,7 +5,7 @@ from dateutil.relativedelta import MO, SU, relativedelta
 from django.utils import timezone
 
 from homeschool.core.schedules import Week
-from homeschool.courses.tests.factories import CourseFactory
+from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
 from homeschool.schools.models import SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
@@ -217,6 +217,40 @@ class TestSchoolYear(TestCase):
         assert not school_year.is_break(
             school_break.end_date + datetime.timedelta(days=1)
         )
+
+    def test_start_after_end(self):
+        school_year = SchoolYearFactory()
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_levels=[grade_level])
+        start_date = datetime.date(2020, 5, 7)
+        end_date = datetime.date(2020, 5, 5)
+
+        count = school_year.get_task_count_in_range(course, start_date, end_date)
+
+        assert count == 1
+
+    def test_breaks_in_task_count(self):
+        """A break is factored into the course task count."""
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.ALL_DAYS)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_levels=[grade_level], days_of_week=SchoolYear.ALL_DAYS
+        )
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=school_year.start_date,
+            end_date=school_year.start_date,
+        )
+        CourseTaskFactory(course=course)
+        CourseTaskFactory(course=course)
+
+        count = school_year.get_task_count_in_range(
+            course,
+            school_year.start_date,
+            school_year.start_date + datetime.timedelta(days=1),
+        )
+
+        assert count == 1
 
 
 class TestGradeLevel(TestCase):

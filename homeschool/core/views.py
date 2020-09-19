@@ -190,14 +190,14 @@ class DailyView(LoginRequiredMixin, TemplateView):
             return schedules
 
         for student in Student.get_students_for(school_year):
-            courses = student.get_courses(school_year)
-            schedule = self.get_student_schedule(student, today, day, courses)
+            schedule = self.get_student_schedule(student, today, day, school_year)
             schedules.append(schedule)
 
         return schedules
 
-    def get_student_schedule(self, student, today, day, courses):
+    def get_student_schedule(self, student, today, day, school_year):
         """Get the daily schedule for the student."""
+        courses = student.get_courses(school_year)
         day_coursework = student.get_day_coursework(day)
         completed_task_ids = list(
             Coursework.objects.filter(
@@ -210,7 +210,9 @@ class DailyView(LoginRequiredMixin, TemplateView):
             if course.id in day_coursework:
                 course_schedule["coursework"] = day_coursework[course.id]
             elif course.runs_on(day):
-                task_index = max(course.get_task_count_in_range(today, day) - 1, 0)
+                task_index = max(
+                    school_year.get_task_count_in_range(course, today, day) - 1, 0
+                )
                 # Doing this query in a loop is definitely an N+1 bug.
                 # If it's possible to do a single query of all tasks
                 # that groups by course then that would be better.

@@ -83,6 +83,23 @@ class SchoolYear(DaysOfWeekModel):
                 current_date = current_date + datetime.timedelta(days=1)
         return breaks_by_date
 
+    def get_task_count_in_range(self, course, start_date, end_date):
+        """Get the task count for a course and factor in any breaks.
+
+        Be inclusive of start and end.
+        """
+        if start_date > end_date:
+            return 1 if course.runs_on(start_date) else 0
+
+        task_count = 0
+        date_to_check = start_date
+        while date_to_check <= end_date:
+            if not self.is_break(date_to_check) and course.runs_on(date_to_check):
+                task_count += 1
+            date_to_check += datetime.timedelta(days=1)
+
+        return task_count
+
     def __str__(self):
         if self.start_date.year == self.end_date.year:
             return str(self.start_date.year)

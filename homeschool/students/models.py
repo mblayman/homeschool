@@ -92,6 +92,7 @@ class Student(models.Model):
                     course_schedule_item["date_type"] = course_schedule_item[
                         "school_break"
                     ].get_date_type(week_date)
+                    continue
 
                 # The first week of a school year should skip any days
                 # before the year officially starts.
@@ -174,16 +175,14 @@ class Student(models.Model):
         # from the current week.
         unfinished_task_count_this_week = 0
         if school_year.last_school_day_for(this_week) < today:
-            unfinished_task_count_this_week = course.get_task_count_in_range(
-                start_date, today
+            unfinished_task_count_this_week = school_year.get_task_count_in_range(
+                course, start_date, today
             )
 
-        return (
-            course.get_task_count_in_range(
-                start_date, week_start_date - datetime.timedelta(days=1)
-            )
-            - unfinished_task_count_this_week
+        tasks_to_do = school_year.get_task_count_in_range(
+            course, start_date, week_start_date - datetime.timedelta(days=1)
         )
+        return tasks_to_do - unfinished_task_count_this_week
 
     def get_day_coursework(self, day):
         """Get the coursework completed in the week.

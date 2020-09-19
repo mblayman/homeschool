@@ -1,4 +1,3 @@
-import datetime
 import uuid
 
 from homeschool.courses.models import Course, CourseTask
@@ -54,15 +53,6 @@ class TestCourse(TestCase):
         course = CourseFactory(days_of_week=days_of_week)
 
         assert course.days_of_week == days_of_week
-
-    def test_start_after_end(self):
-        course = CourseFactory()
-        start_date = datetime.date(2020, 5, 7)
-        end_date = datetime.date(2020, 5, 5)
-
-        count = course.get_task_count_in_range(start_date, end_date)
-
-        assert count == 1
 
     def test_is_running(self):
         running_course = CourseFactory()
