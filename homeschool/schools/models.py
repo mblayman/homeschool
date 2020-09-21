@@ -100,6 +100,20 @@ class SchoolYear(DaysOfWeekModel):
 
         return task_count
 
+    def get_next_course_day(self, course, day):
+        """Get the next course day after the provided day (considering breaks)."""
+        next_course_day = course.get_next_day_from(day)
+        # When the course isn't meeting the next day is the same. Bail early.
+        if next_course_day == day:
+            return day
+
+        while next_course_day < self.end_date:
+            if not self.is_break(next_course_day):
+                return next_course_day
+            next_course_day = course.get_next_day_from(next_course_day)
+
+        return next_course_day
+
     def __str__(self):
         if self.start_date.year == self.end_date.year:
             return str(self.start_date.year)

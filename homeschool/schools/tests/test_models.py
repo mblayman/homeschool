@@ -252,6 +252,58 @@ class TestSchoolYear(TestCase):
 
         assert count == 1
 
+    def test_next_course_day_with_break(self):
+        """A break affects when the next course day is."""
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.ALL_DAYS)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_levels=[grade_level], days_of_week=SchoolYear.ALL_DAYS
+        )
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=school_year.start_date + datetime.timedelta(days=1),
+            end_date=school_year.start_date + datetime.timedelta(days=1),
+        )
+
+        next_course_day = school_year.get_next_course_day(
+            course, school_year.start_date
+        )
+
+        assert next_course_day == school_year.start_date + datetime.timedelta(days=2)
+
+    def test_next_course_day_all_breaks(self):
+        """When all school days are breaks, get the last possible course day."""
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.ALL_DAYS)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_levels=[grade_level], days_of_week=SchoolYear.ALL_DAYS
+        )
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=school_year.start_date,
+            end_date=school_year.end_date,
+        )
+
+        next_course_day = school_year.get_next_course_day(
+            course, school_year.start_date
+        )
+
+        assert next_course_day == school_year.end_date
+
+    def test_next_course_day_course_not_running(self):
+        """When the course isn't running, a next course day is returned."""
+        school_year = SchoolYearFactory(days_of_week=SchoolYear.ALL_DAYS)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(
+            grade_levels=[grade_level], days_of_week=SchoolYear.NO_DAYS
+        )
+
+        next_course_day = school_year.get_next_course_day(
+            course, school_year.start_date
+        )
+
+        assert next_course_day == school_year.start_date
+
 
 class TestGradeLevel(TestCase):
     def test_factory(self):

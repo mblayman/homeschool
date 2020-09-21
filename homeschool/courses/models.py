@@ -10,6 +10,8 @@ from homeschool.core.models import DaysOfWeekModel
 from homeschool.schools.models import GradeLevel
 from homeschool.users.models import User
 
+from .exceptions import NoSchoolYearError
+
 
 class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
@@ -34,6 +36,14 @@ class Course(DaysOfWeekModel):
     def has_many_grade_levels(self):
         """Check if multiple grade levels are associated with the course."""
         return self.grade_levels.count() > 1
+
+    @cached_property
+    def school_year(self):
+        """Get the school year for the course."""
+        grade_level = self.grade_levels.select_related("school_year").first()
+        if grade_level:
+            return grade_level.school_year
+        raise NoSchoolYearError("The course has no school year.")
 
     def belongs_to(self, user):
         """Check if the course belongs to the user."""

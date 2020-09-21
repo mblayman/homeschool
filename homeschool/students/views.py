@@ -94,16 +94,14 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
         # When the school year isn't in progress yet,
         # the offset calculations should come
         # relative to the start of the school year.
-        grade_level = course.grade_levels.select_related("school_year").first()
-        if grade_level:
-            school_year = grade_level.school_year
-            if today < school_year.start_date:
-                today = school_year.start_date
+        school_year = course.school_year
+        if today < school_year.start_date:
+            today = school_year.start_date
 
-        if course.runs_on(today):
+        if not school_year.is_break(today) and course.runs_on(today):
             next_course_day = today
         else:
-            next_course_day = course.get_next_day_from(today)
+            next_course_day = school_year.get_next_course_day(course, today)
 
         coursework_by_task = self.get_course_work_by_task(student, course)
         course_tasks = student.get_tasks_for(course).select_related("graded_work")
@@ -117,7 +115,9 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
                 task_item["coursework"] = coursework_by_task[course_task]
             else:
                 task_item["planned_date"] = next_course_day
-                next_course_day = course.get_next_day_from(next_course_day)
+                next_course_day = school_year.get_next_course_day(
+                    course, next_course_day
+                )
             task_items.append(task_item)
 
         return task_items

@@ -1,5 +1,8 @@
 import uuid
 
+import pytest
+
+from homeschool.courses.exceptions import NoSchoolYearError
 from homeschool.courses.models import Course, CourseTask
 from homeschool.courses.tests.factories import (
     CourseFactory,
@@ -69,6 +72,13 @@ class TestCourse(TestCase):
 
         assert not course.has_many_grade_levels
         assert course_multiple_grade_levels.has_many_grade_levels
+
+    def test_no_school_year(self):
+        """A course without a school year raises an error."""
+        course = CourseFactory()
+
+        with pytest.raises(NoSchoolYearError):
+            course.school_year
 
 
 class TestCourseTask(TestCase):
