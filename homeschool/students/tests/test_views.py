@@ -322,6 +322,32 @@ class TestStudentCourseView(TestCase):
             days=1
         )
 
+    def test_no_forecast_course_not_running(self):
+        """A course that isn't running will not forecast dates."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + relativedelta(years=1, month=1, day=1),
+            end_date=today + relativedelta(years=1, month=12, day=31),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year=school_year
+        )
+        course = CourseFactory(
+            grade_levels=[enrollment.grade_level], days_of_week=Course.NO_DAYS
+        )
+        CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+            )
+
+        task_item = self.get_context("task_items")[0]
+        assert "planned_date" not in task_item
+
 
 class TestGradeView(TestCase):
     def test_unauthenticated_access(self):

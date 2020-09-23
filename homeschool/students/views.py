@@ -103,6 +103,7 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
         else:
             next_course_day = school_year.get_next_course_day(course, today)
 
+        course_is_running = course.is_running
         coursework_by_task = self.get_course_work_by_task(student, course)
         course_tasks = student.get_tasks_for(course).select_related("graded_work")
         task_items = []
@@ -113,7 +114,7 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
             }
             if course_task in coursework_by_task:
                 task_item["coursework"] = coursework_by_task[course_task]
-            else:
+            elif course_is_running:
                 task_item["planned_date"] = next_course_day
                 next_course_day = school_year.get_next_course_day(
                     course, next_course_day
