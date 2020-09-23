@@ -17,6 +17,14 @@ class Student(models.Model):
     last_name = models.CharField(max_length=64)
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Task lookup needs an enrollment and it's a common pattern
+        # to get all the courses, then get the tasks for those courses.
+        # By caching the enrollment when fetching all the courses,
+        # a lot of queries to Enrollment are prevented.
+        self._enrollment_by_course_cache = {}
+
     @classmethod
     def get_students_for(cls, school_year):
         """Get all the enrolled students for the school year."""
@@ -112,15 +120,23 @@ class Student(models.Model):
 
     def get_courses(self, school_year):
         """Get the courses from the school year."""
-        enrollment = Enrollment.objects.filter(
-            student=self, grade_level__in=school_year.grade_levels.all()
-        ).first()
+        enrollment = (
+            Enrollment.objects.filter(
+                student=self, grade_level__in=school_year.grade_levels.all()
+            )
+            .select_related("grade_level")
+            .first()
+        )
         if enrollment:
             # This looks goofy, but it operates under the assumption
             # school year did all the prefetching on grade levels and courses.
             for grade_level in school_year.grade_levels.all():
                 if grade_level.id == enrollment.grade_level_id:
-                    return list(grade_level.courses.all())
+                    courses = list(grade_level.courses.all())
+                    self._enrollment_by_course_cache.update(
+                        {course: enrollment for course in courses}
+                    )
+                    return courses
         return []
 
     def get_week_coursework(self, week):
@@ -209,13 +225,15 @@ class Student(models.Model):
 
         This includes any general or grade level specific task.
         """
-        enrollment = (
-            Enrollment.objects.filter(
-                student=self, grade_level__in=course.grade_levels.all()
+        enrollment = self._enrollment_by_course_cache.get(course)
+        if not enrollment:
+            enrollment = (
+                Enrollment.objects.filter(
+                    student=self, grade_level__in=course.grade_levels.all()
+                )
+                .select_related("grade_level")
+                .first()
             )
-            .select_related("grade_level")
-            .first()
-        )
         if enrollment:
             return course.course_tasks.filter(
                 Q(grade_level__isnull=True) | Q(grade_level=enrollment.grade_level)
