@@ -14,6 +14,7 @@ from django.views.generic import (
     View,
 )
 
+from homeschool.courses.models import CourseResource
 from homeschool.students.models import Enrollment, Grade
 
 from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
@@ -279,4 +280,27 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
                 "graded_work__course_task", "graded_work__course_task__course"
             )
         )
+        return context
+
+
+class ResourceReportView(LoginRequiredMixin, TemplateView):
+    template_name = "schools/resource_report.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        enrollment = get_object_or_404(
+            Enrollment.objects.select_related(
+                "student", "grade_level", "grade_level__school_year"
+            ),
+            student__uuid=self.kwargs["student_uuid"],
+            grade_level__school_year__uuid=self.kwargs["uuid"],
+            grade_level__school_year__school=user.school,
+        )
+        context["grade_level"] = enrollment.grade_level
+        context["school_year"] = enrollment.grade_level.school_year
+        context["student"] = enrollment.student
+        context["resources"] = CourseResource.objects.filter(
+            course__grade_levels__in=[enrollment.grade_level]
+        ).select_related("course")
         return context

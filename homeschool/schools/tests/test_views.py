@@ -1,6 +1,6 @@
 import datetime
 
-from homeschool.courses.tests.factories import CourseFactory
+from homeschool.courses.tests.factories import CourseFactory, CourseResourceFactory
 from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
@@ -569,3 +569,44 @@ class TestProgressReportView(TestCase):
             )
 
         assert list(self.get_context("grades")) == [grade]
+
+
+class TestResourceReportView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        student = StudentFactory()
+        self.assertLoginRequired(
+            "reports:resource", uuid=school_year.uuid, student_uuid=student.uuid
+        )
+
+    def test_get(self):
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        resource = CourseResourceFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200(
+                "reports:resource",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        assert self.get_context("grade_level") == enrollment.grade_level
+        assert self.get_context("school_year") == enrollment.grade_level.school_year
+        assert self.get_context("student") == enrollment.student
+        assert list(self.get_context("resources")) == [resource]
+
+    def test_not_found_for_other_school(self):
+        """A user cannot access a progress report that is not from their school."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.get(
+                "reports:resource",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        self.response_404(response)

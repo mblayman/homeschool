@@ -6,21 +6,29 @@
 {% block main %}
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Reports</h1>
   {% if enrollments %}
-    <div class="flex flex-col max-w-2xl">
+    <div class="flex flex-col max-w-3xl">
       <div class="flex flex-row">
-        <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">School Year</div>
-        <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Student</div>
-        <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Grade Level</div>
-        <div class="w-1/4 text-sm uppercase tracking-wide font-thin py-2">Progress Report</div>
+        <div class="w-1/5 text-sm uppercase tracking-wide font-thin py-2">School Year</div>
+        <div class="w-1/5 text-sm uppercase tracking-wide font-thin py-2">Student</div>
+        <div class="w-1/5 text-sm uppercase tracking-wide font-thin py-2">Grade Level</div>
+        <div class="w-1/5 text-sm uppercase tracking-wide font-thin py-2">Progress Report</div>
+        <div class="w-1/5 text-sm uppercase tracking-wide font-thin py-2">Resource Report</div>
       </div>
     {% for enrollment in enrollments %}
       <div class="flex flex-row">
-        <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level.school_year }}</div>
-        <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.student }}</div>
-        <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level }}</div>
-        <div class="w-1/4 text-sm font-light py-1 border-t border-yellow-400 border-dotted pl-8">
+        <div class="w-1/5 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level.school_year }}</div>
+        <div class="w-1/5 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.student }}</div>
+        <div class="w-1/5 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ enrollment.grade_level }}</div>
+        <div class="w-1/5 text-sm font-light py-1 border-t border-yellow-400 border-dotted pl-8">
           <a class="block sm:-m-2 p-2 flex items-center hover:text-gray-600"
              href="{% url "reports:progress" enrollment.grade_level.school_year.uuid enrollment.student.uuid %}">
+            <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+            View
+          </a>
+        </div>
+        <div class="w-1/5 text-sm font-light py-1 border-t border-yellow-400 border-dotted pl-8">
+          <a class="block sm:-m-2 p-2 flex items-center hover:text-gray-600"
+             href="{% url "reports:resource" enrollment.grade_level.school_year.uuid enrollment.student.uuid %}">
             <svg class="h-4 w-4 mr-1 text-yellow-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
             View
           </a>
