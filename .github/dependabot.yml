@@ -4,3 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    ignored_updates:
+      # isort updates all the time and dependabot doesn't know about pre-commit
+      # so it's annoying to update.
+      # Since it's a dev tool, I can live with major version updates only.
+      - match:
+        dependency_name: "isort"
+        version_requirement: "<6"

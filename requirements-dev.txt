@@ -2,7 +2,7 @@ coverage
 django-test-plus==1.4.0
 factory-boy
 flake8==3.8.3
-isort==5.4.2
+isort==5.5.4
 mypy==0.782
 pip-tools
 pre-commit
