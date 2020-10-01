@@ -7,4 +7,4 @@ mypy==0.782
 pip-tools
 pre-commit
 pygraphviz==1.6
-pytest-django==3.9.0
+pytest-django==3.10.0
