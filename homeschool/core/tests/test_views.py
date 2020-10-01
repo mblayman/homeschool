@@ -4,6 +4,9 @@ from unittest import mock
 import pytest
 import pytz
 from dateutil.relativedelta import FR, MO, SA, SU, WE, relativedelta
+from django.contrib import messages
+from django.contrib.messages.storage.base import Message
+from django.contrib.messages.storage.cookie import CookieStorage
 from django.utils import timezone
 
 from homeschool.core.schedules import Week
@@ -861,6 +864,19 @@ class TestStartView(TestCase):
 
         with self.login(user):
             self.get_check_200("core:start")
+
+    def test_no_message_on_visit(self):
+        """Clear out messages from django-allauth on sign up."""
+        user = self.make_user()
+        self.client.cookies["messages"] = CookieStorage(request=None)._encode(
+            [Message(messages.INFO, "Find me")]
+        )
+
+        with self.login(user):
+            response = self.get("core:start")
+
+        self.assertResponseNotContains("Find me", response)
+        assert response.cookies["messages"].value == ""
 
 
 class TestStartSchoolYearView(TestCase):

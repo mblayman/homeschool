@@ -340,6 +340,22 @@ class DailyView(LoginRequiredMixin, TemplateView):
 class StartView(LoginRequiredMixin, TemplateView):
     template_name = "core/start.html"
 
+    def dispatch(self, *args, **kwargs):
+        # Remove alert messages contributed by django-allauth during sign up
+        # that distract from the onboarding start page.
+        # Removing from the incoming request prevents Django from rendering messages
+        # on *this* view.
+        self.request.COOKIES.pop("messages", "")
+
+        response = super().dispatch(*args, **kwargs)
+
+        # Tell the browser to remove any existing messages.
+        # Removing from the response prevents Django from rendering messages
+        # on the *next* view.
+        response.delete_cookie("messages")
+
+        return response
+
 
 class StartSchoolYearView(LoginRequiredMixin, CreateView):
     template_name = "core/start_school_year.html"
