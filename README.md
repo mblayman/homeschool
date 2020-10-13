@@ -18,6 +18,12 @@ $ source venv/bin/activate
 
 Install developer and application packages.
 
+Note: `pygraphviz` requires `graphviz`
+so you may need to install that first.
+On homebrew on a Mac,
+you can install that tool
+with `brew install graphviz`.
+
 ```bash
 $ pip install -r requirements-dev.txt
 $ pip install -r requirements.txt
