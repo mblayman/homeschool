@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head_title %}Homeschool Scheduling Simplified{% endblock %}
+
 {% block main_css_classes %}flex-grow{% endblock %}
 
 {% block main %}
@@ -21,7 +23,7 @@
           <button class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg">Subscribe</button>
         </div>
         <div class="w-full md:w-3/5 py-6 text-center">
-          <img class="w-full md:w-4/5 mb-8 ml-16 z-50" src="{% static "font.svg" %}">
+          <img class="w-full md:w-4/5 mb-24 sm:mb-8 ml-0 sm:ml-16 z-50" src="{% static "font.svg" %}">
         </div>
       </div>
     </div>
