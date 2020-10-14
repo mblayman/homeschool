@@ -549,6 +549,19 @@ class TestCourseTaskUpdateView(TestCase):
         grade_levels = set(self.get_context("grade_levels"))
         assert grade_levels == {grade_level, other_grade_level}
 
+    def test_has_previous_task(self):
+        """A previous task is in the context when it exists."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        previous_task = CourseTaskFactory(course=course)
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get("courses:task_edit", uuid=task.uuid)
+
+        assert self.get_context("previous_task") == previous_task
+
     def test_redirect_next(self):
         next_url = "/another/location/"
         user = self.make_user()

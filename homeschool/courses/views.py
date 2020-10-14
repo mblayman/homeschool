@@ -294,6 +294,7 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
         context["grade_levels"] = GradeLevel.objects.filter(
             school_year=grade_level.school_year_id
         )
+        context["previous_task"] = self.object.previous()
         return context
 
     def get_success_url(self):
