@@ -22,7 +22,9 @@
     {% if messages %}
     <ul class="flex flex-row justify-center mx-4 -mt-4 mb-4 w-full">
       {% for message in messages %}
-        <li class="bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mx-2 rounded-lg shadow-sm">{{ message }}</li>
+        {% block message_block %}
+          <li class="bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mx-2 rounded-lg shadow-sm">{{ message }}</li>
+        {% endblock %}
       {% endfor %}
     </ul>
     {% endif %}
