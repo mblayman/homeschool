@@ -1,40 +1,46 @@
 {% load hijack_tags static waffle_tags %}
 <nav class="flex {% if request|is_hijacked %}bg-red-700{% else %}bg-blue-700{% endif %} text-white border-b border-blue-300 sm:h-16 items-center print-hide">
   <div class="w-full max-w-6xl relative mx-auto px-6">
-    <div class="flex flex-col sm:flex-row sm:items-center">
-      <a href="/" class="block mr-4 py-1 flex items-center">
+    <div class="py-2 flex flex-col sm:flex-row sm:items-center">
+      <a href="/" class="block py-1 flex items-center justify-center">
         <img class="h-10 w-10 mr-2" src="{% static "logo.svg" %}" alt="School Desk">
         <h1 class="text-lg uppercase tracking-wider font-thin">School Desk</h1>
       </a>
       <div class="flex-grow"></div>
 
-      {% if user.is_authenticated %}
-        {% if user.is_staff %}
-          <div class="mr-4">
-            <a class="hover:underline font-light" href="{% url "admin:index" %}">
-              Office
-            </a>
-          </div>
-        {% endif %}
-        {% if request|is_hijacked %}
-          <div class="mr-4 font-light">
-            As: {{ user.email }}
-          </div>
-          <form class="mr-4" method="POST" action="{% url 'hijack:release_hijack' %}">
+      <div class="flex flex-row justify-around py-2">
+        {% if user.is_authenticated %}
+          {% if user.is_staff %}
+            <div class="mr-4">
+              <a class="hover:underline font-light" href="{% url "admin:index" %}">
+                Office
+              </a>
+            </div>
+          {% endif %}
+          {% if request|is_hijacked %}
+            <div class="mr-4 font-light">
+              As: {{ user.email }}
+            </div>
+            <form class="mr-4" method="POST" action="{% url 'hijack:release_hijack' %}">
+              {% csrf_token %}
+              <button class="hover:underline font-light" type="submit">Release</button>
+            </form>
+          {% endif %}
+          <form method="POST" action="{% url 'account_logout' %}">
             {% csrf_token %}
-            <button class="hover:underline font-light" type="submit">Release</button>
+            <button class="hover:underline font-light" type="submit">Log Out</button>
           </form>
+        {% else %}
+          <div>
+            <a class="hover:underline font-light" href="{% url 'account_login' %}">Log In</a>
+          </div>
+          {% flag signup_flag %}
+            <div>
+              <a class="hover:underline ml-0 sm:ml-4 my-2 font-light" href="{% url 'account_signup' %}">Sign Up</a>
+            </div>
+          {% endflag %}
         {% endif %}
-        <form method="POST" action="{% url 'account_logout' %}">
-          {% csrf_token %}
-          <button class="hover:underline font-light" type="submit">Log Out</button>
-        </form>
-      {% else %}
-        <a class="hover:underline font-light" href="{% url 'account_login' %}">Log In</a>
-        {% flag signup_flag %}
-          <a class="hover:underline ml-0 sm:ml-4 my-2 font-light" href="{% url 'account_signup' %}">Sign Up</a>
-        {% endflag %}
-      {% endif %}
+      </div>
     </div>
   </div>
 </nav>
