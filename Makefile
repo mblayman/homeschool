@@ -3,6 +3,9 @@
 local:
 	heroku local
 
+deploy:
+	git push heroku master
+
 graph:
 	./manage.py graph_models \
 		core \
