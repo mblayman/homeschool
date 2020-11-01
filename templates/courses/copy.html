@@ -20,7 +20,7 @@
         <div class="w-1/3 text-sm uppercase tracking-wide font-thin py-2">School Year</div>
       </div>
       {% for course_info in courses %}
-        <a href="{% url "courses:create" %}?copy_from={{ course_info.course.uuid }}" class="flex hover:bg-yellow-200">
+        <a href="{% url "courses:create" %}?{% if request.GET.school_year %}school_year={{ request.GET.school_year }}&amp;{% endif %}copy_from={{ course_info.course.uuid }}" class="flex hover:bg-yellow-200">
           <div class="w-1/3 text-sm font-light py-1 border-t border-yellow-400 border-dotted">
             {{ course_info.course }}
           </div>
