@@ -22,7 +22,7 @@ django-heroku==0.3.1      # via -r requirements.in
 django-hijack==2.1.10     # via -r requirements.in
 django-ordered-model==3.4.1  # via -r requirements.in
 django-tz-detect==0.3.0   # via -r requirements.in
-django-waffle==1.0.0      # via -r requirements.in
+django-waffle==2.0.0      # via -r requirements.in
 django==3.1.1             # via -r requirements.in, django-allauth, django-debug-toolbar, django-heroku, django-tz-detect
 freezegun==0.3.15         # via -r requirements.in
 gunicorn==20.0.4          # via -r requirements.in
