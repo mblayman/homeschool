@@ -224,6 +224,33 @@ class TestCourseEditView(TestCase):
         assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
 
 
+class TestCourseCopySelectView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("courses:copy")
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("courses:copy")
+
+        assert list(self.get_context("courses")) == [
+            {"course": course, "school_year": grade_level.school_year}
+        ]
+
+    def test_only_user_courses(self):
+        """The copy view only lists the user's courses."""
+        user = self.make_user()
+        CourseFactory()
+
+        with self.login(user):
+            self.get_check_200("courses:copy")
+
+        assert list(self.get_context("courses")) == []
+
+
 class TestCourseTaskCreateView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()

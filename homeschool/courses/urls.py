@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.CourseCreateView.as_view(), name="create"),
     path("<uuid:uuid>/", views.CourseDetailView.as_view(), name="detail"),
     path("<uuid:uuid>/edit/", views.CourseEditView.as_view(), name="edit"),
+    path("copy/", views.CourseCopySelectView.as_view(), name="copy"),
     path(
         "<uuid:uuid>/tasks/", views.CourseTaskCreateView.as_view(), name="task_create"
     ),

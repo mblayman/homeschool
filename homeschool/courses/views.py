@@ -9,7 +9,13 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    TemplateView,
+    UpdateView,
+)
 
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.models import GradeLevel, SchoolYear
@@ -183,6 +189,31 @@ class CourseEditView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+
+
+class CourseCopySelectView(LoginRequiredMixin, TemplateView):
+    """Display all courses so that the user can select one to copy."""
+
+    template_name = "courses/copy.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        user = self.request.user
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        context["courses"] = []
+        for course in (
+            Course.objects.filter(grade_levels__in=grade_levels)
+            .prefetch_related("grade_levels", "grade_levels__school_year")
+            .distinct()
+        ):
+            school_year = None
+            # A course will only be in one school year, but using first()
+            # busts the prefetch cache so we have this silly for loop instead.
+            for grade_level in course.grade_levels.all():
+                school_year = grade_level.school_year
+                break
+            context["courses"].append({"course": course, "school_year": school_year})
+        return context
 
 
 class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):

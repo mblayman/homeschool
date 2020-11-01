@@ -1,0 +1,44 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Select Course To Copy{% endblock %}
+
+{% block main %}
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+    Select Course To Copy
+  </h1>
+  <p class="font-thin text-base text-gray-800 mb-4 max-w-lg">
+    Copying a course creates a new course and copies any associated tasks and resources.
+  </p>
+  <p class="font-thin text-base text-gray-800 mb-4 max-w-lg">
+    You will be able to modify the course after making your selection.
+  </p>
+  {% if courses %}
+    <div class="flex flex-col max-w-3xl">
+      <div class="flex flex-row">
+        <div class="w-1/3 text-sm uppercase tracking-wide font-thin py-2">Course</div>
+        <div class="w-1/3 text-sm uppercase tracking-wide font-thin py-2">Grade Level</div>
+        <div class="w-1/3 text-sm uppercase tracking-wide font-thin py-2">School Year</div>
+      </div>
+      {% for course_info in courses %}
+        <a href="{% url "courses:create" %}?copy_from={{ course_info.course.uuid }}" class="flex hover:bg-yellow-200">
+          <div class="w-1/3 text-sm font-light py-1 border-t border-yellow-400 border-dotted">
+            {{ course_info.course }}
+          </div>
+          <div class="w-1/3 text-sm font-light py-1 border-t border-yellow-400 border-dotted">
+            {{ course_info.course.grade_levels.all|join:", " }}
+          </div>
+          <div class="w-1/3 text-sm font-light py-1 border-t border-yellow-400 border-dotted">
+            {{ course_info.school_year }}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="font-thin text-base text-gray-800 mb-4 max-w-lg">
+      Sorry, you do not have any courses to copy yet.
+    </p>
+    <a href="{% url "courses:create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+      Add Course
+    </a>
+  {% endif %}
+{% endblock %}
