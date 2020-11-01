@@ -99,6 +99,14 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         context["course_to_copy"] = self.course_to_copy
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        if self.course_to_copy:
+            self.course_to_copy.copy_to(self.object)
+
+        return response
+
     def get_success_url(self):
         return reverse("courses:detail", args=[self.object.uuid])
 

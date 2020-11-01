@@ -176,6 +176,36 @@ class TestCourseCreateView(TestCase):
 
         assert self.get_context("course_to_copy") is None
 
+    def test_course_copy_tasks_resources(self):
+        """Copying a course includes the tasks, graded work, and resources."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course_to_copy = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course_to_copy)
+        graded_task = CourseTaskFactory(course=course_to_copy)
+        GradedWorkFactory(course_task=graded_task)
+        CourseResourceFactory(course=course_to_copy)
+        data = {
+            "name": "Course name",
+            "wednesday": "on",
+            "friday": "on",
+            "grade_levels": str(grade_level.id),
+            "default_task_duration": 45,
+        }
+        url = self.reverse("courses:create")
+        url += f"?copy_from={course_to_copy.uuid}"
+
+        with self.login(user):
+            self.post(url, data=data)
+
+        assert Course.objects.count() == 2
+        copied_course = Course.objects.last()
+        assert copied_course.id != course_to_copy.id
+        assert CourseTask.objects.filter(course=copied_course).count() == 2
+        new_graded_task = CourseTask.objects.filter(course=copied_course).last()
+        assert hasattr(new_graded_task, "graded_work")
+        assert CourseResource.objects.filter(course=copied_course).count() == 1
+
 
 class TestCourseDetailView(TestCase):
     def test_unauthenticated_access(self):

@@ -52,6 +52,37 @@ class Course(DaysOfWeekModel):
         ).values_list("id", flat=True)
         return Course.objects.filter(id=self.id, grade_levels__in=grade_levels).exists()
 
+    def copy_to(self, new_course):
+        """Copy the course and its associated items to the new course."""
+        tasks_to_copy = self.course_tasks.all().prefetch_related("graded_work")
+        new_tasks = [
+            CourseTask(
+                course=new_course, description=task.description, duration=task.duration
+            )
+            for task in tasks_to_copy
+        ]
+        CourseTask.objects.bulk_create(new_tasks)
+
+        # To avoid creating tasks individually, a second pass is needed
+        # to add any graded work.
+        tasks_to_compare = zip(
+            tasks_to_copy, CourseTask.objects.filter(course=new_course)
+        )
+        graded_work = [
+            GradedWork(course_task=copied_task)
+            for task_to_copy, copied_task in tasks_to_compare
+            if hasattr(task_to_copy, "graded_work")
+        ]
+        GradedWork.objects.bulk_create(graded_work)
+
+        resources_to_copy = [
+            CourseResource(
+                course=new_course, title=resource.title, details=resource.details
+            )
+            for resource in self.resources.all()
+        ]
+        CourseResource.objects.bulk_create(resources_to_copy)
+
     def __str__(self):
         return self.name
 
