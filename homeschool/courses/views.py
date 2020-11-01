@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
@@ -95,6 +96,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
                 # Bogus uuid. Let it slide.
                 context["grade_level"] = None
 
+        context["course_to_copy"] = self.course_to_copy
         return context
 
     def get_success_url(self):
@@ -122,6 +124,44 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
 
         kwargs["school_year"] = school_year
         return kwargs
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial.update(self.get_copied_course_info())
+        return initial
+
+    def get_copied_course_info(self):
+        """When the user wants to copy the course, prepopulate the form."""
+        if "copy_from" not in self.request.GET:
+            return {}
+
+        course_to_copy = self.course_to_copy
+        if course_to_copy is None:
+            messages.add_message(
+                self.request, messages.ERROR, "Sorry, you can’t copy that course."
+            )
+            return {}
+
+        return {
+            "name": course_to_copy.name,
+            "default_task_duration": course_to_copy.default_task_duration,
+        }
+
+    @cached_property
+    def course_to_copy(self) -> Optional[Course]:
+        """Get the course to copy if the query arg is present."""
+        if "copy_from" not in self.request.GET:
+            return None
+
+        user = self.request.user
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        try:
+            return Course.objects.distinct().get(
+                grade_levels__in=grade_levels, uuid=self.request.GET["copy_from"]
+            )
+        except (Course.DoesNotExist, ValidationError):
+            pass
+        return None
 
 
 class CourseDetailView(LoginRequiredMixin, DetailView):

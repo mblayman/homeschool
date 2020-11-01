@@ -146,6 +146,36 @@ class TestCourseCreateView(TestCase):
             "Location"
         )
 
+    def test_course_copy_fills_form_fields(self):
+        """The course to copy fills in the course form."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course_to_copy = CourseFactory(
+            grade_levels=[grade_level], name="To Copy", default_task_duration=99
+        )
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:create", data={"copy_from": str(course_to_copy.uuid)}
+            )
+
+        form = self.get_context("form")
+        assert form.initial["name"] == "To Copy"
+        assert form.initial["default_task_duration"] == 99
+
+    def test_course_copy_only_user_courses(self):
+        """A user cannot copy another user's course."""
+        user = self.make_user()
+        SchoolYearFactory(school=user.school)
+        course_to_copy = CourseFactory()
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:create", data={"copy_from": str(course_to_copy.uuid)}
+            )
+
+        assert self.get_context("course_to_copy") is None
+
 
 class TestCourseDetailView(TestCase):
     def test_unauthenticated_access(self):
@@ -265,10 +295,7 @@ class TestCourseTaskCreateView(TestCase):
             self.get_check_200("courses:task_create", uuid=course.uuid)
 
         form = self.get_context("form")
-        assert (
-            form.get_initial_for_field(form.fields["duration"], "duration")
-            == course.default_task_duration
-        )
+        assert form.initial["duration"] == course.default_task_duration
 
     def test_post(self):
         user = self.make_user()

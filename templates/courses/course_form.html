@@ -10,6 +10,15 @@
       {{ course.name }}
     {% endif %}
   </h1>
+  {% if course_to_copy %}
+    {% with task_count=course_to_copy.course_tasks.count resource_count=course_to_copy.resources.count %}
+      <p class="mb-6 text-gray-800 font-thin">
+        Copying “{{ course_to_copy }}” will also copy
+        {{ task_count }} task{{ task_count|pluralize }}
+        and {{ resource_count }} resource{{ resource_count|pluralize }}.
+      </p>
+    {% endwith %}
+  {% endif %}
 
   {% include "forms/non_field_errors.html" %}
 
@@ -86,6 +95,7 @@
         </div>
       </div>
     {% endif %}
+
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
