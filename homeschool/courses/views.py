@@ -248,7 +248,7 @@ class CourseCopySelectView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        context["courses"] = []
+        school_years: dict = {}
         for course in (
             Course.objects.filter(grade_levels__in=grade_levels)
             .prefetch_related("grade_levels", "grade_levels__school_year")
@@ -260,7 +260,19 @@ class CourseCopySelectView(LoginRequiredMixin, TemplateView):
             for grade_level in course.grade_levels.all():
                 school_year = grade_level.school_year
                 break
-            context["courses"].append({"course": course, "school_year": school_year})
+
+            if school_year not in school_years:
+                school_years[school_year] = {}
+            if grade_level not in school_years[school_year]:
+                school_years[school_year][grade_level] = []
+            school_years[school_year][grade_level].append(course)
+
+        context["school_years"] = [
+            {"school_year": school_year, "grade_levels": grade_levels}
+            for school_year, grade_levels in sorted(
+                school_years.items(), key=lambda pair: pair[0].start_date
+            )
+        ]
         return context
 
 

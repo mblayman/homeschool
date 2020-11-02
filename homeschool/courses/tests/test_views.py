@@ -296,8 +296,11 @@ class TestCourseCopySelectView(TestCase):
         with self.login(user):
             self.get_check_200("courses:copy")
 
-        assert list(self.get_context("courses")) == [
-            {"course": course, "school_year": grade_level.school_year}
+        assert self.get_context("school_years") == [
+            {
+                "school_year": grade_level.school_year,
+                "grade_levels": {grade_level: [course]},
+            }
         ]
 
     def test_only_user_courses(self):
@@ -308,7 +311,7 @@ class TestCourseCopySelectView(TestCase):
         with self.login(user):
             self.get_check_200("courses:copy")
 
-        assert list(self.get_context("courses")) == []
+        assert self.get_context("school_years") == []
 
 
 class TestCourseTaskCreateView(TestCase):
