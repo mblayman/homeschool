@@ -8,6 +8,7 @@ deploy:
 
 graph:
 	./manage.py graph_models \
+		accounts \
 		core \
 		courses \
 		schools \

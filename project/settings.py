@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "ordered_model",
     "tz_detect",
     "waffle",
+    "homeschool.accounts",
     "homeschool.core",
     "homeschool.courses",
     "homeschool.schools",
