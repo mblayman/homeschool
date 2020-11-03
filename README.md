@@ -60,18 +60,75 @@ This is my analysis of the market
 to assess the features and positioning
 of what is available.
 
-* Google Classroom
-* Homeschool Helper - iPad/Android app. Seems defunct. https://play.google.com/store/apps/details?id=com.homeschoolerhub.llc&hl=en_US&gl=US
-* Homeschool Tracker - https://www.homeschooltracker.com/
-* Homeschool Minder - https://www.homeschoolminder.com/
-* Homeschool Planet - https://homeschoolplanet.com/
-* Homeschool Skedtrack - http://www.homeschoolskedtrack.com/HomeSchool/displayLogin.do
-* Charlotte Mason Organizer - https://simplycharlottemason.com/store/cm-organizer/
-* Lessontrek - https://lessontrek.com/
-* Scholaric - https://www.scholaric.com/marketing
-* Homeschooling Records - https://homeschoolingrecords.com/default.aspx
-* Homeschool Manager - https://homeschoolmanager.com/
-* Homeschool Day Book - http://www.homeschooldaybook.com/
-* Well Planned Gal - https://shop.wellplannedgal.com/index.php/shop/well-planned-day-online.html
-* Homeschool Reporting Online - https://homeschoolreporting.com/
-* My School Year - https://www.myschoolyear.com/
+Research plan:
+Sign up for a service trial
+to test out the account.
+Share findings on forums
+to solicit feedback.
+
+Measurement criteria:
+
+* Price
+* Features
+* Quality
+
+### Charlotte Mason Organizer
+
+https://simplycharlottemason.com/store/cm-organizer/
+
+### Google Classroom
+
+### Homeschool Day Book
+
+http://www.homeschooldaybook.com/
+
+### Homeschool Helper
+
+https://play.google.com/store/apps/details?id=com.homeschoolerhub.llc&hl=en_US&gl=US
+
+iPad/Android app. Seems defunct.
+
+### Homeschool Manager
+
+https://homeschoolmanager.com/
+
+### Homeschool Minder
+
+https://www.homeschoolminder.com/
+
+### Homeschool Planet
+
+https://homeschoolplanet.com/
+
+### Homeschool Reporting Online
+
+https://homeschoolreporting.com/
+
+### Homeschool Skedtrack
+
+http://www.homeschoolskedtrack.com/HomeSchool/displayLogin.do
+
+### Homeschool Tracker
+
+https://www.homeschooltracker.com/
+
+### Homeschooling Records
+
+https://homeschoolingrecords.com/default.aspx
+
+### Lessontrek
+
+https://lessontrek.com/
+
+### My School Year
+
+https://www.myschoolyear.com/
+
+### Scholaric
+
+https://www.scholaric.com/marketing
+
+### Well Planned Gal
+
+https://shop.wellplannedgal.com/index.php/shop/well-planned-day-online.html
+
