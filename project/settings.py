@@ -75,7 +75,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "homeschool.middleware.MoreWhiteNosieMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -226,6 +226,9 @@ ROLLBAR = {
     "branch": "master",
     "root": BASE_DIR,
 }
+
+# WhiteNoise
+WHITENOISE_INDEX_FILE = True
 
 django_heroku.settings(
     locals(), secret_key=False, staticfiles=False, test_runner=False, logging=False

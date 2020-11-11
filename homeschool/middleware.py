@@ -1,6 +1,14 @@
 import html
 
 import bleach
+from django.conf import settings
+from whitenoise.middleware import WhiteNoiseMiddleware
+
+
+class MoreWhiteNosieMiddleware(WhiteNoiseMiddleware):
+    def __init__(self, get_response=None, settings=settings):
+        super().__init__(get_response, settings=settings)
+        self.add_files("blog", prefix="blog/")
 
 
 def strip_clean(input_text):
