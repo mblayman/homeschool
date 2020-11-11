@@ -72,6 +72,8 @@ Measurement criteria:
 * Features
 * Quality
 
+[Well Trained Mind reference analysis](https://docs.google.com/spreadsheets/d/1SroV3KdUshFIQMOEKfVDtv5zwmcylL6OHfewTuaeJRo/edit?usp=sharing)
+
 ### Charlotte Mason Organizer
 
 https://simplycharlottemason.com/store/cm-organizer/
@@ -83,7 +85,6 @@ Forum topics:
 * https://forums.welltrainedmind.com/topic/105037-tell-me-about-the-dvd-seminar-from-simply-charlotte-mason/ uses organizer to add in non-school stuff too like chores
 * https://forums.welltrainedmind.com/topic/93216-curricula-questions-about-1st-grade-ds-hf-autism-adhd/ product plug
 * https://forums.welltrainedmind.com/topic/511101-question-for-those-that-like-circe-etc/ "splurging on it". Likes that you can miss a day and not have to manually tweak things.
-* https://forums.welltrainedmind.com/topic/242641-scm-or-ao/ integrate a variety of planners
 
 ### Google Classroom
 
