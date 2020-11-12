@@ -233,3 +233,9 @@ WHITENOISE_INDEX_FILE = True
 django_heroku.settings(
     locals(), secret_key=False, staticfiles=False, test_runner=False, logging=False
 )
+
+# App settings
+
+# Add extra output directories that WhiteNoise can serve as static files
+# *outside* of `staticfiles`.
+MORE_WHITENOISE = [{"directory": os.path.join(BASE_DIR, "blog_out"), "prefix": "blog/"}]
