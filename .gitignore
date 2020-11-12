@@ -117,3 +117,6 @@ staticfiles/
 
 # macOS
 .DS_Store
+
+# Blog output
+blog_out/
