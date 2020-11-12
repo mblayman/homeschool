@@ -1,10 +1,14 @@
 import datetime
 import uuid
+from typing import TYPE_CHECKING, Optional
 
 from django.db import models
 from django.db.models import Q
 
 from homeschool.core.schedules import Week
+
+if TYPE_CHECKING:  # pragma: no cover
+    from homeschool.courses.models import Course
 
 
 class Student(models.Model):
@@ -89,6 +93,11 @@ class Student(models.Model):
                 )
                 course_tasks.reverse()  # for the performance of pop below.
 
+            # Tasks should only appear *after* the last coursework date.
+            last_coursework_date = self.get_last_coursework_date(
+                week_coursework, course
+            )
+
             for week_date in week_dates:
                 course_schedule_item = {
                     "week_date": week_date,
@@ -113,7 +122,13 @@ class Student(models.Model):
                 ):
                     coursework_list = week_coursework[course.id][week_date]
                     course_schedule_item["coursework"] = coursework_list
-                elif course.runs_on(week_date) and course_tasks:
+                elif (
+                    course.runs_on(week_date)
+                    and course_tasks
+                    and (
+                        last_coursework_date is None or week_date > last_coursework_date
+                    )
+                ):
                     course_schedule_item["task"] = course_tasks.pop()
             schedule["courses"].append(course_schedule)
         return schedule
@@ -199,6 +214,13 @@ class Student(models.Model):
             course, start_date, week_start_date - datetime.timedelta(days=1)
         )
         return tasks_to_do - unfinished_task_count_this_week
+
+    def get_last_coursework_date(
+        self, week_coursework: dict, course: "Course"
+    ) -> Optional[datetime.date]:
+        """Get the last date of coursework if the course has any."""
+        coursework_by_dates = week_coursework.get(course.id)
+        return max(coursework_by_dates.keys()) if coursework_by_dates else None
 
     def get_day_coursework(self, day):
         """Get the coursework completed in the week.

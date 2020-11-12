@@ -2,16 +2,18 @@ import datetime
 import uuid
 
 import pytest
-from dateutil.relativedelta import MO, SA, relativedelta
+from dateutil.relativedelta import MO, SA, SU, relativedelta
 from django.db import IntegrityError
 from django.utils import timezone
 
 from homeschool.core.schedules import Week
+from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import (
     CourseFactory,
     CourseTaskFactory,
     GradedWorkFactory,
 )
+from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
     SchoolFactory,
@@ -113,7 +115,7 @@ class TestStudent(TestCase):
         "pulled forward" to the next school week.
         This will enable users to plan for the following week.
         """
-        today = timezone.now().date()
+        today = timezone.localdate()
         saturday = today + relativedelta(weekday=SA(1))
         next_week = Week(saturday + datetime.timedelta(days=2))
         enrollment = EnrollmentFactory()
@@ -124,6 +126,32 @@ class TestStudent(TestCase):
         week_schedule = student.get_week_schedule(school_year, saturday, next_week)
 
         assert week_schedule["courses"][0]["days"][0]["task"] == task
+
+    def test_week_schedule_tasks_after_last_coursework(self):
+        """Remaining tasks should only appear after the last completed coursework."""
+        today = timezone.localdate()
+        sunday = today + relativedelta(weekday=SU(-1))
+        week = Week(sunday)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__days_of_week=SchoolYear.ALL_DAYS
+        )
+        student = enrollment.student
+        school_year = enrollment.grade_level.school_year
+        completed_task = CourseTaskFactory(
+            course__days_of_week=Course.ALL_DAYS,
+            course__grade_levels=[enrollment.grade_level],
+        )
+        coursework = CourseworkFactory(
+            student=student,
+            course_task=completed_task,
+            completed_date=sunday + datetime.timedelta(days=1),
+        )
+        to_do_task = CourseTaskFactory(course=completed_task.course)
+
+        week_schedule = student.get_week_schedule(school_year, sunday, week)
+
+        assert week_schedule["courses"][0]["days"][1]["coursework"] == [coursework]
+        assert week_schedule["courses"][0]["days"][2]["task"] == to_do_task
 
     def test_get_week_coursework(self):
         today = timezone.now().date()
