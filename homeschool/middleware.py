@@ -5,10 +5,10 @@ from django.conf import settings
 from whitenoise.middleware import WhiteNoiseMiddleware
 
 
-class MoreWhiteNosieMiddleware(WhiteNoiseMiddleware):
+class MoreWhiteNoiseMiddleware(WhiteNoiseMiddleware):
     def __init__(self, get_response=None, settings=settings):
         super().__init__(get_response, settings=settings)
-        self.add_files("blog", prefix="blog/")
+        self.add_files("blog_out", prefix="blog/")
 
 
 def strip_clean(input_text):
