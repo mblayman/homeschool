@@ -43,11 +43,11 @@
                 {% endif %}
               {% endif %}"></div>
           {% elif course_schedule_day.task %}
-            <div class="flex-1 p-2 text-sm font-light overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ course_schedule_day.task.description|linebreaksbr }}</div>
+            <div class="flex-1 p-2 text-sm font-light overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ course_schedule_day.task.description|urlize|linebreaksbr }}</div>
           {% elif course_schedule_day.coursework %}
             <div class="flex-1 p-2 overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
               {% for coursework in course_schedule_day.coursework %}
-                <div class="text-sm font-light text-gray-400">{{ coursework.course_task.description|linebreaksbr }}</div>
+                <div class="text-sm font-light text-gray-400">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
               {% endfor %}
             </div>
           {% else %}

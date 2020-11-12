@@ -48,7 +48,7 @@
               <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
               <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
             </div>
-            <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">{{ course_schedule.task.description|linebreaksbr }}</div>
+            <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">{{ course_schedule.task.description|urlize|linebreaksbr }}</div>
 
             <div class="w-1/12 py-2 flex justify-center items-center print-hide">
               <a href="{% url "courses:task_edit" uuid=course_schedule.task.uuid %}?next={{ request.path|urlencode }}" class="block mx-4 text-gray-300 hover:text-gray-600">
@@ -64,7 +64,7 @@
             </div>
             <div class="w-7/12 p-2">
               {% for coursework in course_schedule.coursework %}
-                <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|linebreaksbr }}</div>
+                <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
               {% endfor %}
             </div>
 
