@@ -23,6 +23,8 @@
     <a class="underline" href="{{ weekly_url }}">Switch to week view</a>
   </p>
 
+  {% include "print_link.html" %}
+
   <form method="POST" action="?next={{ request.path|urlencode }}">
     {% csrf_token %}
     <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">

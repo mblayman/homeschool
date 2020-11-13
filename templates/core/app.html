@@ -14,6 +14,8 @@
     </div>
   </div>
 
+  {% include "print_link.html" %}
+
   {% include "core/week_schedules.html" with schedules=schedules week_dates=week_dates %}
   {% include "core/week_schedules.html" with schedules=next_year_schedules week_dates=next_year_week_dates %}
 {% endblock %}
