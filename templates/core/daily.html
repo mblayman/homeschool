@@ -29,6 +29,7 @@
     {% csrf_token %}
     <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
   {% for schedule in schedules %}
+  <div class="print-break-after-page">
     <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
 
     <div class="flex flex-row max-w-3xl print-hide">
@@ -89,6 +90,7 @@
         </div>
       {% endif %}
     {% endfor %}
+  </div>
   {% empty %}
     <div class="flex flex-row justify-between">
       <div class="w-2/5">
