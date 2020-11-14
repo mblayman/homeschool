@@ -8,6 +8,10 @@
 {# Empty the message block so that messages are consumed but not displayed. #}
 {% block message_block %}{% endblock %}
 
+{% block navigation %}
+  {% include "nav.html" with light=True %}
+{% endblock %}
+
 {% block main %}
   <style>
     .gradient {

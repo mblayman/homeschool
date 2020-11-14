@@ -1,8 +1,20 @@
 {% load hijack_tags static waffle_tags %}
-<nav class="flex {% if request|is_hijacked %}bg-red-700{% else %}bg-blue-700{% endif %} text-white border-b border-blue-300 sm:h-16 items-center print-hide">
+<nav class="flex
+  {% if request|is_hijacked %}
+    bg-red-700
+  {% else %}
+    {% if light %}bg-white{% else %}bg-blue-700{% endif %}
+  {% endif %}
+  {% if light %}text-blue-900{% else %}text-white{% endif %} border-b border-blue-400 sm:h-16 items-center print-hide">
   <div class="w-full max-w-6xl relative mx-auto px-6">
     <div class="py-2 flex flex-col sm:flex-row sm:items-center">
-      <a href="/" class="block py-1 flex items-center justify-center">
+      <a
+        {% if user.is_authenticated %}
+          href="{% url "core:app" %}"
+        {% else %}
+          href="{% url "core:index" %}"
+        {% endif %}
+        class="block py-1 flex items-center justify-center">
         <img class="h-10 w-10 mr-2" src="{% static "logo.svg" %}" alt="School Desk">
         <h1 class="text-lg uppercase tracking-wider font-thin">School Desk</h1>
       </a>

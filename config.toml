@@ -15,7 +15,7 @@ themesDir = "blog/themes"
 [menu]
 [[menu.main]]
 identifier = "home"
-name = "Home"
+name = "Return To App ⇒"
 url = "https://sleepy-caverns-57661.herokuapp.com/"
 weight = 10
 

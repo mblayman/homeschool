@@ -14,8 +14,10 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  {% include "nav.html" %}
-  {% include "sub_nav.html" %}
+  {% block navigation %}
+    {% include "nav.html" %}
+    {% include "sub_nav.html" %}
+  {% endblock %}
 
   <main class="{% block main_css_classes %}container mx-auto p-8 flex-grow print-no-max-width{% endblock %}">
 
@@ -33,7 +35,9 @@
   </main>
 
   <footer class="container mx-auto {% block footer_css_border %}border-t border-gray-400{% endblock %} p-4 text-center text-sm text-gray-600 print-hide">
-    <span class="mx-1">&copy; {% now "Y" %} Matt Layman</span>
+    <span class="mx-1">&copy; {% now "Y" %}
+      <a href="{% url "core:index" %}" class="hover:text-gray-900">School Desk</a>
+    </span>
     <a href="{% url "core:about" %}" class="mx-1 hover:text-gray-900">About</a>
     <a href="{% url "core:terms" %}" class="mx-1 hover:text-gray-900">Terms</a>
     <a href="{% url "core:privacy" %}" class="mx-1 hover:text-gray-900">Privacy</a>
