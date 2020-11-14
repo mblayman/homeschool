@@ -28,3 +28,36 @@ I thought I could do better.
 School Desk began as a side project
 with my spouse as the first customer
 and product designer.
+We worked together
+to determine the elements
+that she needed
+to make a solid school planner.
+
+From our discussions,
+I heard her goals clearly:
+
+1. The app must be simple to use.
+2. The app needs to build a schedule automatically.
+
+With her continual feedback,
+I built up the application bit by bit.
+We designed the app
+to use concepts
+that are familiar
+to any school:
+grade levels, courses, students, grades, and so on.
+
+The net result is an app
+that I believe is tailor-made
+for homeschooling families.
+
+If you're looking for a homeschool planner,
+give School Desk a try.
+I think you'll be happy you did.
+
+You can sign up today
+on our [Sign Up](/accounts/signup/) page!
+
+Matt
+<br>
+Founder of School Desk

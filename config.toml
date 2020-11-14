@@ -12,6 +12,9 @@ staticDir = "blog/static"
 themesDir = "blog/themes"
 
 # Chunky Poster theme stuff
+paginate = 2
+footnoteReturnLinkContents = "^"
+
 [menu]
 [[menu.main]]
 identifier = "home"

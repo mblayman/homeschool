@@ -4,8 +4,8 @@
 {% block head_title %}Sign Up{% endblock %}
 
 {% block main %}
-  {% flag signup_flag %}
-    <div class="w-full max-w-xs mx-auto">
+  <div class="w-full max-w-xs mx-auto">
+    {% flag signup_flag %}
       <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST" action="?next={% url "core:start" %}">
         {% csrf_token %}
         <h1 class="font-bold text-xl mb-2">Sign Up</h1>
@@ -38,6 +38,15 @@
           {% endfor %}
         {% endif %}
       </form>
-    </div>
+  {% else %}
+    <p class="font-thin mb-4">
+      We're not quite ready yet for broad use.
+    </p>
+    <p class="font-thin">
+      If you'd like to join the beta users,
+      please reach out to Matt
+      on <a class="underline" href="https://twitter.com/mblayman" target="_blank">Twitter</a>.
+    </p>
   {% endflag %}
+  </div>
 {% endblock %}
