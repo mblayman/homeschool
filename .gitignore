@@ -118,5 +118,6 @@ staticfiles/
 # macOS
 .DS_Store
 
-# Blog output
+# Blog
 blog_out/
+resources/

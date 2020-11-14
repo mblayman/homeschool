@@ -1,6 +1,7 @@
-baseURL = "http://example.org/"
+baseURL = "https://sleepy-caverns-57661.herokuapp.com/blog/"
 languageCode = "en-us"
-title = "My New Hugo Site"
+theme = "chunky-poster"
+title = "School Desk"
 publishDir = "blog_out"
 
 archetypeDir = "blog/archetypes"
@@ -9,3 +10,24 @@ data = "blog/data"
 layoutDir = "blog/layouts"
 staticDir = "blog/static"
 themesDir = "blog/themes"
+
+# Chunky Poster theme stuff
+[menu]
+[[menu.main]]
+identifier = "home"
+name = "Home"
+url = "https://sleepy-caverns-57661.herokuapp.com/"
+weight = 10
+
+[taxonomies]
+author = "authors"
+tag = "tags"
+category = "categories"
+
+[params]
+description = "Homeschool Planning Simplified"
+share = true
+# homepageImage = "/static/logo.svg"
+
+[params.social]
+rss = true
