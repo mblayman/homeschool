@@ -1,5 +1,6 @@
 import datetime
 
+import waffle
 from dateutil.parser import parse
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -13,6 +14,7 @@ from django.views.generic import CreateView, TemplateView
 
 from homeschool.core.schedules import Week
 from homeschool.courses.models import GradedWork
+from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Grade, Student
@@ -77,6 +79,7 @@ class AppView(LoginRequiredMixin, TemplateView):
             self.get_next_school_year(context, today, week)
 
         context["schedules"] = self.get_schedules(school_year, today, week)
+        context["show_whats_new"] = self.show_whats_new
         return context
 
     def build_week_dates(self, school_year, week):
@@ -128,6 +131,18 @@ class AppView(LoginRequiredMixin, TemplateView):
 
         context["next_year_schedules"] = self.get_schedules(
             next_school_year, today, week
+        )
+
+    @property
+    def show_whats_new(self):
+        """Check if the "What's New?" badge should be displayed."""
+        user = self.request.user
+        return (
+            waffle.flag_is_active(self.request, "whats_new_flag")
+            and user.profile.wants_announcements
+            and Notification.objects.filter(
+                user=user, status=Notification.NotificationStatus.UNREAD
+            ).exists()
         )
 
 

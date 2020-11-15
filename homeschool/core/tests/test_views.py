@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.messages.storage.base import Message
 from django.contrib.messages.storage.cookie import CookieStorage
 from django.utils import timezone
+from waffle.testutils import override_flag
 
 from homeschool.core.schedules import Week
 from homeschool.courses.models import Course
@@ -16,6 +17,8 @@ from homeschool.courses.tests.factories import (
     CourseTaskFactory,
     GradedWorkFactory,
 )
+from homeschool.notifications.models import Notification
+from homeschool.notifications.tests.factories import NotificationFactory
 from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
@@ -182,7 +185,7 @@ class TestApp(TestCase):
             end_date=monday + datetime.timedelta(days=4),
         )
 
-        with self.login(user), self.assertNumQueries(12):
+        with self.login(user), self.assertNumQueries(16):
             self.get("core:app")
 
         expected_schedule = {
@@ -280,7 +283,7 @@ class TestApp(TestCase):
         task_2 = CourseTaskFactory(course=course)
         CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
 
-        with self.login(user), self.assertNumQueries(13):
+        with self.login(user), self.assertNumQueries(17):
             self.get("core:weekly", year=2020, month=1, day=27)
 
         expected_schedule = {
@@ -514,6 +517,41 @@ class TestApp(TestCase):
             if course_schedule_item["week_date"] == next_school_year.start_date:
                 course_day = course_schedule_item
         assert course_day["task"] == task
+
+    @override_flag("whats_new_flag", active=True)
+    def test_show_whats_new_in_context(self):
+        """The show_whats_new boolean is in the context."""
+        user = self.make_user()
+        NotificationFactory(user=user)
+
+        with self.login(user):
+            self.get_check_200("core:app")
+
+        assert self.get_context("show_whats_new")
+
+    @override_flag("whats_new_flag", active=True)
+    def test_show_whats_new_does_not_want_announcements(self):
+        """The show_whats_new is False for users that don't want announcements."""
+        user = self.make_user()
+        user.profile.wants_announcements = False
+        user.profile.save()
+        NotificationFactory(user=user)
+
+        with self.login(user):
+            self.get_check_200("core:app")
+
+        assert not self.get_context("show_whats_new")
+
+    @override_flag("whats_new_flag", active=True)
+    def test_show_whats_new_no_unread_notifications(self):
+        """The show_whats_new is False when there are no unread notifications."""
+        user = self.make_user()
+        NotificationFactory(user=user, status=Notification.NotificationStatus.VIEWED)
+
+        with self.login(user):
+            self.get_check_200("core:app")
+
+        assert not self.get_context("show_whats_new")
 
 
 class TestDaily(TestCase):
