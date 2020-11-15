@@ -37,3 +37,8 @@ class TestProfile(TestCase):
         user = self.make_user()
 
         assert user.profile.wants_announcements
+
+    def test_str(self):
+        user = self.make_user()
+
+        assert str(user.profile) == f"Profile for {user.username}"

@@ -31,6 +31,9 @@ class Profile(models.Model):
         help_text="Would you like to receive announcements about new features?",
     )
 
+    def __str__(self):
+        return f"Profile for {self.user.username}"
+
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
