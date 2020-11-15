@@ -23,3 +23,17 @@ class TestUser(TestCase):
         user = self.make_user()
 
         assert Account.objects.filter(user=user).exists()
+
+
+class TestProfile(TestCase):
+    def test_user_has_profile(self):
+        """Every user has a profile record."""
+        user = self.make_user()
+
+        assert user.profile is not None
+
+    def test_wants_announcements(self):
+        """By default, users receive announcement notifications."""
+        user = self.make_user()
+
+        assert user.profile.wants_announcements
