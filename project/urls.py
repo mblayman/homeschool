@@ -22,6 +22,7 @@ from homeschool.core.views import boom, handle_500
 urlpatterns = [
     path("", include("homeschool.core.urls")),
     path("courses/", include("homeschool.courses.urls")),
+    path("notifications/", include("homeschool.notifications.urls")),
     path("office/", admin.site.urls),
     path("office/boom/", boom, name="boom"),
     path("office/500/", handle_500, name="handle_500"),
