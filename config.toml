@@ -30,7 +30,7 @@ category = "categories"
 [params]
 description = "Homeschool Planning Simplified"
 share = true
-# homepageImage = "/static/logo.svg"
+homepageImage = "/images/organizing.svg"
 
 [params.social]
 rss = true
