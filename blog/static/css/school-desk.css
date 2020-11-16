@@ -1,0 +1,21 @@
+.navbar-brand:before {
+  display: block;
+  content: ' ';
+  background-image: url('/blog/images/logo.svg');
+  background-size: 2.5rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  position: relative;
+  top: 31px;
+  left: -42px;
+  margin-top: -2.5rem;
+}
+
+.navbar-brand {
+  padding-left: 2.5rem;
+}
+
+.homepage-image {
+  top: 50px;
+  width: 425px;
+}
