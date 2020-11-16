@@ -33,16 +33,12 @@
             </form>
           {% endif %}
           {% if return_to_app %}
-            <div class="mr-4">
+            <div>
               <a class="hover:underline font-light" href="{% url "core:app" %}">
                 Return to App ⇒
               </a>
             </div>
           {% endif %}
-          <form method="POST" action="{% url 'account_logout' %}">
-            {% csrf_token %}
-            <button class="hover:underline font-light" type="submit">Log Out</button>
-          </form>
         {% else %}
           <div>
             <a class="hover:underline font-light" href="{% url 'account_login' %}">Log In</a>

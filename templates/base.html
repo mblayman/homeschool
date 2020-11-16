@@ -42,6 +42,12 @@
     <a href="{% url "core:terms" %}" class="mx-1 hover:text-gray-900">Terms</a>
     <a href="{% url "core:privacy" %}" class="mx-1 hover:text-gray-900">Privacy</a>
     <a href="/blog/" class="mx-1 hover:text-gray-900">Blog</a>
+    {% if user.is_authenticated %}
+      <form class="inline" method="POST" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button class="mx-1 hover:text-gray-900" type="submit">Log Out</button>
+      </form>
+    {% endif %}
   </footer>
   {% block tz %}{% tz_detect %}{% endblock %}
   {% block scripts %}{% endblock %}
