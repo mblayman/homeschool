@@ -28,6 +28,7 @@ urlpatterns = [
     path("office/500/", handle_500, name="handle_500"),
     path("reports/", include("homeschool.schools.report_urls")),
     path("schools/", include("homeschool.schools.urls")),
+    path("settings/", include("homeschool.users.settings_urls")),
     path("students/", include("homeschool.students.urls")),
     path("accounts/", include("allauth.urls")),
     path("hijack/", include("hijack.urls")),

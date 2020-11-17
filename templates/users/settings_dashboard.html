@@ -1,0 +1,22 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Settings{% endblock %}
+
+{% block main %}
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">Settings</h1>
+
+  {% include "forms/non_field_errors.html" %}
+
+  <form method="POST" class="w-full max-w-2xl">
+    {% csrf_token %}
+    <div class="mb-8">
+      <label class="p-2 mr-2 font-thin rounded hover:bg-gray-200">
+        <input class="mr-2" type="checkbox" id="{{ form.wants_announcements.id_for_label }}" name="{{ form.wants_announcements.html_name }}" {% if form.wants_announcements.value %}checked{% endif %}>
+        {{ form.wants_announcements.help_text }}
+      </label>
+    </div>
+    <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+      Update
+    </button>
+  </form>
+{% endblock %}
