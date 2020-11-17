@@ -16,8 +16,11 @@ At the end of 2019,
 my wife hit a rough patch
 with the homeschool planner
 that she was using.
-The planner had a clunky user interface
-and the website wasn't secure!
+The planner had a clunky user interface,
+the website wasn't secure,
+and the site would go down
+for hours at a time
+when she wanted to use it!
 
 As a software engineer specializing
 in web application development,
