@@ -26,8 +26,6 @@ As a software engineer specializing
 in web application development,
 I thought I could do better.
 
-<!--more-->
-
 School Desk began as a side project
 with my spouse as the first customer
 and product designer.

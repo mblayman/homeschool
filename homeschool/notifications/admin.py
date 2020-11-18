@@ -42,7 +42,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
         scheme = "https://" if request.is_secure() else "http://"
         site = get_current_site(request)
         url = f"{scheme}{site}{announcement.url}"
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         return response.status_code == 200
 
     def _create_notifications(self, announcement):
