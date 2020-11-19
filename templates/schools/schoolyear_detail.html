@@ -121,7 +121,18 @@
   <div class="flex flex-col w-full">
     {% for grade_level_info in grade_levels %}
       <div class="bg-gray-100 rounded-lg py-4 mb-8">
-        <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
+        <div class="flex flex-row items-center">
+          <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
+          <div class="flex-grow"></div>
+          <div>
+            <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.uuid %}" class="text-gray-400 hover:text-gray-700">
+              <svg class="h-4 w-4 mr-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <title>Edit Grade Level</title>
+                <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
 
         <div class="flex flex-row flex-wrap">
           {% for course in grade_level_info.courses %}

@@ -31,6 +31,11 @@ urlpatterns = [
         name="grade_level_create",
     ),
     path(
+        "grade-levels/<uuid:uuid>/",
+        views.GradeLevelUpdateView.as_view(),
+        name="grade_level_edit",
+    ),
+    path(
         "school-years/<uuid:uuid>/breaks/",
         views.SchoolBreakCreateView.as_view(),
         name="school_break_create",

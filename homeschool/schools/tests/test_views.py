@@ -278,6 +278,7 @@ class TestGradeLevelCreateView(TestCase):
             self.get_check_200("schools:grade_level_create", uuid=school_year.uuid)
 
         assert school_year == self.get_context("school_year")
+        assert self.get_context("create")
 
     def test_post(self):
         """A user can create a grade level for their school year."""
@@ -304,6 +305,49 @@ class TestGradeLevelCreateView(TestCase):
 
         with self.login(user):
             response = self.get("schools:grade_level_create", uuid=school_year.uuid)
+
+        self.response_404(response)
+
+
+class TestGradeLevelUpdateView(TestCase):
+    def test_unauthenticated_access(self):
+        grade_level = SchoolBreakFactory()
+        self.assertLoginRequired("schools:grade_level_edit", uuid=grade_level.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:grade_level_edit", uuid=grade_level.uuid)
+
+        assert self.get_context("school_year") == grade_level.school_year
+
+    def test_post(self):
+        """A user can update a grade level for their school year."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        data = {"school_year": str(grade_level.school_year.id), "name": "12th Grade"}
+
+        with self.login(user):
+            response = self.post(
+                "schools:grade_level_edit", uuid=grade_level.uuid, data=data
+            )
+
+        grade_level.refresh_from_db()
+        assert grade_level.name == "12th Grade"
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=grade_level.school_year.uuid
+        )
+
+    def test_only_users_grade_levels(self):
+        """A user can only edit their own grade levels."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory()
+
+        with self.login(user):
+            response = self.get("schools:grade_level_edit", uuid=grade_level.uuid)
 
         self.response_404(response)
 
