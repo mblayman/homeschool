@@ -58,7 +58,7 @@ class AppView(LoginRequiredMixin, TemplateView):
             SchoolYear.objects.filter(
                 school=self.request.user.school, start_date__lte=day, end_date__gte=day
             )
-            .prefetch_related("grade_levels", "grade_levels__courses")
+            .prefetch_related("grade_levels")
             .first()
         )
 
@@ -170,7 +170,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
             SchoolYear.objects.filter(
                 school=self.request.user.school, start_date__lte=day, end_date__gte=day
             )
-            .prefetch_related("grade_levels", "grade_levels__courses")
+            .prefetch_related("grade_levels")
             .first()
         )
 

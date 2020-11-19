@@ -144,10 +144,10 @@ class Student(models.Model):
         )
         if enrollment:
             # This looks goofy, but it operates under the assumption
-            # school year did all the prefetching on grade levels and courses.
+            # school year did all the prefetching on grade levels.
             for grade_level in school_year.grade_levels.all():
                 if grade_level.id == enrollment.grade_level_id:
-                    courses = list(grade_level.courses.all())
+                    courses = grade_level.get_ordered_courses()
                     self._enrollment_by_course_cache.update(
                         {course: enrollment for course in courses}
                     )
