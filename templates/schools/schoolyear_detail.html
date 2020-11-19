@@ -139,10 +139,14 @@
             <div class="w-3/12">
               <div class="rounded overflow-hidden bg-white shadow-md m-3">
                 <div class="px-4 py-4">
-                  <div class="font-light text-lg border-b border-yellow-400 pb-1 mb-3">
+                  <div class="font-light text-lg border-b border-yellow-400 pb-1 mb-3 flex w-full items-center">
                     <a href="{% url "courses:detail" course.uuid %}" class="hover:underline">
                       {{ course.name }}
                     </a>
+                    <div class="flex-grow"></div>
+                    <div class="text-xs text-gray-500">
+                      #{{ forloop.counter }}
+                    </div>
                   </div>
                   <div class="flex flex-row justify-between">
                     <p class="text-gray-500 text-sm">
