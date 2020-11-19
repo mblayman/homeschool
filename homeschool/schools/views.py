@@ -1,9 +1,11 @@
 from typing import Optional
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -198,6 +200,36 @@ class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+
+def move_course(user, grade_level_uuid, course_uuid, direction):
+    """Move the course ordering in the specified direction."""
+    grade_level = get_object_or_404(
+        GradeLevel, uuid=grade_level_uuid, school_year__school__admin=user
+    )
+    through = get_object_or_404(
+        grade_level.courses.through,
+        grade_level__uuid=grade_level_uuid,
+        course__uuid=course_uuid,
+    )
+    getattr(through, direction)()
+    return HttpResponseRedirect(
+        reverse("schools:grade_level_edit", args=[grade_level_uuid])
+    )
+
+
+@login_required
+@require_POST
+def move_course_down(request, uuid, course_uuid):
+    """Move a course down in the ordering."""
+    return move_course(request.user, uuid, course_uuid, "down")
+
+
+@login_required
+@require_POST
+def move_course_up(request, uuid, course_uuid):
+    """Move a course up in the ordering."""
+    return move_course(request.user, uuid, course_uuid, "up")
 
 
 class SchoolBreakCreateView(LoginRequiredMixin, CreateView):

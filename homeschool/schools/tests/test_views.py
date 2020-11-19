@@ -352,6 +352,62 @@ class TestGradeLevelUpdateView(TestCase):
         self.response_404(response)
 
 
+class TestCourseTaskDown(TestCase):
+    def test_unauthenticated_access(self):
+        grade_level = GradeLevelFactory()
+        course = CourseFactory(grade_levels=[grade_level])
+        self.assertLoginRequired(
+            "schools:course_down", uuid=grade_level.uuid, course_uuid=course.uuid
+        )
+
+    def test_post(self):
+        """A course is moved down."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        first_course = CourseFactory(grade_levels=[grade_level])
+        second_course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            response = self.post(
+                "schools:course_down",
+                uuid=grade_level.uuid,
+                course_uuid=first_course.uuid,
+            )
+
+        assert response.get("Location") == self.reverse(
+            "schools:grade_level_edit", grade_level.uuid
+        )
+        assert list(grade_level.get_ordered_courses()) == [second_course, first_course]
+
+
+class TestCourseTaskUp(TestCase):
+    def test_unauthenticated_access(self):
+        grade_level = GradeLevelFactory()
+        course = CourseFactory(grade_levels=[grade_level])
+        self.assertLoginRequired(
+            "schools:course_up", uuid=grade_level.uuid, course_uuid=course.uuid
+        )
+
+    def test_post(self):
+        """A course is moved up."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        first_course = CourseFactory(grade_levels=[grade_level])
+        second_course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            response = self.post(
+                "schools:course_up",
+                uuid=grade_level.uuid,
+                course_uuid=second_course.uuid,
+            )
+
+        assert response.get("Location") == self.reverse(
+            "schools:grade_level_edit", grade_level.uuid
+        )
+        assert list(grade_level.get_ordered_courses()) == [second_course, first_course]
+
+
 class TestSchoolBreakCreateView(TestCase):
     def test_unauthenticated_access(self):
         school_year = SchoolYearFactory()

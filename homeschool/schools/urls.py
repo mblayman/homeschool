@@ -36,6 +36,16 @@ urlpatterns = [
         name="grade_level_edit",
     ),
     path(
+        "grade-levels/<uuid:uuid>/courses/<uuid:course_uuid>/down/",
+        views.move_course_down,
+        name="course_down",
+    ),
+    path(
+        "grade-levels/<uuid:uuid>/courses/<uuid:course_uuid>/up/",
+        views.move_course_up,
+        name="course_up",
+    ),
+    path(
         "school-years/<uuid:uuid>/breaks/",
         views.SchoolBreakCreateView.as_view(),
         name="school_break_create",
