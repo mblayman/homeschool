@@ -1,9 +1,13 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head_title %}Log In{% endblock %}
 
 {% block main %}
   <div class="w-full max-w-xs mx-auto">
+    <div class="text-center mb-4 w-full">
+      <img src="{% static "logo.svg" %}" class="h-32 w-32 mx-auto" alt="School Desk logo">
+    </div>
     <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST">
       {% csrf_token %}
       <h1 class="font-bold text-xl mb-2">Log In</h1>

@@ -1,11 +1,14 @@
 {% extends "base.html" %}
-{% load waffle_tags %}
+{% load static waffle_tags %}
 
 {% block head_title %}Sign Up{% endblock %}
 
 {% block main %}
   <div class="w-full max-w-xs mx-auto">
     {% flag signup_flag %}
+      <div class="text-center mb-4 w-full">
+        <img src="{% static "logo.svg" %}" class="h-32 w-32 mx-auto" alt="School Desk logo">
+      </div>
       <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST" action="?next={% url "core:start" %}">
         {% csrf_token %}
         <h1 class="font-bold text-xl mb-2">Sign Up</h1>
@@ -47,7 +50,16 @@
             <p class="text-red-500 text-xs italic mt-4">{{ error }}</p>
           {% endfor %}
         {% endif %}
+        <p class="text-xs text-muted mt-6 leading-snug">
+          By continuing,
+          you agree to School Desk&rsquo;s
+          <a href="{% url "core:terms" %}" class="underline" target="_blank">Terms of Service</a> and
+          <a href="{% url "core:privacy" %}" class="underline" target="_blank">Privacy Policy</a>.
+        </p>
       </form>
+      <p class="text-center text-blue-900 text-xl font-thin mt-8">
+        Your 60 day free trial awaits!
+      </p>
   {% else %}
     <p class="font-thin mb-4">
       We're not quite ready yet for broad use.
