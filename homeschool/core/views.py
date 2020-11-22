@@ -1,6 +1,5 @@
 import datetime
 
-import waffle
 from dateutil.parser import parse
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -138,8 +137,7 @@ class AppView(LoginRequiredMixin, TemplateView):
         """Check if the "What's New?" badge should be displayed."""
         user = self.request.user
         return (
-            waffle.flag_is_active(self.request, "whats_new_flag")
-            and user.profile.wants_announcements
+            user.profile.wants_announcements
             and Notification.objects.filter(
                 user=user, status=Notification.NotificationStatus.UNREAD
             ).exists()
