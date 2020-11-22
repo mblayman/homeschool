@@ -133,6 +133,7 @@ class TestCourseCreateView(TestCase):
             "friday": "on",
             "grade_levels": str(grade_level.id),
             "default_task_duration": 45,
+            "is_active": False,
         }
 
         with self.login(user):
@@ -145,6 +146,7 @@ class TestCourseCreateView(TestCase):
         assert self.reverse("courses:detail", uuid=course.uuid) in response.get(
             "Location"
         )
+        assert not course.is_active
 
     def test_course_copy_fills_form_fields(self):
         """The course to copy fills in the course form."""
@@ -274,6 +276,7 @@ class TestCourseEditView(TestCase):
             "friday": "on",
             "grade_levels": str(grade_level.id),
             "default_task_duration": 45,
+            "is_active": False,
         }
 
         with self.login(user):
@@ -282,6 +285,7 @@ class TestCourseEditView(TestCase):
         course.refresh_from_db()
         assert course.name == "New course name"
         assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
+        assert not course.is_active
 
 
 class TestCourseCopySelectView(TestCase):

@@ -26,6 +26,9 @@ class Course(DaysOfWeekModel):
     default_task_duration = models.IntegerField(
         default=30, help_text="The default task duration in minutes"
     )
+    is_active = models.BooleanField(
+        default=True, help_text="Is this course active in the schedule?"
+    )
 
     @property
     def is_running(self):

@@ -342,6 +342,16 @@ class TestGradeLevel(TestCase):
 
         assert grade_level.uuid == grade_level_uuid
 
+    def test_get_active_course(self):
+        """The grade level can get its active courses."""
+        grade_level = GradeLevelFactory()
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseFactory(grade_levels=[grade_level], is_active=False)
+
+        courses = grade_level.get_active_courses()
+
+        assert courses == [course]
+
 
 class TestSchoolBreak(TestCase):
     def test_factory(self):

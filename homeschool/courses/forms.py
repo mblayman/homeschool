@@ -13,7 +13,9 @@ class CourseForm(DaysOfWeekModelForm):
             "name",
             "default_task_duration",
             "grade_levels",
+            "is_active",
         ] + DaysOfWeekModelForm.days_of_week_fields
+        labels = {"is_active": "Is Active?"}
 
     grade_levels = forms.ModelMultipleChoiceField(queryset=GradeLevel.objects.none())
 

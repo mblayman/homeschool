@@ -71,7 +71,8 @@ class TestStudent(TestCase):
 
         assert str(student) == student.full_name
 
-    def test_get_courses(self):
+    def test_get_active_courses(self):
+        """Get the student's active courses."""
         enrollment = EnrollmentFactory()
         student = enrollment.student
         school_year = enrollment.grade_level.school_year
@@ -79,7 +80,7 @@ class TestStudent(TestCase):
         course = CourseFactory()
         course.grade_levels.add(enrollment.grade_level)
 
-        courses = student.get_courses(school_year)
+        courses = student.get_active_courses(school_year)
 
         assert list(courses) == [course]
 
@@ -88,7 +89,7 @@ class TestStudent(TestCase):
         student = StudentFactory()
         school_year = SchoolYearFactory()
 
-        courses = student.get_courses(school_year)
+        courses = student.get_active_courses(school_year)
 
         assert courses == []
 

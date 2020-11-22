@@ -2,7 +2,7 @@
   {% if no_label %}
     <div class="w-full">
   {% else %}
-    <div class="md:w-1/4">
+    <div class="md:w-1/4 {% if field.field.widget.input_type == "checkbox" %}self-start{% endif %}">
       <label class="block text-blue-900 font-thin md:text-right mb-1 md:mb-0 pr-4" for="{{ field.id_for_label }}">
         {{ field.label|title }}
       </label>
@@ -17,7 +17,10 @@
         {% if autofocus %}autofocus{% endif %}
         >{% if field.value %}{{ field.value|safe|escape }}{% endif %}</textarea>
     {% elif field.field.widget.input_type == "checkbox" %}
-      <input type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
+      <input class="ml-1" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
+      {% if field.help_text %}
+        <div class="ml-1 mt-2 text-sm text-gray-600 font-thin">{{ field.help_text }}</div>
+      {% endif %}
     {% else %}
       <input class="bg-white appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none
         {% if field.errors %}border-red-500 focus:border-red-500{% else %}focus:border-blue-500{% endif %}"

@@ -210,7 +210,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def get_student_schedule(self, student, today, day, school_year):
         """Get the daily schedule for the student."""
-        courses = student.get_courses(school_year)
+        courses = student.get_active_courses(school_year)
         day_coursework = student.get_day_coursework(day)
         completed_task_ids = list(
             Coursework.objects.filter(

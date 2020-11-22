@@ -53,7 +53,7 @@ class Student(models.Model):
         as of today. The week is not necessarily *this* week.
         """
         week_dates = school_year.get_week_dates_for(week)
-        courses = self.get_courses(school_year)
+        courses = self.get_active_courses(school_year)
         week_coursework = self.get_week_coursework(week)
 
         week_start_date = week.first_day
@@ -133,8 +133,8 @@ class Student(models.Model):
             schedule["courses"].append(course_schedule)
         return schedule
 
-    def get_courses(self, school_year):
-        """Get the courses from the school year."""
+    def get_active_courses(self, school_year):
+        """Get the active courses from the school year."""
         enrollment = (
             Enrollment.objects.filter(
                 student=self, grade_level__in=school_year.grade_levels.all()
@@ -147,7 +147,7 @@ class Student(models.Model):
             # school year did all the prefetching on grade levels.
             for grade_level in school_year.grade_levels.all():
                 if grade_level.id == enrollment.grade_level_id:
-                    courses = grade_level.get_ordered_courses()
+                    courses = grade_level.get_active_courses()
                     self._enrollment_by_course_cache.update(
                         {course: enrollment for course in courses}
                     )

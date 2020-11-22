@@ -144,6 +144,10 @@ class GradeLevel(models.Model):
             ).select_related("course")
         ]
 
+    def get_active_courses(self):
+        """Get the courses that are active."""
+        return [course for course in self.get_ordered_courses() if course.is_active]
+
     def __str__(self):
         return self.name
 
