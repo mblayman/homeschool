@@ -122,7 +122,9 @@
     {% for grade_level_info in grade_levels %}
       <div class="bg-gray-100 rounded-lg py-4 mb-8">
         <div class="flex flex-row items-center">
-          <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
+          <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.uuid %}" class="hover:underline">
+            <h2 class="font-thin text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
+          </a>
           <div class="flex-grow"></div>
           <div>
             <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.uuid %}" class="text-gray-400 hover:text-gray-700">
