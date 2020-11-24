@@ -1056,6 +1056,43 @@ class TestStartGradeLevelView(TestCase):
         assert form.non_field_errors() == ["Invalid school year."]
 
 
+class TestStartCourseView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:start-course")
+
+    def test_ok(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("core:start-course")
+
+        assert self.get_context("grade_level") == grade_level
+        assert self.get_context("course") == course
+
+    def test_only_users_grade_level(self):
+        """The grade level must belong to the user."""
+        user = self.make_user()
+        GradeLevelFactory()
+
+        with self.login(user):
+            self.get_check_200("core:start-course")
+
+        assert self.get_context("grade_level") is None
+
+    def test_only_users_course(self):
+        """The course must belong to the user for the grade level."""
+        user = self.make_user()
+        GradeLevelFactory(school_year__school=user.school)
+        CourseFactory()
+
+        with self.login(user):
+            self.get_check_200("core:start-course")
+
+        assert self.get_context("course") is None
+
+
 class TestBoom(TestCase):
     def test_non_staff(self):
         """A non-staff user cannot trigger the error page."""

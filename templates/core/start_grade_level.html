@@ -8,9 +8,7 @@
 
   <div class="flex flex-row {% if grade_level or not school_year %}items-center{% endif %} w-full">
     <div class="w-1/2 text-center">
-      <div class="mb-8">
-        <img src="{% static "grade-level.svg" %}" alt="Two school friends chatting">
-      </div>
+      <img src="{% static "grade-level.svg" %}" alt="Two school friends chatting">
     </div>
     <div class="w-1/2 ml-8 text-blue-900 font-light">
       {% if grade_level %}

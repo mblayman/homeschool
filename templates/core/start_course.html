@@ -8,7 +8,7 @@
 
   <div class="flex flex-row {% if course or not grade_level %}items-center{% endif %} w-full">
     <div class="w-1/2 mr-8 text-blue-900 font-light">
-      {% if grade_level %}
+      {% if course %}
         <p class="mb-8">
           You already created your first course.
           The next step is to create a task for the course.
@@ -16,8 +16,9 @@
         <div class="text-center">
           <a href="{% url "core:start-course-task" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Make Your First Task</a>
         </div>
-      {% elif not school_year %}
+      {% elif grade_level %}
         <p class="ml-10 mb-2">
+          TODO
           Each of your students will be enrolled in a grade level for the school year.
           If you have more than one student in your school,
           you will be able to add more grade levels in the future.
@@ -56,9 +57,7 @@
       {% endif %}
     </div>
     <div class="w-1/2 text-center">
-      <div class="mb-8">
-        <img src="{% static "course.svg" %}" alt="Teacher contemplating lesson plans">
-      </div>
+      <img src="{% static "course.svg" %}" alt="Teacher contemplating lesson plans">
     </div>
   </div>
 {% endblock %}

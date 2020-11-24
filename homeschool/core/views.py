@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.views.generic import CreateView, TemplateView
 
 from homeschool.core.schedules import Week
-from homeschool.courses.models import GradedWork
+from homeschool.courses.models import Course, GradedWork
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
@@ -431,6 +431,20 @@ class StartGradeLevelView(LoginRequiredMixin, CreateView):
 
 class StartCourseView(LoginRequiredMixin, TemplateView):
     template_name = "core/start_course.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        grade_level = GradeLevel.objects.filter(
+            school_year__school=self.request.user.school
+        ).first()
+        context["grade_level"] = grade_level
+        if grade_level:
+            context["course"] = (
+                Course.objects.filter(grade_levels__in=[context["grade_level"]])
+                .distinct()
+                .first()
+            )
+        return context
 
 
 class StartCourseTaskView(LoginRequiredMixin, TemplateView):
