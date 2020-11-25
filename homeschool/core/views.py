@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from dateutil.parser import parse
 from django.contrib import messages
@@ -9,9 +10,11 @@ from django.shortcuts import render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.views.generic import CreateView, TemplateView
 
 from homeschool.core.schedules import Week
+from homeschool.courses.forms import CourseForm
 from homeschool.courses.models import Course, GradedWork
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
@@ -429,22 +432,36 @@ class StartGradeLevelView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class StartCourseView(LoginRequiredMixin, TemplateView):
+class StartCourseView(LoginRequiredMixin, CreateView):
     template_name = "core/start_course.html"
+    form_class = CourseForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        grade_level = GradeLevel.objects.filter(
-            school_year__school=self.request.user.school
-        ).first()
-        context["grade_level"] = grade_level
-        if grade_level:
+        context["grade_level"] = self.grade_level
+        if self.grade_level:
             context["course"] = (
-                Course.objects.filter(grade_levels__in=[context["grade_level"]])
+                Course.objects.filter(grade_levels__in=[self.grade_level])
                 .distinct()
                 .first()
             )
         return context
+
+    def get_success_url(self):
+        return reverse("core:start-course-task")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["school_year"] = (
+            self.grade_level.school_year if self.grade_level else None
+        )
+        return kwargs
+
+    @cached_property
+    def grade_level(self) -> Optional[GradeLevel]:
+        return GradeLevel.objects.filter(
+            school_year__school=self.request.user.school
+        ).first()
 
 
 class StartCourseTaskView(LoginRequiredMixin, TemplateView):

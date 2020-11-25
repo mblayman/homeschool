@@ -1092,6 +1092,22 @@ class TestStartCourseView(TestCase):
 
         assert self.get_context("course") is None
 
+    def test_post(self):
+        """A successful POST creates a course."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        data = {
+            "name": "Astronomy",
+            "default_task_duration": "30",
+            "grade_levels": str(grade_level.id),
+        }
+
+        with self.login(user):
+            response = self.post("core:start-course", data=data)
+
+        assert response.status_code == 302
+        assert response["Location"] == self.reverse("core:start-course-task")
+
 
 class TestBoom(TestCase):
     def test_non_staff(self):

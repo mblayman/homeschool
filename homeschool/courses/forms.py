@@ -29,6 +29,9 @@ class CourseForm(DaysOfWeekModelForm):
         )
 
     def clean(self):
+        if not self.school_year:
+            raise forms.ValidationError("A school year is missing.")
+
         if not self.school_year.is_superset(self.get_days_of_week()):
             raise forms.ValidationError(
                 "The course must run within school year days:"

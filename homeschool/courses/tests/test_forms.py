@@ -29,6 +29,21 @@ class TestCourseForm(TestCase):
             in form.non_field_errors()
         )
 
+    def test_no_school_year_clean(self):
+        """A school year is required to clean the data."""
+        data = {
+            "name": "Will Not Work",
+            "default_task_duration": "30",
+            "grade_levels": ["42"],
+            "tuesday": "on",
+        }
+        form = CourseForm(school_year=None, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "A school year is missing." in form.non_field_errors()
+
 
 class TestCourseResourceForm(TestCase):
     def test_invalid_course(self):

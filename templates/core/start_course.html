@@ -10,7 +10,7 @@
     <div class="w-1/2 mr-8 text-blue-900 font-light">
       {% if course %}
         <p class="mb-8">
-          You already created your first course.
+          Your first course is ready to go.
           The next step is to create a task for the course.
         </p>
         <div class="text-center">
@@ -18,29 +18,30 @@
         </div>
       {% elif grade_level %}
         <p class="ml-10 mb-2">
-          TODO
-          Each of your students will be enrolled in a grade level for the school year.
-          If you have more than one student in your school,
-          you will be able to add more grade levels in the future.
+          Please tell us a course you want to add to <strong>{{ grade_level }}</strong>.
+          Your enrolled student will take the courses
+          that you include in the grade level.
         </p>
         <p class="ml-10 mb-2">
-          These starting steps are designed to show you all the parts needed
-          for one grade,
-          and you may add more later.
+          After you’ve created your courses,
+          you can arrange them in whatever order you’d like.
+          You can also set many other details
+          about the course later.
         </p>
         <p class="ml-10 mb-6">
-          Please tell us what you want to call your grade level.
+          What is the name of your first course?
         </p>
         {% include "forms/non_field_errors.html" %}
         <form method="post" class="w-full max-w-lg">
           {% csrf_token %}
-          <input type="hidden" name="school_year" value="{{ school_year.id }}">
+          <input type="hidden" name="grade_levels" value="{{ grade_level.id }}">
+          <input type="hidden" name="default_task_duration" value="30">
           {% include "forms/field.html" with field=form.name placeholder="e.g., “Math” or “Chemistry”" autofocus=True %}
           <div class="md:flex md:items-center">
             <div class="md:w-1/4"></div>
             <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
               <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                Create Grade Level
+                Create Course
               </button>
             </div>
           </div>
