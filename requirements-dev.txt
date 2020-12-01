@@ -8,4 +8,4 @@ pip-tools
 pre-commit
 pygraphviz==1.6
 pytest-django==4.1.0
-responses==0.10.15
+responses==0.12.1
