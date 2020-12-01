@@ -13,4 +13,3 @@ updates:
       # responses has a pinning conflict in 0.12.1 with urllib3.
       # pip doesn't fail on but issues a warning. Stop updating it for now.
       - dependency-name: "responses"
-        versions: "<0.11"
