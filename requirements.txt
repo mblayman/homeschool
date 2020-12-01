@@ -25,7 +25,7 @@ django-ordered-model==3.4.1  # via -r requirements.in
 django-tz-detect==0.3.0   # via -r requirements.in
 django-waffle==2.0.0      # via -r requirements.in
 django==3.1.4             # via -r requirements.in, django-allauth, django-debug-toolbar, django-heroku, django-tz-detect
-freezegun==0.3.15         # via -r requirements.in
+freezegun==1.0.0          # via -r requirements.in
 gunicorn==20.0.4          # via -r requirements.in
 idna==2.8                 # via requests
 oauthlib==3.1.0           # via requests-oauthlib
@@ -40,7 +40,7 @@ pytz==2019.3              # via django, django-tz-detect
 requests-oauthlib==1.3.0  # via django-allauth
 requests==2.25.0          # via -r requirements.in, django-allauth, requests-oauthlib, rollbar
 rollbar==0.15.1           # via -r requirements.in
-six==1.14.0               # via bleach, cryptography, django-compat, django-tz-detect, freezegun, packaging, python-dateutil, rollbar
+six==1.14.0               # via bleach, cryptography, django-compat, django-tz-detect, packaging, python-dateutil, rollbar
 soupsieve==1.9.5          # via beautifulsoup4
 sqlparse==0.3.0           # via django, django-debug-toolbar
 urllib3==1.25.7           # via requests
