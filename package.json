@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "15.x"
+  },
   "dependencies": {
     "tailwindcss": "^1.9.6"
   }
