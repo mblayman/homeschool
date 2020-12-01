@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "tailwindcss build frontend/site.css -c frontend/tailwind.config.js -o static/site.css"
+  },
   "engines": {
     "node": "15.x"
   },

@@ -124,3 +124,4 @@ resources/
 
 # JavaScript
 node_modules/
+static/site.css
