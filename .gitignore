@@ -121,3 +121,6 @@ staticfiles/
 # Blog
 blog_out/
 resources/
+
+# JavaScript
+node_modules/
