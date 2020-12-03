@@ -14,8 +14,8 @@ from django.utils.functional import cached_property
 from django.views.generic import CreateView, TemplateView
 
 from homeschool.core.schedules import Week
-from homeschool.courses.forms import CourseForm
-from homeschool.courses.models import Course, GradedWork
+from homeschool.courses.forms import CourseForm, CourseTaskForm
+from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
@@ -464,8 +464,31 @@ class StartCourseView(LoginRequiredMixin, CreateView):
         ).first()
 
 
-class StartCourseTaskView(LoginRequiredMixin, TemplateView):
-    template_name = "core/start_course.html"
+class StartCourseTaskView(LoginRequiredMixin, CreateView):
+    template_name = "core/start_course_task.html"
+    form_class = CourseTaskForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = (
+            Course.objects.filter(
+                grade_levels__school_year__school=self.request.user.school
+            )
+            .distinct()
+            .first()
+        )
+        context["course"] = course
+        if course:
+            context["task"] = CourseTask.objects.filter(course=course).first()
+        return context
+
+    def get_success_url(self):
+        return reverse("schools:current_school_year")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
 
 @staff_member_required

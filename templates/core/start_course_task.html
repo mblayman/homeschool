@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Make a Task{% endblock %}
+
+{% block main %}
+  {% include "core/start_banner.html" with step="task" %}
+
+  <div class="flex flex-row {% if task or not course %}items-center{% endif %} w-full">
+    <div class="w-1/2 text-center">
+      <img src="{% static "todo.svg" %}" alt="Things to do">
+    </div>
+    <div class="w-1/2 ml-8 text-blue-900 font-light">
+      {% if task %}
+        <p class="mb-8">
+          Your first task is complete.
+          You can check out your school year.
+        </p>
+        <div class="text-center">
+          <a href="{% url "schools:current_school_year" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">See Your School Year</a>
+        </div>
+      {% elif course %}
+        <p class="ml-10 mb-2">
+          It’s time to create your first task
+          for <strong>{{ course }}</strong>
+          that your student will do.
+        </p>
+        <p class="ml-10 mb-6">
+          How would you describe the task?
+        </p>
+        {% include "forms/non_field_errors.html" %}
+        <form method="post" class="w-full max-w-lg">
+          {% csrf_token %}
+          <input type="hidden" name="course" value="{{ course.id }}">
+          <input type="hidden" name="duration" value="{{ course.default_task_duration }}">
+          {% include "forms/field.html" with field=form.description placeholder="e.g., “Read chapter 1”" autofocus=True %}
+          <div class="md:flex md:items-center">
+            <div class="md:w-1/4"></div>
+            <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
+              <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Create Task
+              </button>
+            </div>
+          </div>
+        </form>
+      {% else %}
+        <p class="mb-8">
+          Before you can make a task,
+          you need a course.
+        </p>
+        <div class="text-center">
+          <a href="{% url "core:start-course" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create Course</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

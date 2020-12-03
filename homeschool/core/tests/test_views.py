@@ -10,7 +10,7 @@ from django.contrib.messages.storage.cookie import CookieStorage
 from django.utils import timezone
 
 from homeschool.core.schedules import Week
-from homeschool.courses.models import Course
+from homeschool.courses.models import Course, CourseTask
 from homeschool.courses.tests.factories import (
     CourseFactory,
     CourseTaskFactory,
@@ -1107,6 +1107,64 @@ class TestStartCourseView(TestCase):
 
         assert response.status_code == 302
         assert response["Location"] == self.reverse("core:start-course-task")
+        assert Course.objects.filter(name="Astronomy").exists()
+
+
+class TestStartCourseTaskView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("core:start-course-task")
+
+    def test_ok(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("core:start-course-task")
+
+        assert self.get_context("course") == course
+        assert self.get_context("task") == task
+
+    def test_only_users_course(self):
+        """The course must belong to the user."""
+        user = self.make_user()
+        CourseFactory()
+
+        with self.login(user):
+            self.get_check_200("core:start-course-task")
+
+        assert self.get_context("course") is None
+
+    def test_only_users_course_task(self):
+        """The task must belong to the user."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory()
+
+        with self.login(user):
+            self.get_check_200("core:start-course-task")
+
+        assert self.get_context("task") is None
+
+    def test_post(self):
+        """A successful POST creates a course."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "description": "My first task",
+            "duration": str(course.default_task_duration),
+            "course": str(course.id),
+        }
+
+        with self.login(user):
+            response = self.post("core:start-course-task", data=data)
+
+        assert response.status_code == 302
+        assert response["Location"] == self.reverse("schools:current_school_year")
+        assert CourseTask.objects.filter(description="My first task").exists()
 
 
 class TestBoom(TestCase):

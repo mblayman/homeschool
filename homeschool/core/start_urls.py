@@ -7,5 +7,5 @@ urlpatterns = [
     path("school-year/", views.StartSchoolYearView.as_view(), name="start-school-year"),
     path("grade-level/", views.StartGradeLevelView.as_view(), name="start-grade-level"),
     path("course/", views.StartCourseView.as_view(), name="start-course"),
-    path("task/", views.StartCourseView.as_view(), name="start-course-task"),
+    path("task/", views.StartCourseTaskView.as_view(), name="start-course-task"),
 ]
