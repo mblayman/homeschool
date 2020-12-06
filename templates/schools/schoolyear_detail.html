@@ -4,6 +4,33 @@
 {% block head_title %}{{ schoolyear }} School Year{% endblock %}
 
 {% block main %}
+  {% if request.GET.welcome %}
+    <div class="flex items-center bg-blue-100 w-full rounded-lg p-8 mb-8">
+      <div class="w-1/2">
+        <img src="{% static "celebrate.svg" %}" alt="Celebrate!">
+      </div>
+      <div class="ml-16 w-1/2 text-blue-900 font-thin">
+        <h2 class="text-2xl mb-4">Awesome! You’re Ready To Build Your School Year!</h2>
+        <p class="mb-4">
+          Congratulations on getting your school started.
+          Now that you’ve created your first task,
+          you’re ready to keep building your school year.
+        </p>
+        <p class="mb-4">
+          From here, you have some different options:
+        </p>
+        <ul class="list-disc list-inside mb-4">
+          <li class="mb-2"><a class="underline" href="{% url "schools:grade_level_create" schoolyear.uuid %}">Create another grade level.</a></li>
+          <li class="mb-2"><a class="underline" href="{% url "students:create" %}">Add your first student.</a></li>
+          <li class="mb-2"><a class="underline" href="{% url "courses:task_create" request.GET.welcome %}">Add more tasks to your course.</a></li>
+        </ul>
+        <p class="mb-4">
+          We hope you’ll find School Desk a joy to use.
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
   <h1 class="font-thin text-2xl text-blue-900 mb-8">
     <a href="{% url "schools:school_year_list" %}" class="hover:underline">School Years</a>
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>

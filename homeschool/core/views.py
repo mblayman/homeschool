@@ -483,7 +483,10 @@ class StartCourseTaskView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("schools:current_school_year")
+        return (
+            reverse("schools:current_school_year")
+            + f"?welcome={self.object.course.uuid}"
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
