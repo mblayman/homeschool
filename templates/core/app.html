@@ -1,21 +1,42 @@
 {% extends "app_base.html" %}
+{% load static %}
 
-{% block head_title %}{% if user.first_name %}{{ user.first_name }}’s School{% else %}Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}{% endif %}{% endblock %}
+{% block head_title %}{% if first_day %}{% if user.first_name %}{{ user.first_name }}’s School{% else %}Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}{% endif %}{% else %}Your School{% endif %}{% endblock %}
 
 {% block main %}
-  <div class="flex flex-row items-center mb-8 print-hide">
-    <h1 class="flex-grow font-thin text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
-    <div class="text-sm text-blue-900 font-thin">
-      <a class="hover:underline" href="{% url "core:weekly" previous_week_date.year previous_week_date.month previous_week_date.day %}">Week of {{ previous_week_date|date:"M j" }}</a>
-      <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
-      <span class="p-2 bg-gray-200 rounded">Week of {{ first_day|date:"M j" }}</span>
-      <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-      <a class="hover:underline" href="{% url "core:weekly" next_week_date.year next_week_date.month next_week_date.day %}">Week of {{ next_week_date|date:"M j" }}</a>
+  {% if not has_school_years %}
+    {% include "core/start_banner.html" %}
+
+    <div class="flex flex-row w-full">
+      <div class="w-1/2 mr-8 text-blue-900 font-light">
+        <p class="ml-10 mb-8">
+          Everything begins with your school year.
+          Each school year tracks your grade levels and sets when school is in session.
+        </p>
+        <div class="text-center">
+          <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create School Year</a>
+        </div>
+      </div>
+      <div class="w-1/2 text-center">
+        <img src="{% static "time.svg" %}" alt="Woman contemplating time">
+      </div>
     </div>
-  </div>
+  {% elif not has_students %}
+  {% else %}
+    <div class="flex flex-row items-center mb-8 print-hide">
+      <h1 class="flex-grow font-thin text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
+      <div class="text-sm text-blue-900 font-thin">
+        <a class="hover:underline" href="{% url "core:weekly" previous_week_date.year previous_week_date.month previous_week_date.day %}">Week of {{ previous_week_date|date:"M j" }}</a>
+        <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
+        <span class="p-2 bg-gray-200 rounded">Week of {{ first_day|date:"M j" }}</span>
+        <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+        <a class="hover:underline" href="{% url "core:weekly" next_week_date.year next_week_date.month next_week_date.day %}">Week of {{ next_week_date|date:"M j" }}</a>
+      </div>
+    </div>
 
-  {% include "print_link.html" %}
+    {% include "print_link.html" %}
 
-  {% include "core/week_schedules.html" with schedules=schedules week_dates=week_dates %}
-  {% include "core/week_schedules.html" with schedules=next_year_schedules week_dates=next_year_week_dates %}
+    {% include "core/week_schedules.html" with schedules=schedules week_dates=week_dates %}
+    {% include "core/week_schedules.html" with schedules=next_year_schedules week_dates=next_year_week_dates %}
+  {% endif %}
 {% endblock %}

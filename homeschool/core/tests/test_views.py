@@ -85,6 +85,8 @@ class TestApp(TestCase):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         first_day = now.date() + relativedelta(weekday=SU(-1))
         timezone.localdate.return_value = now.date()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -97,6 +99,8 @@ class TestApp(TestCase):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         last_day = now.date() + relativedelta(weekday=SA(+1))
         timezone.localdate.return_value = now.date()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -110,6 +114,8 @@ class TestApp(TestCase):
         sunday = now.date() + relativedelta(weekday=SU(-1))
         previous_sunday = sunday - datetime.timedelta(days=7)
         timezone.localdate.return_value = now.date()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -123,6 +129,8 @@ class TestApp(TestCase):
         sunday = now.date() + relativedelta(weekday=SU(-1))
         next_sunday = sunday + datetime.timedelta(days=7)
         timezone.localdate.return_value = now.date()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -135,6 +143,7 @@ class TestApp(TestCase):
         mock_timezone.localdate.return_value = today
         user = self.make_user()
         SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -184,7 +193,7 @@ class TestApp(TestCase):
             end_date=monday + datetime.timedelta(days=4),
         )
 
-        with self.login(user), self.assertNumQueries(14):
+        with self.login(user), self.assertNumQueries(16):
             self.get("core:app")
 
         expected_schedule = {
@@ -238,6 +247,7 @@ class TestApp(TestCase):
             + SchoolYear.THURSDAY
             + SchoolYear.FRIDAY,
         )
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:app")
@@ -249,15 +259,6 @@ class TestApp(TestCase):
             {"date": monday + datetime.timedelta(days=3), "school_break": None},
             {"date": monday + datetime.timedelta(days=4), "school_break": None},
         ]
-
-    def test_no_school_year(self):
-        user = self.make_user()
-        StudentFactory(school=user.school)
-
-        with self.login(user):
-            self.get("core:app")
-
-        self.assertContext("schedules", [])
 
     @mock.patch("homeschool.users.models.timezone")
     def test_weekly(self, timezone):
@@ -282,7 +283,7 @@ class TestApp(TestCase):
         task_2 = CourseTaskFactory(course=course)
         CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
 
-        with self.login(user), self.assertNumQueries(15):
+        with self.login(user), self.assertNumQueries(17):
             self.get("core:weekly", year=2020, month=1, day=27)
 
         expected_schedule = {
@@ -325,6 +326,7 @@ class TestApp(TestCase):
         mock_timezone.localdate.return_value = today
         user = self.make_user()
         SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get(
@@ -402,7 +404,9 @@ class TestApp(TestCase):
         school_year = SchoolYearFactory(school=user.school)
         grade_level = GradeLevelFactory(school_year=school_year)
         grade_level_2 = GradeLevelFactory(school_year=school_year)
-        enrollment = EnrollmentFactory(grade_level=grade_level_2)
+        enrollment = EnrollmentFactory(
+            grade_level=grade_level_2, student__school=user.school
+        )
         enrollment_2 = EnrollmentFactory(grade_level=grade_level)
 
         with self.login(user):
@@ -422,7 +426,9 @@ class TestApp(TestCase):
             end_date=today + relativedelta(years=1, month=12, day=31),
             days_of_week=SchoolYear.ALL_DAYS,
         )
-        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=school_year, student__school=user.school
+        )
         task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
         week = Week(school_year.start_date)
 
@@ -458,7 +464,9 @@ class TestApp(TestCase):
             # Running only on the last possible day should guarantee 1 task/week.
             days_of_week=SchoolYear.SATURDAY,
         )
-        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=school_year, student__school=user.school
+        )
         course = CourseFactory(
             grade_levels=[enrollment.grade_level], days_of_week=Course.SATURDAY
         )
@@ -496,7 +504,9 @@ class TestApp(TestCase):
             end_date=today + relativedelta(years=1, month=12, day=31),
             days_of_week=SchoolYear.ALL_DAYS,
         )
-        enrollment = EnrollmentFactory(grade_level__school_year=next_school_year)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=next_school_year, student__school=user.school
+        )
         task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
         week = Week(next_school_year.start_date)
 
@@ -520,6 +530,8 @@ class TestApp(TestCase):
     def test_show_whats_new_in_context(self):
         """The show_whats_new boolean is in the context."""
         user = self.make_user()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
         NotificationFactory(user=user)
 
         with self.login(user):
@@ -530,6 +542,8 @@ class TestApp(TestCase):
     def test_show_whats_new_does_not_want_announcements(self):
         """The show_whats_new is False for users that don't want announcements."""
         user = self.make_user()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
         user.profile.wants_announcements = False
         user.profile.save()
         NotificationFactory(user=user)
@@ -542,12 +556,36 @@ class TestApp(TestCase):
     def test_show_whats_new_no_unread_notifications(self):
         """The show_whats_new is False when there are no unread notifications."""
         user = self.make_user()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
         NotificationFactory(user=user, status=Notification.NotificationStatus.VIEWED)
 
         with self.login(user):
             self.get_check_200("core:app")
 
         assert not self.get_context("show_whats_new")
+
+    def test_no_school_years(self):
+        """When no school years exist, it is marked in the context."""
+        user = self.make_user()
+        # Other user's school years don't count.
+        SchoolYearFactory()
+
+        with self.login(user):
+            self.get_check_200("core:app")
+
+        assert not self.get_context("has_school_years")
+
+    def test_no_students(self):
+        """When no school years exist, it is marked in the context."""
+        user = self.make_user()
+        # Other user's students don't count.
+        StudentFactory()
+
+        with self.login(user):
+            self.get_check_200("core:app")
+
+        assert not self.get_context("has_students")
 
 
 class TestDaily(TestCase):

@@ -31,7 +31,20 @@ class AppView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        user = self.request.user
 
+        has_school_years = SchoolYear.objects.filter(school=user.school).exists()
+        context["has_school_years"] = has_school_years
+
+        has_students = Student.objects.filter(school=user.school).exists()
+        context["has_students"] = has_students
+
+        if has_school_years and has_students:
+            self.get_week_context_data(context)
+        return context
+
+    def get_week_context_data(self, context):
+        """Get the context data for a week."""
         today = self.request.user.get_local_today()
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")
