@@ -24,7 +24,7 @@
     </p>
   {% endif %}
 
-  <p class="mb-8">
+  <p class="mb-8 print-hide">
     <a href="{% url "courses:task_create" uuid=course.uuid %}{% if last_task %}?previous_task={{ last_task.uuid }}&next={{ request.path|urlencode }}%23task-{{ last_task.uuid }}{% endif %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
       Add New Task
@@ -53,12 +53,12 @@
           {{ task.description|linebreaksbr }}
         </a>
       </div>
-      <div class="w-2/12 p-2 text-sm font-light flex items-center overflow-x-scroll">
+      <div class="w-2/12 p-2 text-sm font-light flex items-center overflow-x-scroll print-hide">
         {% if task.grade_level %}
           {{ task.grade_level.name }}
         {% endif %}
       </div>
-      <div class="p-2 flex items-center justify-center w-2/12 text-gray-300">
+      <div class="p-2 flex items-center justify-center w-2/12 text-gray-300 print-hide">
         {% if task.graded_work %}
           <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Graded Task</title>
