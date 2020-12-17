@@ -76,6 +76,7 @@ class AppView(LoginRequiredMixin, TemplateView):
             .prefetch_related("grade_levels")
             .first()
         )
+        print(school_year)
 
         if school_year:
             context["school_year"] = school_year

@@ -85,7 +85,11 @@ class TestApp(TestCase):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         first_day = now.date() + relativedelta(weekday=SU(-1))
         timezone.localdate.return_value = now.date()
-        SchoolYearFactory(school=user.school)
+        SchoolYearFactory(
+            school=user.school,
+            start_date=now,
+            end_date=now + datetime.timedelta(days=1),
+        )
         StudentFactory(school=user.school)
 
         with self.login(user):
@@ -99,7 +103,11 @@ class TestApp(TestCase):
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         last_day = now.date() + relativedelta(weekday=SA(+1))
         timezone.localdate.return_value = now.date()
-        SchoolYearFactory(school=user.school)
+        SchoolYearFactory(
+            school=user.school,
+            start_date=now,
+            end_date=now + datetime.timedelta(days=1),
+        )
         StudentFactory(school=user.school)
 
         with self.login(user):
@@ -114,7 +122,11 @@ class TestApp(TestCase):
         sunday = now.date() + relativedelta(weekday=SU(-1))
         previous_sunday = sunday - datetime.timedelta(days=7)
         timezone.localdate.return_value = now.date()
-        SchoolYearFactory(school=user.school)
+        SchoolYearFactory(
+            school=user.school,
+            start_date=now,
+            end_date=now + datetime.timedelta(days=1),
+        )
         StudentFactory(school=user.school)
 
         with self.login(user):
@@ -129,7 +141,11 @@ class TestApp(TestCase):
         sunday = now.date() + relativedelta(weekday=SU(-1))
         next_sunday = sunday + datetime.timedelta(days=7)
         timezone.localdate.return_value = now.date()
-        SchoolYearFactory(school=user.school)
+        SchoolYearFactory(
+            school=user.school,
+            start_date=now,
+            end_date=now + datetime.timedelta(days=1),
+        )
         StudentFactory(school=user.school)
 
         with self.login(user):
