@@ -1,4 +1,5 @@
 {% extends "app_base.html" %}
+{% load static %}
 
 {% block head_title %}School Years{% endblock %}
 
@@ -7,16 +8,33 @@
     School Years
   </h1>
 
-  <p class="mb-8">
-    <a href="{% url "schools:school_year_create" %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
-      Add School Year
-    </a>
-  </p>
+  {% if schoolyear_list %}
+    <p class="mb-8">
+      <a href="{% url "schools:school_year_create" %}"
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+        Add School Year
+      </a>
+    </p>
 
-  <ul>
-    {% for school_year in schoolyear_list %}
-    <li class="mb-2"><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">{{ school_year }} School Year</a></li>
-    {% endfor %}
-  </ul>
+    <ul>
+      {% for school_year in schoolyear_list %}
+      <li class="mb-2"><a href="{% url "schools:school_year_detail" school_year.uuid %}" class="hover:underline">{{ school_year }} School Year</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="flex flex-row  w-full">
+      <div class="w-1/2 mr-8 text-blue-900 font-light">
+          <p class="ml-10 mb-6">
+            Everything begins with your school year.
+            Each school year tracks your grade levels and sets when school is in session.
+          </p>
+          <div class="text-center">
+            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create School Year</a>
+          </div>
+      </div>
+      <div class="w-1/2 text-center">
+        <img src="{% static "time.svg" %}" alt="Woman contemplating time">
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
