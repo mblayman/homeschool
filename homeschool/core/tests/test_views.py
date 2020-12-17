@@ -164,6 +164,7 @@ class TestApp(TestCase):
 
         schedules = self.get_context("schedules")
         assert len(schedules[0]["courses"]) > 0
+        assert self.get_context("school_year") == grade_level.school_year
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
@@ -446,6 +447,7 @@ class TestApp(TestCase):
             if course_schedule_item["week_date"] == school_year.start_date:
                 course_day = course_schedule_item
         assert course_day["task"] == task
+        assert self.get_context("school_year") == school_year
 
     def test_future_school_year_advanced_week(self):
         """Looking ahead in a future school year calculates offsets from year start.

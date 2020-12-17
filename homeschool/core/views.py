@@ -78,6 +78,8 @@ class AppView(LoginRequiredMixin, TemplateView):
         )
 
         if school_year:
+            context["school_year"] = school_year
+
             # When the school year isn't in progress yet,
             # the offset calculations should come
             # relative to the start of the school year.
@@ -134,6 +136,7 @@ class AppView(LoginRequiredMixin, TemplateView):
             .first()
         )
         if next_school_year:
+            context["school_year"] = next_school_year
             context["next_year_week_dates"] = self.build_week_dates(
                 next_school_year, week
             )

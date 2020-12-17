@@ -24,7 +24,7 @@
   {% elif not has_students %}
     {% include "core/start_banner.html" %}
     {% include "students/empty_students.html" %}
-  {% else %}
+  {% elif schedules or next_year_schedules %}
     <div class="flex flex-row items-center mb-8 print-hide">
       <h1 class="flex-grow font-thin text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
       <div class="text-sm text-blue-900 font-thin">
@@ -40,5 +40,20 @@
 
     {% include "core/week_schedules.html" with schedules=schedules week_dates=week_dates %}
     {% include "core/week_schedules.html" with schedules=next_year_schedules week_dates=next_year_week_dates %}
+  {% else %}
+    <div class="flex flex-row w-full">
+      <div class="w-1/2 mr-8 text-blue-900 font-light">
+        <p class="ml-10 mb-8">
+          Before you can view the week’s schedule,
+          you need to enroll a student.
+        </p>
+        <div class="text-center">
+          <a href="{% url "students:enrollment_create" school_year.uuid %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Enroll a Student</a>
+        </div>
+      </div>
+      <div class="w-1/2 text-center">
+        <img src="{% static "children.svg" %}" alt="Children playing">
+      </div>
+    </div>
   {% endif %}
 {% endblock %}
