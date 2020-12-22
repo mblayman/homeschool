@@ -1,0 +1,16 @@
+{% load static %}
+
+<div class="flex flex-row w-full">
+  <div class="w-1/2 mr-8 text-blue-900 font-light">
+    <p class="ml-10 mb-8">
+      Everything begins with your school year.
+      Each school year tracks your grade levels and sets when school is in session.
+    </p>
+    <div class="text-center">
+      <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create School Year</a>
+    </div>
+  </div>
+  <div class="w-1/2 text-center">
+    <img src="{% static "time.svg" %}" alt="Woman contemplating time">
+  </div>
+</div>

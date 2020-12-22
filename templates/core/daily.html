@@ -1,126 +1,134 @@
 {% extends "app_base.html" %}
 {% load static %}
 
-{% block head_title %}Day of {{ day|date:"l, N j" }}{% endblock %}
+{% block head_title %}{% if day %}Day of {{ day|date:"l, N j" }}{% else %}Daily{% endif %}{% endblock %}
 
 {% block main %}
-  <div class="flex flex-row items-center">
-    <h1 class="flex-grow font-thin text-2xl text-blue-900">Day of {{ day|date:"l, M j" }}</h1>
-    <div class="text-sm text-blue-900 font-thin print-hide">
-      <a class="hover:underline" href="{% url "core:daily_for_date" ereyesterday.year ereyesterday.month ereyesterday.day %}">{{ ereyesterday|date:"M j" }}</a>
-      <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
-      <a class="hover:underline" href="{% url "core:daily_for_date" yesterday.year yesterday.month yesterday.day %}">{{ yesterday|date:"M j" }}</a>
-      <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
-      <span class="p-2 bg-gray-200 rounded">{{ day|date:"M j" }}</span>
-      <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-      <a class="hover:underline" href="{% url "core:daily_for_date" tomorrow.year tomorrow.month tomorrow.day %}">{{ tomorrow|date:"M j" }}</a>
-      <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-      <a class="hover:underline" href="{% url "core:daily_for_date" overmorrow.year overmorrow.month overmorrow.day %}">{{ overmorrow|date:"M j" }}</a>
-    </div>
-  </div>
-
-  <p class="font-thin text-base text-gray-800 my-2 print-hide">
-    <a class="underline" href="{{ weekly_url }}">Switch to week view</a>
-  </p>
-
-  {% include "print_link.html" %}
-
-  <form method="POST" action="?next={{ request.path|urlencode }}">
-    {% csrf_token %}
-    <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
-  {% for schedule in schedules %}
-  <div class="print-break-after-page">
-    <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
-
-    <div class="flex flex-row max-w-3xl print-hide">
-      <div class="w-3/12"></div>
-      <div class="w-1/12 text-sm text-center py-2">
-        <input type="checkbox" onclick="checkTasks(this, '{{ schedule.student.id }}')">
+  {% if not has_school_years %}
+    {% include "core/start_banner.html" %}
+    {% include "schools/empty_school_years.html" %}
+  {% elif not has_students %}
+    {% include "core/start_banner.html" %}
+    {% include "students/empty_students.html" %}
+  {% else %}
+    <div class="flex flex-row items-center">
+      <h1 class="flex-grow font-thin text-2xl text-blue-900">Day of {{ day|date:"l, M j" }}</h1>
+      <div class="text-sm text-blue-900 font-thin print-hide">
+        <a class="hover:underline" href="{% url "core:daily_for_date" ereyesterday.year ereyesterday.month ereyesterday.day %}">{{ ereyesterday|date:"M j" }}</a>
+        <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
+        <a class="hover:underline" href="{% url "core:daily_for_date" yesterday.year yesterday.month yesterday.day %}">{{ yesterday|date:"M j" }}</a>
+        <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
+        <span class="p-2 bg-gray-200 rounded">{{ day|date:"M j" }}</span>
+        <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+        <a class="hover:underline" href="{% url "core:daily_for_date" tomorrow.year tomorrow.month tomorrow.day %}">{{ tomorrow|date:"M j" }}</a>
+        <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+        <a class="hover:underline" href="{% url "core:daily_for_date" overmorrow.year overmorrow.month overmorrow.day %}">{{ overmorrow|date:"M j" }}</a>
       </div>
-      <div class="text-sm text-center uppercase tracking-wide font-thin -ml-2 py-2 w-20">Complete?</div>
     </div>
-    {% for course_schedule in schedule.courses %}
-      {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
-        <div class="flex flex-row border-t border-yellow-400 max-w-3xl">
-          <div class="w-3/12 text-sm uppercase tracking-wide font-thin py-2 pr-4">
-            <a class="hover:underline" href="{% url "students:course" schedule.student.uuid course_schedule.course.uuid %}">{{ course_schedule.course.name }}</a>
-          </div>
 
-          {% if course_schedule.task %}
-            <div class="w-1/12 text-sm text-center py-2">
-              <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
-              <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
-            </div>
-            <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">{{ course_schedule.task.description|urlize|linebreaksbr }}</div>
+    <p class="font-thin text-base text-gray-800 my-2 print-hide">
+      <a class="underline" href="{{ weekly_url }}">Switch to week view</a>
+    </p>
 
-            <div class="w-1/12 py-2 flex justify-center items-center print-hide">
-              <a href="{% url "courses:task_edit" uuid=course_schedule.task.uuid %}?next={{ request.path|urlencode }}" class="block mx-4 text-gray-300 hover:text-gray-600">
-                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
-              </a>
-            </div>
-          {% elif course_schedule.coursework %}
-            <div class="w-1/12 text-sm text-center py-2">
-              {% for coursework in course_schedule.coursework %}
-                <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
-                <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked><br>
-              {% endfor %}
-            </div>
-            <div class="w-7/12 p-2">
-              {% for coursework in course_schedule.coursework %}
-                <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
-              {% endfor %}
+    {% include "print_link.html" %}
+
+    <form method="POST" action="?next={{ request.path|urlencode }}">
+      {% csrf_token %}
+      <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
+    {% for schedule in schedules %}
+    <div class="print-break-after-page">
+      <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
+
+      <div class="flex flex-row max-w-3xl print-hide">
+        <div class="w-3/12"></div>
+        <div class="w-1/12 text-sm text-center py-2">
+          <input type="checkbox" onclick="checkTasks(this, '{{ schedule.student.id }}')">
+        </div>
+        <div class="text-sm text-center uppercase tracking-wide font-thin -ml-2 py-2 w-20">Complete?</div>
+      </div>
+      {% for course_schedule in schedule.courses %}
+        {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
+          <div class="flex flex-row border-t border-yellow-400 max-w-3xl">
+            <div class="w-3/12 text-sm uppercase tracking-wide font-thin py-2 pr-4">
+              <a class="hover:underline" href="{% url "students:course" schedule.student.uuid course_schedule.course.uuid %}">{{ course_schedule.course.name }}</a>
             </div>
 
-            <div class="w-1/12 py-2 flex justify-center items-center print-hide">
-              {% for coursework in course_schedule.coursework %}
-                <a href="{% url "courses:task_edit" uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="block pb-2 mx-4 text-gray-300 hover:text-gray-600">
+            {% if course_schedule.task %}
+              <div class="w-1/12 text-sm text-center py-2">
+                <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
+                <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
+              </div>
+              <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">{{ course_schedule.task.description|urlize|linebreaksbr }}</div>
+
+              <div class="w-1/12 py-2 flex justify-center items-center print-hide">
+                <a href="{% url "courses:task_edit" uuid=course_schedule.task.uuid %}?next={{ request.path|urlencode }}" class="block mx-4 text-gray-300 hover:text-gray-600">
                   <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
                 </a>
-              {% endfor %}
-            </div>
-          {% elif course_schedule.no_scheduled_task %}
-            <div class="w-1/12 text-sm text-center py-2"></div>
-            <div class="w-7/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll">No scheduled task</div>
-            <div class="w-1/12 py-2 flex justify-center items-center print-hide">
-              <a href="{% url "courses:task_create" uuid=course_schedule.course.uuid %}?next={{ request.path|urlencode }}" class="block mx-4 text-gray-300 hover:text-gray-600">
-                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/></svg>
-              </a>
-            </div>
-          {% endif %}
-        </div>
-      {% endif %}
-    {% endfor %}
-  </div>
-  {% empty %}
-    <div class="flex flex-row justify-between">
-      <div class="w-2/5">
-        <div class="m-8 mt-8 ml-12">
-          <img src="{% static "children.svg" %}" alt="Children playing">
-        </div>
-      </div>
-      <div class="w-3/5">
-        <div class="m-8 ml-12">
-          <h2 class="font-thin text-xl text-blue-900 mb-2">Nothing on the schedule for the day!</h2>
-          <p class="mb-1 font-light">
-            {% if is_break_day %}
-              Today is a school break.
-            {% else %}
-              Your students have no scheduled tasks today.
-            {% endif %}
-          </p>
-        </div>
-      </div>
-    </div>
-  {% endfor %}
+              </div>
+            {% elif course_schedule.coursework %}
+              <div class="w-1/12 text-sm text-center py-2">
+                {% for coursework in course_schedule.coursework %}
+                  <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
+                  <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked><br>
+                {% endfor %}
+              </div>
+              <div class="w-7/12 p-2">
+                {% for coursework in course_schedule.coursework %}
+                  <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
+                {% endfor %}
+              </div>
 
-  {% if schedules %}
-    <div class="flex flex-row max-w-3xl justify-end print-hide">
-      <button class="mt-8 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-        Save
-      </button>
+              <div class="w-1/12 py-2 flex justify-center items-center print-hide">
+                {% for coursework in course_schedule.coursework %}
+                  <a href="{% url "courses:task_edit" uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="block pb-2 mx-4 text-gray-300 hover:text-gray-600">
+                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
+                  </a>
+                {% endfor %}
+              </div>
+            {% elif course_schedule.no_scheduled_task %}
+              <div class="w-1/12 text-sm text-center py-2"></div>
+              <div class="w-7/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll">No scheduled task</div>
+              <div class="w-1/12 py-2 flex justify-center items-center print-hide">
+                <a href="{% url "courses:task_create" uuid=course_schedule.course.uuid %}?next={{ request.path|urlencode }}" class="block mx-4 text-gray-300 hover:text-gray-600">
+                  <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/></svg>
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
     </div>
+    {% empty %}
+      <div class="flex flex-row justify-between">
+        <div class="w-2/5">
+          <div class="m-8 mt-8 ml-12">
+            <img src="{% static "children.svg" %}" alt="Children playing">
+          </div>
+        </div>
+        <div class="w-3/5">
+          <div class="m-8 ml-12">
+            <h2 class="font-thin text-xl text-blue-900 mb-2">Nothing on the schedule for the day!</h2>
+            <p class="mb-1 font-light">
+              {% if is_break_day %}
+                Today is a school break.
+              {% else %}
+                Your students have no scheduled tasks today.
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if schedules %}
+      <div class="flex flex-row max-w-3xl justify-end print-hide">
+        <button class="mt-8 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Save
+        </button>
+      </div>
+    {% endif %}
+    </form>
   {% endif %}
-  </form>
 {% endblock %}
 
 {% block scripts %}

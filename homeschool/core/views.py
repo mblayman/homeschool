@@ -76,7 +76,6 @@ class AppView(LoginRequiredMixin, TemplateView):
             .prefetch_related("grade_levels")
             .first()
         )
-        print(school_year)
 
         if school_year:
             context["school_year"] = school_year
@@ -169,7 +168,19 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        user = self.request.user
 
+        has_school_years = SchoolYear.objects.filter(school=user.school).exists()
+        context["has_school_years"] = has_school_years
+
+        has_students = Student.objects.filter(school=user.school).exists()
+        context["has_students"] = has_students
+
+        if has_school_years and has_students:
+            self.get_daily_context(context)
+        return context
+
+    def get_daily_context(self, context):
         today = self.request.user.get_local_today()
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")

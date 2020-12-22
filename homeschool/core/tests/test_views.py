@@ -613,6 +613,8 @@ class TestDaily(TestCase):
     def test_ok(self):
         user = self.make_user()
         today = timezone.localdate()
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get_check_200("core:daily")
@@ -623,14 +625,16 @@ class TestDaily(TestCase):
             "core:weekly", first_day.year, first_day.month, first_day.day
         )
 
-    def test_no_school_year(self):
+    def test_no_school_years(self):
+        """When no school years exist, it is marked in the context."""
         user = self.make_user()
-        StudentFactory(school=user.school)
+        # Other user's school years don't count.
+        SchoolYearFactory()
 
         with self.login(user):
-            self.get("core:daily")
+            self.get_check_200("core:daily")
 
-        self.assertContext("schedules", [])
+        assert not self.get_context("has_school_years")
 
     @mock.patch("homeschool.users.models.timezone")
     def test_school_not_run_on_day(self, mock_timezone):
@@ -638,6 +642,7 @@ class TestDaily(TestCase):
         mock_timezone.localdate.return_value = sunday
         user = self.make_user()
         SchoolYearFactory(school=user.school, days_of_week=SchoolYear.MONDAY)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:daily")
@@ -652,7 +657,9 @@ class TestDaily(TestCase):
         user = self.make_user()
         SchoolYearFactory()
         school_year = SchoolYearFactory(school=user.school)
-        EnrollmentFactory(grade_level__school_year=school_year)
+        EnrollmentFactory(
+            grade_level__school_year=school_year, student__school=user.school
+        )
 
         with self.login(user):
             self.get("core:daily")
@@ -758,15 +765,24 @@ class TestDaily(TestCase):
     def test_specific_day(self):
         user = self.make_user()
         day = datetime.date(2020, 1, 20)
+        SchoolYearFactory(school=user.school)
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:daily_for_date", year=day.year, month=day.month, day=day.day)
 
         self.assertContext("day", day)
 
-    def test_surrounding_dates_no_school_year(self):
+    def test_surrounding_dates_no_current_school_year(self):
+        """When there is no current school year, pull the dates from today."""
         user = self.make_user()
-        today = timezone.now().date()
+        today = timezone.localdate()
+        SchoolYearFactory(
+            school=user.school,
+            start_date=today - datetime.timedelta(days=5),
+            end_date=today - datetime.timedelta(days=1),
+        )
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:daily")
@@ -787,6 +803,7 @@ class TestDaily(TestCase):
             + SchoolYear.WEDNESDAY
             + SchoolYear.THURSDAY,
         )
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("core:daily")
@@ -807,8 +824,12 @@ class TestDaily(TestCase):
         school_year = SchoolYearFactory(school=user.school)
         grade_level = GradeLevelFactory(school_year=school_year)
         grade_level_2 = GradeLevelFactory(school_year=school_year)
-        enrollment = EnrollmentFactory(grade_level=grade_level_2)
-        enrollment_2 = EnrollmentFactory(grade_level=grade_level)
+        enrollment = EnrollmentFactory(
+            grade_level=grade_level_2, student__school=user.school
+        )
+        enrollment_2 = EnrollmentFactory(
+            grade_level=grade_level, student__school=user.school
+        )
 
         with self.login(user):
             self.get("core:daily")
@@ -901,7 +922,9 @@ class TestDaily(TestCase):
             end_date=today + relativedelta(years=1, month=12, day=31),
             days_of_week=SchoolYear.ALL_DAYS,
         )
-        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=school_year, student__school=user.school
+        )
         task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
 
         with self.login(user):
@@ -930,7 +953,9 @@ class TestDaily(TestCase):
             start_date=school_year.start_date,
             end_date=school_year.end_date,
         )
-        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=school_year, student__school=user.school
+        )
         CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
 
         with self.login(user):
@@ -943,6 +968,17 @@ class TestDaily(TestCase):
 
         assert self.get_context("is_break_day")
         assert self.get_context("schedules") == []
+
+    def test_no_students(self):
+        """When no school years exist, it is marked in the context."""
+        user = self.make_user()
+        # Other user's students don't count.
+        StudentFactory()
+
+        with self.login(user):
+            self.get_check_200("core:daily")
+
+        assert not self.get_context("has_students")
 
 
 class TestStartView(TestCase):
