@@ -41,6 +41,10 @@ class AppView(LoginRequiredMixin, TemplateView):
 
         if has_school_years and has_students:
             self.get_week_context_data(context)
+        else:
+            context["has_tasks"] = CourseTask.objects.filter(
+                course__grade_levels__school_year__school=user.school
+            ).exists()
         return context
 
     def get_week_context_data(self, context):
@@ -178,6 +182,10 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
         if has_school_years and has_students:
             self.get_daily_context(context)
+        else:
+            context["has_tasks"] = CourseTask.objects.filter(
+                course__grade_levels__school_year__school=user.school
+            ).exists()
         return context
 
     def get_daily_context(self, context):

@@ -8,7 +8,9 @@
     {% include "core/start_banner.html" %}
     {% include "schools/empty_school_years.html" %}
   {% elif not has_students %}
-    {% include "core/start_banner.html" %}
+    {% if not has_tasks %}
+      {% include "core/start_banner.html" %}
+    {% endif %}
     {% include "students/empty_students.html" %}
   {% else %}
     <div class="flex flex-row items-center">

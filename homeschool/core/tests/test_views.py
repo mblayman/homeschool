@@ -80,27 +80,11 @@ class TestApp(TestCase):
         self.assertLoginRequired("core:app")
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_has_first_day(self, timezone):
+    def test_has_days(self, timezone):
+        """The context has the first and last day of the week."""
         user = self.make_user()
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         first_day = now.date() + relativedelta(weekday=SU(-1))
-        timezone.localdate.return_value = now.date()
-        SchoolYearFactory(
-            school=user.school,
-            start_date=now,
-            end_date=now + datetime.timedelta(days=1),
-        )
-        StudentFactory(school=user.school)
-
-        with self.login(user):
-            self.get("core:app")
-
-        self.assertContext("first_day", first_day)
-
-    @mock.patch("homeschool.users.models.timezone")
-    def test_has_last_day(self, timezone):
-        user = self.make_user()
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         last_day = now.date() + relativedelta(weekday=SA(+1))
         timezone.localdate.return_value = now.date()
         SchoolYearFactory(
@@ -113,32 +97,16 @@ class TestApp(TestCase):
         with self.login(user):
             self.get("core:app")
 
-        self.assertContext("last_day", last_day)
+        assert self.get_context("first_day") == first_day
+        assert self.get_context("last_day") == last_day
 
     @mock.patch("homeschool.users.models.timezone")
-    def test_has_previous_week_date(self, timezone):
+    def test_has_surrounding_week_dates(self, timezone):
+        """The context has the previous and next week dates."""
         user = self.make_user()
         now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
         sunday = now.date() + relativedelta(weekday=SU(-1))
         previous_sunday = sunday - datetime.timedelta(days=7)
-        timezone.localdate.return_value = now.date()
-        SchoolYearFactory(
-            school=user.school,
-            start_date=now,
-            end_date=now + datetime.timedelta(days=1),
-        )
-        StudentFactory(school=user.school)
-
-        with self.login(user):
-            self.get("core:app")
-
-        self.assertContext("previous_week_date", previous_sunday)
-
-    @mock.patch("homeschool.users.models.timezone")
-    def test_has_next_week_date(self, timezone):
-        user = self.make_user()
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
-        sunday = now.date() + relativedelta(weekday=SU(-1))
         next_sunday = sunday + datetime.timedelta(days=7)
         timezone.localdate.return_value = now.date()
         SchoolYearFactory(
@@ -151,7 +119,8 @@ class TestApp(TestCase):
         with self.login(user):
             self.get("core:app")
 
-        self.assertContext("next_week_date", next_sunday)
+        assert self.get_context("previous_week_date") == previous_sunday
+        assert self.get_context("next_week_date") == next_sunday
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_today(self, mock_timezone):
@@ -595,7 +564,7 @@ class TestApp(TestCase):
         assert not self.get_context("has_school_years")
 
     def test_no_students(self):
-        """When no school years exist, it is marked in the context."""
+        """When no student exists, it is marked in the context."""
         user = self.make_user()
         # Other user's students don't count.
         StudentFactory()
@@ -604,6 +573,18 @@ class TestApp(TestCase):
             self.get_check_200("core:app")
 
         assert not self.get_context("has_students")
+
+    def test_no_students_with_task(self):
+        """Even when no student exists, the start banner may appear."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        CourseTaskFactory(course__grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("core:app")
+
+        assert not self.get_context("has_students")
+        assert self.get_context("has_tasks")
 
 
 class TestDaily(TestCase):
@@ -970,7 +951,7 @@ class TestDaily(TestCase):
         assert self.get_context("schedules") == []
 
     def test_no_students(self):
-        """When no school years exist, it is marked in the context."""
+        """When no student exists, it is marked in the context."""
         user = self.make_user()
         # Other user's students don't count.
         StudentFactory()
@@ -979,6 +960,18 @@ class TestDaily(TestCase):
             self.get_check_200("core:daily")
 
         assert not self.get_context("has_students")
+
+    def test_no_students_with_task(self):
+        """Even when no student exists, the start banner may appear."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        CourseTaskFactory(course__grade_levels=[grade_level])
+
+        with self.login(user):
+            self.get_check_200("core:daily")
+
+        assert not self.get_context("has_students")
+        assert self.get_context("has_tasks")
 
 
 class TestStartView(TestCase):
