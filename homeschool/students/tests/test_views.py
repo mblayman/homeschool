@@ -374,6 +374,7 @@ class TestGradeView(TestCase):
                 {"student": student_2, "graded_work": []},
             ],
         )
+        assert not self.get_context("has_work_to_grade")
 
     def test_not_other_students(self):
         user = self.make_user()
@@ -398,9 +399,10 @@ class TestGradeView(TestCase):
         with self.login(user):
             self.get("students:grade")
 
-        self.assertContext(
-            "work_to_grade", [{"student": student, "graded_work": [graded_work_2]}]
-        )
+        assert self.get_context("work_to_grade") == [
+            {"student": student, "graded_work": [graded_work_2]}
+        ]
+        assert self.get_context("has_work_to_grade")
 
     def test_not_graded_work_from_other_school(self):
         user = self.make_user()

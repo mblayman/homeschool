@@ -138,6 +138,12 @@ class GradeView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["work_to_grade"] = self.get_students_graded_work()
+        context["has_work_to_grade"] = any(
+            [
+                student_work.get("graded_work")
+                for student_work in context["work_to_grade"]
+            ]
+        )
         return context
 
     def get_students_graded_work(self):
