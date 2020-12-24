@@ -158,6 +158,23 @@
           </div>
         </div>
 
+        {% if grade_level_info.courses and not grade_level_info.has_students %}
+          <div class="flex m-3 bg-white border border-blue-500 p-6 rounded-md shadow-md items-center mx-auto max-w-xl">
+            <div class="text-blue-700">
+              <svg class="h-8 w-8 mr-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 11v4h2V9H9v2zm0-6v2h2V5H9z"/></svg>
+            </div>
+            <div class="font-light text-gray-700 mr-3">
+              Your grade level has no enrolled students.
+            </div>
+            <div>
+              <a href="{% url "students:enrollment_create" schoolyear.uuid %}"
+                class="bg-blue-700 hover:bg-blue-500 text-white font-normal py-2 px-3 rounded focus:outline-none focus:shadow-outline">
+                Enroll Student
+              </a>
+            </div>
+          </div>
+        {% endif %}
+
         <div class="flex flex-row flex-wrap">
           {% for course in grade_level_info.courses %}
             {% include "schools/course_summary.html" %}

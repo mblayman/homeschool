@@ -113,12 +113,13 @@ class TestSchoolYearDetailView(TestCase):
         school_year = SchoolYearFactory(school=user.school)
         grade_level = GradeLevelFactory(school_year=school_year)
         course = CourseFactory(grade_levels=[grade_level])
+        EnrollmentFactory(grade_level=grade_level)
 
         with self.login(user):
             self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
 
         assert self.get_context("grade_levels") == [
-            {"grade_level": grade_level, "courses": [course]}
+            {"grade_level": grade_level, "courses": [course], "has_students": True}
         ]
 
 

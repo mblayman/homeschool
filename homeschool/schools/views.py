@@ -89,6 +89,9 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
                 {
                     "grade_level": grade_level,
                     "courses": grade_level.get_ordered_courses(),
+                    "has_students": Enrollment.objects.filter(
+                        grade_level=grade_level
+                    ).exists(),
                 }
             )
         return context
