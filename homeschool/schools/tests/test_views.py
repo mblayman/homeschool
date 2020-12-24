@@ -82,9 +82,6 @@ class TestSchoolYearDetailView(TestCase):
             self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
 
         assert self.get_context("is_in_school_year")
-        assert self.get_context("enroll_url") == self.reverse(
-            "students:enrollment_create", school_year_uuid=school_year.uuid
-        )
 
     def test_only_school_year_for_user(self):
         """A user may only view their own school years."""
@@ -123,33 +120,6 @@ class TestSchoolYearDetailView(TestCase):
         assert self.get_context("grade_levels") == [
             {"grade_level": grade_level, "courses": [course]}
         ]
-
-    def test_no_enroll_url(self):
-        """When enrollment is full, do not show the enroll button."""
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-        student = StudentFactory(school=user.school)
-        EnrollmentFactory(student=student, grade_level__school_year=school_year)
-
-        with self.login(user):
-            self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
-
-        assert self.get_context("enroll_url") is None
-
-    def test_more_enrollable(self):
-        """When more students can be enrolled, show the enroll button."""
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-        StudentFactory(school=user.school)
-        student = StudentFactory(school=user.school)
-        EnrollmentFactory(student=student, grade_level__school_year=school_year)
-
-        with self.login(user):
-            self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
-
-        assert self.get_context("enroll_url") == self.reverse(
-            "students:enrollment_create", school_year_uuid=school_year.uuid
-        )
 
 
 class TestSchoolYearCreateView(TestCase):

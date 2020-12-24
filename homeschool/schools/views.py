@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -93,25 +91,7 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
                     "courses": grade_level.get_ordered_courses(),
                 }
             )
-        context["enroll_url"] = self._get_enroll_url()
         return context
-
-    def _get_enroll_url(self) -> Optional[str]:
-        """Get the enrollment creation URL.
-
-        This controls whether the enrollment button is displayed or not.
-        """
-        enroll_url = reverse("students:enrollment_create", args=[self.object.uuid])
-        students_count = self.request.user.school.students.count()
-        if students_count:
-            enrollment_count = Enrollment.objects.filter(
-                grade_level__school_year=self.object
-            ).count()
-            if students_count > enrollment_count:
-                return enroll_url
-        else:
-            return enroll_url
-        return None
 
 
 class SchoolYearEditView(LoginRequiredMixin, UpdateView):
