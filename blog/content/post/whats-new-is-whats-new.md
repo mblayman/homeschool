@@ -19,8 +19,6 @@ that will bring you
 to the latest and greatest news
 on this blog.
 
-<!--more-->
-
 I'll announce big changes
 to School Desk
 that are noteworthy
