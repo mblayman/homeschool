@@ -276,3 +276,26 @@ https://shop.wellplannedgal.com/index.php/shop/well-planned-day-online.html
 * https://forums.welltrainedmind.com/topic/618353-homeschool-planner-and-how-do-you-plan/ product comparison 2016
 * https://forums.welltrainedmind.com/topic/481657-homeschool-planet-anyone-trying-it/ vs planet 2013
 * https://forums.welltrainedmind.com/topic/415058-ipad-users-homeschool-helper-app/ ipad 2012
+
+### Audience
+
+Things to try:
+
+* Google Adwords keyword planner
+* followerwonk.com
+* Topsy Analytics to check social mentions?
+* Ahrefs Site Explorer to see referral traffic for other sites
+* BuzzSumo for Twitter analysis
+* Homeschool magazines? Is that a thing?
+* Amazon reviews of homeschool stuff
+* Reddit has a homeschool subreddit
+* Popular homeschool blogs to contact?
+* Homeschool podcasts?
+
+### Future
+
+* Dunning - Don't make customer sign in to update card info
+* Dunning - Don't email until the card has actually failed (wait until 3rd reattempt or 5 days)
+* Dunning - Email multiple times. It's ok. People miss stuff.
+* Churn Buster if crazy popular by some remote chance
+* Make Annual <-> Monthly up/downgrade not hard
