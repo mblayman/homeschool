@@ -11,6 +11,8 @@ class TestSettingsDashboard(TestCase):
         with self.login(user):
             self.get_check_200("settings:dashboard")
 
+        assert self.get_context("nav_link") == "settings"
+
     def test_wants_announcements_change(self):
         """The wants announcement profile setting can change."""
         user = self.make_user()

@@ -19,4 +19,6 @@ def settings_dashboard(request):
             return redirect(reverse("settings:dashboard"))
     else:
         form = ProfileForm(instance=request.user.profile)
-    return render(request, "users/settings_dashboard.html", {"form": form})
+    return render(
+        request, "users/settings_dashboard.html", {"form": form, "nav_link": "settings"}
+    )
