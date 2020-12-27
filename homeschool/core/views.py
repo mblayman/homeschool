@@ -31,6 +31,8 @@ class AppView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        context["nav_link"] = "dashboard"
+
         user = self.request.user
 
         has_school_years = SchoolYear.objects.filter(school=user.school).exists()
@@ -172,6 +174,8 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        context["nav_link"] = "daily"
+
         user = self.request.user
 
         has_school_years = SchoolYear.objects.filter(school=user.school).exists()

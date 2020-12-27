@@ -26,7 +26,8 @@ class TestCurrentSchoolYearView(TestCase):
         with self.login(user):
             self.get_check_200("schools:current_school_year")
 
-        assert school_year == self.get_context("schoolyear")
+        assert self.get_context("nav_link") == "school_year"
+        assert self.get_context("schoolyear") == school_year
 
     def test_future_school_year(self):
         """Go to a future school year if there is no current one.
@@ -81,6 +82,7 @@ class TestSchoolYearDetailView(TestCase):
         with self.login(user):
             self.get_check_200("schools:school_year_detail", uuid=school_year.uuid)
 
+        assert self.get_context("nav_link") == "school_year"
         assert self.get_context("is_in_school_year")
 
     def test_only_school_year_for_user(self):
@@ -223,6 +225,7 @@ class TestSchoolYearListView(TestCase):
         with self.login(user):
             self.get_check_200("schools:school_year_list")
 
+        assert self.get_context("nav_link") == "school_year"
         assert school_year in self.get_context("schoolyear_list")
 
     def test_only_school_year_for_user(self):
@@ -561,6 +564,8 @@ class TestReportsIndex(TestCase):
 
         with self.login(user):
             self.get_check_200("reports:index")
+
+        assert self.get_context("nav_link") == "reports"
 
     def test_has_enrollments(self):
         """The enrollments are in the context."""

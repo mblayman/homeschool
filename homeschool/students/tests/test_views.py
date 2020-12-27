@@ -37,6 +37,8 @@ class TestStudentsIndexView(TestCase):
         with self.login(user):
             self.get_check_200("students:index")
 
+        assert self.get_context("nav_link") == "students"
+
     def test_has_school_year(self):
         """The current school year is in the context."""
         user = self.make_user()

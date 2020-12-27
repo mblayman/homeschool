@@ -76,6 +76,8 @@ class TestApp(TestCase):
         with self.login(user):
             self.get_check_200("core:app")
 
+        assert self.get_context("nav_link") == "dashboard"
+
     def test_unauthenticated_access(self):
         self.assertLoginRequired("core:app")
 
@@ -600,6 +602,7 @@ class TestDaily(TestCase):
         with self.login(user):
             self.get_check_200("core:daily")
 
+        assert self.get_context("nav_link") == "daily"
         assert self.get_context("day") == today
         first_day = Week(today).first_day
         assert self.get_context("weekly_url") == self.reverse(

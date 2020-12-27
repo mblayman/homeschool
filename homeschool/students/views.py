@@ -22,6 +22,8 @@ class StudentIndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["nav_link"] = "students"
+
         user = self.request.user
         context["school_year"] = SchoolYear.get_current_year_for(user)
         context["roster"] = []
