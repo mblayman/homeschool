@@ -291,6 +291,7 @@ Things to try:
 * Reddit has a homeschool subreddit
 * Popular homeschool blogs to contact?
 * Homeschool podcasts?
+* Monthly webinars?
 
 ### Future
 
