@@ -36,7 +36,7 @@ class TestSendToWhatsNew(TestCase):
             response = self.get("notifications:whats_new")
 
         assert response.status_code == 302
-        assert response["Location"] == self.reverse("core:app")
+        assert response["Location"] == self.reverse("core:dashboard")
 
     def test_marks_all_notifications_viewed(self):
         """Any unread notifications from the user are marked as viewed."""

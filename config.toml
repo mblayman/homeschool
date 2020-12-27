@@ -19,7 +19,7 @@ footnoteReturnLinkContents = "^"
 [[menu.main]]
 identifier = "home"
 name = "Return to App ⇒"
-url = "https://sleepy-caverns-57661.herokuapp.com/app/"
+url = "https://sleepy-caverns-57661.herokuapp.com/dashboard/"
 weight = 10
 
 [taxonomies]

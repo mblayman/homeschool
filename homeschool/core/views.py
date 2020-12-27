@@ -26,7 +26,7 @@ class IndexView(TemplateView):
     template_name = "core/index.html"
 
 
-class AppView(LoginRequiredMixin, TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "core/app.html"
 
     def get_context_data(self, *args, **kwargs):

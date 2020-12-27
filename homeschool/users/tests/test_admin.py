@@ -15,7 +15,7 @@ class TestUserAdmin(TestCase):
             response = self.post("admin:users_user_changelist", data=data)
 
         self.response_302(response)
-        assert response.get("Location") == self.reverse("core:app")
+        assert response.get("Location") == self.reverse("core:dashboard")
 
     def test_multiple_user_hijack_attempt(self):
         """A superuser may not hijack multiple users simultaneously."""

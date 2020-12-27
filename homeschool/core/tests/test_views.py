@@ -56,7 +56,7 @@ class TestTerms(TestCase):
         self.get_check_200("core:terms")
 
 
-class TestApp(TestCase):
+class TestDashboard(TestCase):
     def make_student_enrolled_in_grade_level(self, user, week_date):
         enrollment = EnrollmentFactory(
             grade_level__school_year__school=user.school,
@@ -74,12 +74,12 @@ class TestApp(TestCase):
         user = self.make_user()
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert self.get_context("nav_link") == "dashboard"
 
     def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:app")
+        self.assertLoginRequired("core:dashboard")
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_days(self, timezone):
@@ -97,7 +97,7 @@ class TestApp(TestCase):
         StudentFactory(school=user.school)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         assert self.get_context("first_day") == first_day
         assert self.get_context("last_day") == last_day
@@ -119,7 +119,7 @@ class TestApp(TestCase):
         StudentFactory(school=user.school)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         assert self.get_context("previous_week_date") == previous_sunday
         assert self.get_context("next_week_date") == next_sunday
@@ -133,7 +133,7 @@ class TestApp(TestCase):
         StudentFactory(school=user.school)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         self.assertContext("day", today)
 
@@ -147,7 +147,7 @@ class TestApp(TestCase):
         CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         schedules = self.get_context("schedules")
         assert len(schedules[0]["courses"]) > 0
@@ -182,7 +182,7 @@ class TestApp(TestCase):
         )
 
         with self.login(user), self.assertNumQueries(16):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         expected_schedule = {
             "student": student,
@@ -238,7 +238,7 @@ class TestApp(TestCase):
         StudentFactory(school=user.school)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         assert self.get_context("week_dates") == [
             {"date": monday, "school_break": None},
@@ -364,7 +364,7 @@ class TestApp(TestCase):
         CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         schedules = self.get_context("schedules")
         assert schedules[0]["courses"] == []
@@ -381,7 +381,7 @@ class TestApp(TestCase):
         CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         schedules = self.get_context("schedules")
         assert schedules[0]["courses"]
@@ -398,7 +398,7 @@ class TestApp(TestCase):
         enrollment_2 = EnrollmentFactory(grade_level=grade_level)
 
         with self.login(user):
-            self.get("core:app")
+            self.get("core:dashboard")
 
         schedules = self.get_context("schedules")
         assert schedules[0]["student"] == enrollment_2.student
@@ -524,7 +524,7 @@ class TestApp(TestCase):
         NotificationFactory(user=user)
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert self.get_context("show_whats_new")
 
@@ -538,7 +538,7 @@ class TestApp(TestCase):
         NotificationFactory(user=user)
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert not self.get_context("show_whats_new")
 
@@ -550,7 +550,7 @@ class TestApp(TestCase):
         NotificationFactory(user=user, status=Notification.NotificationStatus.VIEWED)
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert not self.get_context("show_whats_new")
 
@@ -561,7 +561,7 @@ class TestApp(TestCase):
         SchoolYearFactory()
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert not self.get_context("has_school_years")
 
@@ -572,7 +572,7 @@ class TestApp(TestCase):
         StudentFactory()
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert not self.get_context("has_students")
 
@@ -583,7 +583,7 @@ class TestApp(TestCase):
         CourseTaskFactory(course__grade_levels=[grade_level])
 
         with self.login(user):
-            self.get_check_200("core:app")
+            self.get_check_200("core:dashboard")
 
         assert not self.get_context("has_students")
         assert self.get_context("has_tasks")

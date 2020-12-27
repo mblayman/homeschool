@@ -22,4 +22,4 @@ def send_whats_new(request):
     if notification:
         unread_notifications.update(status=Notification.NotificationStatus.VIEWED)
         return redirect(notification.announcement.url)
-    return redirect(reverse("core:app"))
+    return redirect(reverse("core:dashboard"))
