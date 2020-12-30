@@ -132,6 +132,7 @@ class SchoolYearForm(DaysOfWeekModelForm):
             else:
                 self.check_overlap(start_date, end_date)
                 self.check_max_length(start_date, end_date)
+                self.check_breaks(start_date, end_date)
 
         days_of_week = self.get_days_of_week()
         if days_of_week == SchoolYear.NO_DAYS:
@@ -169,6 +170,21 @@ class SchoolYearForm(DaysOfWeekModelForm):
         if abs(delta.days) > max_allowed_days:
             self.add_error(
                 None, f"A school year may not be longer than {max_allowed_days} days."
+            )
+
+    def check_breaks(self, start_date, end_date):
+        """Check that the school year continues to contain any breaks."""
+        if SchoolBreak.objects.filter(
+            school_year=self.instance, start_date__lt=start_date
+        ).exists():
+            self.add_error(
+                None, "You have a school break before the school year's start date."
+            )
+        if SchoolBreak.objects.filter(
+            school_year=self.instance, end_date__gt=end_date
+        ).exists():
+            self.add_error(
+                None, "You have a school break after the school year's end date."
             )
 
     def check_superset_of_courses(self, days_of_week):

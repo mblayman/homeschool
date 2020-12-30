@@ -168,6 +168,29 @@ class TestSchoolYearForm(TestCase):
             f" {course}" in form.non_field_errors()
         )
 
+    def test_no_date_change_with_breaks(self):
+        """A school year must contain any breaks."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        start = school_year.start_date
+        end = school_year.end_date
+        SchoolBreakFactory(school_year=school_year, start_date=start, end_date=start)
+        SchoolBreakFactory(school_year=school_year, start_date=end, end_date=end)
+        data = {
+            "school": str(school.id),
+            "start_date": str(start + datetime.timedelta(days=1)),
+            "end_date": str(end - datetime.timedelta(days=1)),
+            "monday": True,
+        }
+        form = SchoolYearForm(user=school.admin, instance=school_year, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        errors = form.non_field_errors()
+        assert "You have a school break before the school year's start date." in errors
+        assert "You have a school break after the school year's end date." in errors
+
 
 class TestSchoolBreakForm(TestCase):
     def test_start_before_end(self):
