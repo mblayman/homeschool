@@ -52,3 +52,6 @@ jobs:
         env:
           ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
           SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'
+
+      - name: Check documentation build
+        run: make -C docs html
