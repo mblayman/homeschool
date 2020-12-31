@@ -2,6 +2,7 @@ import datetime
 from typing import Optional
 
 from dateutil.parser import parse
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -24,6 +25,15 @@ from homeschool.students.models import Coursework, Grade, Student
 
 class IndexView(TemplateView):
     template_name = "core/index.html"
+
+
+class HelpView(TemplateView):
+    template_name = "core/help.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["support_email"] = settings.SUPPORT_EMAIL
+        return context
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):

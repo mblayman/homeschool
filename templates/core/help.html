@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Getting Help{% endblock %}
+
+{% block main %}
+  <div class="mx-auto max-w-xl font-thin text-base text-gray-800">
+
+    <div class="mb-4 w-full">
+      <img class="w-32 mx-auto" src="{% static "logo.svg" %}" alt="School Desk logo">
+    </div>
+    <h1 class="font-thin text-2xl text-blue-900 mb-4">Getting Help</h1>
+    <p class="mb-2">
+      You can learn more about School Desk
+      with the <a class="underline" target="_blank" href="/docs/">Help Documentation</a>.
+    </p>
+    {% if user.is_authenticated %}
+      <p class="mb-2">
+        If you have an issue,
+        you can contact <a class="underline" href="mailto:{{ support_email }}">{{ support_email }}</a>.
+        I'll try to help out as soon as I can.
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}

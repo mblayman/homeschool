@@ -13,6 +13,7 @@ urlpatterns = [
         TemplateView.as_view(template_name="core/privacy.html"),
         name="privacy",
     ),
+    path("help/", views.HelpView.as_view(), name="help"),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path(
         "weekly/<int:year>/<int:month>/<int:day>/",

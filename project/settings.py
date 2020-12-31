@@ -239,4 +239,10 @@ django_heroku.settings(
 
 # Add extra output directories that WhiteNoise can serve as static files
 # *outside* of `staticfiles`.
-MORE_WHITENOISE = [{"directory": os.path.join(BASE_DIR, "blog_out"), "prefix": "blog/"}]
+MORE_WHITENOISE = [
+    {"directory": os.path.join(BASE_DIR, "blog_out"), "prefix": "blog/"},
+    {"directory": os.path.join(BASE_DIR, "docs", "_build", "html"), "prefix": "docs/"},
+]
+
+# core
+SUPPORT_EMAIL = "support@theschooldesk.app"

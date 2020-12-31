@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 import pytz
 from dateutil.relativedelta import FR, MO, SA, SU, WE, relativedelta
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.storage.base import Message
 from django.contrib.messages.storage.cookie import CookieStorage
@@ -54,6 +55,22 @@ class TestPrivacy(TestCase):
 class TestTerms(TestCase):
     def test_ok(self):
         self.get_check_200("core:terms")
+
+
+class TestHelp(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:help")
+
+        self.assertResponseNotContains(settings.SUPPORT_EMAIL)
+
+    def test_has_support_email(self):
+        """The support email is available to authenticated users."""
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("core:help")
+
+        self.assertResponseContains(settings.SUPPORT_EMAIL)
 
 
 class TestDashboard(TestCase):

@@ -35,13 +35,14 @@
   </main>
 
   <footer class="container mx-auto {% block footer_css_border %}border-t border-gray-400{% endblock %} p-4 text-center text-sm text-gray-600 print-hide">
-    <span class="mx-1">&copy; {% now "Y" %}
-      <a href="{% url "core:index" %}" class="hover:text-gray-900">School Desk</a>
+    <span class="mx-1">
+      <a href="{% url "core:index" %}" class="hover:text-gray-900">&copy; {% now "Y" %} School Desk</a>
     </span>
     <a href="{% url "core:about" %}" class="mx-1 hover:text-gray-900">About</a>
     <a href="{% url "core:terms" %}" class="mx-1 hover:text-gray-900">Terms</a>
     <a href="{% url "core:privacy" %}" class="mx-1 hover:text-gray-900">Privacy</a>
     <a href="/blog/" class="mx-1 hover:text-gray-900">Blog</a>
+    <a href="{% url "core:help" %}" class="mx-1 hover:text-gray-900">Help</a>
     {% if user.is_authenticated %}
       <form class="inline" method="POST" action="{% url 'account_logout' %}">
         {% csrf_token %}
