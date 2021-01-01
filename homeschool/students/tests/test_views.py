@@ -280,7 +280,9 @@ class TestStudentCourseView(TestCase):
         enrollment = EnrollmentFactory(
             student__school=user.school, grade_level__school_year=school_year
         )
-        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        course = CourseFactory(
+            grade_levels=[enrollment.grade_level], days_of_week=Course.ALL_DAYS
+        )
         CourseTaskFactory(course=course)
 
         with self.login(user):

@@ -434,7 +434,10 @@ class TestDashboard(TestCase):
         enrollment = EnrollmentFactory(
             grade_level__school_year=school_year, student__school=user.school
         )
-        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        task = CourseTaskFactory(
+            course__grade_levels=[enrollment.grade_level],
+            course__days_of_week=Course.ALL_DAYS,
+        )
         week = Week(school_year.start_date)
 
         with self.login(user):
@@ -503,7 +506,10 @@ class TestDashboard(TestCase):
             days_of_week=SchoolYear.ALL_DAYS,
         )
         enrollment = EnrollmentFactory(grade_level__school_year=current_school_year)
-        CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        CourseTaskFactory(
+            course__grade_levels=[enrollment.grade_level],
+            course__days_of_week=Course.ALL_DAYS,
+        )
         next_school_year = SchoolYearFactory(
             school=user.school,
             start_date=today + relativedelta(years=1, month=1, day=1),
@@ -513,7 +519,10 @@ class TestDashboard(TestCase):
         enrollment = EnrollmentFactory(
             grade_level__school_year=next_school_year, student__school=user.school
         )
-        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        task = CourseTaskFactory(
+            course__grade_levels=[enrollment.grade_level],
+            course__days_of_week=Course.ALL_DAYS,
+        )
         week = Week(next_school_year.start_date)
 
         with self.login(user):
@@ -926,7 +935,10 @@ class TestDaily(TestCase):
         enrollment = EnrollmentFactory(
             grade_level__school_year=school_year, student__school=user.school
         )
-        task = CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+        task = CourseTaskFactory(
+            course__grade_levels=[enrollment.grade_level],
+            course__days_of_week=Course.ALL_DAYS,
+        )
 
         with self.login(user):
             self.get(
