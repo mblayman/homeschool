@@ -300,3 +300,31 @@ Things to try:
 * Dunning - Email multiple times. It's ok. People miss stuff.
 * Churn Buster if crazy popular by some remote chance
 * Make Annual <-> Monthly up/downgrade not hard
+
+### Persona
+
+This is an exercise to build a reasonable persona
+of the ideal customer for School Desk
+as suggested in SaaS Marketing Essentials.
+
+Hannah Homeschooler:
+
+* Hannah is a 30 - 45 year old woman.
+* She is educated and a self-starter (fiercely independent).
+* Hannah has two children.
+* Hannah lives in a suburban area or small to mid-size city.
+* Her time is constrained while balancing home obligations with child education.
+* Hannah has a fondness for paper for keeping records.
+  Before finding School Desk,
+  she was starting to hit the limits of her process
+  and was looking for a way to save time.
+* Hannah wants full control of *what* she teaches her children,
+  but would like some tools that can take out the drudgery
+  of building weekly schedules for school.
+* After using School Desk,
+  Hannah benefits from the automatically generated schedules
+  that show *her* material
+  in a timeframe that fits the constraints
+  that she specified to School Desk.
+* School Desk makes it painless to stay on top of homeschool
+  so that she focus her attention on other parts of her life.
