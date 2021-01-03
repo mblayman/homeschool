@@ -328,3 +328,17 @@ Hannah Homeschooler:
   that she specified to School Desk.
 * School Desk makes it painless to stay on top of homeschool
   so that she focus her attention on other parts of her life.
+
+### Product Position
+
+What's the point? Why would Hannah want to use School Desk?
+Is it control? Is it time saving?
+
+What is the benefit?
+
+* "Take Control of Your Homeschool Plan"
+* "Save Time Building Your Homeschool Plan"
+* "Focus on Your School, Let Us Handle the Schedule"
+* Stop swimming in spreadsheets
+* Not an airplane cockpit
+* From the customer, "simplicity"
