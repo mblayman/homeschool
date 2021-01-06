@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Verify Your Email Address{% endblock %}
+
+{% block main %}
+  <div class="mx-auto max-w-xl font-thin text-base text-gray-800">
+
+    <div class="mb-4 w-full">
+      <img class="w-32 mx-auto" src="{% static "logo.svg" %}" alt="School Desk logo">
+    </div>
+    <h1 class="font-thin text-2xl text-blue-900 mb-4">Please Check Your Email!</h1>
+    <p class="mb-6">
+      We sent you an email so we can confirm your address
+      to complete your sign up.
+      Please follow the link in your email.
+      Once you do that,
+      you’ll be on your way to starting with School Desk!
+    </p>
+    <p>
+      Regards,<br>
+      Matt from School Desk
+    </p>
+  </div>
+{% endblock %}
