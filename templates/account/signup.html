@@ -9,7 +9,7 @@
       <div class="text-center mb-4 w-full">
         <img src="{% static "logo.svg" %}" class="h-32 w-32 mx-auto" alt="School Desk logo">
       </div>
-      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST" action="?next={% url "core:start" %}">
+      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST">
         {% csrf_token %}
         <h1 class="font-bold text-xl mb-2">Sign Up</h1>
         <div {% if not form.email.errors %}class="mb-4"{% endif %}>

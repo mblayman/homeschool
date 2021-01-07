@@ -1,0 +1,10 @@
+Hello!
+
+Thanks for signing up with School Desk!
+
+To confirm your account, please follow this link to complete sign up: {{ activate_url }}
+
+I hope you have a great time using School Desk.
+
+Regards,
+Matt from School Desk

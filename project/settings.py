@@ -12,6 +12,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     DEBUG_TOOLBAR=(bool, False),
     EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
+    EMAIL_TESTING=(bool, False),
     ROLLBAR_ENABLED=(bool, True),
     ROLLBAR_ENVIRONMENT=(str, "production"),
     SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
@@ -119,6 +120,11 @@ DATABASES = {
 
 # Email
 EMAIL_BACKEND = env("EMAIL_BACKEND")
+# Enable this to test with MailHog for local email testing.
+if env("EMAIL_TESTING"):
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "0.0.0.0"
+    EMAIL_PORT = 1025
 DEFAULT_FROM_EMAIL = f"noreply@{domain}"
 SERVER_EMAIL = f"noreply@{domain}"
 
