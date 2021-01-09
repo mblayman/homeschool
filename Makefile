@@ -1,4 +1,4 @@
-.PHONY: local
+.PHONY: docs local
 
 local:
 	heroku local
@@ -22,3 +22,9 @@ coverage:
 
 mypy:
 	mypy homeschool project manage.py
+
+docs:
+	make -C docs html
+
+servedocs:
+	cd docs/_build/html && python3 -m http.server

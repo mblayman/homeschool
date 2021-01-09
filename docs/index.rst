@@ -15,6 +15,8 @@ please contact support!
 .. toctree::
    :maxdepth: 2
 
+   faq.rst
+
 How Does School Desk Stack Up?
 ------------------------------
 
