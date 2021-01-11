@@ -1016,6 +1016,8 @@ class TestStartView(TestCase):
         with self.login(user):
             self.get_check_200("core:start")
 
+        assert self.get_context("support_email") == settings.SUPPORT_EMAIL
+
     def test_no_message_on_visit(self):
         """Clear out messages from django-allauth on sign up."""
         user = self.make_user()

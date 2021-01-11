@@ -422,6 +422,11 @@ class StartView(LoginRequiredMixin, TemplateView):
 
         return response
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["support_email"] = settings.SUPPORT_EMAIL
+        return context
+
 
 class StartSchoolYearView(LoginRequiredMixin, CreateView):
     template_name = "core/start_school_year.html"
