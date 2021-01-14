@@ -36,6 +36,12 @@
           {% csrf_token %}
           <input type="hidden" name="grade_levels" value="{{ grade_level.id }}">
           <input type="hidden" name="default_task_duration" value="30">
+          <input type="hidden" name="is_active" value="on">
+          <input type="hidden" name="monday" value="on">
+          <input type="hidden" name="tuesday" value="on">
+          <input type="hidden" name="wednesday" value="on">
+          <input type="hidden" name="thursday" value="on">
+          <input type="hidden" name="friday" value="on">
           {% include "forms/field.html" with field=form.name placeholder="e.g., “Math” or “Chemistry”" autofocus=True %}
           <div class="md:flex md:items-center">
             <div class="md:w-1/4"></div>
