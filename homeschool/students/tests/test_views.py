@@ -209,20 +209,19 @@ class TestStudentCourseView(TestCase):
 
     @freeze_time("2020-02-10")  # Monday
     def test_has_tasks_with_completed(self):
+        """Completed tasks appear in the context when the query flag is present."""
         user = self.make_user()
         enrollment = EnrollmentFactory(
             student__school=user.school, grade_level__school_year__school=user.school
         )
         student = enrollment.student
         grade_level = enrollment.grade_level
-        course = CourseFactory(
-            grade_levels=[grade_level], days_of_week=Course.WEDNESDAY + Course.THURSDAY
-        )
+        course = CourseFactory(grade_levels=[grade_level])
         task_1 = CourseTaskFactory(course=course)
         coursework = CourseworkFactory(course_task=task_1, student=student)
         task_2 = CourseTaskFactory(course=course)
         GradedWorkFactory(course_task=task_2)
-        today = timezone.now().date() + datetime.timedelta(days=2)
+        tuesday = timezone.localdate() + datetime.timedelta(days=1)
 
         with self.login(user):
             self.get_check_200(
@@ -232,17 +231,11 @@ class TestStudentCourseView(TestCase):
                 data={"completed_tasks": "1"},
             )
 
-        self.assertContext(
-            "task_items",
-            [
-                {
-                    "course_task": task_1,
-                    "coursework": coursework,
-                    "has_graded_work": False,
-                },
-                {"course_task": task_2, "planned_date": today, "has_graded_work": True},
-            ],
-        )
+        assert coursework.completed_date == timezone.localdate()
+        assert self.get_context("task_items") == [
+            {"course_task": task_1, "coursework": coursework, "has_graded_work": False},
+            {"course_task": task_2, "planned_date": tuesday, "has_graded_work": True},
+        ]
 
     def test_only_task_for_grade_level(self):
         """Only general tasks and tasks for the student's grade level appear."""

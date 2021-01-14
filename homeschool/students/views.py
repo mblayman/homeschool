@@ -115,7 +115,13 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
                 "has_graded_work": hasattr(course_task, "graded_work"),
             }
             if course_task in coursework_by_task:
-                task_item["coursework"] = coursework_by_task[course_task]
+                coursework = coursework_by_task[course_task]
+                # Advance the next course day to deconflict with coursework.
+                if coursework.completed_date == next_course_day:
+                    next_course_day = school_year.get_next_course_day(
+                        course, next_course_day
+                    )
+                task_item["coursework"] = coursework
             elif course_is_running:
                 task_item["planned_date"] = next_course_day
                 next_course_day = school_year.get_next_course_day(
