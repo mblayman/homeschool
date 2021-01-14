@@ -277,7 +277,11 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 course_schedule["coursework"] = day_coursework[course.id]
             elif course.runs_on(day):
                 task_index = max(
-                    school_year.get_task_count_in_range(course, today, day) - 1, 0
+                    student.get_incomplete_task_count_in_range(
+                        course, today, day, school_year
+                    )
+                    - 1,
+                    0,
                 )
                 # Doing this query in a loop is definitely an N+1 bug.
                 # If it's possible to do a single query of all tasks

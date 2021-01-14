@@ -263,6 +263,21 @@ class Student(models.Model):
         else:
             return course.course_tasks.none()
 
+    def get_incomplete_task_count_in_range(
+        self, course, start_date, end_date, school_year
+    ):
+        """Get the count of incomplete tasks for a course.
+
+        Be inclusive of start and end date.
+        """
+        task_count = school_year.get_task_count_in_range(course, start_date, end_date)
+        coursework_count = Coursework.objects.filter(
+            course_task__course=course,
+            student=self,
+            completed_date__range=[start_date, end_date],
+        ).count()
+        return task_count - coursework_count
+
 
 class Enrollment(models.Model):
     """The association between a student and grade level"""

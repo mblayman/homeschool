@@ -223,6 +223,24 @@ class TestStudent(TestCase):
 
         assert list(course_tasks) == []
 
+    def test_get_incomplete_task_count_in_range(self):
+        """The student can get the count of incomplete tasks for a course."""
+        enrollment = EnrollmentFactory()
+        school_year = enrollment.grade_level.school_year
+        student = enrollment.student
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        coursework = CourseworkFactory(student=student, course_task__course=course)
+        CourseTaskFactory(course=course)
+
+        incomplete_task_count = student.get_incomplete_task_count_in_range(
+            course,
+            coursework.completed_date,
+            coursework.completed_date + datetime.timedelta(days=1),
+            school_year,
+        )
+
+        assert incomplete_task_count == 1
+
 
 class TestEnrollment(TestCase):
     def test_factory(self):
