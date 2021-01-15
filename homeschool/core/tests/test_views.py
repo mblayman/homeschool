@@ -173,12 +173,13 @@ class TestDashboard(TestCase):
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
         """The schedules are in the context."""
-        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)
-        friday = now.date()
-        monday = friday - datetime.timedelta(days=4)
+        now = datetime.datetime(2020, 1, 23, tzinfo=pytz.utc)
+        thursday = now.date()
+        monday = thursday - datetime.timedelta(days=3)
+        friday = thursday + datetime.timedelta(days=1)
         timezone.localdate.return_value = now.date()
         user = self.make_user()
-        student, grade_level = self.make_student_enrolled_in_grade_level(user, friday)
+        student, grade_level = self.make_student_enrolled_in_grade_level(user, thursday)
         course = CourseFactory(
             grade_levels=[grade_level],
             days_of_week=Course.MONDAY
@@ -188,14 +189,11 @@ class TestDashboard(TestCase):
         )
         task_1 = CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
-        task_3 = CourseTaskFactory(course=course)
         coursework = CourseworkFactory(
             student=student, course_task=task_1, completed_date=monday
         )
         school_break = SchoolBreakFactory(
-            school_year=grade_level.school_year,
-            start_date=monday + datetime.timedelta(days=4),
-            end_date=monday + datetime.timedelta(days=4),
+            school_year=grade_level.school_year, start_date=friday, end_date=friday
         )
 
         with self.login(user), self.assertNumQueries(16):
@@ -218,12 +216,11 @@ class TestDashboard(TestCase):
                         },
                         {
                             "week_date": monday + datetime.timedelta(days=2),
-                            "task": task_2,
                             "school_break": None,
                         },
                         {
                             "week_date": monday + datetime.timedelta(days=3),
-                            "task": task_3,
+                            "task": task_2,
                             "school_break": None,
                         },
                         {

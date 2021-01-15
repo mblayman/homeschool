@@ -225,10 +225,14 @@ class TestStudent(TestCase):
 
     def test_get_incomplete_task_count_in_range(self):
         """The student can get the count of incomplete tasks for a course."""
-        enrollment = EnrollmentFactory()
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__days_of_week=SchoolYear.ALL_DAYS
+        )
         school_year = enrollment.grade_level.school_year
         student = enrollment.student
-        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        course = CourseFactory(
+            grade_levels=[enrollment.grade_level], days_of_week=Course.ALL_DAYS
+        )
         coursework = CourseworkFactory(student=student, course_task__course=course)
         CourseTaskFactory(course=course)
 

@@ -128,6 +128,8 @@ class Student(models.Model):
                     and (
                         last_coursework_date is None or week_date > last_coursework_date
                     )
+                    # Any tasks left for the week should only appear on or after today.
+                    and week_date >= today
                 ):
                     course_schedule_item["task"] = course_tasks.pop()
             schedule["courses"].append(course_schedule)
