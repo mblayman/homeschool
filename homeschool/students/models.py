@@ -53,45 +53,31 @@ class Student(models.Model):
         as of today. The week is not necessarily *this* week.
         """
         week_dates = school_year.get_week_dates_for(week)
-        courses = self.get_active_courses(school_year)
+        week_end_date = school_year.last_school_day_for(week)
         week_coursework = self.get_week_coursework(week)
 
-        week_start_date = week.first_day
-        week_end_date = school_year.last_school_day_for(week)
+        courses = self.get_active_courses(school_year)
         completed_task_ids = list(
             Coursework.objects.filter(
                 student=self, course_task__course__in=courses
             ).values_list("course_task_id", flat=True)
         )
-        task_limit = len(week_dates)
-        schedule: dict = {"student": self, "courses": []}
+        course_schedules = []
         for course in courses:
             if week_end_date > today and not course.is_running:
                 continue
 
             course_schedule = {"course": course, "days": []}
 
-            course_tasks = []
-            # Only show tasks on current or future weeks.
-            if week_end_date >= today:
-                task_index = 0
-                if week_start_date > today:
-                    task_index = self.get_future_course_task_index(
-                        course, today, week_start_date, school_year
-                    )
-
-                # Doing this query in a loop is definitely an N+1 bug.
-                # If it's possible to do a single query of all tasks
-                # that groups by course then that would be better.
-                # No need to over-optimize until that's a real issue.
-                # I brought this up on the forum. It doesn't look like it's easy to fix.
-                # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
-                course_tasks = list(
-                    self.get_tasks_for(course).exclude(id__in=completed_task_ids)[
-                        task_index : task_index + task_limit
-                    ]
-                )
-                course_tasks.reverse()  # for the performance of pop below.
+            course_tasks = self._build_course_tasks(
+                course,
+                school_year,
+                completed_task_ids,
+                today,
+                week.first_day,
+                week_end_date,
+                len(week_dates),
+            )
 
             # Tasks should only appear *after* the last coursework date.
             last_coursework_date = self.get_last_coursework_date(
@@ -99,16 +85,17 @@ class Student(models.Model):
             )
 
             for week_date in week_dates:
+                school_break = school_year.get_break(week_date)
                 course_schedule_item = {
                     "week_date": week_date,
-                    "school_break": school_year.get_break(week_date),
+                    "school_break": school_break,
                 }
                 course_schedule["days"].append(course_schedule_item)
 
-                if course_schedule_item["school_break"]:
-                    course_schedule_item["date_type"] = course_schedule_item[
-                        "school_break"
-                    ].get_date_type(week_date)
+                if school_break:
+                    course_schedule_item["date_type"] = school_break.get_date_type(
+                        week_date
+                    )
                     continue
 
                 # The first week of a school year should skip any days
@@ -132,8 +119,46 @@ class Student(models.Model):
                     and week_date >= today
                 ):
                     course_schedule_item["task"] = course_tasks.pop()
-            schedule["courses"].append(course_schedule)
-        return schedule
+            course_schedules.append(course_schedule)
+        return {"student": self, "courses": course_schedules}
+
+    def _build_course_tasks(
+        self,
+        course,
+        school_year,
+        completed_task_ids,
+        today,
+        week_start_date,
+        week_end_date,
+        task_limit,
+    ):
+        """Build a list of course tasks that can be added to the schedule.
+
+        The tasks are returned in reverse order so they can be popped
+        like a stack for performance.
+        """
+        course_tasks: list = []
+        # Only show tasks on current or future weeks.
+        if week_end_date < today:
+            return course_tasks
+
+        task_index = self._get_course_task_index(
+            course, today, week_start_date, school_year
+        )
+
+        # Doing this query in a loop is definitely an N+1 bug.
+        # If it's possible to do a single query of all tasks
+        # that groups by course then that would be better.
+        # No need to over-optimize until that's a real issue.
+        # I brought this up on the forum. It doesn't look like it's easy to fix.
+        # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
+        course_tasks = list(
+            self.get_tasks_for(course).exclude(id__in=completed_task_ids)[
+                task_index : task_index + task_limit
+            ]
+        )
+        course_tasks.reverse()  # for the performance of pop below.
+        return course_tasks
 
     def get_active_courses(self, school_year):
         """Get the active courses from the school year."""
@@ -179,11 +204,16 @@ class Student(models.Model):
 
         return week_coursework
 
-    def get_future_course_task_index(self, course, today, week_start_date, school_year):
-        """Get the db index of course tasks for future weeks.
+    def _get_course_task_index(self, course, today, week_start_date, school_year):
+        """Get the db index of course tasks.
 
         This is based on the last completed coursework for the course.
         """
+        # When this is the current week or the past, there is no need
+        # to look into an index in the future.
+        if week_start_date <= today:
+            return 0
+
         this_week = Week(today)
         latest_coursework = (
             Coursework.objects.filter(student=self, course_task__course=course)
