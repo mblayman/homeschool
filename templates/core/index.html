@@ -24,8 +24,8 @@
       <div class="container px-3 xl:px-8 mx-auto flex flex-wrap flex-col md:flex-row items-center">
         <div class="flex flex-col w-full md:w-2/5 justify-center items-start text-center text-white md:text-left">
           <p class="uppercase tracking-loose w-full">Homeschool Planning Simplified</p>
-          <h1 class="my-4 text-5xl font-bold leading-tight">Take Control of Your Homeschool Plan</h1>
-          <p class="leading-normal text-2xl mb-8">Set your students on the right path without being buried in scheduling. Free for 60 days!</p>
+          <h1 class="my-4 text-5xl font-bold leading-tight">Simple Planning for Your Homeschool</h1>
+          <p class="leading-normal text-2xl mb-8">Set your students on the right path without being buried in scheduling. <span class="text-yellow-500">Free for 60 days!</span></p>
 
           <a href="{% url 'account_signup' %}" class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg">Sign Up</a>
         </div>
@@ -53,15 +53,21 @@
 
     <section class="bg-white border-b py-8">
       <div class="container max-w-6xl mx-auto m-8">
-        <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">It's Your School</h1>
+        <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">It’s Your School</h1>
         <div class="w-full mb-12">
           <div class="h-1 mx-auto gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
         </div>
 
         <div class="flex flex-wrap items-center">
-          <div class="w-5/6 sm:w-1/2 p-6">
-            <h3 class="text-4xl text-gray-800 font-bold leading-none mb-3">Keep Track of Your Curriculum</h3>
-            <p class="text-gray-600 mb-8 text-lg">All of your course information for each school year is kept in a format that is tailor-made for schools.</p>
+          <div class="sm:w-1/2 p-6">
+            <h3 class="text-4xl text-gray-800 font-bold leading-none mb-3">Built for Your Homeschool</h3>
+            <p class="text-gray-600 mb-3 text-lg">
+              All of your course information for each school year is kept in a format that is tailor-made for schools like yours.</p>
+            <p class="text-gray-600 mb-8 text-lg">
+              You can avoid spreadsheets and cobbling together a system.
+              School Desk gives you the information you need
+              so you can focus on your school instead of your tools.
+            </p>
           </div>
           <div class="w-full sm:w-1/2 p-6">
             <div class="relative flex">
@@ -92,8 +98,17 @@
           </div>
           <div class="w-full sm:w-1/2 p-6 mt-6">
             <div class="align-middle">
-              <h3 class="text-4xl text-gray-800 font-bold leading-none mb-3">Your Task List at Your Fingertips</h3>
-              <p class="text-gray-600 text-lg mb-8">School Desk assembles your school activities for each week of your school year for each of the students in your home.</p>
+              <h3 class="text-4xl text-gray-800 font-bold leading-none mb-3">
+                Your Task List at the Ready
+              </h3>
+              <p class="text-gray-600 text-lg mb-3">
+                What do you have to do for school <i>today?</i>
+              </p>
+              <p class="text-gray-600 text-lg mb-8">
+                With School Desk’s automatic schedule building,
+                you can see immediately what needs to happen today, tomorrow,
+                or any day in your school year.
+              </p>
             </div>
           </div>
         </div>
@@ -246,7 +261,7 @@
         <div class="h-1 mx-auto bg-white w-1/6 opacity-25 my-0 py-0 rounded-t"></div>
       </div>
 
-      <h3 class="mt-4 mb-8 text-3xl leading-tight text-white">Start Your 60-Day Free Trial!</h3>
+      <h3 class="mt-4 mb-8 text-3xl leading-tight text-yellow-500">Start Your 60-Day Free Trial!</h3>
 
       <div class="my-6">
         <a href="{% url "account_signup" %}" class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg">Sign Up</a>

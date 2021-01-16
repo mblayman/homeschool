@@ -341,4 +341,5 @@ What is the benefit?
 * "Focus on Your School, Let Us Handle the Schedule"
 * Stop swimming in spreadsheets
 * Not an airplane cockpit
-* From the customer, "simplicity"
+
+Customer answer: The key benefit is simplicity.
