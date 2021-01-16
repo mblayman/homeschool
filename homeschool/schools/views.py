@@ -353,7 +353,11 @@ class ResourceReportView(LoginRequiredMixin, TemplateView):
         context["grade_level"] = enrollment.grade_level
         context["school_year"] = enrollment.grade_level.school_year
         context["student"] = enrollment.student
-        context["resources"] = CourseResource.objects.filter(
-            course__grade_levels__in=[enrollment.grade_level]
-        ).select_related("course")
+        context["resources"] = (
+            CourseResource.objects.filter(
+                course__grade_levels__in=[enrollment.grade_level]
+            )
+            .select_related("course")
+            .order_by("course")
+        )
         return context
