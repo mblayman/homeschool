@@ -21,7 +21,7 @@ class Account(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+"
     )
     status = models.IntegerField(
-        choices=AccountStatus.choices, default=AccountStatus.BETA, db_index=True
+        choices=AccountStatus.choices, default=AccountStatus.TRIALING, db_index=True
     )
 
 

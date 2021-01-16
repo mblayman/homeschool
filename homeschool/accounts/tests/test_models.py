@@ -8,4 +8,4 @@ class TestAccount(TestCase):
         account = AccountFactory()
 
         assert account.user is not None
-        assert account.status == Account.AccountStatus.BETA
+        assert account.status == Account.AccountStatus.TRIALING
