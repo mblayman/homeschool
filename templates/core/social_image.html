@@ -1,0 +1,20 @@
+{% extends "app_base.html" %}
+{% load static %}
+
+{% block head_title %}Social image{% endblock %}
+
+{% block main %}
+<div class="flex items-center mx-auto max-w-3xl my-32">
+  <div class="w-1/4">
+    <img src="{% static "logo.svg" %}">
+  </div>
+  <div class="w-3/4 pl-4">
+    <div class="text-5xl text-blue-800 uppercase tracking-widest font-thin leading-tight">
+      School Desk
+    </div>
+    <div class="text-xl text-gray-700 font-light">
+      Simple Planning for Your Homeschool
+    </div>
+  </div>
+</div>
+{% endblock %}

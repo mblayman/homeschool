@@ -17,7 +17,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from homeschool.core.views import boom, handle_500
+from homeschool.core.views import boom, handle_500, social_image
 
 urlpatterns = [
     path("", include("homeschool.core.urls")),
@@ -25,6 +25,7 @@ urlpatterns = [
     path("notifications/", include("homeschool.notifications.urls")),
     path("office/", admin.site.urls),
     path("office/boom/", boom, name="boom"),
+    path("office/social-image/", social_image, name="social_image"),
     path("office/500/", handle_500, name="handle_500"),
     path("reports/", include("homeschool.schools.report_urls")),
     path("schools/", include("homeschool.schools.urls")),

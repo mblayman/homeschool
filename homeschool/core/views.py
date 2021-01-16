@@ -559,6 +559,12 @@ def boom(request):
     raise Exception("Is this thing on?")
 
 
+@staff_member_required
+def social_image(request):
+    """Render a view to create any social images."""
+    return render(request, "core/social_image.html", {})
+
+
 def handle_500(request):
     """Handle 500 errors and display them."""
     return render(request, "500.html", {}, status=500)

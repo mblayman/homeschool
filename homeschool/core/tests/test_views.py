@@ -1306,6 +1306,24 @@ class TestBoom(TestCase):
         assert str(excinfo.value) == "Is this thing on?"
 
 
+class TestSocialImage(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("social_image")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+
+        with self.login(user):
+            self.get_check_200("social_image")
+
+
 class TestHandle500(TestCase):
     def test_get(self):
         response = self.get("handle_500")
