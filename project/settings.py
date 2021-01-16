@@ -8,6 +8,7 @@ import environ
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 env = environ.Env(
+    ALLOWED_HOSTS=(list, []),
     ANYMAIL_ACCOUNT_DEFAULT_HTTP_PROTOCOL=(str, "https"),
     CSRF_COOKIE_SECURE=(bool, True),
     DEBUG=(bool, False),
