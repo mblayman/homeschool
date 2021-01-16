@@ -1,4 +1,4 @@
-baseURL = "https://sleepy-caverns-57661.herokuapp.com/blog/"
+baseURL = "https://www.theschooldesk.app/blog/"
 languageCode = "en-us"
 theme = "chunky-poster"
 title = "School Desk"
@@ -19,7 +19,7 @@ footnoteReturnLinkContents = "^"
 [[menu.main]]
 identifier = "home"
 name = "Return to App ⇒"
-url = "https://sleepy-caverns-57661.herokuapp.com/dashboard/"
+url = "https://www.theschooldesk.app/dashboard/"
 weight = 10
 
 [taxonomies]

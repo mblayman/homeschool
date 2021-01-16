@@ -43,11 +43,9 @@
           <div>
             <a class="hover:underline font-light" href="{% url 'account_login' %}">Log In</a>
           </div>
-          {% flag signup_flag %}
-            <div>
-              <a class="hover:underline ml-0 sm:ml-4 my-2 font-light" href="{% url 'account_signup' %}">Sign Up</a>
-            </div>
-          {% endflag %}
+          <div>
+            <a class="ml-0 sm:ml-4 my-2 font-light bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-white p-3 rounded-lg" href="{% url 'account_signup' %}">Free Trial</a>
+          </div>
         {% endif %}
       </div>
     </div>

@@ -16,7 +16,7 @@
           E-mail
         </label>
         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          type="email" name="login" id="id_login" type="text" placeholder="E-mail address" required
+          type="email" name="login" id="id_login" type="text" placeholder="E-mail address" required autofocus
           {% if form.login.value %}
             value="{{ form.login.value }}"
           {% endif %}

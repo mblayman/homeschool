@@ -5,10 +5,10 @@
 
 {% block main %}
   <div class="w-full max-w-xs mx-auto">
+    <div class="text-center mb-4 w-full">
+      <img src="{% static "logo.svg" %}" class="h-32 w-32 mx-auto" alt="School Desk logo">
+    </div>
     {% flag signup_flag %}
-      <div class="text-center mb-4 w-full">
-        <img src="{% static "logo.svg" %}" class="h-32 w-32 mx-auto" alt="School Desk logo">
-      </div>
       <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-blue-300" method="POST">
         {% csrf_token %}
         <h1 class="font-bold text-xl mb-2">Sign Up</h1>
@@ -17,7 +17,7 @@
             E-mail
           </label>
           <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="email" name="email" id="id_email" type="text" placeholder="E-mail address" required
+            type="email" name="email" id="id_email" type="text" placeholder="E-mail address" required autofocus
             {% if form.email.value %}
               value="{{ form.email.value }}"
             {% endif %}
@@ -61,13 +61,8 @@
         Your 60 day free trial awaits!
       </p>
   {% else %}
-    <p class="font-thin mb-4">
-      We're not quite ready yet for broad use.
-    </p>
-    <p class="font-thin">
-      If you'd like to join the beta users,
-      please reach out to Matt
-      on <a class="underline" href="https://twitter.com/mblayman" target="_blank">Twitter</a>.
+    <p class="text-center font-thin mb-4">
+      Sorry, sign up is closed at this time.
     </p>
   {% endflag %}
   </div>
