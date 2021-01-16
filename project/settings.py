@@ -16,6 +16,7 @@ env = environ.Env(
     EMAIL_TESTING=(bool, False),
     ROLLBAR_ENABLED=(bool, True),
     ROLLBAR_ENVIRONMENT=(str, "production"),
+    SECURE_HSTS_PRELOAD=(bool, True),
     SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
     SECURE_SSL_REDIRECT=(bool, True),
     SESSION_COOKIE_SECURE=(bool, True),
@@ -33,7 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 DEBUG_TOOLBAR = env("DEBUG_TOOLBAR")
 
-ALLOWED_HOSTS: List[str] = []
+ALLOWED_HOSTS: List[str] = env("ALLOWED_HOSTS")
 
 # App constants
 domain = "theschooldesk.app"
@@ -173,16 +174,13 @@ USE_TZ = True
 CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_REFERRER_POLICY = "same-origin"
+SECURE_HSTS_PRELOAD = env("SECURE_HSTS_PRELOAD")
 SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS")
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
 
-SILENCED_SYSTEM_CHECKS = [
-    # For now, since there is no custom domain, the site is not added
-    # to the HSTS preload list.
-    "security.W021"
-]
+SILENCED_SYSTEM_CHECKS: List[str] = []
 
 # django.contrib.sites
 SITE_ID = 1
@@ -242,7 +240,12 @@ ROLLBAR = {
 WHITENOISE_INDEX_FILE = True
 
 django_heroku.settings(
-    locals(), secret_key=False, staticfiles=False, test_runner=False, logging=False
+    locals(),
+    allowed_hosts=False,
+    secret_key=False,
+    staticfiles=False,
+    test_runner=False,
+    logging=False,
 )
 
 # App settings
