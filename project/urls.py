@@ -17,16 +17,14 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from homeschool.core.views import boom, handle_500, social_image
+from homeschool.core.views import handle_500
 
 urlpatterns = [
     path("", include("homeschool.core.urls")),
     path("courses/", include("homeschool.courses.urls")),
     path("notifications/", include("homeschool.notifications.urls")),
     path("office/", admin.site.urls),
-    path("office/boom/", boom, name="boom"),
-    path("office/social-image/", social_image, name="social_image"),
-    path("office/500/", handle_500, name="handle_500"),
+    path("office/dashboard/", include("homeschool.core.office_dashboard_urls")),
     path("reports/", include("homeschool.schools.report_urls")),
     path("schools/", include("homeschool.schools.urls")),
     path("settings/", include("homeschool.users.settings_urls")),

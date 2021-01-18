@@ -1,0 +1,38 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Onboarding{% endblock %}
+
+{% block main %}
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">
+    <a href="{% url "office:dashboard" %}" class="hover:underline">Office Dashboard</a>
+    <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+    Onboarding
+  </h1>
+
+  <div class="flex flex-col w-full text-center">
+    <div class="flex flex-row mb-2 border-b">
+      <div class="w-1/12">ID</div>
+      <div class="w-1/12">Username</div>
+      <div class="w-1/12">Created</div>
+      <div class="w-1/12">School Years</div>
+      <div class="w-1/12">Grades</div>
+      <div class="w-1/12">Courses</div>
+      <div class="w-1/12">Tasks</div>
+      <div class="w-1/12">Students</div>
+      <div class="w-1/12">Enrollments</div>
+    </div>
+    {% for stats in user_stats %}
+      <div class="flex flex-row {% cycle 'bg-white' 'bg-gray-100' %} py-2">
+        <div class="w-1/12">{{ stats.user.id }}</div>
+        <div class="w-1/12">{{ stats.user.username }}</div>
+        <div class="w-1/12">{{ stats.user.date_joined|date:"Y-m-d" }}</div>
+        <div class="w-1/12">{{ stats.school_years }}</div>
+        <div class="w-1/12">{{ stats.grade_levels }}</div>
+        <div class="w-1/12">{{ stats.courses }}</div>
+        <div class="w-1/12">{{ stats.tasks }}</div>
+        <div class="w-1/12">{{ stats.students }}</div>
+        <div class="w-1/12">{{ stats.enrollments }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

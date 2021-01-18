@@ -14,13 +14,14 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import CreateView, TemplateView
 
+from homeschool.accounts.models import Account
 from homeschool.core.schedules import Week
 from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
-from homeschool.students.models import Coursework, Grade, Student
+from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 
 class IndexView(TemplateView):
@@ -554,6 +555,44 @@ class StartCourseTaskView(LoginRequiredMixin, CreateView):
 
 
 @staff_member_required
+def office_dashboard(request):
+    """For back office stuff"""
+    return render(request, "core/office/dashboard.html", {})
+
+
+@staff_member_required
+def office_onboarding(request):
+    """Show how new users are doing in the onboarding process."""
+    trialing_users = [
+        account.user
+        for account in Account.objects.filter(
+            status=Account.AccountStatus.TRIALING
+        ).order_by("user")
+    ]
+    user_stats = []
+    # Yeah, this is pretty dumb. Optimization is not important here.
+    for user in trialing_users:
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
+        user_stats.append(
+            {
+                "user": user,
+                "school_years": SchoolYear.objects.filter(school__admin=user).count(),
+                "grade_levels": len(grade_levels),
+                "courses": len(courses),
+                "tasks": CourseTask.objects.filter(course__in=courses).count(),
+                "students": Student.objects.filter(school__admin=user).count(),
+                "enrollments": Enrollment.objects.filter(
+                    student__school__admin=user
+                ).count(),
+            }
+        )
+
+    context = {"user_stats": user_stats}
+    return render(request, "core/office/onboarding.html", context)
+
+
+@staff_member_required
 def boom(request):
     """This is for checking error handling (like Rollbar)."""
     raise Exception("Is this thing on?")
@@ -562,7 +601,7 @@ def boom(request):
 @staff_member_required
 def social_image(request):
     """Render a view to create any social images."""
-    return render(request, "core/social_image.html", {})
+    return render(request, "core/office/social_image.html", {})
 
 
 def handle_500(request):

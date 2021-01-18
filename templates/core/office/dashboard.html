@@ -1,0 +1,27 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Office Dashboard{% endblock %}
+
+{% block main %}
+
+  <h1 class="font-thin text-2xl text-blue-900 mb-8">
+    Office Dashboard
+  </h1>
+
+  <div class="mb-2">
+    <a class="underline hover:text-gray-600" href="{% url "office:onboarding" %}">Onboarding funnel</a>
+  </div>
+
+  <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">
+    Tools
+  </h2>
+
+  <div class="mb-2">
+    <a class="underline hover:text-gray-600" href="{% url "office:social_image" %}">Social image designs</a>
+  </div>
+
+  <div>
+    <a class="underline hover:text-gray-600" href="{% url "office:boom" %}">Trigger exception</a>
+  </div>
+
+{% endblock %}

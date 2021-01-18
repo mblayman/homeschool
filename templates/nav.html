@@ -22,6 +22,11 @@
                 Office
               </a>
             </div>
+            <div class="mr-4">
+              <a class="hover:underline font-light" href="{% url "office:dashboard" %}">
+                Dashboard
+              </a>
+            </div>
           {% endif %}
           {% if request|is_hijacked %}
             <div class="mr-4 font-light">

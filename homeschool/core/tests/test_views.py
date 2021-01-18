@@ -1286,13 +1286,49 @@ class TestStartCourseTaskView(TestCase):
         assert CourseTask.objects.filter(description="My first task").exists()
 
 
+class TestOfficeDashboard(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("office:dashboard")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+
+        with self.login(user):
+            self.get_check_200("office:dashboard")
+
+
+class TestOfficeOnboarding(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("office:onboarding")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+
+        with self.login(user):
+            self.get_check_200("office:onboarding")
+
+
 class TestBoom(TestCase):
     def test_non_staff(self):
         """A non-staff user cannot trigger the error page."""
         user = self.make_user()
 
         with self.login(user):
-            response = self.get("boom")
+            response = self.get("office:boom")
 
         self.response_302(response)
 
@@ -1301,7 +1337,7 @@ class TestBoom(TestCase):
         user = UserFactory(is_staff=True)
 
         with self.login(user), pytest.raises(Exception) as excinfo:
-            self.get("boom")
+            self.get("office:boom")
 
         assert str(excinfo.value) == "Is this thing on?"
 
@@ -1312,7 +1348,7 @@ class TestSocialImage(TestCase):
         user = self.make_user()
 
         with self.login(user):
-            response = self.get("social_image")
+            response = self.get("office:social_image")
 
         self.response_302(response)
 
@@ -1321,11 +1357,11 @@ class TestSocialImage(TestCase):
         user = UserFactory(is_staff=True)
 
         with self.login(user):
-            self.get_check_200("social_image")
+            self.get_check_200("office:social_image")
 
 
 class TestHandle500(TestCase):
     def test_get(self):
-        response = self.get("handle_500")
+        response = self.get("office:handle_500")
 
         assert response.status_code == 500
