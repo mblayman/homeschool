@@ -1,8 +1,3 @@
-.. School Desk documentation master file, created by
-   sphinx-quickstart on Tue Dec 29 23:37:29 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Help Documentation
 ==================
 
@@ -12,10 +7,57 @@ so if you don't find the answer
 to your issue,
 please contact support!
 
+What Does School Desk Do?
+-------------------------
+
+School Desk is an online homeschool planner.
+The application is designed with simplicity in mind.
+We don't plan to put every feature under the sun
+into the app.
+
+At the core,
+**School Desk will automatically build your homeschool schedule
+based on the courses and tasks
+that you need
+for your students**.
+
+The idea is simple:
+you tell us about your courses
+and when you want them to run,
+and School Desk figures out the rest.
+
+The application tracks your students' progress
+on their journey
+through the school year.
+Additionally, School Desk can track grades,
+produce progress reports,
+and other materials
+that you may need to report
+to your local government
+as a homeschooling family.
+
+.. note::
+
+   School Desk is focused on your homeschool
+   and your students.
+   Our mission is to remove the management burden
+   of scheduling,
+   so that you get to focus
+   on the more important work
+   of teaching your students instead.
+
+Learn More
+----------
+
+This documentation has plenty more to teach.
+Check out some of the topics below
+to learn more about how School Desk works.
+
 .. toctree::
    :maxdepth: 2
 
    faq.rst
+   terminology.rst
 
 How Does School Desk Stack Up?
 ------------------------------
@@ -31,4 +73,17 @@ if School Desk is a good fit for you.
    :maxdepth: 2
    :glob:
 
-   comparisons/*
+   comparisons/simply-charlotte-mason.rst
+   comparisons/google-classroom.rst
+   comparisons/homeschool-day-book.rst
+   comparisons/homeschool-helper.rst
+   comparisons/homeschool-manager.rst
+   comparisons/homeschool-minder.rst
+   comparisons/homeschool-planet.rst
+   comparisons/homeschool-reporting-online.rst
+   comparisons/homeschool-skedtrack.rst
+   comparisons/homeschool-tracker.rst
+   comparisons/homeschooling-records.rst
+   comparisons/lessontrek.rst
+   comparisons/my-school-year.rst
+   comparisons/scholaric.rst

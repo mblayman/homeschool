@@ -1,5 +1,5 @@
-CM Organizer
-============
+Homeschool Helper
+=================
 
 As part of my goal for 2021,
 I plan to try out and review every online homeschool planner

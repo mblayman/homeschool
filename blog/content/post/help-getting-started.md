@@ -20,8 +20,6 @@ that you'll need
 to be successful with planning
 with School Desk.
 
-<!--more-->
-
 *Why do this?*
 I'm certain
 that most users will have no trouble
