@@ -1,0 +1,9 @@
+{% extends "!layout.html" %}
+
+{% block sidebartitle %}
+  <a href="/" class="icon icon-home"> {{ project }}
+    <img src="{{ pathto('_static/' + logo, 1) }}" class="logo" alt="{{ _('Logo') }}"/>
+  </a>
+
+  {% include "searchbox.html" %}
+{% endblock %}
