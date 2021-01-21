@@ -139,6 +139,11 @@ class CourseTask(OrderedModel):
             course__grade_levels__in=grade_levels, uuid=task_uuid
         ).first()
 
+    @property
+    def is_graded(self):
+        """Check if the task is graded."""
+        return hasattr(self, "graded_work")
+
     def __str__(self):
         return self.description
 

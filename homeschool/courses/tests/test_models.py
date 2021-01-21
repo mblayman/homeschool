@@ -175,6 +175,15 @@ class TestCourseTask(TestCase):
 
         assert task is None
 
+    def test_is_graded(self):
+        """Check if a task has associated graded work."""
+        graded_work = GradedWorkFactory()
+        graded_task = CourseTaskFactory(graded_work=graded_work)
+        task = CourseTaskFactory()
+
+        assert graded_task.is_graded
+        assert not task.is_graded
+
 
 class TestGradedWork(TestCase):
     def test_factory(self):
