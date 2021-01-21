@@ -411,6 +411,9 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
         return get_course_task_queryset(self.request.user)
 
     def get_success_url(self):
+        next_url = self.request.GET.get("next")
+        if next_url:
+            return next_url
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
 
 

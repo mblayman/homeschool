@@ -773,6 +773,22 @@ class TestCourseTaskDeleteView(TestCase):
 
         self.response_404(response)
 
+    def test_redirect_next(self):
+        """The delete view redirects to next parameter if present."""
+        next_url = "/another/location/"
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        url = self.reverse("courses:task_delete", uuid=course.uuid, task_uuid=task.uuid)
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url)
+
+        self.response_302(response)
+        assert next_url in response.get("Location")
+
 
 class TestCourseTaskDown(TestCase):
     def test_unauthenticated_access(self):
