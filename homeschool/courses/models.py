@@ -141,7 +141,12 @@ class CourseTask(OrderedModel):
 
     @property
     def is_graded(self):
-        """Check if the task is graded."""
+        """Check if the task is graded.
+
+        Reminder: This triggers a db query since it's a related_name access.
+        The foreign key is on the GradedWork model so the db access can't be avoided
+        from the task side.
+        """
         return hasattr(self, "graded_work")
 
     def __str__(self):
