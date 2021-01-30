@@ -7,14 +7,15 @@ from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import CreateView, TemplateView
+from django.utils.functional import cached_property
+from django.views.generic import CreateView, FormView, TemplateView
 
-from homeschool.courses.models import Course, GradedWork
+from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 from .exceptions import FullEnrollmentError, NoGradeLevelError, NoStudentError
-from .forms import EnrollmentForm
+from .forms import CourseworkForm, EnrollmentForm
 
 
 class StudentIndexView(LoginRequiredMixin, TemplateView):
@@ -136,6 +137,53 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
             student=student, course_task__course=course
         ).select_related("course_task")
         return {c.course_task: c for c in coursework}
+
+
+class CourseworkFormView(LoginRequiredMixin, FormView):
+    template_name = "students/coursework_form.html"
+    form_class = CourseworkForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update({"student": self.student, "course_task": self.course_task})
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = Coursework.objects.filter(
+            student=self.student, course_task=self.course_task
+        ).first()
+        if self.request.method == "POST":
+            data = kwargs["data"].copy()
+            data.update({"student": self.student, "course_task": self.course_task})
+            kwargs["data"] = data
+        return kwargs
+
+    def get_success_url(self):
+        return reverse(
+            "students:course", args=[self.kwargs["uuid"], self.course_task.course.uuid]
+        )
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    @cached_property
+    def student(self):
+        return get_object_or_404(
+            Student, uuid=self.kwargs["uuid"], school__admin=self.request.user
+        )
+
+    @cached_property
+    def course_task(self):
+        grade_levels = GradeLevel.objects.filter(
+            school_year__school__admin=self.request.user
+        )
+        return get_object_or_404(
+            CourseTask,
+            uuid=self.kwargs["course_task_uuid"],
+            course__grade_levels__in=grade_levels,
+        )
 
 
 class GradeView(LoginRequiredMixin, TemplateView):

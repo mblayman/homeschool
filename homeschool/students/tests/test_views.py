@@ -17,7 +17,7 @@ from homeschool.schools.tests.factories import (
     SchoolBreakFactory,
     SchoolYearFactory,
 )
-from homeschool.students.models import Enrollment, Grade, Student
+from homeschool.students.models import Coursework, Enrollment, Grade, Student
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
@@ -344,6 +344,88 @@ class TestStudentCourseView(TestCase):
 
         task_item = self.get_context("task_items")[0]
         assert "planned_date" not in task_item
+
+
+class TestCourseworkFormView(TestCase):
+    def test_unauthenticated_access(self):
+        student = StudentFactory()
+        course_task = CourseTaskFactory()
+        self.assertLoginRequired(
+            "students:coursework", uuid=student.uuid, course_task_uuid=course_task.uuid
+        )
+
+    def test_get(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:coursework",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+            )
+
+        assert self.get_context("student") == student
+        assert self.get_context("course_task") == course_task
+
+    def test_post(self):
+        """A POST creates a coursework."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+        data = {"completed_date": str(grade_level.school_year.start_date)}
+
+        with self.login(user):
+            response = self.post(
+                "students:coursework",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+                data=data,
+            )
+
+        self.response_302(response)
+        assert (
+            Coursework.objects.filter(student=student, course_task=course_task).count()
+            == 1
+        )
+
+    def test_other_user_student(self):
+        """A student belonging to another user is a 404."""
+        user = self.make_user()
+        student = StudentFactory()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.get(
+                "students:coursework",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+            )
+
+        self.response_404(response)
+
+    def test_other_user_task(self):
+        """A task belonging to another user is a 404."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        course_task = CourseTaskFactory()
+
+        with self.login(user):
+            response = self.get(
+                "students:coursework",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+            )
+
+        self.response_404(response)
 
 
 class TestGradeView(TestCase):

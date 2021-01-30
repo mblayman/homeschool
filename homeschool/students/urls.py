@@ -11,6 +11,11 @@ urlpatterns = [
         views.StudentCourseView.as_view(),
         name="course",
     ),
+    path(
+        "<uuid:uuid>/tasks/<uuid:course_task_uuid>/",
+        views.CourseworkFormView.as_view(),
+        name="coursework",
+    ),
     path("grade/", views.GradeView.as_view(), name="grade"),
     path(
         "enroll/<uuid:school_year_uuid>/",
