@@ -48,7 +48,10 @@
 
   {% for task in course_tasks %}
     <div id="task-{{ task.uuid }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
-      <div class="w-8/12 p-2 text-sm font-light overflow-x-scroll">
+      <div class="w-1/12 p-2 text-sm font-light overflow-x-scroll">
+        {{ forloop.counter }}.
+      </div>
+      <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">
         <a href="{% url "courses:task_edit" uuid=task.uuid %}?next={{ request.path|urlencode }}%23task-{{ task.uuid }}" class="hover:text-gray-600">
           {{ task.description|linebreaksbr }}
         </a>
