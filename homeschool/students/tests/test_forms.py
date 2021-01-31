@@ -1,12 +1,17 @@
 import datetime
 
-from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
+from homeschool.courses.tests.factories import (
+    CourseFactory,
+    CourseTaskFactory,
+    GradedWorkFactory,
+)
 from homeschool.schools.tests.factories import GradeLevelFactory
-from homeschool.students.forms import CourseworkForm, EnrollmentForm
-from homeschool.students.models import Coursework
+from homeschool.students.forms import CourseworkForm, EnrollmentForm, GradeForm
+from homeschool.students.models import Coursework, Grade
 from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
+    GradeFactory,
     StudentFactory,
 )
 from homeschool.test import TestCase
@@ -125,7 +130,7 @@ class TestCourseworkForm(TestCase):
         ]
 
     def test_invalid_course_task(self):
-        """An invalid student is an error."""
+        """An invalid course task is an error."""
         user = self.make_user()
         student = StudentFactory(school=user.school)
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -186,4 +191,88 @@ class TestEnrollmentForm(TestCase):
             "A student may not be enrolled in multiple grade levels in a school year. "
             f"{enrollment.student} is enrolled in {enrollment.grade_level}."
             in form.non_field_errors()
+        )
+
+
+class TestGradeForm(TestCase):
+    def test_is_valid(self):
+        """The new grade validates."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        graded_work = GradedWorkFactory(course_task__course=course)
+        data = {
+            "student": str(student.id),
+            "graded_work": str(graded_work.id),
+            "score": "100",
+        }
+        form = GradeForm(data=data)
+
+        is_valid = form.is_valid()
+
+        assert is_valid
+
+    def test_invalid_graded_work(self):
+        """An invalid graded work is an error."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        GradedWorkFactory(course_task__course=course)
+        data = {"student": str(student.id), "graded_work": "0", "score": "100"}
+        form = GradeForm(data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+
+    def test_save(self):
+        """The form creates a new grade."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        graded_work = GradedWorkFactory(course_task__course=course)
+        data = {
+            "student": str(student.id),
+            "graded_work": str(graded_work.id),
+            "score": "100",
+        }
+        form = GradeForm(data=data)
+        form.is_valid()
+
+        form.save()
+
+        assert (
+            Grade.objects.filter(
+                student=student, graded_work=graded_work, score=100
+            ).count()
+            == 1
+        )
+
+    def test_save_update(self):
+        """The form updates a grade."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        graded_work = GradedWorkFactory(course_task__course=course)
+        GradeFactory(student=student, graded_work=graded_work)
+        data = {
+            "student": str(student.id),
+            "graded_work": str(graded_work.id),
+            "score": "100",
+        }
+        form = GradeForm(data=data)
+        form.is_valid()
+
+        form.save()
+
+        assert (
+            Grade.objects.filter(student=student, graded_work=graded_work).count() == 1
         )

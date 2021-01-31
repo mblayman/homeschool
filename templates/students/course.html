@@ -42,7 +42,7 @@
         </div>
       {% endif %}
       <div class="p-2 flex items-center justify-center w-1/12">
-        <div class="block mx-1 text-gray-300 hover:text-gray-600">
+        <a href="{% url "students:grade_task" uuid=student.uuid course_task_uuid=task_item.course_task.uuid %}?previous_task={{ task_item.course_task.uuid }}&next={{ request.path|urlencode }}%23task-{{ task_item.course_task.uuid }}" class="block mx-1 text-gray-300 hover:text-gray-600">
           {% if task_item.has_graded_work %}
             <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <title>Graded Task</title>
@@ -51,7 +51,7 @@
           {% else %}
             <div class="h-4 w-4 mr-1"></div>
           {% endif %}
-        </div>
+        </a>
         <a href="{% url "students:coursework" uuid=student.uuid course_task_uuid=task_item.course_task.uuid %}?previous_task={{ task_item.course_task.uuid }}&next={{ request.path|urlencode }}%23task-{{ task_item.course_task.uuid }}" class="block mx-1 text-gray-300 hover:text-gray-600">
           <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Set the completed date of the task</title>

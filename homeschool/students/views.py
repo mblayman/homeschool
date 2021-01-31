@@ -2,7 +2,7 @@ from typing import Dict
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
@@ -14,7 +14,7 @@ from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
 
 from .exceptions import FullEnrollmentError, NoGradeLevelError, NoStudentError
-from .forms import CourseworkForm, EnrollmentForm
+from .forms import CourseworkForm, EnrollmentForm, GradeForm
 from .mixins import StudentMixin
 from .models import Coursework, Enrollment, Grade, Student
 
@@ -160,6 +160,44 @@ class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, Form
     def get_success_url(self):
         return reverse(
             "students:course", args=[self.kwargs["uuid"], self.course_task.course.uuid]
+        )
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+class GradeFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView):
+    template_name = "students/grade_form.html"
+    form_class = GradeForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update({"student": self.student, "course_task": self.course_task})
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        try:
+            graded_work = self.course_task.graded_work
+        except GradedWork.DoesNotExist:
+            raise Http404
+        kwargs["instance"] = Grade.objects.filter(
+            student=self.student, graded_work=graded_work
+        ).first()
+        if self.request.method == "POST":
+            data = kwargs["data"].copy()
+            data.update({"student": self.student, "graded_work": graded_work})
+            kwargs["data"] = data
+        return kwargs
+
+    def get_success_url(self):
+        return self.request.GET.get(
+            "next",
+            reverse(
+                "students:course",
+                args=[self.kwargs["uuid"], self.course_task.course.uuid],
+            ),
         )
 
     def form_valid(self, form):

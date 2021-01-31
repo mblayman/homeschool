@@ -405,6 +405,95 @@ class TestCourseworkFormView(TestCase):
         self.response_404(response)
 
 
+class TestGradeFormView(TestCase):
+    def test_unauthenticated_access(self):
+        student = StudentFactory()
+        course_task = CourseTaskFactory()
+        self.assertLoginRequired(
+            "students:grade_task", uuid=student.uuid, course_task_uuid=course_task.uuid
+        )
+
+    def test_get(self):
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+        GradedWorkFactory(course_task=course_task)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:grade_task",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+            )
+
+        assert self.get_context("student") == student
+        assert self.get_context("course_task") == course_task
+
+    def test_post(self):
+        """A POST creates a grade."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+        graded_work = GradedWorkFactory(course_task=course_task)
+        data = {"score": "100"}
+
+        with self.login(user):
+            response = self.post(
+                "students:grade_task",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+                data=data,
+            )
+
+        self.response_302(response)
+        assert (
+            Grade.objects.filter(student=student, graded_work=graded_work).count() == 1
+        )
+
+    def test_no_graded_work(self):
+        """A course task that has no graded work returns a 404."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.get(
+                "students:grade_task",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+            )
+
+        self.response_404(response)
+
+    def test_redirect_next(self):
+        next_url = "/another/location/"
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+        GradedWorkFactory(course_task=course_task)
+        data = {"score": "100"}
+        url = self.reverse(
+            "students:grade_task", uuid=student.uuid, course_task_uuid=course_task.uuid
+        )
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url, data=data)
+
+        self.response_302(response)
+        assert next_url in response.get("Location")
+
+
 class TestGradeView(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("students:grade")

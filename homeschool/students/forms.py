@@ -1,9 +1,20 @@
 from django import forms
 
-from .models import Coursework, Enrollment
+from .models import Coursework, Enrollment, Grade
 
 
-class CourseworkForm(forms.ModelForm):
+class EnrolledTaskMixin:
+    """Can check if the student is enrolled in the course that has the task."""
+
+    def _is_enrolled_task(self, student, course_task):
+        """The student is permitted to complete the task."""
+        if not Enrollment.objects.filter(
+            student=student, grade_level__in=course_task.course.grade_levels.all()
+        ).exists():
+            raise forms.ValidationError("The student is not enrolled in this course.")
+
+
+class CourseworkForm(EnrolledTaskMixin, forms.ModelForm):
     class Meta:
         model = Coursework
         fields = ["student", "course_task", "completed_date"]
@@ -19,16 +30,9 @@ class CourseworkForm(forms.ModelForm):
         if student is None or course_task is None or completed_date is None:
             return
 
-        self._can_complete_task(student, course_task)
+        self._is_enrolled_task(student, course_task)
         self._check_completed_date_in_school_year(completed_date, course_task)
         return self.cleaned_data
-
-    def _can_complete_task(self, student, course_task):
-        """The student is permitted to complete the task."""
-        if not Enrollment.objects.filter(
-            student=student, grade_level__in=course_task.course.grade_levels.all()
-        ).exists():
-            raise forms.ValidationError("The student is not enrolled in this course.")
 
     def _check_completed_date_in_school_year(self, completed_date, course_task):
         """The completed date must be in the school year."""
@@ -86,3 +90,30 @@ class EnrollmentForm(forms.ModelForm):
             )
 
         return self.cleaned_data
+
+
+class GradeForm(EnrolledTaskMixin, forms.ModelForm):
+    class Meta:
+        model = Grade
+        fields = ["student", "graded_work", "score"]
+
+    def clean(self):
+        super().clean()
+        student = self.cleaned_data.get("student")
+        graded_work = self.cleaned_data.get("graded_work")
+
+        # Any of these being None is field level validation failure,
+        # but a guard is needed to prevent unnecessary processing.
+        if student is None or graded_work is None:
+            return
+
+        self._is_enrolled_task(student, graded_work.course_task)
+        return self.cleaned_data
+
+    def save(self):
+        """Create or update a grade."""
+        Grade.objects.update_or_create(
+            student=self.cleaned_data["student"],
+            graded_work=self.cleaned_data["graded_work"],
+            defaults={"score": self.cleaned_data["score"]},
+        )
