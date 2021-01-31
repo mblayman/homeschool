@@ -122,6 +122,9 @@ class TestStudentCourseView(TestCase):
                 "students:course", uuid=student.uuid, course_uuid=course.uuid
             )
 
+        assert self.get_context("student") == student
+        assert self.get_context("course") == course
+
     def test_other_user(self):
         user = self.make_user()
         student = StudentFactory()
@@ -133,32 +136,6 @@ class TestStudentCourseView(TestCase):
             )
 
         self.response_404(response)
-
-    def test_has_student(self):
-        user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-
-        with self.login(user):
-            self.get_check_200(
-                "students:course", uuid=student.uuid, course_uuid=course.uuid
-            )
-
-        self.assertContext("student", student)
-
-    def test_has_course(self):
-        user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-
-        with self.login(user):
-            self.get_check_200(
-                "students:course", uuid=student.uuid, course_uuid=course.uuid
-            )
-
-        self.assertContext("course", course)
 
     @freeze_time("2020-02-10")  # Monday
     def test_has_tasks_today(self):

@@ -7,15 +7,16 @@ from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.functional import cached_property
 from django.views.generic import CreateView, FormView, TemplateView
 
-from homeschool.courses.models import Course, CourseTask, GradedWork
+from homeschool.courses.mixins import CourseTaskMixin
+from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
-from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 from .exceptions import FullEnrollmentError, NoGradeLevelError, NoStudentError
 from .forms import CourseworkForm, EnrollmentForm
+from .mixins import StudentMixin
+from .models import Coursework, Enrollment, Grade, Student
 
 
 class StudentIndexView(LoginRequiredMixin, TemplateView):
@@ -64,13 +65,13 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class StudentCourseView(LoginRequiredMixin, TemplateView):
+class StudentCourseView(LoginRequiredMixin, StudentMixin, TemplateView):
     template_name = "students/course.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         user = self.request.user
-        context["student"] = self.get_student(user)
+        context["student"] = self.student
         context["course"] = self.get_course(user)
         context["task_items"] = self.get_task_items(
             context["student"], context["course"]
@@ -80,9 +81,6 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
                 item for item in context["task_items"] if "coursework" not in item
             ]
         return context
-
-    def get_student(self, user):
-        return get_object_or_404(user.school.students.all(), uuid=self.kwargs["uuid"])
 
     def get_course(self, user):
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
@@ -139,7 +137,7 @@ class StudentCourseView(LoginRequiredMixin, TemplateView):
         return {c.course_task: c for c in coursework}
 
 
-class CourseworkFormView(LoginRequiredMixin, FormView):
+class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView):
     template_name = "students/coursework_form.html"
     form_class = CourseworkForm
 
@@ -167,23 +165,6 @@ class CourseworkFormView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
-
-    @cached_property
-    def student(self):
-        return get_object_or_404(
-            Student, uuid=self.kwargs["uuid"], school__admin=self.request.user
-        )
-
-    @cached_property
-    def course_task(self):
-        grade_levels = GradeLevel.objects.filter(
-            school_year__school__admin=self.request.user
-        )
-        return get_object_or_404(
-            CourseTask,
-            uuid=self.kwargs["course_task_uuid"],
-            course__grade_levels__in=grade_levels,
-        )
 
 
 class GradeView(LoginRequiredMixin, TemplateView):
