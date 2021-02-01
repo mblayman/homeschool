@@ -50,7 +50,7 @@ django-tz-detect==0.3.0
     # via -r requirements.in
 django-waffle==2.0.0
     # via -r requirements.in
-django==3.1.4
+django==3.1.5
     # via
     #   -r requirements.in
     #   django-allauth
