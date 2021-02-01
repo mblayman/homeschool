@@ -60,7 +60,7 @@ django==3.1.6
     #   django-tz-detect
 docutils==0.16
     # via sphinx
-freezegun==1.0.0
+freezegun==1.1.0
     # via -r requirements.in
 gunicorn==20.0.4
     # via -r requirements.in
