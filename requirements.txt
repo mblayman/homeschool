@@ -30,7 +30,7 @@ dj-database-url==0.5.0
     # via django-heroku
 django-allauth==0.44.0
     # via -r requirements.in
-django-anymail[sendgrid]==8.1
+django-anymail[sendgrid]==8.2
     # via -r requirements.in
 django-compat==1.0.15
     # via django-hijack
