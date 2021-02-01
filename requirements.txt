@@ -12,7 +12,7 @@ babel==2.9.0
     # via sphinx
 beautifulsoup4==4.9.3
     # via -r requirements.in
-bleach==3.2.1
+bleach==3.2.3
     # via -r requirements.in
 brotli==1.0.9
     # via whitenoise
