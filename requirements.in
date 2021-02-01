@@ -1,6 +1,6 @@
 beautifulsoup4==4.9.3
 bleach==3.2.3
-Django==3.1.4
+Django==3.1.6
 django-allauth==0.44.0
 django-anymail[sendgrid]==8.2
 django-debug-toolbar==3.2
