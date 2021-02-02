@@ -74,9 +74,28 @@ Measurement criteria:
 
 [Well Trained Mind reference analysis](https://docs.google.com/spreadsheets/d/1SroV3KdUshFIQMOEKfVDtv5zwmcylL6OHfewTuaeJRo/edit?usp=sharing)
 
+### Product Matrix
+
+| Product | Business Model | Price | Reviewed |
+| --- | --- | --- | --- |
+| CM Organizer | Freemium | $7.95 / month | 2/1/21 |
+
 ### Charlotte Mason Organizer
 
 https://simplycharlottemason.com/store/cm-organizer/
+
+* Pitch: Homeschool organizer for those using the Charlotte Mason method.
+* The service seems centered around picking specific books
+  and adding them to the schedule.
+  Books are considered "resources."
+* Offers Progress, Attendance, and Bibliography reports
+* Share resources with other CM organizer users (paid feature)
+* Fetches book information by ISBN
+* Resources are attached to "subjects."
+* Resources are broken up on the scheduler by "divisions" (e.g., chapters)
+  and called "assignments."
+* Assignments can be partially completed and marked as "worked on."
+* Filters on daily view.
 
 Forum topics:
 
