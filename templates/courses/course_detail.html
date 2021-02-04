@@ -18,6 +18,15 @@
     {{ course.name }}
   </h1>
 
+  {% if enrolled_students %}
+    <p class="font-thin text-base text-gray-800 mb-8">
+      See progress for
+      {% for student in enrolled_students %}
+        <a href="{% url "students:course" student.uuid course.uuid %}" class="underline hover:text-gray-600">{{ student.first_name }}</a>{% if forloop.last %}.{% else %},{% endif %}
+      {% endfor %}
+    </p>
+  {% endif %}
+
   {% if not course.is_active %}
     <p class="font-thin text-base text-gray-800 mb-8">
       This course is currently <strong>inactive</strong> and will not appear on the schedule.

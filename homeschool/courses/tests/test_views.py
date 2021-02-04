@@ -8,6 +8,7 @@ from homeschool.courses.tests.factories import (
     GradedWorkFactory,
 )
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
+from homeschool.students.tests.factories import EnrollmentFactory
 from homeschool.test import TestCase
 
 
@@ -251,6 +252,18 @@ class TestCourseDetailView(TestCase):
             self.get("courses:detail", uuid=course.uuid)
 
         assert self.get_context("last_task") == last_task
+
+    def test_enrolled_students(self):
+        """The enrolled students of the course are in the context."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", uuid=course.uuid)
+
+        assert self.get_context("enrolled_students") == [enrollment.student]
 
 
 class TestCourseEditView(TestCase):

@@ -20,6 +20,7 @@ from django.views.generic import (
 
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.models import GradeLevel, SchoolYear
+from homeschool.students.models import Enrollment
 
 from .forms import CourseForm, CourseResourceForm, CourseTaskForm
 from .models import Course, CourseResource, CourseTask
@@ -195,6 +196,14 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         context["grade_levels"] = grade_levels
         if grade_levels:
             context["school_year"] = grade_levels[0].school_year
+            context["enrolled_students"] = [
+                enrollment.student
+                for enrollment in Enrollment.objects.filter(
+                    grade_level__in=grade_levels
+                )
+                .select_related("student")
+                .order_by("student__first_name")
+            ]
 
         course_tasks = list(self.object.course_tasks.all())
         context["course_tasks"] = course_tasks
