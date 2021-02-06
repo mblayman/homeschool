@@ -65,7 +65,7 @@
               <div class="w-1/12 py-2 flex justify-center items-center">
 
                 {% if course_schedule.task.is_graded %}
-                  <a href="{% url "students:grade_task" uuid=schedule.student.uuid course_task_uuid=course_schedule.task.uuid %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600">
+                  <a href="{% url "students:grade_task" uuid=schedule.student.uuid course_task_uuid=course_schedule.task.uuid %}?next={{ request.path|urlencode }}" class="block text-gray-300 hover:text-gray-600">
                     <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                       <title>Graded Task</title>
                       <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
@@ -81,35 +81,44 @@
               </div>
             {% elif course_schedule.coursework %}
               <div class="w-1/12 text-sm text-center py-2">
-                {% for coursework in course_schedule.coursework %}
-                  <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
-                  <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked><br>
-                {% endfor %}
+                <div class="flex flex-col justify-around h-full">
+                  {% for coursework in course_schedule.coursework %}
+                    <div>
+                      <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
+                      <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked>
+                    </div>
+                  {% endfor %}
+                </div>
               </div>
               <div class="w-7/12 p-2">
-                {% for coursework in course_schedule.coursework %}
-                  <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
-                {% endfor %}
+                <div class="flex flex-col justify-around h-full">
+                  {% for coursework in course_schedule.coursework %}
+                    <div class="text-sm font-light text-gray-400 overflow-x-scroll">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
+                  {% endfor %}
+                </div>
               </div>
 
-              <div class="w-1/12 py-2 flex justify-center items-center">
-                {% for coursework in course_schedule.coursework %}
+              <div class="w-1/12 py-2">
+                <div class="flex flex-col justify-around h-full">
+                  {% for coursework in course_schedule.coursework %}
+                    <div class="flex justify-center items-center">
+                      {% if coursework.course_task.is_graded %}
+                        <a href="{% url "students:grade_task" uuid=schedule.student.uuid course_task_uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="{% if not forloop.last %}pb-2 {% endif %}block text-gray-300 hover:text-gray-600">
+                          <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <title>Graded Task</title>
+                            <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                          </svg>
+                        </a>
+                      {% else %}
+                        <div class="h-4 w-4 mr-2"></div>
+                      {% endif %}
 
-                  {% if coursework.course_task.is_graded %}
-                    <a href="{% url "students:grade_task" uuid=schedule.student.uuid course_task_uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="{% if not forloop.last %}pb-2 {% endif %}block mx-1 text-gray-300 hover:text-gray-600">
-                      <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <title>Graded Task</title>
-                        <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                      </svg>
-                    </a>
-                  {% else %}
-                    <div class="h-4 w-4 mr-2"></div>
-                  {% endif %}
-
-                  <a href="{% url "courses:task_edit" uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="block {% if not forloop.last %}pb-2 {% endif %}mx-1 text-gray-300 hover:text-gray-600 print-hide">
-                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
-                  </a>
-                {% endfor %}
+                      <a href="{% url "courses:task_edit" uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="block {% if not forloop.last %}pb-2 {% endif %}mx-1 text-gray-300 hover:text-gray-600 print-hide">
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
+                      </a>
+                    </div>
+                  {% endfor %}
+                </div>
               </div>
             {% elif course_schedule.no_scheduled_task %}
               <div class="w-1/12 text-sm text-center py-2"></div>

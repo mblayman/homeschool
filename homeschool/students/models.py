@@ -260,9 +260,11 @@ class Student(models.Model):
         The data is in a dictionary for fast lookups.
         """
         day_coursework: dict = {}
-        coursework_qs = Coursework.objects.filter(
-            student=self, completed_date=day
-        ).select_related("course_task")
+        coursework_qs = (
+            Coursework.objects.filter(student=self, completed_date=day)
+            .order_by("course_task__id")
+            .select_related("course_task")
+        )
         for coursework in coursework_qs:
             course_id = coursework.course_task.course_id
             if course_id not in day_coursework:
