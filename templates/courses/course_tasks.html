@@ -1,0 +1,88 @@
+{% load static %}
+<div id="tasks">
+  {% for task in course_tasks %}
+    <div id="task-{{ task.uuid }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
+      <div class="w-1/12 p-2 text-sm font-light overflow-x-scroll">
+        {{ forloop.counter }}.
+      </div>
+      <div class="w-6/12 p-2 text-sm font-light overflow-x-scroll">
+        <a href="{% url "courses:task_edit" uuid=task.uuid %}?next={{ request.path|urlencode }}%23task-{{ task.uuid }}" class="hover:text-gray-600">
+          {{ task.description|linebreaksbr }}
+        </a>
+      </div>
+      <div class="w-2/12 p-2 text-sm font-light flex items-center overflow-x-scroll print-hide">
+        {% if task.grade_level %}
+          {{ task.grade_level.name }}
+        {% endif %}
+      </div>
+      <div class="p-2 flex items-center justify-center w-3/12 text-gray-300 print-hide">
+        {% if task.graded_work %}
+          <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <title>Graded Task</title>
+            <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+        {% else %}
+          <div class="h-4 w-4 mr-2"></div>
+        {% endif %}
+        <a href="{% url "courses:task_create" uuid=course.uuid %}?previous_task={{ task.uuid }}&next={{ request.path|urlencode }}%23task-{{ task.uuid }}" class="block mr-2 hover:text-gray-600">
+          <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <title>Add Task After This Task</title>
+            <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
+          </svg>
+        </a>
+        <form method="POST" action="{% url "courses:task_up" uuid=task.uuid %}">
+          {% csrf_token %}
+          <button type="submit" class="block mr-2 hover:text-gray-600">
+            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <title>Move Task Up</title>
+              <path d="M0 10a10 10 0 1 1 20 0 10 10 0 0 1-20 0zm10 8a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm.7-10.54L14.25 11l-1.41 1.41L10 9.6l-2.83 2.8L5.76 11 10 6.76l.7.7z"/>
+            </svg>
+          </button>
+        </form>
+        <form method="POST" action="{% url "courses:task_down" uuid=task.uuid %}">
+          {% csrf_token %}
+          <button type="submit" class="block mr-2 hover:text-gray-600">
+            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <title>Move Task Down</title>
+              <path d="M20 10a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm-.7 10.54L5.75 9l1.41-1.41L10 10.4l2.83-2.82L14.24 9 10 13.24l-.7-.7z"/>
+            </svg>
+          </button>
+        </form>
+        <a class="block mr-2 hover:text-gray-600"
+          hx-delete="{% url "courses:task_hx_delete" task.uuid %}"
+          hx-confirm="Are you sure you want to delete this task?"
+          hx-target="#tasks"
+          hx-swap="outerHTML">
+          <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <title>Delete This Task</title>
+            <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm1.41-1.41A8 8 0 1 0 15.66 4.34 8 8 0 0 0 4.34 15.66zm9.9-8.49L11.41 10l2.83 2.83-1.41 1.41L10 11.41l-2.83 2.83-1.41-1.41L8.59 10 5.76 7.17l1.41-1.41L10 8.59l2.83-2.83 1.41 1.41z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  {% empty %}
+    <div class="flex flex-row justify-between">
+      <div class="w-2/5">
+        <div class="m-8 mt-8 ml-12">
+          <img src="{% static "todo.svg" %}" alt="Things to do">
+        </div>
+      </div>
+      <div class="w-3/5">
+        <div class="m-8 ml-12">
+          <h2 class="font-thin text-xl text-blue-900 mb-2">Add Your First Task</h2>
+          <p class="mb-1 font-light">
+            What do students do in this course?
+            Each course is a collection of tasks.
+          </p>
+          <p class="mb-8 font-light">
+            Let’s add one to begin.
+          </p>
+          <a href="{% url "courses:task_create" uuid=course.uuid %}"
+            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+            Add Task
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

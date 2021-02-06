@@ -21,6 +21,9 @@ urlpatterns = [
         views.CourseTaskDeleteView.as_view(),
         name="task_delete",
     ),
+    path(
+        "tasks/<uuid:uuid>/delete/", views.course_task_hx_delete, name="task_hx_delete"
+    ),
     path("tasks/<uuid:uuid>/", views.CourseTaskUpdateView.as_view(), name="task_edit"),
     path("tasks/<uuid:uuid>/down/", views.move_task_down, name="task_down"),
     path("tasks/<uuid:uuid>/up/", views.move_task_up, name="task_up"),

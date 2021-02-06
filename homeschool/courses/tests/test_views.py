@@ -803,6 +803,36 @@ class TestCourseTaskDeleteView(TestCase):
         assert next_url in response.get("Location")
 
 
+class TestCourseTaskHxDeleteView(TestCase):
+    def test_unauthenticated_access(self):
+        task = CourseTaskFactory()
+        self.assertLoginRequired("courses:task_hx_delete", uuid=task.uuid)
+
+    def test_delete(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.delete("courses:task_hx_delete", uuid=task.uuid)
+
+        assert CourseTask.objects.count() == 0
+        self.response_200(response)
+
+    def test_delete_other_user(self):
+        """Another user cannot delete a user's task."""
+        user = self.make_user()
+        course = CourseFactory()
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.delete("courses:task_hx_delete", uuid=task.uuid)
+
+        assert CourseTask.objects.count() == 1
+        self.response_404(response)
+
+
 class TestCourseTaskDown(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()

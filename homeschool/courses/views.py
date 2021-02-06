@@ -9,7 +9,7 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -424,6 +424,23 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
         if next_url:
             return next_url
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def course_task_hx_delete(request, uuid):
+    """Delete a course task via htmx."""
+    task = get_object_or_404(
+        get_course_task_queryset(request.user).select_related("course"), uuid=uuid
+    )
+    context = {
+        "course": task.course,
+        "course_tasks": task.course.course_tasks.all()
+        .select_related("grade_level")
+        .prefetch_related("graded_work"),
+    }
+    task.delete()
+    return render(request, "courses/course_tasks.html", context)
 
 
 @login_required
