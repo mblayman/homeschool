@@ -22,7 +22,7 @@ cffi==1.14.3
     # via cryptography
 chardet==3.0.4
     # via requests
-cryptography==3.2.1
+cryptography==3.3.2
     # via pyjwt
 defusedxml==0.6.0
     # via python3-openid
