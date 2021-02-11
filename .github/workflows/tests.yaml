@@ -4,7 +4,7 @@ on: push
 jobs:
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Get the code
         uses: actions/checkout@v1
