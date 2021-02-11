@@ -13,6 +13,7 @@ env = environ.Env(
     CSRF_COOKIE_SECURE=(bool, True),
     DEBUG=(bool, False),
     DEBUG_TOOLBAR=(bool, False),
+    DJSTRIPE_WEBHOOK_VALIDATION=(str, "verify_signature"),
     EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
     EMAIL_TESTING=(bool, False),
     ROLLBAR_ENABLED=(bool, True),
@@ -21,6 +22,7 @@ env = environ.Env(
     SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
     SECURE_SSL_REDIRECT=(bool, True),
     SESSION_COOKIE_SECURE=(bool, True),
+    STRIPE_LIVE_MODE=(bool, True),
 )
 env_file = os.path.join(BASE_DIR, ".env")
 if os.path.exists(env_file):
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "django_extensions",
+    "djstripe",
     "hijack",
     "compat",  # For django-hijack
     "ordered_model",
@@ -227,6 +230,25 @@ HIJACK_LOGOUT_REDIRECT_URL = "/office/users/user/"
 # django-waffle
 WAFFLE_FLAG_MODEL = "core.Flag"
 WAFFLE_CREATE_MISSING_FLAGS = True
+
+# dj-stripe
+STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
+STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
+STRIPE_LIVE_MODE = env("STRIPE_LIVE_SECRET_KEY")
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
+DJSTRIPE_SUBSCRIBER_MODEL = "accounts.Account"
+DJSTRIPE_USE_NATIVE_JSONFIELD = True
+DJSTRIPE_WEBHOOK_SECRET = env("DJSTRIPE_WEBHOOK_SECRET")
+# dj-stripe won't accept an empty string to disable validation
+# so the logic has to be conditional.
+DJSTRIPE_WEBHOOK_VALIDATION = (
+    env("DJSTRIPE_WEBHOOK_VALIDATION") if env("DJSTRIPE_WEBHOOK_VALIDATION") else None
+)
+
+# When the validation is explicitly disabled (i.e., dev mode),
+# the check should be ignored to appease CI.
+if DJSTRIPE_WEBHOOK_VALIDATION is None:
+    SILENCED_SYSTEM_CHECKS.append("djstripe.W004")
 
 # rollbar
 ROLLBAR = {

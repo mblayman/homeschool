@@ -44,18 +44,28 @@ jobs:
         run: make coverage
         env:
           ALLOWED_HOSTS: '*'
+          DJSTRIPE_WEBHOOK_SECRET: 'a secret to everybody'
+          DJSTRIPE_WEBHOOK_VALIDATION: ''
           ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
           SECRET_KEY: 'a secret to everybody'
           SECURE_SSL_REDIRECT: 'off'
           SENDGRID_API_KEY: 'a secret to everybody'
+          STRIPE_LIVE_MODE: 'off'
+          STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
+          STRIPE_TEST_SECRET_KEY: 'asecrettoeverybody'
 
       - name: Check deploy configuration
         run: ./manage.py check --deploy
         env:
           ALLOWED_HOSTS: '*'
+          DJSTRIPE_WEBHOOK_SECRET: 'a secret to everybody'
+          DJSTRIPE_WEBHOOK_VALIDATION: ''
           ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
           SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'
           SENDGRID_API_KEY: 'a secret to everybody'
+          STRIPE_LIVE_MODE: 'off'
+          STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
+          STRIPE_TEST_SECRET_KEY: 'asecrettoeverybody'
 
       - name: Check documentation build
         run: make -C docs html

@@ -9,3 +9,9 @@ class TestAccount(TestCase):
 
         assert account.user is not None
         assert account.status == Account.AccountStatus.TRIALING
+
+    def test_email(self):
+        """The account proxies the account holder's email address."""
+        account = AccountFactory()
+
+        assert account.email == account.user.email

@@ -58,6 +58,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             context["has_tasks"] = CourseTask.objects.filter(
                 course__grade_levels__school_year__school=user.school
             ).exists()
+
+        context["show_whats_new"] = self.show_whats_new
         return context
 
     def get_week_context_data(self, context):
@@ -113,7 +115,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             self.get_next_school_year(context, today, week)
 
         context["schedules"] = self.get_schedules(school_year, today, week)
-        context["show_whats_new"] = self.show_whats_new
         return context
 
     def build_week_dates(self, school_year, week):

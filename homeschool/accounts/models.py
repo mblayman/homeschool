@@ -24,6 +24,14 @@ class Account(models.Model):
         choices=AccountStatus.choices, default=AccountStatus.TRIALING, db_index=True
     )
 
+    @property
+    def email(self):
+        """Get the account holder's email.
+
+        This property is needed by dj-stripe.
+        """
+        return self.user.email
+
 
 @receiver(post_save, sender=User)
 def create_account(sender, instance, created, **kwargs):
