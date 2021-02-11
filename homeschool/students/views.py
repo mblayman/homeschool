@@ -382,7 +382,7 @@ class EnrollmentCreateView(LoginRequiredMixin, CreateView):
                 "All students are enrolled in the school year.",
             )
             raise FullEnrollmentError()
-        enrolled_students = set(enrollment.student for enrollment in enrollments)
+        enrolled_students = {enrollment.student for enrollment in enrollments}
         return [student for student in students if student not in enrolled_students]
 
     def get_success_url(self):
