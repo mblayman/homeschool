@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 import django_heroku
 import environ
@@ -37,7 +36,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 DEBUG_TOOLBAR = env("DEBUG_TOOLBAR")
 
-ALLOWED_HOSTS: List[str] = env("ALLOWED_HOSTS")
+ALLOWED_HOSTS: list[str] = env("ALLOWED_HOSTS")
 
 # App constants
 domain = "theschooldesk.app"
@@ -184,7 +183,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
 
-SILENCED_SYSTEM_CHECKS: List[str] = []
+SILENCED_SYSTEM_CHECKS: list[str] = []
 
 # django.contrib.sites
 SITE_ID = 1

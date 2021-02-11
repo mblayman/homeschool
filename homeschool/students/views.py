@@ -1,5 +1,3 @@
-from typing import Dict
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect
@@ -305,7 +303,7 @@ class GradeView(LoginRequiredMixin, TemplateView):
         raw_scores = {
             k: v for k, v in self.request.POST.items() if k.startswith("graded_work")
         }
-        scores: Dict[int, Dict[int, str]] = {}
+        scores: dict[int, dict[int, str]] = {}
         for student_work, score in raw_scores.items():
             if not score:
                 continue

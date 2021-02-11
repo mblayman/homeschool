@@ -852,7 +852,7 @@ class TestDaily(TestCase):
         grade_level = GradeLevelFactory(school_year__school=user.school)
         task = CourseTaskFactory(course__grade_levels=[grade_level])
         data = {
-            "completed_date": "{:%Y-%m-%d}".format(today),
+            "completed_date": f"{today:%Y-%m-%d}",
             f"task-{student.id}-{task.id}": "on",
         }
 
@@ -871,7 +871,7 @@ class TestDaily(TestCase):
         task = CourseTaskFactory(course__grade_levels=[grade_level])
         CourseworkFactory(student=student, course_task=task)
         data = {
-            "completed_date": "{:%Y-%m-%d}".format(today),
+            "completed_date": f"{today:%Y-%m-%d}",
             f"task-{student.id}-{task.id}": "off",
         }
 
@@ -887,7 +887,7 @@ class TestDaily(TestCase):
         grade_level = GradeLevelFactory(school_year__school=user.school)
         graded_work = GradedWorkFactory(course_task__course__grade_levels=[grade_level])
         data = {
-            "completed_date": "{:%Y-%m-%d}".format(today),
+            "completed_date": f"{today:%Y-%m-%d}",
             f"task-{student.id}-{graded_work.course_task.id}": "on",
         }
 
@@ -909,7 +909,7 @@ class TestDaily(TestCase):
             graded_work__course_task__course__grade_levels=[grade_level],
         )
         data = {
-            "completed_date": "{:%Y-%m-%d}".format(today),
+            "completed_date": f"{today:%Y-%m-%d}",
             f"task-{student.id}-{grade.graded_work.course_task.id}": "on",
         }
 

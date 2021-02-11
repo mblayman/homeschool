@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from typing import Dict, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.db import models
@@ -73,7 +73,7 @@ class SchoolYear(DaysOfWeekModel):
         return self._school_breaks_by_date.get(break_date)
 
     @cached_property
-    def _school_breaks_by_date(self) -> Dict[datetime.date, "SchoolBreak"]:
+    def _school_breaks_by_date(self) -> dict[datetime.date, "SchoolBreak"]:
         """Get the school breaks grouped by the dates."""
         breaks_by_date = {}
         for school_break in self.breaks.all():

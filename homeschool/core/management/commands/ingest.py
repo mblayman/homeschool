@@ -76,7 +76,7 @@ class Command(BaseCommand):
 
     def process_course(self, course_name, file_path):
         self.stdout.write(f"Processing {course_name}...")
-        with open(file_path, "r") as csv_file:
+        with open(file_path) as csv_file:
             reader = csv.reader(csv_file.readlines())
 
         searching_tasks = True
