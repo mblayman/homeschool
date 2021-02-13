@@ -29,6 +29,7 @@ urlpatterns = [
     path("schools/", include("homeschool.schools.urls")),
     path("settings/", include("homeschool.users.settings_urls")),
     path("students/", include("homeschool.students.urls")),
+    path("subscriptions/", include("homeschool.accounts.subscriptions_urls")),
     path("accounts/", include("allauth.urls")),
     path("hijack/", include("hijack.urls")),
     path("stripe/", include("djstripe.urls", namespace="djstripe")),

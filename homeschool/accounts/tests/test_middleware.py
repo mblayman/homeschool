@@ -28,3 +28,16 @@ class TestAccountGateMiddleware(TestCase):
         middleware(request)
 
         assert request.account is None
+
+    def test_inactive_redirect(self):
+        """An inactive account redirect to the subscriptions page."""
+        request = self.rf.get("/")
+        request.user = self.make_user()
+        expired = Account.AccountStatus.TRIAL_EXPIRED
+        Account.objects.filter(user=request.user).update(status=expired)
+        middleware = AccountGateMiddleware(get_response)
+
+        response = middleware(request)
+
+        assert response.status_code == 302
+        assert response["Location"] == self.reverse("subscriptions:index")
