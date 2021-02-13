@@ -1,11 +1,5 @@
-from django.http import HttpResponse
-
 from homeschool.middleware import SqueakyCleanMiddleware
-
-
-def get_response(request):
-    """A basic callback for the middleware tests to use."""
-    return HttpResponse()
+from homeschool.test import get_response
 
 
 def test_cleans_fields(rf):
