@@ -280,5 +280,8 @@ MORE_WHITENOISE = [
     {"directory": os.path.join(BASE_DIR, "docs", "_build", "html"), "prefix": "docs/"},
 ]
 
+# accounts
+ACCOUNT_GATE_ALLOW_LIST = ["/accounts/logout/", "/help/"]
+
 # core
 SUPPORT_EMAIL = f"support@{domain}"

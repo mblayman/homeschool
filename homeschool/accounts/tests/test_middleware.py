@@ -25,9 +25,10 @@ class TestAccountGateMiddleware(TestCase):
         request.user = AnonymousUser()
         middleware = AccountGateMiddleware(get_response)
 
-        middleware(request)
+        response = middleware(request)
 
         assert request.account is None
+        assert response.status_code == 200
 
     def test_inactive_redirect(self):
         """An inactive account redirect to the subscriptions page."""
@@ -41,3 +42,27 @@ class TestAccountGateMiddleware(TestCase):
 
         assert response.status_code == 302
         assert response["Location"] == self.reverse("subscriptions:index")
+
+    def test_no_gate_url_redirect(self):
+        """The middleware will not redirect the URL gate destination."""
+        request = self.rf.get(self.reverse("subscriptions:index"))
+        request.user = self.make_user()
+        expired = Account.AccountStatus.TRIAL_EXPIRED
+        Account.objects.filter(user=request.user).update(status=expired)
+        middleware = AccountGateMiddleware(get_response)
+
+        response = middleware(request)
+
+        assert response.status_code == 200
+
+    def test_allow_list(self):
+        """A URL on the allow list does not redirect."""
+        request = self.rf.get(self.reverse("core:help"))
+        request.user = self.make_user()
+        expired = Account.AccountStatus.TRIAL_EXPIRED
+        Account.objects.filter(user=request.user).update(status=expired)
+        middleware = AccountGateMiddleware(get_response)
+
+        response = middleware(request)
+
+        assert response.status_code == 200
