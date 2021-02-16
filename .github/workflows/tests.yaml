@@ -52,7 +52,7 @@ jobs:
           SENDGRID_API_KEY: 'a secret to everybody'
           STRIPE_LIVE_MODE: 'off'
           STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
-          STRIPE_TEST_SECRET_KEY: 'asecrettoeverybody'
+          STRIPE_TEST_SECRET_KEY: 'sk_test_asecrettoeverybody'
 
       - name: Check deploy configuration
         run: ./manage.py check --deploy
@@ -65,7 +65,7 @@ jobs:
           SENDGRID_API_KEY: 'a secret to everybody'
           STRIPE_LIVE_MODE: 'off'
           STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
-          STRIPE_TEST_SECRET_KEY: 'asecrettoeverybody'
+          STRIPE_TEST_SECRET_KEY: 'sk_test_asecrettoeverybody'
 
       - name: Check documentation build
         run: make -C docs html
