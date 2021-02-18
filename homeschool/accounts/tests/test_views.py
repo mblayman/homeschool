@@ -1,9 +1,27 @@
 from unittest import mock
 
+from django.conf import settings
+from djstripe.models import Price, Product
+
 from homeschool.test import TestCase
 
 
 class TestSubscriptionsView(TestCase):
+    def setUp(self):
+        product = Product.objects.create()
+        Price.objects.create(
+            nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME,
+            active=True,
+            product=product,
+            id="price_fake_monthly",
+        )
+        Price.objects.create(
+            nickname=settings.ACCOUNTS_ANNUAL_PRICE_NICKNAME,
+            active=True,
+            product=product,
+            id="price_fake_annual",
+        )
+
     def test_unauthenticated_access(self):
         self.assertLoginRequired("subscriptions:index")
 
@@ -12,6 +30,13 @@ class TestSubscriptionsView(TestCase):
 
         with self.login(user):
             self.get_check_200("subscriptions:index")
+
+        assert self.get_context("monthly_price") is not None
+        assert self.get_context("annual_price") is not None
+        assert (
+            self.get_context("stripe_publishable_key")
+            == settings.STRIPE_PUBLISHABLE_KEY
+        )
 
 
 class TestCreateCheckoutSession(TestCase):

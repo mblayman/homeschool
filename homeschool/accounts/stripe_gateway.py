@@ -16,6 +16,7 @@ class StripeGateway:
         """Create a checkout session based on the subscription price."""
         site = Site.objects.get_current()
         checkout_session = stripe.checkout.Session.create(
+            # TODO: prepopulate email field
             # TODO: This URL needs to point to the appropriate spot.
             success_url=f"https://{site}?session_id={{CHECKOUT_SESSION_ID}}",
             # TODO: This URL needs to point to the appropriate spot.
