@@ -1,4 +1,5 @@
 import factory
+from djstripe.models import Price, Product
 
 
 class AccountFactory(factory.django.DjangoModelFactory):
@@ -6,3 +7,22 @@ class AccountFactory(factory.django.DjangoModelFactory):
         model = "accounts.Account"
 
     user = factory.SubFactory("homeschool.users.tests.factories.UserFactory")
+
+
+# djstripe factories
+
+
+class ProductFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Product
+
+    id = factory.Sequence(lambda n: f"product_{n}")
+
+
+class PriceFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Price
+
+    id = factory.Sequence(lambda n: f"price_{n}")
+    active = True
+    product = factory.SubFactory(ProductFactory)

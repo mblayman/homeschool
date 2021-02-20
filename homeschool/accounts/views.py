@@ -1,9 +1,11 @@
 import json
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from djstripe.models import Price
 
@@ -30,8 +32,17 @@ def subscriptions_index(request):
 def create_checkout_session(request):
     """Create a checkout session for Stripe."""
     data = json.loads(request.body)
-    # TODO: Validate that the price is real.
-    session_id = stripe_gateway.create_checkout_session(
-        data.get("price_id"), request.account
-    )
+    price_id = data.get("price_id")
+
+    if not Price.objects.filter(
+        id=price_id, nickname__in=settings.ACCOUNTS_PRICE_NICKNAMES
+    ).exists():
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "That plan price is not available. Please contact support for help.",
+        )
+        return HttpResponseRedirect(reverse("subscriptions:index"))
+
+    session_id = stripe_gateway.create_checkout_session(price_id, request.account)
     return JsonResponse({"session_id": session_id})
