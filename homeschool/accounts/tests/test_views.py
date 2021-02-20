@@ -43,7 +43,7 @@ class TestCreateCheckoutSession(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("subscriptions:create_checkout_session")
 
-    @mock.patch("homeschool.accounts.views.stripe_gateway")
+    @mock.patch("homeschool.accounts.views.stripe_gateway", autospec=True)
     def test_ok(self, mock_stripe_gateway):
         """The view gets a session from the gateway."""
         mock_stripe_gateway.create_checkout_session.return_value = "session_fake_id"
