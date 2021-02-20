@@ -6,7 +6,7 @@
         {{ forloop.counter }}.
       </div>
       <div class="w-6/12 p-2 text-sm font-light overflow-x-scroll">
-        <a href="{% url "courses:task_edit" uuid=task.uuid %}?next={{ request.path|urlencode }}%23task-{{ task.uuid }}" class="hover:text-gray-600">
+        <a href="{% url "courses:task_edit" uuid=task.uuid %}?next={% url "courses:detail" task.course.uuid %}%23task-{{ task.uuid }}" class="hover:text-gray-600">
           {{ task.description|linebreaksbr }}
         </a>
       </div>
