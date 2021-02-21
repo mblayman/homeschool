@@ -9,6 +9,7 @@ django-extensions==3.1.0
 django-heroku==0.3.1
 django-hijack==2.1.10
 django-ordered-model==3.4.1
+django-simple-history==2.12.0
 django-tz-detect==0.3.0
 django-waffle==2.1.0
 dj-stripe==2.4.3

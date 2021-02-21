@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "hijack",
     "compat",  # For django-hijack
     "ordered_model",
+    "simple_history",
     "tz_detect",
     "waffle",
     "homeschool.accounts",
