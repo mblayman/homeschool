@@ -1,6 +1,7 @@
 import stripe
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.urls import reverse
 
 stripe.api_key = (
     settings.STRIPE_LIVE_SECRET_KEY
@@ -15,12 +16,13 @@ class StripeGateway:
     def create_checkout_session(self, price_id, account):
         """Create a checkout session based on the subscription price."""
         site = Site.objects.get_current()
+        subscription_success = reverse("subscriptions:success")
+        stripe_cancel = reverse("subscriptions:stripe_cancel")
+
         checkout_session = stripe.checkout.Session.create(
             customer_email=account.email,
-            # TODO: This URL needs to point to the appropriate spot.
-            success_url=f"https://{site}?session_id={{CHECKOUT_SESSION_ID}}",
-            # TODO: This URL needs to point to the appropriate spot.
-            cancel_url=f"https://{site}",
+            success_url=f"https://{site}{subscription_success}",
+            cancel_url=f"https://{site}{stripe_cancel}",
             payment_method_types=["card"],
             mode="subscription",
             line_items=[{"price": price_id, "quantity": 1}],

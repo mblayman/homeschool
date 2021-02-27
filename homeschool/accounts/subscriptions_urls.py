@@ -10,4 +10,6 @@ urlpatterns = [
         views.create_checkout_session,
         name="create_checkout_session",
     ),
+    path("success/", views.SuccessView.as_view(), name="success"),
+    path("stripe-cancel/", views.StripeCancelView.as_view(), name="stripe_cancel"),
 ]

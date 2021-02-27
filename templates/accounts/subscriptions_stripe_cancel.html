@@ -1,0 +1,28 @@
+{% extends "app_base.html" %}
+{% load static %}
+
+{% block head_title %}We’re Here When You’re Ready{% endblock %}
+
+{% block main %}
+  <div class="mx-auto max-w-lg font-thin text-base text-gray-800">
+    <img class="mb-4 w-10/12 mx-auto" src="{% static "questions.svg" %}" alt="People touching a giant question mark">
+    <h1 class="font-thin text-2xl text-blue-900 mb-4 text-center">We’re Here When You’re Ready</h1>
+    <div class="mx-auto max-w-md">
+      <p class="mb-2">
+        Making the right choice for your home school can be tough.
+        When you’re ready, you can pick your plan.
+      </p>
+      <p class="mb-8">
+        If you’re not ready to join because School Desk is missing features you need,
+        please <a class="underline" href="mailto:{{ support_email }}">email support</a>
+        to let us know what you're looking for!
+      </p>
+      <div class="mx-auto text-center mb-8">
+        <a href="{% url "subscriptions:index" %}"
+          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Check Out The Plan Choices
+        </a>
+      <div>
+    </div>
+  </div>
+{% endblock %}

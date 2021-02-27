@@ -69,3 +69,27 @@ class TestCreateCheckoutSession(TestCase):
             == "That plan price is not available. Please contact support for help."
         )
         assert not mock_stripe_gateway.create_checkout_session.called
+
+
+class TestSuccessView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("subscriptions:success")
+
+    def test_get(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("subscriptions:success")
+
+
+class TestStripeCancelView(TestCase):
+    def test_unauthenticated_access(self):
+        self.assertLoginRequired("subscriptions:stripe_cancel")
+
+    def test_get(self):
+        user = self.make_user()
+
+        with self.login(user):
+            self.get_check_200("subscriptions:stripe_cancel")
+
+        assert self.get_context("support_email") == settings.SUPPORT_EMAIL
