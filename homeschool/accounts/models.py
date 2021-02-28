@@ -1,3 +1,5 @@
+import datetime
+
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
@@ -5,6 +7,8 @@ from django.dispatch import receiver
 from simple_history.models import HistoricalRecords
 
 from homeschool.users.models import User
+
+from . import constants
 
 
 class Account(models.Model):
@@ -51,6 +55,11 @@ class Account(models.Model):
         This property is needed by dj-stripe.
         """
         return self.user.email
+
+    @property
+    def trial_end(self):
+        """Calculate the account's trial end date."""
+        return self.user.date_joined + datetime.timedelta(days=constants.TRIAL_DAYS)
 
 
 @receiver(post_save, sender=User)
