@@ -5,7 +5,7 @@ django-allauth==0.44.0
 django-anymail[sendgrid]==8.2
 django-debug-toolbar==3.2
 django-environ==0.4.5
-django-extensions==3.1.0
+django-extensions==3.1.1
 django-heroku==0.3.1
 django-hijack==2.1.10
 django-ordered-model==3.4.1
