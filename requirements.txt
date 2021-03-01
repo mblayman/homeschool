@@ -136,7 +136,7 @@ soupsieve==1.9.5
     # via beautifulsoup4
 sphinx-rtd-theme==0.5.1
     # via -r requirements.in
-sphinx==3.4.3
+sphinx==3.5.1
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
