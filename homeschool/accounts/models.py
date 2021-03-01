@@ -39,6 +39,8 @@ class Account(models.Model):
         AccountStatus.ACTIVE,
     )
 
+    PRE_PLAN_STATUSES = (AccountStatus.TRIALING, AccountStatus.TRIAL_EXPIRED)
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+"
     )
