@@ -34,8 +34,6 @@ django-allauth==0.44.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.2
     # via -r requirements.in
-django-compat==1.0.15
-    # via django-hijack
 django-debug-toolbar==3.2
     # via -r requirements.in
 django-environ==0.4.5
@@ -44,7 +42,7 @@ django-extensions==3.1.1
     # via -r requirements.in
 django-heroku==0.3.1
     # via -r requirements.in
-django-hijack==2.1.10
+django-hijack==2.3.0
     # via -r requirements.in
 django-ordered-model==3.4.1
     # via -r requirements.in
@@ -62,6 +60,7 @@ django==3.1.7
     #   django-anymail
     #   django-debug-toolbar
     #   django-heroku
+    #   django-hijack
     #   django-tz-detect
     #   jsonfield
 docutils==0.16
@@ -124,7 +123,6 @@ six==1.14.0
     # via
     #   bleach
     #   cryptography
-    #   django-compat
     #   django-simple-history
     #   django-tz-detect
     #   packaging

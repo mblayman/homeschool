@@ -32,7 +32,7 @@
             <div class="mr-4 font-light">
               As: {{ user.email }}
             </div>
-            <form class="mr-4" method="POST" action="{% url 'hijack:release_hijack' %}">
+            <form class="mr-4" method="POST" action="{% url 'hijack:release' %}">
               {% csrf_token %}
               <button class="hover:underline font-light" type="submit">Release</button>
             </form>
