@@ -18,6 +18,6 @@ gunicorn==20.0.4
 python-dateutil==2.8.1
 requests==2.25.1
 rollbar==0.15.1
-Sphinx==3.4.3
+Sphinx==3.5.1
 sphinx-rtd-theme==0.5.1
 whitenoise[brotli]==5.2.0
