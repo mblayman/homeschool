@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from djstripe import webhooks
 from simple_history.models import HistoricalRecords
 
 from homeschool.users.models import User
@@ -69,3 +70,15 @@ def create_account(sender, instance, created, **kwargs):
     """A new user gets an associated account."""
     if created:
         Account.objects.create(user=instance)
+
+
+@webhooks.handler("checkout.session.completed")
+def handle_checkout_session_completed(event, **kwargs):
+    """Transition the account to an active state.
+
+    This event occurs after a user provides their checkout payment information.
+    """
+    event_data = event.data["object"]
+    # The Stripe gateway sets the account ID in the client reference ID field.
+    account_id = int(event_data["client_reference_id"])
+    Account.objects.filter(id=account_id).update(status=Account.AccountStatus.ACTIVE)

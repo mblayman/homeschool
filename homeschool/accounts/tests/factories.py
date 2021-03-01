@@ -1,5 +1,5 @@
 import factory
-from djstripe.models import Price, Product
+from djstripe.models import Event, Price, Product
 
 
 class AccountFactory(factory.django.DjangoModelFactory):
@@ -10,6 +10,14 @@ class AccountFactory(factory.django.DjangoModelFactory):
 
 
 # djstripe factories
+
+
+class EventFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Event
+
+    id = factory.Sequence(lambda n: f"evt_{n}")
+    data = factory.LazyFunction(lambda: {})
 
 
 class ProductFactory(factory.django.DjangoModelFactory):
