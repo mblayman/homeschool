@@ -44,7 +44,7 @@ jobs:
         run: make coverage
         env:
           ALLOWED_HOSTS: '*'
-          DJSTRIPE_WEBHOOK_SECRET: 'a secret to everybody'
+          DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
           DJSTRIPE_WEBHOOK_VALIDATION: ''
           ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
           SECRET_KEY: 'a secret to everybody'
@@ -59,7 +59,7 @@ jobs:
         run: ./manage.py check --deploy
         env:
           ALLOWED_HOSTS: '*'
-          DJSTRIPE_WEBHOOK_SECRET: 'a secret to everybody'
+          DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
           DJSTRIPE_WEBHOOK_VALIDATION: ''
           ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
           SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'
