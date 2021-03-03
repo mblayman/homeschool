@@ -11,14 +11,19 @@ graph:
 		accounts \
 		core \
 		courses \
+		notifications \
 		schools \
 		students \
 		users \
 		-o models.png
 
+# For the next time I think about making this faster:
+# -n auto --dist loadfile, 8 CPUs, 445 tests, 1m15s
+# -n 4    --dist loadfile, 4 CPUs, 445 tests, 43s
+# -n 2    --dist loadfile, 4 CPUs, 445 tests, 39s
+# no parallelism,                  445 tests, 41s
 coverage:
-	coverage run --source='homeschool' -m pytest --migrations
-	coverage report
+	pytest --cov=homeschool --migrations -n 2 --dist loadfile
 
 mypy:
 	mypy homeschool project manage.py
