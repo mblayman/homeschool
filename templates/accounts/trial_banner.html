@@ -6,6 +6,7 @@
     <div class="py-4 pr-4">
       Your School Desk trial ends on <span class="font-semibold">{{ request.account.trial_end|date:"F j, Y" }}</span>.
       Please <a class="underline" href="{% url "subscriptions:index" %}">choose a subscription plan</a> to continue beyond your trial.
+      Your account will not be charged until the end of your trial.
     </div>
   </div>
 {% endif %}
