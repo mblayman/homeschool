@@ -1,0 +1,11 @@
+{% if display_banner %}
+  <div class="max-w-3xl mx-auto flex flex-row justify-center items-center mb-8 bg-blue-100 border border-blue-500 text-gray-800 rounded-lg shadow-sm">
+    <div class="text-blue-700">
+      <svg class="mx-4 h-8 w-8 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg>
+    </div>
+    <div class="py-4 pr-4">
+      Your School Desk trial ends on <span class="font-semibold">{{ request.account.trial_end|date:"F j, Y" }}</span>.
+      Please <a class="underline" href="{% url "subscriptions:index" %}">choose a subscription plan</a> to continue beyond your trial.
+    </div>
+  </div>
+{% endif %}

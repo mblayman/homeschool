@@ -196,7 +196,7 @@ class TestDashboard(TestCase):
             school_year=grade_level.school_year, start_date=friday, end_date=friday
         )
 
-        with self.login(user), self.assertNumQueries(17):
+        with self.login(user), self.assertNumQueries(18):
             self.get("core:dashboard")
 
         expected_schedule = {
@@ -285,7 +285,7 @@ class TestDashboard(TestCase):
         task_2 = CourseTaskFactory(course=course)
         CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
 
-        with self.login(user), self.assertNumQueries(18):
+        with self.login(user), self.assertNumQueries(19):
             self.get("core:weekly", year=2020, month=1, day=27)
 
         expected_schedule = {

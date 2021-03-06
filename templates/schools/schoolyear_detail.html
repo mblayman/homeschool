@@ -1,9 +1,12 @@
 {% extends "app_base.html" %}
-{% load static %}
+{% load accounts_tags static %}
 
 {% block head_title %}{{ schoolyear }} School Year{% endblock %}
 
 {% block main %}
+
+  {% trial_banner %}
+
   {% if request.GET.welcome %}
     <div class="flex items-center bg-blue-100 w-full rounded-lg p-8 mb-8">
       <div class="w-1/2">
