@@ -17,12 +17,13 @@ from .stripe_gateway import stripe_gateway
 @login_required
 def subscriptions_index(request):
     """Show the subscription plan options."""
+    livemode = settings.STRIPE_LIVE_MODE
     context = {
         "monthly_price": Price.objects.get(
-            nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME
+            nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME, livemode=livemode
         ),
         "annual_price": Price.objects.get(
-            nickname=settings.ACCOUNTS_ANNUAL_PRICE_NICKNAME
+            nickname=settings.ACCOUNTS_ANNUAL_PRICE_NICKNAME, livemode=livemode
         ),
         "stripe_publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
     }

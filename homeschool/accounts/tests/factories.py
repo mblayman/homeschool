@@ -33,4 +33,5 @@ class PriceFactory(factory.django.DjangoModelFactory):
 
     id = factory.Sequence(lambda n: f"price_{n}")
     active = True
+    livemode = False
     product = factory.SubFactory(ProductFactory)

@@ -13,8 +13,11 @@ class TestSubscriptionsView(TestCase):
 
     def test_get(self):
         user = self.make_user()
+        # The filter needs to consider livemode when getting prices.
         PriceFactory(nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME)
+        PriceFactory(nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME, livemode=True)
         PriceFactory(nickname=settings.ACCOUNTS_ANNUAL_PRICE_NICKNAME)
+        PriceFactory(nickname=settings.ACCOUNTS_ANNUAL_PRICE_NICKNAME, livemode=True)
 
         with self.login(user):
             self.get_check_200("subscriptions:index")
