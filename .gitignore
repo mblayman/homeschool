@@ -109,9 +109,6 @@ venv.bak/
 # Modeling output
 models.png
 
-# Skedtrack exports
-courses_exports/
-
 # Django
 staticfiles/
 
