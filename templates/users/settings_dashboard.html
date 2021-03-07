@@ -1,5 +1,4 @@
 {% extends "app_base.html" %}
-{% load waffle_tags %}
 
 {% block head_title %}Settings{% endblock %}
 
@@ -21,40 +20,37 @@
     </button>
   </form>
 
-  {% flag billing_portal %}
-    <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-4">Billing</h1>
+  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-4">Billing</h1>
 
-    {% if request.account.status == request.account.AccountStatus.ACTIVE %}
-      <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
-        <a class="underline" id="manage-billing" href="#">Manage Your Billing Information</a>
-        at the Stripe customer portal.
-      </p>
-    {% elif request.account.status == request.account.AccountStatus.TRIALING %}
-      <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
-        Your account is in the trial period
-        and your trial ends on {{ request.account.trial_end|date:"F j, Y" }}.
-      </p>
-      <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
-        Ready to extend beyond your trial?
-        <a class="underline" href="{% url "subscriptions:index" %}">Choose Your Plan</a>
-      </p>
-      <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
-        You will not be charged until the end
-        of your trial!
-      </p>
-    {% elif request.account.status == request.account.AccountStatus.EXEMPT %}
-      <p class="font-thin text-base text-gray-800 mb-2">
-        Your account is special and you are exempt. No billing required for you!
-      </p>
-    {% elif request.account.status == request.account.AccountStatus.BETA %}
-      <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
-        You are a beta user. No billing required for you!
-        Please support School Desk by providing your feedback
-        as you use the service.
-      </p>
-    {% endif %}
-
-  {% endflag %}
+  {% if request.account.status == request.account.AccountStatus.ACTIVE %}
+    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+      <a class="underline" id="manage-billing" href="#">Manage Your Billing Information</a>
+      at the Stripe customer portal.
+    </p>
+  {% elif request.account.status == request.account.AccountStatus.TRIALING %}
+    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+      Your account is in the trial period
+      and your trial ends on {{ request.account.trial_end|date:"F j, Y" }}.
+    </p>
+    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+      Ready to extend beyond your trial?
+      <a class="underline" href="{% url "subscriptions:index" %}">Choose Your Plan</a>
+    </p>
+    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+      You will not be charged until the end
+      of your trial!
+    </p>
+  {% elif request.account.status == request.account.AccountStatus.EXEMPT %}
+    <p class="font-thin text-base text-gray-800 mb-2">
+      Your account is special and you are exempt. No billing required for you!
+    </p>
+  {% elif request.account.status == request.account.AccountStatus.BETA %}
+    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+      You are a beta user. No billing required for you!
+      Please support School Desk by providing your feedback
+      as you use the service.
+    </p>
+  {% endif %}
 
 {% endblock %}
 
