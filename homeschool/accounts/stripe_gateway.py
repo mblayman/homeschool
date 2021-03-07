@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.urls import reverse
 from django.utils import timezone
+from djstripe.models import Customer
 
 stripe.api_key = (
     settings.STRIPE_LIVE_SECRET_KEY
@@ -54,6 +55,20 @@ class StripeGateway:
         """
         cutoff = timezone.now() + datetime.timedelta(days=2)
         return account.trial_end > cutoff
+
+    def create_billing_portal_session(self, account):
+        """Create a billing portal session at Stripe.
+
+        This method assumes that there is an existing Stripe customer
+        for the account.
+        """
+        site = Site.objects.get_current()
+        return_url = reverse("settings:dashboard")
+        customer = Customer.objects.get(email=account.email)
+        session = stripe.billing_portal.Session.create(
+            customer=customer.id, return_url=f"https://{site}{return_url}"
+        )
+        return session.url
 
 
 stripe_gateway = StripeGateway()

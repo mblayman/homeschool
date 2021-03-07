@@ -66,3 +66,11 @@ class StripeCancelView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         context["support_email"] = settings.SUPPORT_EMAIL
         return context
+
+
+@login_required
+@require_POST
+def create_billing_portal_session(request):
+    """Create a billing portal session for a customer."""
+    portal_url = stripe_gateway.create_billing_portal_session(request.account)
+    return JsonResponse({"url": portal_url})

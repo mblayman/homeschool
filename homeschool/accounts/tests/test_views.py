@@ -96,3 +96,23 @@ class TestStripeCancelView(TestCase):
             self.get_check_200("subscriptions:stripe_cancel")
 
         assert self.get_context("support_email") == settings.SUPPORT_EMAIL
+
+
+@mock.patch("homeschool.accounts.views.stripe_gateway", autospec=True)
+class TestCreateBillingPortalSession(TestCase):
+    def test_unauthenticated_access(self, mock_stripe_gateway):
+        self.assertLoginRequired("subscriptions:create_billing_portal_session")
+
+    def test_ok(self, mock_stripe_gateway):
+        """The view gets a session URL from the gateway."""
+        mock_stripe_gateway.create_billing_portal_session.return_value = "/portal"
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.post(
+                "subscriptions:create_billing_portal_session",
+                extra={"content_type": "application/json"},
+            )
+
+        assert response.status_code == 200
+        assert response.json()["url"] == "/portal"

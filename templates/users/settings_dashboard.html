@@ -25,7 +25,10 @@
     <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-4">Billing</h1>
 
     {% if request.account.status == request.account.AccountStatus.ACTIVE %}
-      TODO: Active
+      <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+        <a class="underline" id="manage-billing" href="#">Manage Your Billing Information</a>
+        at the Stripe customer portal.
+      </p>
     {% elif request.account.status == request.account.AccountStatus.TRIALING %}
       <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
         Your account is in the trial period
@@ -53,4 +56,27 @@
 
   {% endflag %}
 
+{% endblock %}
+
+{% block scripts %}
+  {% if request.account.status == request.account.AccountStatus.ACTIVE %}
+    <script>
+      document
+        .getElementById("manage-billing")
+        .addEventListener("click", function(evt) {
+          evt.preventDefault();
+          fetch("{% url 'subscriptions:create_billing_portal_session' %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}"
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              window.location.href = data.url;
+            });
+        });
+    </script>
+  {% endif %}
 {% endblock %}

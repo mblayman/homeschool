@@ -12,4 +12,9 @@ urlpatterns = [
     ),
     path("success/", views.SuccessView.as_view(), name="success"),
     path("stripe-cancel/", views.StripeCancelView.as_view(), name="stripe_cancel"),
+    path(
+        "stripe-billing-portal/",
+        views.create_billing_portal_session,
+        name="create_billing_portal_session",
+    ),
 ]

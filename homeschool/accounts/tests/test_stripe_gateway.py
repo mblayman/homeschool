@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from homeschool.accounts import constants
 from homeschool.accounts.stripe_gateway import StripeGateway
-from homeschool.accounts.tests.factories import AccountFactory
+from homeschool.accounts.tests.factories import AccountFactory, CustomerFactory
 from homeschool.test import TestCase
 
 
@@ -40,3 +40,19 @@ class TestStripeGateway(TestCase):
 
         kwargs = mock_stripe.checkout.Session.create.call_args.kwargs
         assert "subscription_data" not in kwargs
+
+    def test_creates_billing_portal_session(self, mock_stripe):
+        """The gateway creates a URL to a billing portal session."""
+        account = AccountFactory()
+        customer = CustomerFactory(email=account.email)
+        mock_session = mock.Mock()
+        mock_session.url = "/portal"
+        mock_stripe.billing_portal.Session.create.return_value = mock_session
+        gateway = StripeGateway()
+
+        url = gateway.create_billing_portal_session(account)
+
+        assert url == "/portal"
+        kwargs = mock_stripe.billing_portal.Session.create.call_args.kwargs
+        assert kwargs["customer"] == customer.id
+        assert self.reverse("settings:dashboard") in kwargs["return_url"]
