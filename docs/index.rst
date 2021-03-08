@@ -70,8 +70,7 @@ if School Desk is a good fit for you.
 
 .. toctree::
    :caption: Comparisons
-   :maxdepth: 2
-   :glob:
+   :maxdepth: 1
 
    comparisons/simply-charlotte-mason.rst
    comparisons/google-classroom.rst
