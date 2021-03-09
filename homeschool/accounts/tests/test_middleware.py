@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory
+from django.urls import Resolver404, resolve
 
 from homeschool.accounts.middleware import AccountGateMiddleware
 from homeschool.accounts.models import Account
@@ -66,3 +68,11 @@ class TestAccountGateMiddleware(TestCase):
         response = middleware(request)
 
         assert response.status_code == 200
+
+    def test_allow_list_resolves(self):
+        """All the routes on the allow list resolve to real views."""
+        for path in settings.ACCOUNT_GATE_ALLOW_LIST:
+            try:
+                resolve(path)
+            except Resolver404:
+                self.fail(f"{path} failed to resolve.")

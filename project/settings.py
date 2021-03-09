@@ -286,7 +286,11 @@ MORE_WHITENOISE = [
 ]
 
 # accounts
-ACCOUNT_GATE_ALLOW_LIST = ["/accounts/logout/", "/help/"]
+ACCOUNT_GATE_ALLOW_LIST = [
+    "/accounts/logout/",
+    "/help/",
+    "/subscriptions/create-checkout-session/",
+]
 ACCOUNTS_MONTHLY_PRICE_NICKNAME = "monthly-v1"
 ACCOUNTS_ANNUAL_PRICE_NICKNAME = "annual-v1"
 ACCOUNTS_PRICE_NICKNAMES = (
