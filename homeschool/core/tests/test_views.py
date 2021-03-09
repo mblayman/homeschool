@@ -52,6 +52,11 @@ class TestSiteMapIndex(TestCase):
         self.get_check_200("core:sitemapindex")
 
 
+class TestSiteMap(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:sitemap")
+
+
 class TestAbout(TestCase):
     def test_ok(self):
         self.get_check_200("core:about")

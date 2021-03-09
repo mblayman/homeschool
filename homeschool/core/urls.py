@@ -1,7 +1,9 @@
+from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.views.generic import TemplateView
 
 from homeschool.core import views
+from homeschool.core.sitemaps import sitemaps
 
 app_name = "core"
 urlpatterns = [
@@ -20,6 +22,7 @@ urlpatterns = [
         ),
         name="sitemapindex",
     ),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("about/", TemplateView.as_view(template_name="core/about.html"), name="about"),
     path("terms/", TemplateView.as_view(template_name="core/terms.html"), name="terms"),
     path(
