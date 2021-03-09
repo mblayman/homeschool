@@ -47,6 +47,11 @@ class TestRobots(TestCase):
         self.get_check_200("core:robots")
 
 
+class TestSiteMapIndex(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:sitemapindex")
+
+
 class TestAbout(TestCase):
     def test_ok(self):
         self.get_check_200("core:about")

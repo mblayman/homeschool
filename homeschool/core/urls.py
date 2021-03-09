@@ -13,6 +13,13 @@ urlpatterns = [
         ),
         name="robots",
     ),
+    path(
+        "sitemapindex.xml",
+        TemplateView.as_view(
+            template_name="core/sitemapindex.xml", content_type="text/xml"
+        ),
+        name="sitemapindex",
+    ),
     path("about/", TemplateView.as_view(template_name="core/about.html"), name="about"),
     path("terms/", TemplateView.as_view(template_name="core/terms.html"), name="terms"),
     path(
