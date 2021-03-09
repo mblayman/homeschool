@@ -128,16 +128,20 @@ six==1.14.0
     #   packaging
     #   python-dateutil
     #   rollbar
+    #   sphinx-sitemap
 snowballstemmer==2.0.0
     # via sphinx
 soupsieve==1.9.5
     # via beautifulsoup4
 sphinx-rtd-theme==0.5.1
     # via -r requirements.in
+sphinx-sitemap==2.2.0
+    # via -r requirements.in
 sphinx==3.5.1
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
+    #   sphinx-sitemap
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
 sphinxcontrib-devhelp==1.0.2

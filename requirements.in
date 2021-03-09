@@ -20,4 +20,5 @@ requests==2.25.1
 rollbar==0.15.1
 Sphinx==3.5.1
 sphinx-rtd-theme==0.5.1
+sphinx-sitemap==2.2.0
 whitenoise[brotli]==5.2.0

@@ -28,7 +28,7 @@ author = "Matt Layman"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx_rtd_theme"]
+extensions = ["sphinx_rtd_theme", "sphinx_sitemap"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -58,3 +58,6 @@ html_theme_options = {"style_nav_header_background": "#2b6cb0"}
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+
+# sphinx-sitemap configuration
+html_baseurl = "https://www.theschooldesk.app/docs/"
