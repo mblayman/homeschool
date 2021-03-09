@@ -6,6 +6,13 @@ from homeschool.core import views
 app_name = "core"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="core/robots.txt", content_type="text/plain"
+        ),
+        name="robots",
+    ),
     path("about/", TemplateView.as_view(template_name="core/about.html"), name="about"),
     path("terms/", TemplateView.as_view(template_name="core/terms.html"), name="terms"),
     path(
