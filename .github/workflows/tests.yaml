@@ -56,7 +56,7 @@ jobs:
           STRIPE_TEST_PUBLISHABLE_KEY: 'pk_test_asecrettoeverybody'
 
       - name: Check deploy configuration
-        run: ./manage.py check --deploy
+        run: ./manage.py check --deploy --fail-level WARNING
         env:
           ALLOWED_HOSTS: '*'
           DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
