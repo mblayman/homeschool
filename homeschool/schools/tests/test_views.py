@@ -214,6 +214,29 @@ class TestSchoolYearEditView(TestCase):
         )
 
 
+class TestSchoolYearForecastView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        self.assertLoginRequired("schools:school_year_forecast", uuid=school_year.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:school_year_forecast", uuid=school_year.uuid)
+
+    def test_not_found_for_other_school(self):
+        """A user cannot view the forecast of another user's school year."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            response = self.get("schools:school_year_forecast", uuid=school_year.uuid)
+
+        self.response_404(response)
+
+
 class TestSchoolYearListView(TestCase):
     def test_unauthenticated_access(self):
         self.assertLoginRequired("schools:school_year_list")

@@ -46,9 +46,12 @@
     and {% if user.get_local_today > schoolyear.end_date %}ended{% else %}ends{% endif %} on
     <strong>{{ schoolyear.end_date|date:"F j, Y" }}</strong>.
   </p>
-  <p class="font-thin text-base text-gray-800 mb-8">
+  <p class="font-thin text-base text-gray-800 mb-2">
     School weeks {% if user.get_local_today > schoolyear.end_date %}ran{% else %}run{% endif %} on
     <strong>{{ schoolyear.display_days }}</strong>.
+  </p>
+  <p class="font-thin text-base text-gray-800 mb-8">
+    <a class="underline" href="{% url "schools:school_year_forecast" schoolyear.uuid %}">View school year project completion dates.</a>
   </p>
 
   <p class="mb-8">

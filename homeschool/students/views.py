@@ -4,11 +4,11 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import CreateView, FormView, TemplateView
 
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
+from homeschool.schools.forecaster import Forecaster
 from homeschool.schools.models import GradeLevel, SchoolYear
 
 from .exceptions import FullEnrollmentError, NoGradeLevelError, NoStudentError
@@ -71,7 +71,8 @@ class StudentCourseView(LoginRequiredMixin, StudentMixin, TemplateView):
         user = self.request.user
         context["student"] = self.student
         context["course"] = self.get_course(user)
-        context["task_items"] = self.get_task_items(
+        forecaster = Forecaster()
+        context["task_items"] = forecaster.get_task_items(
             context["student"], context["course"]
         )
         if not self.request.GET.get("completed_tasks"):
@@ -86,53 +87,6 @@ class StudentCourseView(LoginRequiredMixin, StudentMixin, TemplateView):
             Course.objects.filter(grade_levels__in=grade_levels).distinct(),
             uuid=self.kwargs["course_uuid"],
         )
-
-    def get_task_items(self, student, course):
-        today = timezone.localdate()
-
-        # When the school year isn't in progress yet,
-        # the offset calculations should come
-        # relative to the start of the school year.
-        school_year = course.school_year
-        if today < school_year.start_date:
-            today = school_year.start_date
-
-        if not school_year.is_break(today) and course.runs_on(today):
-            next_course_day = today
-        else:
-            next_course_day = school_year.get_next_course_day(course, today)
-
-        course_is_running = course.is_running
-        coursework_by_task = self.get_course_work_by_task(student, course)
-        course_tasks = student.get_tasks_for(course).select_related("graded_work")
-        task_items = []
-        for course_task in course_tasks:
-            task_item = {
-                "course_task": course_task,
-                "has_graded_work": hasattr(course_task, "graded_work"),
-            }
-            if course_task in coursework_by_task:
-                coursework = coursework_by_task[course_task]
-                # Advance the next course day to deconflict with coursework.
-                if coursework.completed_date == next_course_day:
-                    next_course_day = school_year.get_next_course_day(
-                        course, next_course_day
-                    )
-                task_item["coursework"] = coursework
-            elif course_is_running:
-                task_item["planned_date"] = next_course_day
-                next_course_day = school_year.get_next_course_day(
-                    course, next_course_day
-                )
-            task_items.append(task_item)
-
-        return task_items
-
-    def get_course_work_by_task(self, student, course):
-        coursework = Coursework.objects.filter(
-            student=student, course_task__course=course
-        ).select_related("course_task")
-        return {c.course_task: c for c in coursework}
 
 
 class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView):

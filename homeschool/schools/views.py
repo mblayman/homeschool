@@ -131,6 +131,18 @@ class SchoolYearEditView(LoginRequiredMixin, UpdateView):
         )
 
 
+class SchoolYearForecastView(LoginRequiredMixin, TemplateView):
+    template_name = "schools/schoolyear_forecast.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["schoolyear"] = get_object_or_404(
+            SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
+        )
+        return context
+
+
 class SchoolYearListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user

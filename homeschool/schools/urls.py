@@ -24,6 +24,11 @@ urlpatterns = [
         views.SchoolYearEditView.as_view(),
         name="school_year_edit",
     ),
+    path(
+        "school-years/<uuid:uuid>/forecast/",
+        views.SchoolYearForecastView.as_view(),
+        name="school_year_forecast",
+    ),
     path("school-years/", views.SchoolYearListView.as_view(), name="school_year_list"),
     path(
         "school-years/<uuid:uuid>/grade-levels/",
