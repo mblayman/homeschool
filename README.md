@@ -129,14 +129,6 @@ Forum topics:
 * https://forums.welltrainedmind.com/topic/586061-math-textbooks-not-used-in-school-anymore/ use in a middle school
 * https://forums.welltrainedmind.com/topic/656644-8th-grade-more-independent/ product plug
 
-### Homeschool Day Book
-
-http://www.homeschooldaybook.com/
-
-Forum topics:
-
-Nothing found.
-
 ### Homeschool Helper
 
 https://play.google.com/store/apps/details?id=com.homeschoolerhub.llc&hl=en_US&gl=US
