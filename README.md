@@ -129,23 +129,6 @@ Forum topics:
 * https://forums.welltrainedmind.com/topic/586061-math-textbooks-not-used-in-school-anymore/ use in a middle school
 * https://forums.welltrainedmind.com/topic/656644-8th-grade-more-independent/ product plug
 
-### Homeschool Helper
-
-https://play.google.com/store/apps/details?id=com.homeschoolerhub.llc&hl=en_US&gl=US
-
-iPad/Android app. Seems defunct.
-
-Forum topics:
-
-* https://forums.welltrainedmind.com/topic/415058-ipad-users-homeschool-helper-app/ asking about product, product creator (?) responds
-* https://forums.welltrainedmind.com/topic/674932-anyone-still-using-homeschool-helper/ asking about it, no response
-* https://forums.welltrainedmind.com/topic/254395-record-keeping-homeschool-tracker-and-ipad/ product plug
-* https://forums.welltrainedmind.com/topic/419151-keeping-track-of-hours/ product plug
-* https://forums.welltrainedmind.com/topic/109114-free-curriculum-list/ "free curriculum list"
-* https://forums.welltrainedmind.com/topic/4551-for-those-of-you-who-are-using-lapbooks/ product plug
-* https://forums.welltrainedmind.com/topic/619965-how-do-you-keep-track-of-grades/ product plug, "how to keep track of grades" discussion
-* https://forums.welltrainedmind.com/topic/444843-looking-for-planning-app/?tab=comments#comment-4541473 product plug
-
 ### Homeschool Manager
 
 https://homeschoolmanager.com/

@@ -74,7 +74,6 @@ if School Desk is a good fit for you.
 
    comparisons/simply-charlotte-mason.rst
    comparisons/google-classroom.rst
-   comparisons/homeschool-helper.rst
    comparisons/homeschool-manager.rst
    comparisons/homeschool-minder.rst
    comparisons/homeschool-planet.rst
