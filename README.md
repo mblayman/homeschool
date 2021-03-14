@@ -79,6 +79,7 @@ Measurement criteria:
 | Product | Business Model | Price | Reviewed |
 | --- | --- | --- | --- |
 | CM Organizer | Freemium | $7.95 / month | 2/1/21 |
+| Google Classroom | Free | $0 | 3/12/21 |
 
 ### Charlotte Mason Organizer
 
@@ -106,6 +107,19 @@ Forum topics:
 * https://forums.welltrainedmind.com/topic/511101-question-for-those-that-like-circe-etc/ "splurging on it". Likes that you can miss a day and not have to manually tweak things.
 
 ### Google Classroom
+
+https://classroom.google.com/h
+
+* For Teachers, Students, and Parents/Guardians
+* Class announcements
+* Respond to student posts
+* Integration with Google Drive
+* Google Worksplace for Education for extra privacy controls
+* Define "Rubrics" to tell students how work is graded
+* Students see their grades and can submit assignments
+* Private messages between teachers and students
+* Scheduling abilities of Google Calendar
+* Class questions
 
 Forum topics:
 
