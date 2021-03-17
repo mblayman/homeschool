@@ -80,6 +80,7 @@ Measurement criteria:
 | --- | --- | --- | --- |
 | CM Organizer | Freemium | $7.95 / month | 2/1/21 |
 | Google Classroom | Free | $0 | 3/12/21 |
+| Homeschool Manager | Subscription | $5.99 / month | 3/13/21 |
 
 ### Charlotte Mason Organizer
 
@@ -132,6 +133,20 @@ Forum topics:
 ### Homeschool Manager
 
 https://homeschoolmanager.com/
+
+* Pricing: $5.99 / month OR $49 / year
+* Starts with student setup
+* Video help for onboarding
+* School Year is bound to student (behaves like Grade Level)
+* Drag and drop functionality for task management
+* Quick add task feature
+* Grade stuff, different task types, grade calculator
+* Volunteer hours tracking
+* Book list tracking
+* Dashboard to track what's overdue (necessary because tasks are pinned to dates)
+* Report cards and past history
+* Transcripts
+* Attendance and time tracking
 
 Forum topics:
 
