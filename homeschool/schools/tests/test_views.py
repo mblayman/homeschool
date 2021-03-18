@@ -8,6 +8,7 @@ from homeschool.schools.tests.factories import (
     SchoolYearFactory,
 )
 from homeschool.students.tests.factories import (
+    CourseworkFactory,
     EnrollmentFactory,
     GradeFactory,
     StudentFactory,
@@ -222,9 +223,22 @@ class TestSchoolYearForecastView(TestCase):
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        coursework = CourseworkFactory(course_task__course=course)
 
         with self.login(user):
             self.get_check_200("schools:school_year_forecast", uuid=school_year.uuid)
+
+        assert self.get_context("schoolyear") == school_year
+        assert self.get_context("students") == [
+            {
+                "student": enrollment.student,
+                "courses": [
+                    {"course": course, "last_forecast_date": coursework.completed_date}
+                ],
+            }
+        ]
 
     def test_not_found_for_other_school(self):
         """A user cannot view the forecast of another user's school year."""

@@ -16,4 +16,21 @@
   <p class="font-thin text-base text-gray-800 mb-2">
   </p>
 
+  {% for student_info in students %}
+    <h2 class="font-thin text-xl text-blue-900 mt-8 mb-4">{{ student_info.student.first_name }}</h2>
+
+    <div class="flex flex-col max-w-lg mb-8">
+      <div class="flex flex-row">
+        <div class="w-3/6 text-sm uppercase tracking-wide font-thin py-2">Course</div>
+        <div class="w-3/6 text-sm uppercase tracking-wide font-thin py-2">Last Forecast Date</div>
+      </div>
+      {% for course_info in student_info.courses %}
+        <div class="flex flex-row">
+          <div class="w-3/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ course_info.course }}</div>
+          <div class="w-3/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ course_info.last_forecast_date|date:"Y-m-d"|default:"Unable to forecast" }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
 {% endblock %}

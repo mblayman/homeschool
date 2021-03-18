@@ -17,6 +17,7 @@ from django.views.generic import (
 from homeschool.courses.models import CourseResource
 from homeschool.students.models import Enrollment, Grade
 
+from .forecaster import Forecaster
 from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
 from .models import GradeLevel, SchoolBreak, SchoolYear
 from .year_calendar import YearCalendar
@@ -137,9 +138,31 @@ class SchoolYearForecastView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        context["schoolyear"] = get_object_or_404(
+        school_year = get_object_or_404(
             SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
         )
+        context["schoolyear"] = school_year
+
+        enrollments = Enrollment.objects.filter(
+            grade_level__school_year=school_year
+        ).select_related("grade_level", "student")
+        students = []
+        for enrollment in enrollments:
+            student_info = {"student": enrollment.student, "courses": []}
+
+            for course in enrollment.grade_level.get_ordered_courses():
+                forecaster = Forecaster()
+                course_info = {
+                    "course": course,
+                    "last_forecast_date": forecaster.get_last_forecast_date(
+                        enrollment.student, course
+                    ),
+                }
+                student_info["courses"].append(course_info)
+
+            students.append(student_info)
+
+        context["students"] = students
         return context
 
 

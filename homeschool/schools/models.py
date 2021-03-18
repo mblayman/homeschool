@@ -137,12 +137,18 @@ class GradeLevel(models.Model):
         """
         from homeschool.courses.models import GradeLevelCoursesThroughModel
 
-        return [
+        courses = [
             gc.course
             for gc in GradeLevelCoursesThroughModel.objects.filter(
                 grade_level=self
             ).select_related("course")
         ]
+        # Eager load the school year to avoid performance hit
+        # of hitting the cached property on course in a loop.
+        school_year = self.school_year
+        for course in courses:
+            course.school_year = school_year
+        return courses
 
     def get_active_courses(self):
         """Get the courses that are active."""
