@@ -1,5 +1,6 @@
 import datetime
 
+from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseResourceFactory
 from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
@@ -224,7 +225,9 @@ class TestSchoolYearForecastView(TestCase):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
         enrollment = EnrollmentFactory(grade_level__school_year=school_year)
-        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        course = CourseFactory(
+            grade_levels=[enrollment.grade_level], days_of_week=Course.ALL_DAYS
+        )
         coursework = CourseworkFactory(course_task__course=course)
 
         with self.login(user):

@@ -8,6 +8,8 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.functional import cached_property
 
+from homeschool.core.slack_gateway import slack_gateway
+
 
 class User(AbstractUser):
     """A custom user for extension"""
@@ -48,9 +50,11 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(user_signed_up, sender=User)
 def notify_signup(sender, request, user, **kwargs):
     """Notify that a new signup occurred."""
+    # TODO: Remove the email after verifying live confirmation of Slack.
     send_mail(
         f"New sign up: {user.username}",
         "There is a new user signup.",
         settings.DEFAULT_FROM_EMAIL,
         [settings.SUPPORT_EMAIL],
     )
+    slack_gateway.send_message(f"New sign up: {user.username}")

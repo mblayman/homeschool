@@ -21,6 +21,7 @@ env = environ.Env(
     SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
     SECURE_SSL_REDIRECT=(bool, True),
     SESSION_COOKIE_SECURE=(bool, True),
+    SLACK_WEBHOOK=(str, ""),
     STRIPE_LIVE_MODE=(bool, True),
 )
 env_file = os.path.join(BASE_DIR, ".env")
@@ -300,4 +301,5 @@ ACCOUNTS_PRICE_NICKNAMES = (
 )
 
 # core
+SLACK_WEBHOOK = env("SLACK_WEBHOOK")
 SUPPORT_EMAIL = f"support@{domain}"
