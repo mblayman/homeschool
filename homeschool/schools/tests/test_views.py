@@ -686,6 +686,30 @@ class TestProgressReportView(TestCase):
 
         assert list(self.get_context("grades")) == [grade]
 
+    def test_only_students_coursework(self):
+        """Only coursework from the student is included.
+
+        Coursework is added to the grades to display the completed dates.
+        It is possible for a user to add a grade without the student finishing the task
+        so the coursework can be None.
+        """
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        grade = GradeFactory(
+            student=enrollment.student,
+            graded_work__course_task__course__grade_levels=[enrollment.grade_level],
+        )
+        CourseworkFactory(course_task=grade.graded_work.course_task)
+
+        with self.login(user):
+            self.get_check_200(
+                "reports:progress",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        assert self.get_context("grades")[0].coursework is None
+
 
 class TestResourceReportView(TestCase):
     def test_unauthenticated_access(self):

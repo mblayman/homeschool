@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 
 from homeschool.courses.models import CourseResource
-from homeschool.students.models import Enrollment, Grade
+from homeschool.students.models import Coursework, Enrollment, Grade
 
 from .forecaster import Forecaster
 from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
@@ -356,19 +356,43 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
         context["grade_level"] = enrollment.grade_level
         context["school_year"] = enrollment.grade_level.school_year
         context["student"] = enrollment.student
-        context["grades"] = (
+
+        grades = (
             Grade.objects.filter(
                 student=enrollment.student,
                 graded_work__course_task__course__grade_levels__in=[
                     enrollment.grade_level
                 ],
             )
-            .order_by("graded_work__course_task__course")
-            .select_related(
+            # Include secondary ordering so tasks are ordered in the course.
+            .order_by(
+                "graded_work__course_task__course", "graded_work__course_task"
+            ).select_related(
                 "graded_work__course_task", "graded_work__course_task__course"
             )
         )
+        self._mixin_coursework(grades, enrollment.student)
+        context["grades"] = grades
         return context
+
+    def _mixin_coursework(self, grades, student):
+        """Mix in the coursework for the grades.
+
+        Coursework is added to the grades to display the completed dates.
+        It is possible for a user to add a grade without the student finishing the task
+        so the coursework can be None.
+        """
+        tasks = [grade.graded_work.course_task for grade in grades]
+        coursework_by_task_id = {
+            coursework.course_task_id: coursework
+            for coursework in Coursework.objects.filter(
+                student=student, course_task__in=tasks
+            )
+        }
+        for grade in grades:
+            grade.coursework = coursework_by_task_id.get(
+                grade.graded_work.course_task_id
+            )
 
 
 class ResourceReportView(LoginRequiredMixin, TemplateView):
