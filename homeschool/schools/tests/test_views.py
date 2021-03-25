@@ -665,11 +665,51 @@ class TestProgressReportView(TestCase):
 
         self.response_404(response)
 
-    def test_only_students_grades(self):
-        """Only grades from the student are included."""
+    def test_only_students_courses(self):
+        """Only courses from the student are included."""
         user = self.make_user()
         enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
         grade = GradeFactory(
+            score=50,
+            student=enrollment.student,
+            graded_work__course_task__course=course,
+        )
+        grade_2 = GradeFactory(
+            score=100,
+            student=enrollment.student,
+            graded_work__course_task__course=course,
+        )
+        GradeFactory(
+            graded_work__course_task__course__grade_levels=[enrollment.grade_level]
+        )
+
+        with self.login(user):
+            self.get_check_200(
+                "reports:progress",
+                uuid=enrollment.grade_level.school_year.uuid,
+                student_uuid=enrollment.student.uuid,
+            )
+
+        assert self.get_context("courses") == [
+            {
+                "course": grade.graded_work.course_task.course,
+                "grades": [grade, grade_2],
+                "course_average": 75,
+            }
+        ]
+
+    def test_multiple_averages(self):
+        """The average for each course is calculated."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        GradeFactory(
+            score=50,
+            student=enrollment.student,
+            graded_work__course_task__course__grade_levels=[enrollment.grade_level],
+        )
+        GradeFactory(
+            score=100,
             student=enrollment.student,
             graded_work__course_task__course__grade_levels=[enrollment.grade_level],
         )
@@ -684,7 +724,8 @@ class TestProgressReportView(TestCase):
                 student_uuid=enrollment.student.uuid,
             )
 
-        assert list(self.get_context("grades")) == [grade]
+        assert self.get_context("courses")[0]["course_average"] == 50
+        assert self.get_context("courses")[1]["course_average"] == 100
 
     def test_only_students_coursework(self):
         """Only coursework from the student is included.
@@ -708,7 +749,7 @@ class TestProgressReportView(TestCase):
                 student_uuid=enrollment.student.uuid,
             )
 
-        assert self.get_context("grades")[0].coursework is None
+        assert self.get_context("courses")[0]["grades"][0].coursework is None
 
 
 class TestResourceReportView(TestCase):

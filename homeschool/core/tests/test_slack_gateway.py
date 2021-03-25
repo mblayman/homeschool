@@ -35,3 +35,12 @@ class TestSlackGateway(TestCase):
         gateway.send_message("fails")
 
         assert mock_rollbar.report_exc_info.called
+
+
+def test_print(capsys):
+    """Without the webhook URL, output is printed."""
+    gateway = SlackGateway()
+
+    gateway.send_message("success")
+
+    assert "success" in capsys.readouterr().out

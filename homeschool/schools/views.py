@@ -1,3 +1,5 @@
+from decimal import ROUND_HALF_UP, Decimal
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -372,7 +374,7 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
             )
         )
         self._mixin_coursework(grades, enrollment.student)
-        context["grades"] = grades
+        context["courses"] = self._build_courses_info(grades)
         return context
 
     def _mixin_coursework(self, grades, student):
@@ -393,6 +395,41 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
             grade.coursework = coursework_by_task_id.get(
                 grade.graded_work.course_task_id
             )
+
+    def _build_courses_info(self, grades):
+        """Regroup the grades into an appropriate display structure for the template.
+
+        Grades must be sorted by course.
+        """
+        if not grades:
+            return []
+
+        courses = []
+        course = None
+        course_info = {}
+        for grade in grades:
+            next_course = grade.graded_work.course_task.course
+            if course != next_course:
+                # Don't compute average until a course is collected.
+                # On the first iteration when course is None, nothing is collected yet.
+                if course is not None:
+                    self._compute_course_average(course_info)
+                course = next_course
+                course_info = {"course": course, "grades": [grade]}
+                courses.append(course_info)
+            else:
+                course_info["grades"].append(grade)
+
+        # Compute average of last course to catch the edge case.
+        self._compute_course_average(course_info)
+        return courses
+
+    def _compute_course_average(self, course_info):
+        """Compute the average for the course based on collected grades."""
+        grades = course_info["grades"]
+        average = sum(grade.score for grade in grades) / len(grades)
+        # Sane rounding.
+        course_info["course_average"] = int(Decimal(average).quantize(0, ROUND_HALF_UP))
 
 
 class ResourceReportView(LoginRequiredMixin, TemplateView):
