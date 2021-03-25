@@ -1,7 +1,5 @@
 from allauth.account.signals import user_signed_up
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.mail import send_mail
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -50,11 +48,4 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(user_signed_up, sender=User)
 def notify_signup(sender, request, user, **kwargs):
     """Notify that a new signup occurred."""
-    # TODO: Remove the email after verifying live confirmation of Slack.
-    send_mail(
-        f"New sign up: {user.username}",
-        "There is a new user signup.",
-        settings.DEFAULT_FROM_EMAIL,
-        [settings.SUPPORT_EMAIL],
-    )
     slack_gateway.send_message(f"New sign up: {user.username}")

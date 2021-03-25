@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.core import mail
+from unittest import mock
 
 from homeschool.accounts.models import Account
 from homeschool.schools.models import School
@@ -49,13 +48,12 @@ class TestProfile(TestCase):
 
 
 class TestNotifySignup(TestCase):
-    def test_signup_sends_email(self):
-        """A signup sends an email to the support address."""
+    @mock.patch("homeschool.users.models.slack_gateway", autospec=True)
+    def test_signup_sends_message(self, mock_slack_gateway):
+        """A signup sends a message to Slack."""
         user = self.make_user()
 
         notify_signup(user, request=None, user=user)
 
-        assert len(mail.outbox) == 1
-        message = mail.outbox[0]
-        assert user.username in message.subject
-        assert message.to == [settings.SUPPORT_EMAIL]
+        args = mock_slack_gateway.send_message.call_args.args
+        assert user.username in args[0]
