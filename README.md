@@ -49,10 +49,15 @@ Start the local web server.
 $ make
 ```
 
-## Forums
+## Docker Compose
 
-* https://forums.welltrainedmind.com/
-* https://forum.memoriapress.com/
+Tricky problems require better debugging tools.
+This command will get db data from Heroku
+to inspect issues:
+
+```bash
+$ heroku pg:pull HEROKU_PG_NAME postgres://postgres:postgres@localhost:5432/mylocaldb --app APP
+```
 
 ## Market Research
 

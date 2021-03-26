@@ -234,18 +234,26 @@ class Student(models.Model):
             if start_date < school_year.start_date:
                 start_date = school_year.start_date
 
-        # Adjust the starting index for future weeks to account for any unfinished tasks
-        # from the current week.
-        unfinished_task_count_this_week = 0
-        if school_year.last_school_day_for(this_week) < today:
-            unfinished_task_count_this_week = school_year.get_task_count_in_range(
-                course, start_date, today
+        last_school_day_this_week = school_year.last_school_day_for(this_week)
+        if today <= last_school_day_this_week:
+            # During the active part of the week, tasks roll forward each day.
+            # This means the unfinished work is everything from today to the end
+            # of the last school day.
+            unfinished_tasks_this_week = school_year.get_task_count_in_range(
+                course, today, last_school_day_this_week
             )
+        else:
+            # On the weekend, don't count unfinished tasks and roll everything forward.
+            unfinished_tasks_this_week = 0
 
-        tasks_to_do = school_year.get_task_count_in_range(
-            course, start_date, week_start_date - datetime.timedelta(days=1)
+        # Get the count of all the tasks between the current week
+        # and the future week that the user wants to see.
+        tasks_between = school_year.get_task_count_in_range(
+            course,
+            last_school_day_this_week + datetime.timedelta(days=1),
+            week_start_date - datetime.timedelta(days=1),
         )
-        return tasks_to_do - unfinished_task_count_this_week
+        return unfinished_tasks_this_week + tasks_between
 
     def get_last_coursework_date(
         self, week_coursework: dict, course: "Course"

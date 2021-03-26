@@ -294,11 +294,14 @@ class TestDashboard(TestCase):
             + Course.FRIDAY,
         )
         task_1 = CourseTaskFactory(course=course)
-        CourseTaskFactory(course=course)
-        CourseTaskFactory(course=course)
-        CourseTaskFactory(course=course)
-        task_2 = CourseTaskFactory(course=course)
         CourseworkFactory(student=student, course_task=task_1, completed_date=monday)
+        # Because this is a Friday, this task would appear on the current week.
+        CourseTaskFactory(course=course)
+        # But these tasks would roll forward to next week's view
+        # and appear on the expected schedule.
+        task_2 = CourseTaskFactory(course=course)
+        task_3 = CourseTaskFactory(course=course)
+        task_4 = CourseTaskFactory(course=course)
 
         with self.login(user), self.assertNumQueries(19):
             self.get("core:weekly", year=2020, month=1, day=27)
@@ -321,10 +324,12 @@ class TestDashboard(TestCase):
                         {
                             "week_date": monday + datetime.timedelta(days=9),
                             "school_break": None,
+                            "task": task_3,
                         },
                         {
                             "week_date": monday + datetime.timedelta(days=10),
                             "school_break": None,
+                            "task": task_4,
                         },
                         {
                             "week_date": monday + datetime.timedelta(days=11),

@@ -126,6 +126,19 @@ DATABASES = {
     }
 }
 
+# For local Postgres testing.
+# TODO: Clean up with Issue #355
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "mylocaldb",
+#         "USER": "postgres",
+#         "PASSWORD": "postgres",
+#         "HOST": "localhost",
+#         "PORT": 5432,
+#     }
+# }
+
 # Email
 EMAIL_BACKEND = env("EMAIL_BACKEND")
 # Enable this to test with MailHog for local email testing.
