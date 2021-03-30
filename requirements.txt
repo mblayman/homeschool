@@ -89,7 +89,7 @@ psycopg2==2.8.4
     # via django-heroku
 pycparser==2.20
     # via cffi
-pygments==2.7.3
+pygments==2.7.4
     # via sphinx
 pyjwt[crypto]==1.7.1
     # via django-allauth
