@@ -56,6 +56,7 @@ to learn more about how School Desk works.
 .. toctree::
    :maxdepth: 2
 
+   features.rst
    faq.rst
    terminology.rst
 
