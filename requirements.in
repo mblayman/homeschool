@@ -14,7 +14,7 @@ django-tz-detect==0.3.0
 django-waffle==2.1.0
 dj-stripe==2.4.3
 freezegun==1.1.0
-gunicorn==20.0.4
+gunicorn==20.1.0
 python-dateutil==2.8.1
 requests==2.25.1
 rollbar==0.15.1
