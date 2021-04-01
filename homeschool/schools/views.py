@@ -1,3 +1,4 @@
+import datetime
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.contrib.auth.decorators import login_required
@@ -457,3 +458,47 @@ class ResourceReportView(LoginRequiredMixin, TemplateView):
             .order_by("course")
         )
         return context
+
+
+class AttendanceReportView(LoginRequiredMixin, TemplateView):
+    template_name = "schools/attendance_report.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        enrollment = get_object_or_404(
+            Enrollment.objects.select_related(
+                "student", "grade_level", "grade_level__school_year"
+            ),
+            uuid=self.kwargs["uuid"],
+            grade_level__school_year__school=user.school,
+        )
+        context["grade_level"] = enrollment.grade_level
+        context["school_year"] = enrollment.grade_level.school_year
+        context["student"] = enrollment.student
+        context["school_dates"] = self._build_school_dates(enrollment)
+        return context
+
+    def _build_school_dates(self, enrollment):
+        """Collect all the school dates in the year to the end or today."""
+        dates_with_work = set(
+            Coursework.objects.filter(
+                student=enrollment.student,
+                course_task__course__grade_levels__in=[enrollment.grade_level],
+            ).values_list("completed_date", flat=True)
+        )
+        school_dates = []
+        school_year = enrollment.grade_level.school_year
+        school_date = school_year.start_date
+        end_date = min(school_year.end_date, self.request.user.get_local_today())
+        while school_date <= end_date:
+            school_dates.append(
+                {
+                    "date": school_date,
+                    "is_school_day": school_year.runs_on(school_date),
+                    "is_break": school_year.is_break(school_date),
+                    "attended": school_date in dates_with_work,
+                }
+            )
+            school_date += datetime.timedelta(days=1)
+        return school_dates

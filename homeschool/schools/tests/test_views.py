@@ -1,5 +1,8 @@
 import datetime
 
+from django.utils import timezone
+from freezegun import freeze_time
+
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseResourceFactory
 from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
@@ -789,5 +792,90 @@ class TestResourceReportView(TestCase):
                 uuid=enrollment.grade_level.school_year.uuid,
                 student_uuid=enrollment.student.uuid,
             )
+
+        self.response_404(response)
+
+
+class TestAttendanceReportView(TestCase):
+    def test_unauthenticated_access(self):
+        enrollment = EnrollmentFactory()
+        self.assertLoginRequired("reports:attendance", uuid=enrollment.uuid)
+
+    def test_get(self):
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", uuid=enrollment.uuid)
+
+        assert self.get_context("grade_level") == enrollment.grade_level
+        assert self.get_context("school_year") == enrollment.grade_level.school_year
+        assert self.get_context("student") == enrollment.student
+
+    @freeze_time("2021-04-01")  # A Thursday
+    def test_school_dates(self):
+        """The dates on the report have the expected states."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        school_year = enrollment.grade_level.school_year
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=school_year.start_date,
+            end_date=school_year.start_date,
+        )
+        CourseworkFactory(
+            student=enrollment.student,
+            course_task__course__grade_levels=[enrollment.grade_level],
+            completed_date=school_year.start_date + datetime.timedelta(days=1),
+        )
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", uuid=enrollment.uuid)
+
+        school_dates = self.get_context("school_dates")
+        assert school_dates[0]["is_break"]
+        assert school_dates[1]["attended"]
+        assert not school_dates[4]["is_school_day"]  # First Saturday
+
+    def test_school_year_end_date(self):
+        """An old school year will go to the end date."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today - datetime.timedelta(days=100),
+            end_date=today - datetime.timedelta(days=50),
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", uuid=enrollment.uuid)
+
+        school_dates = self.get_context("school_dates")
+        assert school_dates[-1]["date"] == school_year.end_date
+
+    def test_future_school_year(self):
+        """A future school year has no school dates."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + datetime.timedelta(days=50),
+            end_date=today + datetime.timedelta(days=100),
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", uuid=enrollment.uuid)
+
+        assert not self.get_context("school_dates")
+
+    def test_not_found_for_other_school(self):
+        """A user cannot access an attendance report that is not from their school."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.get("reports:attendance", uuid=enrollment.uuid)
 
         self.response_404(response)
