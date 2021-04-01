@@ -137,7 +137,7 @@ sphinx-rtd-theme==0.5.1
     # via -r requirements.in
 sphinx-sitemap==2.2.0
     # via -r requirements.in
-sphinx==3.5.1
+sphinx==3.5.3
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
