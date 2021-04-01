@@ -117,7 +117,7 @@ requests==2.25.1
     #   rollbar
     #   sphinx
     #   stripe
-rollbar==0.15.1
+rollbar==0.15.2
     # via -r requirements.in
 six==1.14.0
     # via
