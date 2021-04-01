@@ -251,6 +251,7 @@ class TestEnrollment(TestCase):
         enrollment = EnrollmentFactory()
 
         assert enrollment is not None
+        assert enrollment.uuid is not None
 
     def test_has_student(self):
         student = StudentFactory()

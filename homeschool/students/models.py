@@ -326,6 +326,7 @@ class Enrollment(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     class Meta:
         constraints = [
