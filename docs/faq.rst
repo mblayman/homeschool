@@ -12,7 +12,7 @@ we should clarify.
 As much as it would be amazing
 for a tool to understand
 your homeschool
-and comletely build a course curriculum
+and completely build a course curriculum
 for you,
 that's not really feasible.
 
