@@ -52,11 +52,13 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 "id", flat=True
             )
         )
-        canceled = Account.AccountStatus.CANCELED
-        canceled_users = set(
-            Account.objects.filter(status=canceled).values_list("user_id", flat=True)
+        excluded_statuses = Account.END_STATUSES
+        excluded_users = set(
+            Account.objects.filter(status__in=excluded_statuses).values_list(
+                "user_id", flat=True
+            )
         )
-        users_to_notify = users_wanting_announcements - canceled_users
+        users_to_notify = users_wanting_announcements - excluded_users
         notifications = [
             Notification(announcement=announcement, user_id=user_id)
             for user_id in users_to_notify

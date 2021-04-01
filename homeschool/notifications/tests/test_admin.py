@@ -85,6 +85,10 @@ class TestAnnouncementAdmin(TestCase):
         canceled_user = UserFactory()
         canceled = Account.AccountStatus.CANCELED
         Account.objects.filter(user=canceled_user).update(status=canceled)
+        # Skip expired users.
+        expired_user = UserFactory()
+        expired = Account.AccountStatus.TRIAL_EXPIRED
+        Account.objects.filter(user=expired_user).update(status=expired)
         data = {"action": "announce", ACTION_CHECKBOX_NAME: str(announcement.id)}
 
         with self.login(user):
