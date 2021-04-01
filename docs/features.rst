@@ -3,7 +3,7 @@ What Can School Desk Do for Me?
 
 As a homeschool planner,
 School Desk focuses
-on task
+on tasks
 that help you manage your school year.
 On this help page,
 you'll learn about some of the things
