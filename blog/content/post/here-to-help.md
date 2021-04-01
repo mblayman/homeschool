@@ -14,8 +14,6 @@ we have an answer.
 The [School Desk documentation](/docs/) is your destination
 for learning about the app.
 
-<!--more-->
-
 I want the app to be so simple
 that you don't need a manual.
 If you haven't tried it out yet,
