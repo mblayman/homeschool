@@ -17,7 +17,7 @@ urlpatterns = [
         name="task_create_bulk",
     ),
     path(
-        "<uuid:uuid>/tasks/bulk/partial/",
+        "<uuid:uuid>/tasks/bulk/partial/<int:last_form_number>/",
         views.get_course_task_bulk_hx,
         name="task_create_bulk_hx",
     ),

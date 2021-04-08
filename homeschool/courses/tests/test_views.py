@@ -487,6 +487,7 @@ class TestBulkCreateCourseTasks(TestCase):
         )
         assert self.get_context("course") == course
         assert list(self.get_context("grade_levels")) == [grade_level]
+        assert self.get_context("extra_forms") == "3"
 
     def test_post(self):
         user = self.make_user()

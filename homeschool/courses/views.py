@@ -340,7 +340,10 @@ def bulk_create_course_tasks(request, uuid):
         request.user, request.GET.get("previous_task", "")
     )
 
-    CourseTaskFormSet = modelformset_factory(CourseTask, form=CourseTaskForm, extra=10)
+    extra_forms = 3
+    CourseTaskFormSet = modelformset_factory(
+        CourseTask, form=CourseTaskForm, extra=extra_forms
+    )
     form_kwargs = {
         "user": request.user,
         "initial": {"duration": course.default_task_duration},
@@ -374,16 +377,27 @@ def bulk_create_course_tasks(request, uuid):
             school_year=grade_level.school_year_id
         ),
         "previous_task": previous_task,
+        # Cast to str to avoid some ugly template filters.
+        "extra_forms": str(extra_forms),
     }
     return render(request, "courses/coursetask_form_bulk.html", context)
 
 
-def get_course_task_bulk_hx(request, uuid):
+def get_course_task_bulk_hx(request, uuid, last_form_number):
+    course = get_course(request.user, uuid)
     # TODO: course for context
     # TODO: form for context
     # TODO: school year's grade levels
     # TODO: partial form number - can we extract that number from the formset form?
-    context = {"forms": [1], "form_number": "10"}
+
+    context = {
+        "course": course,
+        "forms": [1],
+        "form_number": last_form_number + 1,
+        # next_form_number is the next form *after this new form*.
+        # Cast to str to avoid some nasty template filters.
+        "next_form_number": str(last_form_number + 2),
+    }
     return render(request, "courses/coursetask_form_bulk_partial.html", context)
 
 

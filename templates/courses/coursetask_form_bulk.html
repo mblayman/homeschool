@@ -30,6 +30,10 @@
     </div>
   {% endif %}
 
+  <p class="font-thin text-base text-gray-800 mb-4">
+    This bulk create page will add more tasks as you need them. Tab is your friend.
+  </p>
+
   <div class="w-full max-w-3xl">
     <div class="flex flex-row text-sm uppercase tracking-wide font-thin mb-4">
       <div class="w-3/6">Description</div>
@@ -41,9 +45,9 @@
       {% csrf_token %}
       {{ formset.management_form }}
       {% for form in formset %}
-        {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-10" form_number=forloop.counter0 %}
+        {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-"|add:extra_forms form_number=forloop.counter0 %}
       {% endfor %}
-      <span class="form-row" id="form-row-10"></span>
+      <span class="form-row" id="form-row-{{ extra_forms }}"></span>
       <div class="md:flex md:items-center">
         <div class="md:w-1/4"></div>
         <div class="md:w-3/4 text-right">
