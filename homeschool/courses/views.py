@@ -378,6 +378,15 @@ def bulk_create_course_tasks(request, uuid):
     return render(request, "courses/coursetask_form_bulk.html", context)
 
 
+def get_course_task_bulk_hx(request, uuid):
+    # TODO: course for context
+    # TODO: form for context
+    # TODO: school year's grade levels
+    # TODO: partial form number - can we extract that number from the formset form?
+    context = {"forms": [1], "form_number": "10"}
+    return render(request, "courses/coursetask_form_bulk_partial.html", context)
+
+
 class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"

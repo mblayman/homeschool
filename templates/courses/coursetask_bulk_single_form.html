@@ -1,0 +1,38 @@
+<div class="flex flex-row border-t border-yellow-400 pt-4 form-row" id='form-row-{{ form_number }}'>
+  <input type="hidden" name="{{ form.course.html_name }}" value="{{ course.id }}">
+  <div class="w-3/6 pr-4">
+    {% if forloop.last %}
+      {% url "courses:task_create_bulk_hx" course.uuid as bulk_create_partial_url %}
+      <span hx-target="{{ replace_element }}" hx-swap="outerHTML">
+        {% include "forms/field.html" with field=form.description textarea=True no_label=True hx_get=bulk_create_partial_url hx_trigger="keyup once delay:100ms" %}
+      </span>
+    {% else %}
+      {% include "forms/field.html" with field=form.description textarea=True autofocus=True no_label=True %}
+    {% endif %}
+  </div>
+  <div class="w-2/6 pr-4">
+    {% include "forms/field.html" with field=form.duration no_label=True %}
+    {% if course.has_many_grade_levels %}
+      <div class="relative -mt-3">
+        <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500" id="id_grade_level" name="{{ form.grade_level.html_name }}">
+          <option value="">All grade levels</option>
+          {% for grade_level in grade_levels %}
+            <option value="{{ grade_level.id }}"
+            {% if grade_level == coursetask.grade_level %}
+              selected
+            {% endif %}
+            >{{ grade_level.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+        </div>
+      </div>
+    {% else %}
+      <input type="hidden" name="{{ form.grade_level.html_name }}" value="">
+    {% endif %}
+  </div>
+  <div class="w-1/6 text-center items-center">
+    {% include "forms/field.html" with field=form.is_graded no_label=True %}
+  </div>
+</div>
