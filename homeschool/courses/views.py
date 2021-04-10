@@ -384,19 +384,33 @@ def bulk_create_course_tasks(request, uuid):
 
 
 def get_course_task_bulk_hx(request, uuid, last_form_number):
+    """Get the next set of empty forms to display for bulk edit.
+
+    This returns an HTML fragment of forms for htmx.
+    """
     course = get_course(request.user, uuid)
-    # TODO: course for context
-    # TODO: form for context
+    total_existing_forms = last_form_number + 1
     # TODO: school year's grade levels
     # TODO: partial form number - can we extract that number from the formset form?
 
+    # Formsets won't create the latest forms so this must re-create *all* forms
+    # then slice from the end to get the forms that are needed. Efficient? Heck no.
+    form_count = 3
+    extra_forms = total_existing_forms + form_count
+    CourseTaskFormSet = modelformset_factory(
+        CourseTask, form=CourseTaskForm, extra=extra_forms
+    )
+    formset = CourseTaskFormSet(
+        form_kwargs={
+            "user": request.user,
+            "initial": {"duration": course.default_task_duration},
+        },
+        queryset=CourseTask.objects.none(),
+    )
     context = {
         "course": course,
-        "forms": [1],
-        "form_number": last_form_number + 1,
-        # next_form_number is the next form *after this new form*.
-        # Cast to str to avoid some nasty template filters.
-        "next_form_number": str(last_form_number + 2),
+        "forms": formset[-form_count:],
+        "last_form_number": last_form_number,
     }
     return render(request, "courses/coursetask_form_bulk_partial.html", context)
 

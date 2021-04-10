@@ -1,4 +1,6 @@
-{% for fake_form in forms %}
-  {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-"|add:next_form_number %}
+{% for form in forms %}
+  {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-"|add:form.prefix form_number=last_form_number|add:forloop.counter %}
+  {% if forloop.last %}
+    <span class="form-row" id="form-row-{{ form.prefix }}"></span>
+  {% endif %}
 {% endfor %}
-<span class="form-row" id="form-row-{{ next_form_number }}"></span>

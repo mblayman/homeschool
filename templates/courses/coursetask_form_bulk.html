@@ -45,7 +45,7 @@
       {% csrf_token %}
       {{ formset.management_form }}
       {% for form in formset %}
-        {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-"|add:extra_forms form_number=forloop.counter0 %}
+        {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-"|add:extra_forms form_number=forloop.counter0 autofocus=forloop.first %}
       {% endfor %}
       <span class="form-row" id="form-row-{{ extra_forms }}"></span>
       <div class="md:flex md:items-center">

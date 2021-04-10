@@ -7,7 +7,7 @@
         {% include "forms/field.html" with field=form.description textarea=True no_label=True hx_get=bulk_create_partial_url hx_trigger="keyup once delay:100ms" %}
       </span>
     {% else %}
-      {% include "forms/field.html" with field=form.description textarea=True autofocus=True no_label=True %}
+      {% include "forms/field.html" with field=form.description textarea=True autofocus=autofocus no_label=True %}
     {% endif %}
   </div>
   <div class="w-2/6 pr-4">
