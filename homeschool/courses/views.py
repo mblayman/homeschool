@@ -369,13 +369,10 @@ def bulk_create_course_tasks(request, uuid):
             form_kwargs=form_kwargs, queryset=CourseTask.objects.none()
         )
 
-    grade_level = course.grade_levels.first()
     context = {
         "course": course,
         "formset": formset,
-        "grade_levels": GradeLevel.objects.filter(
-            school_year=grade_level.school_year_id
-        ),
+        "grade_levels": course.grade_levels.all(),
         "previous_task": previous_task,
         # Cast to str to avoid some ugly template filters.
         "extra_forms": str(extra_forms),
@@ -383,6 +380,7 @@ def bulk_create_course_tasks(request, uuid):
     return render(request, "courses/coursetask_form_bulk.html", context)
 
 
+@login_required
 def get_course_task_bulk_hx(request, uuid, last_form_number):
     """Get the next set of empty forms to display for bulk edit.
 
@@ -390,8 +388,6 @@ def get_course_task_bulk_hx(request, uuid, last_form_number):
     """
     course = get_course(request.user, uuid)
     total_existing_forms = last_form_number + 1
-    # TODO: school year's grade levels
-    # TODO: partial form number - can we extract that number from the formset form?
 
     # Formsets won't create the latest forms so this must re-create *all* forms
     # then slice from the end to get the forms that are needed. Efficient? Heck no.
@@ -407,8 +403,10 @@ def get_course_task_bulk_hx(request, uuid, last_form_number):
         },
         queryset=CourseTask.objects.none(),
     )
+
     context = {
         "course": course,
+        "grade_levels": course.grade_levels.all(),
         "forms": formset[-form_count:],
         "last_form_number": last_form_number,
     }
