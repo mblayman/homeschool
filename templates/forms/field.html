@@ -15,7 +15,7 @@
         id="{{ field.id_for_label }}"
         name="{{ field.html_name }}"
         {% if autofocus %}autofocus{% endif %}
-        {% if hx_get %}hx-get="{{ hx_get }}" hx-trigger="keyup once delay:1s"{% endif %}
+        {% if hx_get %}hx-get="{{ hx_get }}"{% endif %}
         {% if hx_trigger %}hx-trigger="{{ hx_trigger }}"{% endif %}
         >{% if field.value %}{{ field.value|safe|escape }}{% endif %}</textarea>
     {% elif field.field.widget.input_type == "checkbox" %}
