@@ -489,6 +489,16 @@ class TestBulkCreateCourseTasks(TestCase):
         assert list(self.get_context("grade_levels")) == [grade_level]
         assert self.get_context("extra_forms") == "3"
 
+    def test_other_course(self):
+        """A user may not bulk create for another user's course."""
+        user = self.make_user()
+        course = CourseFactory()
+
+        with self.login(user):
+            response = self.get("courses:task_create_bulk", uuid=course.uuid)
+
+        assert response.status_code == 404
+
     def test_post(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -584,6 +594,47 @@ class TestBulkCreateCourseTasks(TestCase):
             self.get_check_200(url)
 
         assert self.get_context("previous_task") == task
+
+
+class TestGetCourseTaskBulkHx(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        self.assertLoginRequired(
+            "courses:task_create_bulk_hx", uuid=course.uuid, last_form_number=42
+        )
+
+    def test_other_course(self):
+        """A user may not get bulk create forms for another user's course."""
+        user = self.make_user()
+        course = CourseFactory()
+
+        with self.login(user):
+            response = self.get(
+                "courses:task_create_bulk_hx", uuid=course.uuid, last_form_number=2
+            )
+
+        assert response.status_code == 404
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
+
+        with self.login(user):
+            self.get_check_200(
+                "courses:task_create_bulk_hx", uuid=course.uuid, last_form_number=2
+            )
+
+        assert len(self.get_context("forms")) == 3
+        form = self.get_context("forms")[0]
+        assert form.user == user
+        assert (
+            form.get_initial_for_field(form.fields["duration"], "duration")
+            == course.default_task_duration
+        )
+        assert self.get_context("course") == course
+        assert list(self.get_context("grade_levels")) == [grade_level]
+        assert self.get_context("last_form_number") == 2
 
 
 class TestCourseTaskUpdateView(TestCase):
