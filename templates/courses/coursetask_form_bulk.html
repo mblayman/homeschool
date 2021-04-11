@@ -61,14 +61,16 @@
 
 {% endblock %}
 
+{# Submit up to the last completed form. #}
 {% block scripts %}
   <script>
     function submitForms() {
       let filledFormCount = 0;
       let descriptions = document.querySelectorAll('[id$="-description"]');
-      for (let description of descriptions) {
-        if (description.value !== "") {
-          filledFormCount++;
+      for (let i = descriptions.length - 1; i >= 0; i--) {
+        if (descriptions[i].value !== "") {
+          filledFormCount = i + 1;
+          break;
         }
       }
       let totalInput = document.getElementById("id_form-TOTAL_FORMS");
