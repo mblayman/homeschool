@@ -1,5 +1,17 @@
 {% extends "app_base.html" %}
 
+{% block styles %}
+  <style>
+    .form-row.htmx-settling {
+      opacity: 0;
+    }
+    .form-row {
+      opacity: 1;
+      transition: opacity 250ms ease-out;
+    }
+  </style>
+{% endblock %}
+
 {% block head_title %}Add Course Tasks{% endblock %}
 
 {% block main %}
@@ -18,6 +30,10 @@
     </div>
   {% endif %}
 
+  <p class="font-thin text-base text-gray-800 mb-4">
+    This bulk create page will add more tasks as you need them. Tab is your friend.
+  </p>
+
   <div class="w-full max-w-3xl">
     <div class="flex flex-row text-sm uppercase tracking-wide font-thin mb-4">
       <div class="w-3/6">Description</div>
@@ -29,38 +45,9 @@
       {% csrf_token %}
       {{ formset.management_form }}
       {% for form in formset %}
-        <div class="flex flex-row border-t border-yellow-400 pt-4">
-          <input type="hidden" name="{{ form.course.html_name }}" value="{{ course.id }}">
-          <div class="w-3/6 pr-4">
-            {% include "forms/field.html" with field=form.description textarea=True autofocus=True no_label=True %}
-          </div>
-          <div class="w-2/6 pr-4">
-            {% include "forms/field.html" with field=form.duration no_label=True %}
-            {% if course.has_many_grade_levels %}
-              <div class="relative -mt-3">
-                <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500" id="id_grade_level" name="{{ form.grade_level.html_name }}">
-                  <option value="">All grade levels</option>
-                  {% for grade_level in grade_levels %}
-                    <option value="{{ grade_level.id }}"
-                    {% if grade_level == coursetask.grade_level %}
-                      selected
-                    {% endif %}
-                    >{{ grade_level.name }}</option>
-                  {% endfor %}
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                </div>
-              </div>
-            {% else %}
-              <input type="hidden" name="{{ form.grade_level.html_name }}" value="">
-            {% endif %}
-          </div>
-          <div class="w-1/6 text-center items-center">
-            {% include "forms/field.html" with field=form.is_graded no_label=True %}
-          </div>
-        </div>
+        {% include "courses/coursetask_bulk_single_form.html" with form=form course=course grade_levels=grade_levels replace_element="#form-row-"|add:extra_forms form_number=forloop.counter0 autofocus=forloop.first %}
       {% endfor %}
+      <span class="form-row" id="form-row-{{ extra_forms }}"></span>
       <div class="md:flex md:items-center">
         <div class="md:w-1/4"></div>
         <div class="md:w-3/4 text-right">
@@ -74,14 +61,16 @@
 
 {% endblock %}
 
+{# Submit up to the last completed form. #}
 {% block scripts %}
   <script>
     function submitForms() {
       let filledFormCount = 0;
       let descriptions = document.querySelectorAll('[id$="-description"]');
-      for (let description of descriptions) {
-        if (description.value !== "") {
-          filledFormCount++;
+      for (let i = descriptions.length - 1; i >= 0; i--) {
+        if (descriptions[i].value !== "") {
+          filledFormCount = i + 1;
+          break;
         }
       }
       let totalInput = document.getElementById("id_form-TOTAL_FORMS");
