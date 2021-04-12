@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
@@ -464,6 +465,68 @@ class TestCourseTaskCreateView(TestCase):
         assert CourseTask.objects.count() == 1
         task = CourseTask.objects.get(course=course)
         assert task.graded_work is not None
+
+    def test_replicates(self):
+        """A user that replicates data will create multiple tasks."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "course": str(course.id),
+            "description": "A new task",
+            "duration": "30",
+            "replicate": "on",
+            "replicate_count": "2",
+        }
+
+        with self.login(user):
+            self.post("courses:task_create", uuid=course.uuid, data=data)
+
+        assert CourseTask.objects.count() == 2
+        descriptions = list(
+            CourseTask.objects.filter(course=course).values_list(
+                "description", flat=True
+            )
+        )
+        assert descriptions == ["A new task", "A new task"]
+
+    def test_bad_replicate_count(self):
+        """A bad replicate count does no harm."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "course": str(course.id),
+            "description": "A new task",
+            "duration": "30",
+            "replicate": "on",
+            "replicate_count": "bad",
+        }
+
+        with self.login(user):
+            self.post("courses:task_create", uuid=course.uuid, data=data)
+
+        assert CourseTask.objects.count() == 1
+
+    @mock.patch("homeschool.courses.views.schools_constants")
+    def test_max_allowed_enforced(self, mock_constants):
+        """When replicate count is higher than the max, only the max are created."""
+        mock_constants.MAX_ALLOWED_DAYS = 2
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "course": str(course.id),
+            "description": "A new task",
+            "duration": "30",
+            "replicate": "on",
+            "replicate_count": "10",
+        }
+
+        with self.login(user):
+            self.post("courses:task_create", uuid=course.uuid, data=data)
+
+        assert CourseTask.objects.count() == 2
 
 
 class TestBulkCreateCourseTasks(TestCase):

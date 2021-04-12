@@ -87,6 +87,18 @@
           </div>
         {% endif %}
       </div>
+      {% if create %}
+        <h2 class="font-thin text-xl text-blue-900 mt-2 mb-4">More Options</h2>
+        <div class="md:flex md:items-center">
+          <div class="md:w-1/4"></div>
+          <div class="md:w-3/4">
+            <label class="block w-full pl-1 py-2 text-blue-900 font-thin rounded hover:bg-gray-200">
+              <input class="mr-2" type="checkbox" name="replicate">
+              Replicate <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" type="number" name="replicate_count" value="2" min="1" max="{{ max_tasks }}"> times
+            </label>
+          </div>
+        </div>
+      {% endif %}
     </form>
   </div>
 {% endblock %}

@@ -18,6 +18,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Enrollment
@@ -305,6 +306,7 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
             school_year=grade_level.school_year_id
         )
         context["previous_task"] = self.previous_task
+        context["max_tasks"] = schools_constants.MAX_ALLOWED_DAYS
         return context
 
     def get_initial(self):
@@ -320,12 +322,39 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         response = super().form_valid(form)
         if self.previous_task:
             self.object.below(self.previous_task)
+        replicate = self.request.POST.get("replicate")
+        if replicate:
+            self.create_copies()
         return response
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+    def create_copies(self):
+        """Create copies that a user requested.
+
+        This should create 1 less than the requested amount
+        because the CreateView already created the first instance.
+        """
+        try:
+            replicate_count = int(self.request.POST.get("replicate_count", 1))
+            replicate_count = min(replicate_count, schools_constants.MAX_ALLOWED_DAYS)
+            replicate_count -= 1
+        except ValueError:
+            # Bad POST data. Stop.
+            return
+
+        previous_task = self.object
+        for _ in range(replicate_count):
+            form = CourseTaskForm(user=self.request.user, data=self.request.POST)
+            # This method should only be called after the first form was validated.
+            # That should make this is_valid call safe and populate cleaned_data.
+            form.is_valid()
+            form.save()
+            form.instance.below(previous_task)
+            previous_task = form.instance
 
 
 @login_required

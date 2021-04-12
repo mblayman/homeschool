@@ -3,6 +3,7 @@ from django import forms
 from homeschool.core.forms import DaysOfWeekModelForm
 from homeschool.courses.models import Course
 
+from . import constants
 from .models import GradeLevel, SchoolBreak, SchoolYear
 
 
@@ -165,7 +166,7 @@ class SchoolYearForm(DaysOfWeekModelForm):
 
     def check_max_length(self, start_date, end_date):
         """Check that the school year is within the max allowed days."""
-        max_allowed_days = 500
+        max_allowed_days = constants.MAX_ALLOWED_DAYS
         delta = end_date - start_date
         if abs(delta.days) > max_allowed_days:
             self.add_error(
