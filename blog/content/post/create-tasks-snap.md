@@ -39,7 +39,7 @@ that share the same name
 at one time.
 For example,
 if your student is in a "🎹 Piano" course
-and you want to tasks to practice,
+and you want to make tasks for practice,
 you create one task
 with a "Practice" description,
 then select the replicate option
