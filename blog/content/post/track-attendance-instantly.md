@@ -18,8 +18,6 @@ we're excited to announce the availability
 of an attendance report
 that automatically tracks your student's attendance.
 
-<!--more-->
-
 For those of you in states that require attendance tracking,
 we've got you covered.
 School Desk has attendance reports
