@@ -89,16 +89,41 @@
       </div>
       {% if create %}
         <h2 class="font-thin text-xl text-blue-900 mt-2 mb-4">More Options</h2>
-        <div class="md:flex md:items-center">
+        <div class="md:flex md:items-center mb-2">
           <div class="md:w-1/4"></div>
           <div class="md:w-3/4">
             <label class="block w-full pl-1 py-2 text-blue-900 font-thin rounded hover:bg-gray-200">
-              <input class="mr-2" type="checkbox" name="replicate">
+              <input onchange="toggleAutonumber(this)" class="mr-2" type="checkbox" name="replicate">
               Replicate <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" type="number" name="replicate_count" value="2" min="1" max="{{ max_tasks }}"> times
             </label>
+          </div>
+        </div>
+        <div class="md:flex md:items-center opacity-0 transition duration-200 ease-in-out" id="autonumber_option">
+          <div class="md:w-1/4"></div>
+          <div class="md:w-3/4">
+            <label class="block w-full pl-1 py-2 text-blue-900 font-thin rounded hover:bg-gray-200">
+              <input class="mr-2" type="checkbox" name="autonumber">
+              Number each task
+            </label>
+            <p class="p-1 text-sm text-blue-900 font-thin">
+              Example: “Lesson” creates “Lesson 1”, “Lesson 2”, etc.
+            </p>
           </div>
         </div>
       {% endif %}
     </form>
   </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function toggleAutonumber(checkBox) {
+      let autonumberOption = document.getElementById('autonumber_option');
+      if (checkBox.checked) {
+        autonumberOption.classList.replace('opacity-0', 'opacity-100');
+      } else {
+        autonumberOption.classList.replace('opacity-100', 'opacity-0');
+      }
+    }
+  </script>
 {% endblock %}

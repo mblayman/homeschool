@@ -346,9 +346,20 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
             # Bad POST data. Stop.
             return
 
+        original_description = self.object.description
+        autonumber = self.request.POST.get("autonumber")
+        if autonumber:
+            self.object.description = f"{original_description} 1"
+            self.object.save()
+
         previous_task = self.object
-        for _ in range(replicate_count):
-            form = CourseTaskForm(user=self.request.user, data=self.request.POST)
+        # A copy of the POST is needed for mutable access for autonumber to work.
+        data = self.request.POST.copy()
+        for autonumber_counter, _ in enumerate(range(replicate_count), start=2):
+            if autonumber:
+                data["description"] = f"{original_description} {autonumber_counter}"
+
+            form = CourseTaskForm(user=self.request.user, data=data)
             # This method should only be called after the first form was validated.
             # That should make this is_valid call safe and populate cleaned_data.
             form.is_valid()
