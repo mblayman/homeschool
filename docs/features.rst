@@ -122,3 +122,35 @@ The Resource Report shows all of those resources
 for a single school year,
 grouped by course,
 on a single page.
+
+Quick Task Creation
+-------------------
+
+Part of building a school schedule is creating the tasks
+for each of your students.
+School Desk provides handy options
+to remove extra steps
+when building your tasks.
+
+* **Create in bulk**:
+  School Desk includes a task creation form
+  that will grow automatically as you need
+  to enter more tasks
+  for your course.
+  You can stay focused on your course preparation
+  instead of fiddling with website forms.
+* **Task replication**:
+  "Practice, practice, practice!"
+  If your students have tasks
+  that happen repeatedly
+  like music practice,
+  you can create all of those tasks
+  in one swoop.
+* **Automatically number tasks**:
+  Maybe you want to replicate tasks
+  *and* assign each one a number
+  like "Lesson 1," "Lesson 2,"
+  and so on.
+  School Desk's task creation tools also make this trivial
+  to add
+  to a course.
