@@ -9,7 +9,11 @@ from homeschool.courses.tests.factories import (
     GradedWorkFactory,
 )
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
-from homeschool.students.tests.factories import EnrollmentFactory
+from homeschool.students.tests.factories import (
+    CourseworkFactory,
+    EnrollmentFactory,
+    GradeFactory,
+)
 from homeschool.test import TestCase
 
 
@@ -300,6 +304,53 @@ class TestCourseEditView(TestCase):
         assert course.name == "New course name"
         assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
         assert not course.is_active
+
+
+class TestCourseDeleteView(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        self.assertLoginRequired("courses:delete", uuid=course.uuid)
+
+    def test_other_course(self):
+        """A user may not access another user's course."""
+        user = self.make_user()
+        course = CourseFactory()
+
+        with self.login(user):
+            response = self.get("courses:delete", uuid=course.uuid)
+
+        assert response.status_code == 404
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        GradeFactory(graded_work__course_task=task)
+        CourseworkFactory(course_task=task)
+        CourseResourceFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("courses:delete", uuid=course.uuid)
+
+        assert self.get_context("tasks_count") == 1
+        assert self.get_context("grades_count") == 1
+        assert self.get_context("coursework_count") == 1
+        assert self.get_context("course_resources_count") == 1
+
+    def test_post(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            response = self.post("courses:delete", uuid=course.uuid)
+
+        assert Course.objects.count() == 0
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_detail", uuid=grade_level.school_year.uuid
+        )
 
 
 class TestCourseCopySelectView(TestCase):

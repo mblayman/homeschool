@@ -112,6 +112,11 @@
             </a>
           {% endif %}
         {% else %}
+          <a href="{% url "courses:delete" course.uuid %}"
+            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            Delete
+          </a>
+          <div class="flex-grow"></div>
           <a href="{% url "courses:detail" course.uuid %}"
             class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Cancel

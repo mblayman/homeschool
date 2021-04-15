@@ -21,7 +21,7 @@ from django.views.generic import (
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.models import GradeLevel, SchoolYear
-from homeschool.students.models import Enrollment
+from homeschool.students.models import Coursework, Enrollment, Grade
 
 from .forms import CourseForm, CourseResourceForm, CourseTaskForm
 from .models import Course, CourseResource, CourseTask
@@ -174,19 +174,24 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         return None
 
 
-class CourseDetailView(LoginRequiredMixin, DetailView):
+class CourseQuerySetMixin:
+    if TYPE_CHECKING:  # pragma: no cover
+        request = HttpRequest()
+
+    def get_course_queryset(self):
+        user = self.request.user
+        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
+        return Course.objects.filter(grade_levels__in=grade_levels).distinct()
+
+
+class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
 
     def get_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return (
-            Course.objects.filter(grade_levels__in=grade_levels)
-            .prefetch_related(
-                "resources", "course_tasks__grade_level", "course_tasks__graded_work"
-            )
-            .distinct()
+        course_qs = self.get_course_queryset()
+        return course_qs.prefetch_related(
+            "resources", "course_tasks__grade_level", "course_tasks__graded_work"
         )
 
     def get_context_data(self, *args, **kwargs):
@@ -216,16 +221,14 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CourseEditView(LoginRequiredMixin, UpdateView):
+class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):
     form_class = CourseForm
     template_name = "courses/course_form.html"
     slug_field = "uuid"
     slug_url_kwarg = "uuid"
 
     def get_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return Course.objects.filter(grade_levels__in=grade_levels).distinct()
+        return self.get_course_queryset()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -247,6 +250,34 @@ class CourseEditView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+
+
+class CourseDeleteView(LoginRequiredMixin, CourseQuerySetMixin, DeleteView):
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
+
+    def get_queryset(self):
+        return self.get_course_queryset()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["tasks_count"] = CourseTask.objects.filter(course=self.object).count()
+        context["coursework_count"] = Coursework.objects.filter(
+            course_task__course=self.object
+        ).count()
+        context["grades_count"] = Grade.objects.filter(
+            graded_work__course_task__course=self.object
+        ).count()
+        context["course_resources_count"] = CourseResource.objects.filter(
+            course=self.object
+        ).count()
+        return context
+
+    def get_success_url(self):
+        grade_level = self.object.grade_levels.select_related("school_year").first()
+        return reverse(
+            "schools:school_year_detail", kwargs={"uuid": grade_level.school_year.uuid}
+        )
 
 
 class CourseCopySelectView(LoginRequiredMixin, TemplateView):
