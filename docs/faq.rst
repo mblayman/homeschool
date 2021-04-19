@@ -41,6 +41,43 @@ you can use the daily or weekly views
 of your homeschool's tasks
 to know what your students need to work on each day.
 
+What Happens When I Fall Behind In Tracking Tasks?
+--------------------------------------------------
+
+Any tasks that your students do not complete
+in a week
+will push to the next week automatically.
+But there will be times where your students did the work,
+and you didn't get a chance to get into School Desk
+and mark the tasks as complete.
+If tasks automatically roll forward,
+how do you go back and set things as completed
+in the past?
+
+School Desk has two ways to set tasks
+as completed in the past:
+
+1. The daily view can fill
+   in past activity.
+   When you look at a past date in the app,
+   School Desk will try to fill in the next available task
+   for each course
+   if no task is marked as complete
+   for that date.
+   This gives you the ability to go back in time
+   and walk through each day where you did not set any tasks as complete.
+2. You can also set a task
+   by visiting the student's course page
+   that tracks their progress
+   (this page is accessible
+   by clicking a course name
+   on the weekly or daily view).
+   From this list of tasks,
+   select the calendar icon
+   for the task that you want to set.
+   On the following page, you can set the date
+   when your student completed the task.
+
 How Do I Cancel My Account?
 ---------------------------
 
