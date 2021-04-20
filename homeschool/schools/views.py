@@ -461,8 +461,7 @@ class ResourceReportView(LoginRequiredMixin, TemplateView):
             Enrollment.objects.select_related(
                 "student", "grade_level", "grade_level__school_year"
             ),
-            student__uuid=self.kwargs["student_uuid"],
-            grade_level__school_year__uuid=self.kwargs["uuid"],
+            uuid=self.kwargs["uuid"],
             grade_level__school_year__school=user.school,
         )
         context["grade_level"] = enrollment.grade_level

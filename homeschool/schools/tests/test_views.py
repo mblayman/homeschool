@@ -15,7 +15,6 @@ from homeschool.students.tests.factories import (
     CourseworkFactory,
     EnrollmentFactory,
     GradeFactory,
-    StudentFactory,
 )
 from homeschool.test import TestCase
 
@@ -768,11 +767,8 @@ class TestProgressReportView(TestCase):
 
 class TestResourceReportView(TestCase):
     def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        student = StudentFactory()
-        self.assertLoginRequired(
-            "reports:resource", uuid=school_year.uuid, student_uuid=student.uuid
-        )
+        enrollment = EnrollmentFactory()
+        self.assertLoginRequired("reports:resource", uuid=enrollment.uuid)
 
     def test_get(self):
         user = self.make_user()
@@ -781,11 +777,7 @@ class TestResourceReportView(TestCase):
         resource = CourseResourceFactory(course=course)
 
         with self.login(user):
-            self.get_check_200(
-                "reports:resource",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            self.get_check_200("reports:resource", uuid=enrollment.uuid)
 
         assert self.get_context("grade_level") == enrollment.grade_level
         assert self.get_context("school_year") == enrollment.grade_level.school_year
@@ -798,11 +790,7 @@ class TestResourceReportView(TestCase):
         enrollment = EnrollmentFactory()
 
         with self.login(user):
-            response = self.get(
-                "reports:resource",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            response = self.get("reports:resource", uuid=enrollment.uuid)
 
         self.response_404(response)
 

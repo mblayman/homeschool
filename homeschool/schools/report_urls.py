@@ -11,9 +11,5 @@ urlpatterns = [
         name="attendance",
     ),
     path("progress/<uuid:uuid>/", views.ProgressReportView.as_view(), name="progress"),
-    path(
-        "resources/<uuid:uuid>/student/<uuid:student_uuid>/",
-        views.ResourceReportView.as_view(),
-        name="resource",
-    ),
+    path("resources/<uuid:uuid>/", views.ResourceReportView.as_view(), name="resource"),
 ]
