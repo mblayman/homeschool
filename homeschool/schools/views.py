@@ -477,6 +477,9 @@ class AttendanceReportView(LoginRequiredMixin, TemplateView):
         context["school_year"] = enrollment.grade_level.school_year
         context["student"] = enrollment.student
         context["school_dates"] = self._build_school_dates(enrollment)
+        context["total_days_attended"] = sum(
+            1 for school_date in context["school_dates"] if school_date["attended"]
+        )
         return context
 
     def _build_school_dates(self, enrollment):

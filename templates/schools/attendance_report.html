@@ -26,6 +26,11 @@
           </div>
         </div>
       {% endfor %}
+      <div class="flex flex-row">
+        <div class="w-3/6 text-sm font-light text-right font-bold pr-2 py-2 border-t border-yellow-400 border-dotted">Total Days Attended:</div>
+        <div class="w-3/6 text-sm font-light text-left pr-8 py-2 border-t border-yellow-400 border-dotted">{{ total_days_attended }}</div>
+
+      </div>
     </div>
   {% else %}
     <div class="flex flex-row justify-between">

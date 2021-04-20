@@ -836,6 +836,7 @@ class TestAttendanceReportView(TestCase):
         assert school_dates[0]["is_break"]
         assert school_dates[1]["attended"]
         assert not school_dates[4]["is_school_day"]  # First Saturday
+        assert self.get_context("total_days_attended") == 1
 
     def test_school_year_end_date(self):
         """An old school year will go to the end date."""
