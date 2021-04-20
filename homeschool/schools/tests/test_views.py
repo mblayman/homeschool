@@ -633,22 +633,15 @@ class TestReportsIndex(TestCase):
 
 class TestProgressReportView(TestCase):
     def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        student = StudentFactory()
-        self.assertLoginRequired(
-            "reports:progress", uuid=school_year.uuid, student_uuid=student.uuid
-        )
+        enrollment = EnrollmentFactory()
+        self.assertLoginRequired("reports:progress", uuid=enrollment.uuid)
 
     def test_get(self):
         user = self.make_user()
         enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
 
         with self.login(user):
-            self.get_check_200(
-                "reports:progress",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            self.get_check_200("reports:progress", uuid=enrollment.uuid)
 
         assert self.get_context("grade_level") == enrollment.grade_level
         assert self.get_context("school_year") == enrollment.grade_level.school_year
@@ -660,11 +653,7 @@ class TestProgressReportView(TestCase):
         enrollment = EnrollmentFactory()
 
         with self.login(user):
-            response = self.get(
-                "reports:progress",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            response = self.get("reports:progress", uuid=enrollment.uuid)
 
         self.response_404(response)
 
@@ -688,11 +677,7 @@ class TestProgressReportView(TestCase):
         )
 
         with self.login(user):
-            self.get_check_200(
-                "reports:progress",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            self.get_check_200("reports:progress", uuid=enrollment.uuid)
 
         assert self.get_context("courses") == [
             {
@@ -721,11 +706,7 @@ class TestProgressReportView(TestCase):
         )
 
         with self.login(user):
-            self.get_check_200(
-                "reports:progress",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            self.get_check_200("reports:progress", uuid=enrollment.uuid)
 
         assert self.get_context("courses")[0]["course_average"] == 50
         assert self.get_context("courses")[1]["course_average"] == 100
@@ -746,11 +727,7 @@ class TestProgressReportView(TestCase):
         CourseworkFactory(course_task=grade.graded_work.course_task)
 
         with self.login(user):
-            self.get_check_200(
-                "reports:progress",
-                uuid=enrollment.grade_level.school_year.uuid,
-                student_uuid=enrollment.student.uuid,
-            )
+            self.get_check_200("reports:progress", uuid=enrollment.uuid)
 
         assert self.get_context("courses")[0]["grades"][0].coursework is None
 
@@ -763,11 +740,7 @@ class TestProgressReportView(TestCase):
         course_2 = CourseFactory(grade_levels=[enrollment.grade_level])
         GradeFactory(student=student, graded_work__course_task__course=course_1)
         GradeFactory(student=student, graded_work__course_task__course=course_2)
-        url = self.reverse(
-            "reports:progress",
-            uuid=enrollment.grade_level.school_year.uuid,
-            student_uuid=enrollment.student.uuid,
-        )
+        url = self.reverse("reports:progress", uuid=enrollment.uuid)
         url += f"?course={course_1.uuid}"
 
         with self.login(user):
@@ -784,11 +757,7 @@ class TestProgressReportView(TestCase):
         course_2 = CourseFactory(grade_levels=[enrollment.grade_level])
         GradeFactory(student=student, graded_work__course_task__course=course_1)
         GradeFactory(student=student, graded_work__course_task__course=course_2)
-        url = self.reverse(
-            "reports:progress",
-            uuid=enrollment.grade_level.school_year.uuid,
-            student_uuid=enrollment.student.uuid,
-        )
+        url = self.reverse("reports:progress", uuid=enrollment.uuid)
         url += "?course=nope"
 
         with self.login(user):
