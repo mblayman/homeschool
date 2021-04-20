@@ -187,9 +187,14 @@ class Student(models.Model):
         The data is in a dictionary for fast lookups.
         """
         week_coursework: dict = {}
-        coursework_qs = Coursework.objects.filter(
-            student=self, completed_date__range=(week.first_day, week.last_day)
-        ).select_related("course_task")
+        coursework_qs = (
+            Coursework.objects.filter(
+                student=self, completed_date__range=(week.first_day, week.last_day)
+            )
+            # Users can mark content as complete in whatever order they want,
+            # but the display should match the task list.
+            .order_by("course_task").select_related("course_task")
+        )
         for coursework in coursework_qs:
             course_id = coursework.course_task.course_id
             if course_id not in week_coursework:
