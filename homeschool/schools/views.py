@@ -1,8 +1,10 @@
 import datetime
+import uuid
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -360,13 +362,18 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
         context["school_year"] = enrollment.grade_level.school_year
         context["student"] = enrollment.student
 
-        grades = (
-            Grade.objects.filter(
-                student=enrollment.student,
+        course_uuid = self._get_course_uuid()
+        if course_uuid:
+            qs_filter = Q(graded_work__course_task__course__uuid=course_uuid)
+        else:
+            qs_filter = Q(
                 graded_work__course_task__course__grade_levels__in=[
                     enrollment.grade_level
-                ],
+                ]
             )
+
+        grades = (
+            Grade.objects.filter(qs_filter, student=enrollment.student)
             # Include secondary ordering so tasks are ordered in the course.
             .order_by(
                 "graded_work__course_task__course", "graded_work__course_task"
@@ -374,9 +381,21 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
                 "graded_work__course_task", "graded_work__course_task__course"
             )
         )
+
         self._mixin_coursework(grades, enrollment.student)
         context["courses"] = self._build_courses_info(grades)
         return context
+
+    def _get_course_uuid(self):
+        """Get a course UUID if a valid entry is in the querystring."""
+        course_uuid = self.request.GET.get("course")
+        if course_uuid:
+            try:
+                uuid.UUID(course_uuid)
+            except ValueError:
+                # If the UUID doesn't smell right, skip filtering.
+                return ""
+        return course_uuid
 
     def _mixin_coursework(self, grades, student):
         """Mix in the coursework for the grades.

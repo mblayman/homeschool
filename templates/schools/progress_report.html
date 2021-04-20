@@ -7,7 +7,11 @@
   <h1 class="font-thin text-2xl text-blue-900 mb-8">Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
   {% if courses %}
     {% for course_info in courses %}
-      <h2 class="font-thin text-xl text-blue-900 mb-2">{{ course_info.course }}</h2>
+      <h2 class="font-thin text-xl text-blue-900 mb-2">
+        <a class="hover:underline" href="{{ request.path }}?course={{ course_info.course.uuid }}">
+          {{ course_info.course }}
+        </a>
+      </h2>
       <div class="flex flex-col max-w-3xl mb-8">
         <div class="flex flex-row">
           <div class="w-4/6 text-sm uppercase tracking-wide font-thin py-2">Task</div>
