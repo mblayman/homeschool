@@ -404,6 +404,27 @@ class TestCourseworkFormView(TestCase):
 
         self.response_404(response)
 
+    def test_multiple_grade_levels(self):
+        """A task that belongs to multiple grade levels can be displayed.
+
+        This is a regression test for https://rollbar.com/SchoolDesk/schooldesk/items/6/
+        """
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        other_grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level, other_grade_level])
+        course_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200(
+                "students:coursework",
+                uuid=student.uuid,
+                course_task_uuid=course_task.uuid,
+            )
+
+        assert self.get_context("course_task") == course_task
+
 
 class TestGradeFormView(TestCase):
     def test_unauthenticated_access(self):
