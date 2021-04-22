@@ -6,7 +6,7 @@
         {{ forloop.counter }}.
       </div>
       <div class="w-6/12 p-2 text-sm font-light overflow-x-scroll">
-        <a href="{% url "courses:task_edit" uuid=task.uuid %}?next={% url "courses:detail" task.course.uuid %}%23task-{{ task.uuid }}" class="hover:text-gray-600">
+        <a href="{% url "courses:task_edit" pk=task.id %}?next={% url "courses:detail" task.course.id %}%23task-{{ task.uuid }}" class="hover:text-gray-600">
           {{ task.description|linebreaksbr }}
         </a>
       </div>
@@ -24,13 +24,13 @@
         {% else %}
           <div class="h-4 w-4 mr-2"></div>
         {% endif %}
-        <a href="{% url "courses:task_create" uuid=course.uuid %}?previous_task={{ task.uuid }}&next={% url "courses:detail" task.course.uuid %}%23task-{{ task.uuid }}" class="block mr-2 hover:text-gray-600">
+        <a href="{% url "courses:task_create" pk=course.id %}?previous_task={{ task.uuid }}&next={% url "courses:detail" task.course.id %}%23task-{{ task.uuid }}" class="block mr-2 hover:text-gray-600">
           <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Add Task After This Task</title>
             <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
           </svg>
         </a>
-        <form method="POST" action="{% url "courses:task_up" uuid=task.uuid %}">
+        <form method="POST" action="{% url "courses:task_up" pk=task.id %}">
           {% csrf_token %}
           <button type="submit" class="block mr-2 hover:text-gray-600">
             <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -39,7 +39,7 @@
             </svg>
           </button>
         </form>
-        <form method="POST" action="{% url "courses:task_down" uuid=task.uuid %}">
+        <form method="POST" action="{% url "courses:task_down" pk=task.id %}">
           {% csrf_token %}
           <button type="submit" class="block mr-2 hover:text-gray-600">
             <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -49,7 +49,7 @@
           </button>
         </form>
         <a class="block mr-2 hover:text-gray-600"
-          hx-delete="{% url "courses:task_hx_delete" task.uuid %}"
+          hx-delete="{% url "courses:task_hx_delete" task.id %}"
           hx-confirm="Are you sure you want to delete this task?"
           hx-target="#tasks"
           hx-swap="outerHTML">
@@ -77,7 +77,7 @@
           <p class="mb-8 font-light">
             Let’s add one to begin.
           </p>
-          <a href="{% url "courses:task_create" uuid=course.uuid %}"
+          <a href="{% url "courses:task_create" pk=course.id %}"
             class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
             Add Task
           </a>

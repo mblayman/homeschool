@@ -149,9 +149,7 @@ class TestCourseCreateView(TestCase):
         assert course.name == "Course name"
         assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
         self.response_302(response)
-        assert self.reverse("courses:detail", uuid=course.uuid) in response.get(
-            "Location"
-        )
+        assert self.reverse("courses:detail", pk=course.id) in response.get("Location")
         assert not course.is_active
 
     def test_course_copy_fills_form_fields(self):
@@ -218,7 +216,7 @@ class TestCourseCreateView(TestCase):
 class TestCourseDetailView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
-        self.assertLoginRequired("courses:detail", uuid=course.uuid)
+        self.assertLoginRequired("courses:detail", pk=course.id)
 
     def test_get(self):
         user = self.make_user()
@@ -226,7 +224,7 @@ class TestCourseDetailView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get_check_200("courses:detail", uuid=course.uuid)
+            self.get_check_200("courses:detail", pk=course.id)
 
         assert list(self.get_context("grade_levels")) == [grade_level]
         assert self.get_context("school_year") == grade_level.school_year
@@ -241,7 +239,7 @@ class TestCourseDetailView(TestCase):
         CourseTaskFactory(course=course, grade_level=grade_level)
 
         with self.login(user):
-            self.get("courses:detail", uuid=course.uuid)
+            self.get("courses:detail", pk=course.id)
 
         self.assertResponseContains(grade_level.name)
 
@@ -254,7 +252,7 @@ class TestCourseDetailView(TestCase):
         last_task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get("courses:detail", uuid=course.uuid)
+            self.get("courses:detail", pk=course.id)
 
         assert self.get_context("last_task") == last_task
 
@@ -266,7 +264,7 @@ class TestCourseDetailView(TestCase):
         enrollment = EnrollmentFactory(grade_level=grade_level)
 
         with self.login(user):
-            self.get_check_200("courses:detail", uuid=course.uuid)
+            self.get_check_200("courses:detail", pk=course.id)
 
         assert self.get_context("enrolled_students") == [enrollment.student]
 
@@ -274,7 +272,7 @@ class TestCourseDetailView(TestCase):
 class TestCourseEditView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
-        self.assertLoginRequired("courses:edit", uuid=course.uuid)
+        self.assertLoginRequired("courses:edit", pk=course.id)
 
     def test_get(self):
         user = self.make_user()
@@ -282,7 +280,7 @@ class TestCourseEditView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get_check_200("courses:edit", uuid=course.uuid)
+            self.get_check_200("courses:edit", pk=course.id)
 
     def test_post(self):
         user = self.make_user()
@@ -298,7 +296,7 @@ class TestCourseEditView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:edit", uuid=course.uuid, data=data)
+            self.post("courses:edit", pk=course.id, data=data)
 
         course.refresh_from_db()
         assert course.name == "New course name"
@@ -309,7 +307,7 @@ class TestCourseEditView(TestCase):
 class TestCourseDeleteView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
-        self.assertLoginRequired("courses:delete", uuid=course.uuid)
+        self.assertLoginRequired("courses:delete", pk=course.id)
 
     def test_other_course(self):
         """A user may not access another user's course."""
@@ -317,7 +315,7 @@ class TestCourseDeleteView(TestCase):
         course = CourseFactory()
 
         with self.login(user):
-            response = self.get("courses:delete", uuid=course.uuid)
+            response = self.get("courses:delete", pk=course.id)
 
         assert response.status_code == 404
 
@@ -331,7 +329,7 @@ class TestCourseDeleteView(TestCase):
         CourseResourceFactory(course=course)
 
         with self.login(user):
-            self.get_check_200("courses:delete", uuid=course.uuid)
+            self.get_check_200("courses:delete", pk=course.id)
 
         assert self.get_context("tasks_count") == 1
         assert self.get_context("grades_count") == 1
@@ -344,7 +342,7 @@ class TestCourseDeleteView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            response = self.post("courses:delete", uuid=course.uuid)
+            response = self.post("courses:delete", pk=course.id)
 
         assert Course.objects.count() == 0
         self.response_302(response)
@@ -386,7 +384,7 @@ class TestCourseCopySelectView(TestCase):
 class TestCourseTaskCreateView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
-        self.assertLoginRequired("courses:task_create", uuid=course.uuid)
+        self.assertLoginRequired("courses:task_create", pk=course.id)
 
     def test_get(self):
         user = self.make_user()
@@ -394,7 +392,7 @@ class TestCourseTaskCreateView(TestCase):
         course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
 
         with self.login(user):
-            self.get_check_200("courses:task_create", uuid=course.uuid)
+            self.get_check_200("courses:task_create", pk=course.id)
 
         form = self.get_context("form")
         assert form.initial["duration"] == course.default_task_duration
@@ -406,16 +404,14 @@ class TestCourseTaskCreateView(TestCase):
         data = {"course": str(course.id), "description": "A new task", "duration": "30"}
 
         with self.login(user):
-            response = self.post("courses:task_create", uuid=course.uuid, data=data)
+            response = self.post("courses:task_create", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 1
         task = CourseTask.objects.get(course=course)
         assert task.description == data["description"]
         assert task.duration == int(data["duration"])
         self.response_302(response)
-        assert response.get("Location") == self.reverse(
-            "courses:detail", uuid=course.uuid
-        )
+        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
         assert not hasattr(task, "graded_work")
 
     def test_has_previous_task(self):
@@ -424,7 +420,7 @@ class TestCourseTaskCreateView(TestCase):
         grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(course=course)
-        url = self.reverse("courses:task_create", uuid=course.uuid)
+        url = self.reverse("courses:task_create", pk=course.id)
         url += f"?previous_task={task.uuid}"
 
         with self.login(user):
@@ -438,7 +434,7 @@ class TestCourseTaskCreateView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get("courses:task_create", uuid=course.uuid)
+            self.get("courses:task_create", pk=course.id)
 
         self.assertContext("create", True)
 
@@ -452,7 +448,7 @@ class TestCourseTaskCreateView(TestCase):
             "description": "new description",
             "duration": 15,
         }
-        url = self.reverse("courses:task_create", uuid=course.uuid)
+        url = self.reverse("courses:task_create", pk=course.id)
         url += f"?next={next_url}"
 
         with self.login(user):
@@ -467,7 +463,7 @@ class TestCourseTaskCreateView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get("courses:task_create", uuid=course.uuid)
+            self.get("courses:task_create", pk=course.id)
 
         self.assertContext("course", course)
 
@@ -478,7 +474,7 @@ class TestCourseTaskCreateView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get("courses:task_create", uuid=course.uuid)
+            self.get("courses:task_create", pk=course.id)
 
         grade_levels = set(self.get_context("grade_levels"))
         assert grade_levels == {grade_level, other_grade_level}
@@ -490,7 +486,7 @@ class TestCourseTaskCreateView(TestCase):
         data = {"course": str(course.id), "description": "A new task", "duration": "30"}
         task_1 = CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
-        url = self.reverse("courses:task_create", uuid=course.uuid)
+        url = self.reverse("courses:task_create", pk=course.id)
         url += f"?previous_task={task_1.uuid}"
 
         with self.login(user):
@@ -511,7 +507,7 @@ class TestCourseTaskCreateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_create", uuid=course.uuid, data=data)
+            self.post("courses:task_create", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 1
         task = CourseTask.objects.get(course=course)
@@ -531,7 +527,7 @@ class TestCourseTaskCreateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_create", uuid=course.uuid, data=data)
+            self.post("courses:task_create", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 2
         descriptions = list(
@@ -555,7 +551,7 @@ class TestCourseTaskCreateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_create", uuid=course.uuid, data=data)
+            self.post("courses:task_create", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 1
 
@@ -575,7 +571,7 @@ class TestCourseTaskCreateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_create", uuid=course.uuid, data=data)
+            self.post("courses:task_create", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 2
 
@@ -594,7 +590,7 @@ class TestCourseTaskCreateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_create", uuid=course.uuid, data=data)
+            self.post("courses:task_create", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 2
         descriptions = list(
@@ -608,7 +604,7 @@ class TestCourseTaskCreateView(TestCase):
 class TestBulkCreateCourseTasks(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
-        self.assertLoginRequired("courses:task_create_bulk", uuid=course.uuid)
+        self.assertLoginRequired("courses:task_create_bulk", pk=course.id)
 
     def test_get(self):
         user = self.make_user()
@@ -616,7 +612,7 @@ class TestBulkCreateCourseTasks(TestCase):
         course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
 
         with self.login(user):
-            self.get_check_200("courses:task_create_bulk", uuid=course.uuid)
+            self.get_check_200("courses:task_create_bulk", pk=course.id)
 
         form = self.get_context("formset")[0]
         assert form.user == user
@@ -634,7 +630,7 @@ class TestBulkCreateCourseTasks(TestCase):
         course = CourseFactory()
 
         with self.login(user):
-            response = self.get("courses:task_create_bulk", uuid=course.uuid)
+            response = self.get("courses:task_create_bulk", pk=course.id)
 
         assert response.status_code == 404
 
@@ -653,18 +649,14 @@ class TestBulkCreateCourseTasks(TestCase):
         }
 
         with self.login(user):
-            response = self.post(
-                "courses:task_create_bulk", uuid=course.uuid, data=data
-            )
+            response = self.post("courses:task_create_bulk", pk=course.id, data=data)
 
         assert CourseTask.objects.count() == 1
         task = CourseTask.objects.get(course=course)
         assert task.description == data["form-0-description"]
         assert task.duration == int(data["form-0-duration"])
         self.response_302(response)
-        assert response.get("Location") == self.reverse(
-            "courses:detail", uuid=course.uuid
-        )
+        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
         assert not hasattr(task, "graded_work")
 
     def test_after_task(self):
@@ -686,7 +678,7 @@ class TestBulkCreateCourseTasks(TestCase):
         }
         task_1 = CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
-        url = self.reverse("courses:task_create_bulk", uuid=course.uuid)
+        url = self.reverse("courses:task_create_bulk", pk=course.id)
         url += f"?previous_task={task_1.uuid}"
 
         with self.login(user):
@@ -711,7 +703,7 @@ class TestBulkCreateCourseTasks(TestCase):
             "form-0-description": "A new task",
             "form-0-duration": "42",
         }
-        url = self.reverse("courses:task_create_bulk", uuid=course.uuid)
+        url = self.reverse("courses:task_create_bulk", pk=course.id)
         url += f"?next={next_url}"
 
         with self.login(user):
@@ -726,7 +718,7 @@ class TestBulkCreateCourseTasks(TestCase):
         grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
         task = CourseTaskFactory(course=course)
-        url = self.reverse("courses:task_create_bulk", uuid=course.uuid)
+        url = self.reverse("courses:task_create_bulk", pk=course.id)
         url += f"?previous_task={task.uuid}"
 
         with self.login(user):
@@ -739,7 +731,7 @@ class TestGetCourseTaskBulkHx(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
         self.assertLoginRequired(
-            "courses:task_create_bulk_hx", uuid=course.uuid, last_form_number=42
+            "courses:task_create_bulk_hx", pk=course.id, last_form_number=42
         )
 
     def test_other_course(self):
@@ -749,7 +741,7 @@ class TestGetCourseTaskBulkHx(TestCase):
 
         with self.login(user):
             response = self.get(
-                "courses:task_create_bulk_hx", uuid=course.uuid, last_form_number=2
+                "courses:task_create_bulk_hx", pk=course.id, last_form_number=2
             )
 
         assert response.status_code == 404
@@ -761,7 +753,7 @@ class TestGetCourseTaskBulkHx(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "courses:task_create_bulk_hx", uuid=course.uuid, last_form_number=2
+                "courses:task_create_bulk_hx", pk=course.id, last_form_number=2
             )
 
         assert len(self.get_context("forms")) == 3
@@ -779,7 +771,7 @@ class TestGetCourseTaskBulkHx(TestCase):
 class TestCourseTaskUpdateView(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_edit", uuid=task.uuid)
+        self.assertLoginRequired("courses:task_edit", pk=task.id)
 
     def test_get(self):
         user = self.make_user()
@@ -788,14 +780,14 @@ class TestCourseTaskUpdateView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get_check_200("courses:task_edit", uuid=task.uuid)
+            self.get_check_200("courses:task_edit", pk=task.id)
 
     def test_get_other_user(self):
         user = self.make_user()
         task = CourseTaskFactory()
 
         with self.login(user):
-            response = self.get("courses:task_edit", uuid=task.uuid)
+            response = self.get("courses:task_edit", pk=task.id)
 
         self.response_404(response)
 
@@ -813,7 +805,7 @@ class TestCourseTaskUpdateView(TestCase):
         }
 
         with self.login(user):
-            response = self.post("courses:task_edit", uuid=task.uuid, data=data)
+            response = self.post("courses:task_edit", pk=task.id, data=data)
 
         task.refresh_from_db()
         assert task.description == data["description"]
@@ -827,7 +819,7 @@ class TestCourseTaskUpdateView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get("courses:task_edit", uuid=task.uuid)
+            self.get("courses:task_edit", pk=task.id)
 
         self.assertContext("course", task.course)
 
@@ -839,7 +831,7 @@ class TestCourseTaskUpdateView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get("courses:task_edit", uuid=task.uuid)
+            self.get("courses:task_edit", pk=task.id)
 
         grade_levels = set(self.get_context("grade_levels"))
         assert grade_levels == {grade_level, other_grade_level}
@@ -853,7 +845,7 @@ class TestCourseTaskUpdateView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            self.get("courses:task_edit", uuid=task.uuid)
+            self.get("courses:task_edit", pk=task.id)
 
         assert self.get_context("previous_task") == previous_task
 
@@ -868,7 +860,7 @@ class TestCourseTaskUpdateView(TestCase):
             "description": "new description",
             "duration": 15,
         }
-        url = self.reverse("courses:task_edit", uuid=task.uuid)
+        url = self.reverse("courses:task_edit", pk=task.id)
         url += f"?next={next_url}"
 
         with self.login(user):
@@ -892,7 +884,7 @@ class TestCourseTaskUpdateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_edit", uuid=task.uuid, data=data)
+            self.post("courses:task_edit", pk=task.id, data=data)
 
         task.refresh_from_db()
         assert task.graded_work is not None
@@ -913,7 +905,7 @@ class TestCourseTaskUpdateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_edit", uuid=task.uuid, data=data)
+            self.post("courses:task_edit", pk=task.id, data=data)
 
         task.refresh_from_db()
         assert task.graded_work is not None
@@ -934,7 +926,7 @@ class TestCourseTaskUpdateView(TestCase):
         }
 
         with self.login(user):
-            self.post("courses:task_edit", uuid=task.uuid, data=data)
+            self.post("courses:task_edit", pk=task.id, data=data)
 
         task.refresh_from_db()
         assert not hasattr(task, "graded_work")
@@ -944,9 +936,7 @@ class TestCourseTaskDeleteView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
         task = CourseTaskFactory(course=course)
-        self.assertLoginRequired(
-            "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
-        )
+        self.assertLoginRequired("courses:task_delete", course_id=course.id, pk=task.id)
 
     def test_post(self):
         user = self.make_user()
@@ -955,15 +945,11 @@ class TestCourseTaskDeleteView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            response = self.post(
-                "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
-            )
+            response = self.post("courses:task_delete", course_id=course.id, pk=task.id)
 
         assert CourseTask.objects.count() == 0
         self.response_302(response)
-        assert response.get("Location") == self.reverse(
-            "courses:detail", uuid=course.uuid
-        )
+        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
 
     def test_post_other_user(self):
         user = self.make_user()
@@ -971,9 +957,7 @@ class TestCourseTaskDeleteView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            response = self.get(
-                "courses:task_delete", uuid=course.uuid, task_uuid=task.uuid
-            )
+            response = self.get("courses:task_delete", course_id=course.id, pk=task.id)
 
         self.response_404(response)
 
@@ -984,7 +968,7 @@ class TestCourseTaskDeleteView(TestCase):
         grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(course=course)
-        url = self.reverse("courses:task_delete", uuid=course.uuid, task_uuid=task.uuid)
+        url = self.reverse("courses:task_delete", course_id=course.id, pk=task.id)
         url += f"?next={next_url}"
 
         with self.login(user):
@@ -997,7 +981,7 @@ class TestCourseTaskDeleteView(TestCase):
 class TestCourseTaskHxDeleteView(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_hx_delete", uuid=task.uuid)
+        self.assertLoginRequired("courses:task_hx_delete", pk=task.id)
 
     def test_delete(self):
         user = self.make_user()
@@ -1006,7 +990,7 @@ class TestCourseTaskHxDeleteView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            response = self.delete("courses:task_hx_delete", uuid=task.uuid)
+            response = self.delete("courses:task_hx_delete", pk=task.id)
 
         assert CourseTask.objects.count() == 0
         self.response_200(response)
@@ -1018,7 +1002,7 @@ class TestCourseTaskHxDeleteView(TestCase):
         task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            response = self.delete("courses:task_hx_delete", uuid=task.uuid)
+            response = self.delete("courses:task_hx_delete", pk=task.id)
 
         assert CourseTask.objects.count() == 1
         self.response_404(response)
@@ -1027,7 +1011,7 @@ class TestCourseTaskHxDeleteView(TestCase):
 class TestCourseTaskDown(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_down", uuid=task.uuid)
+        self.assertLoginRequired("courses:task_down", pk=task.id)
 
     def test_post(self):
         """A task is moved down."""
@@ -1038,11 +1022,11 @@ class TestCourseTaskDown(TestCase):
         second_task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            response = self.post("courses:task_down", uuid=first_task.uuid)
+            response = self.post("courses:task_down", pk=first_task.id)
 
         assert (
             response.get("Location")
-            == self.reverse("courses:detail", first_task.course.uuid)
+            == self.reverse("courses:detail", first_task.course.id)
             + f"#task-{first_task.uuid}"
         )
         assert list(CourseTask.objects.all()) == [second_task, first_task]
@@ -1051,7 +1035,7 @@ class TestCourseTaskDown(TestCase):
 class TestCourseTaskUp(TestCase):
     def test_unauthenticated_access(self):
         task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_up", uuid=task.uuid)
+        self.assertLoginRequired("courses:task_up", pk=task.id)
 
     def test_post(self):
         """A task is moved up."""
@@ -1062,11 +1046,11 @@ class TestCourseTaskUp(TestCase):
         second_task = CourseTaskFactory(course=course)
 
         with self.login(user):
-            response = self.post("courses:task_up", uuid=second_task.uuid)
+            response = self.post("courses:task_up", pk=second_task.id)
 
         assert (
             response.get("Location")
-            == self.reverse("courses:detail", second_task.course.uuid)
+            == self.reverse("courses:detail", second_task.course.id)
             + f"#task-{second_task.uuid}"
         )
         assert list(CourseTask.objects.all()) == [second_task, first_task]
@@ -1075,7 +1059,7 @@ class TestCourseTaskUp(TestCase):
 class TestCourseResourceCreateView(TestCase):
     def test_unauthenticated_access(self):
         course = CourseFactory()
-        self.assertLoginRequired("courses:resource_create", uuid=course.uuid)
+        self.assertLoginRequired("courses:resource_create", pk=course.id)
 
     def test_get(self):
         user = self.make_user()
@@ -1083,7 +1067,7 @@ class TestCourseResourceCreateView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get_check_200("courses:resource_create", uuid=course.uuid)
+            self.get_check_200("courses:resource_create", pk=course.id)
 
         assert self.get_context("create")
         assert self.get_context("course") == course
@@ -1099,22 +1083,20 @@ class TestCourseResourceCreateView(TestCase):
         }
 
         with self.login(user):
-            response = self.post("courses:resource_create", uuid=course.uuid, data=data)
+            response = self.post("courses:resource_create", pk=course.id, data=data)
 
         assert CourseResource.objects.count() == 1
         resource = CourseResource.objects.get(course=course)
         assert resource.title == data["title"]
         assert resource.details == data["details"]
         self.response_302(response)
-        assert response.get("Location") == self.reverse(
-            "courses:detail", uuid=course.uuid
-        )
+        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
 
 
 class TestCourseResourceUpdateView(TestCase):
     def test_unauthenticated_access(self):
         resource = CourseResourceFactory()
-        self.assertLoginRequired("courses:resource_edit", uuid=resource.uuid)
+        self.assertLoginRequired("courses:resource_edit", pk=resource.id)
 
     def test_get(self):
         user = self.make_user()
@@ -1122,7 +1104,7 @@ class TestCourseResourceUpdateView(TestCase):
         resource = CourseResourceFactory(course__grade_levels=[grade_level])
 
         with self.login(user):
-            self.get_check_200("courses:resource_edit", uuid=resource.uuid)
+            self.get_check_200("courses:resource_edit", pk=resource.id)
 
         assert not self.get_context("create")
         assert self.get_context("course") == resource.course
@@ -1133,7 +1115,7 @@ class TestCourseResourceUpdateView(TestCase):
         resource = CourseResourceFactory()
 
         with self.login(user):
-            response = self.get("courses:resource_edit", uuid=resource.uuid)
+            response = self.get("courses:resource_edit", pk=resource.id)
 
         self.response_404(response)
 
@@ -1148,7 +1130,7 @@ class TestCourseResourceUpdateView(TestCase):
         }
 
         with self.login(user):
-            response = self.post("courses:resource_edit", uuid=resource.uuid, data=data)
+            response = self.post("courses:resource_edit", pk=resource.id, data=data)
 
         assert CourseResource.objects.count() == 1
         resource = CourseResource.objects.get(course=resource.course)
@@ -1156,14 +1138,14 @@ class TestCourseResourceUpdateView(TestCase):
         assert resource.details == data["details"]
         self.response_302(response)
         assert response.get("Location") == self.reverse(
-            "courses:detail", uuid=resource.course.uuid
+            "courses:detail", pk=resource.course.id
         )
 
 
 class TestCourseResourceDeleteView(TestCase):
     def test_unauthenticated_access(self):
         resource = CourseResourceFactory()
-        self.assertLoginRequired("courses:resource_delete", uuid=resource.uuid)
+        self.assertLoginRequired("courses:resource_delete", pk=resource.id)
 
     def test_post(self):
         user = self.make_user()
@@ -1172,13 +1154,11 @@ class TestCourseResourceDeleteView(TestCase):
         resource = CourseResourceFactory(course=course)
 
         with self.login(user):
-            response = self.post("courses:resource_delete", uuid=resource.uuid)
+            response = self.post("courses:resource_delete", pk=resource.id)
 
         assert CourseResource.objects.count() == 0
         self.response_302(response)
-        assert response.get("Location") == self.reverse(
-            "courses:detail", uuid=course.uuid
-        )
+        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
 
     def test_post_other_user(self):
         """A user may not delete another user's resource."""
@@ -1187,6 +1167,6 @@ class TestCourseResourceDeleteView(TestCase):
         resource = CourseResourceFactory(course=course)
 
         with self.login(user):
-            response = self.post("courses:resource_delete", uuid=resource.uuid)
+            response = self.post("courses:resource_delete", pk=resource.id)
 
         self.response_404(response)

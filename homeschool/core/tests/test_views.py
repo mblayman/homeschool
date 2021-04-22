@@ -1301,7 +1301,7 @@ class TestStartCourseTaskView(TestCase):
         assert response.status_code == 302
         assert (
             response["Location"]
-            == self.reverse("schools:current_school_year") + f"?welcome={course.uuid}"
+            == self.reverse("schools:current_school_year") + f"?welcome={course.id}"
         )
         assert CourseTask.objects.filter(description="My first task").exists()
 

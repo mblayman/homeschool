@@ -239,6 +239,9 @@ ACCOUNT_USERNAME_REQUIRED = False
 # django-anymail
 ANYMAIL = {"SENDGRID_API_KEY": env("SENDGRID_API_KEY")}
 
+# django-hashid-field
+HASHID_FIELD_SALT = env("HASHID_FIELD_SALT")
+
 # django-hijack
 HIJACK_LOGOUT_REDIRECT_URL = "/office/users/user/"
 

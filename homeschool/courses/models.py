@@ -1,8 +1,10 @@
 import uuid
 from typing import Optional
 
+from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
+from hashid_field import HashidAutoField
 from ordered_model.models import OrderedModel
 
 from homeschool.core.compatibility import OrderedModelQuerySet
@@ -16,6 +18,7 @@ from .exceptions import NoSchoolYearError
 class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
 
+    id = HashidAutoField(primary_key=True, salt=f"course{settings.HASHID_FIELD_SALT}")
     name = models.CharField(max_length=256)
     grade_levels = models.ManyToManyField(
         "schools.GradeLevel",
@@ -107,6 +110,9 @@ class CourseTask(OrderedModel):
     class Meta(OrderedModel.Meta):
         pass
 
+    id = HashidAutoField(
+        primary_key=True, salt=f"coursetask{settings.HASHID_FIELD_SALT}"
+    )
     course = models.ForeignKey(
         "courses.Course", on_delete=models.CASCADE, related_name="course_tasks"
     )
@@ -164,6 +170,9 @@ class GradedWork(models.Model):
 class CourseResource(models.Model):
     """A resource related to a course (e.g., a book or workbook)"""
 
+    id = HashidAutoField(
+        primary_key=True, salt=f"courseresource{settings.HASHID_FIELD_SALT}"
+    )
     course = models.ForeignKey(
         "courses.Course", on_delete=models.CASCADE, related_name="resources"
     )

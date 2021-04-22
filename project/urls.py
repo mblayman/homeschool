@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, register_converter
 
+from homeschool.core.converters import HashidConverter
 from homeschool.core.views import handle_500
+
+register_converter(HashidConverter, "hashid")
 
 urlpatterns = [
     path("", include("homeschool.core.urls")),

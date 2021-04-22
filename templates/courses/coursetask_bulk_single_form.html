@@ -2,7 +2,7 @@
   <input type="hidden" name="{{ form.course.html_name }}" value="{{ course.id }}">
   <div class="w-3/6 pr-4">
     {% if forloop.last %}
-      {% url "courses:task_create_bulk_hx" course.uuid form_number as bulk_create_partial_url %}
+      {% url "courses:task_create_bulk_hx" course.id form_number as bulk_create_partial_url %}
       <span hx-target="{{ replace_element }}" hx-swap="outerHTML">
         {% include "forms/field.html" with field=form.description textarea=True no_label=True hx_get=bulk_create_partial_url hx_trigger="keyup once delay:100ms" %}
       </span>

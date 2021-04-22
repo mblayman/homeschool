@@ -19,7 +19,7 @@
         </div>
       {% else %}
         <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
-          <a href="{% url "courses:resource_delete" courseresource.uuid %}"
+          <a href="{% url "courses:resource_delete" courseresource.id %}"
             class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
             Delete
           </a>

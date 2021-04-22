@@ -2,7 +2,7 @@
   <div class="rounded overflow-hidden bg-white shadow-md m-3">
     <div class="px-4 py-4">
       <div class="font-light text-lg {% if not course.is_active %}text-gray-500{% endif %} border-b border-yellow-400 pb-1 mb-3 flex w-full items-center">
-        <a href="{% url "courses:detail" course.uuid %}" class="hover:underline truncate">
+        <a href="{% url "courses:detail" course.id %}" class="hover:underline truncate">
           {{ course.name }}
         </a>
         <div class="flex-grow"></div>
@@ -19,7 +19,7 @@
           {% endif %}
         </p>
         <p class="text-gray-300 hover:text-gray-600 text-sm text-right">
-          <a href="{% url "courses:edit" uuid=course.uuid %}">
+          <a href="{% url "courses:edit" pk=course.id %}">
             <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <title>Edit Course</title>
               <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/>

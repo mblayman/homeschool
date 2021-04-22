@@ -75,7 +75,7 @@
                   <div class="h-4 w-4 mr-2"></div>
                 {% endif %}
 
-                <a href="{% url "courses:task_edit" uuid=course_schedule.task.uuid %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600 print-hide">
+                <a href="{% url "courses:task_edit" pk=course_schedule.task.id %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600 print-hide">
                   <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
                 </a>
               </div>
@@ -113,7 +113,7 @@
                         <div class="h-4 w-4 mr-2"></div>
                       {% endif %}
 
-                      <a href="{% url "courses:task_edit" uuid=coursework.course_task.uuid %}?next={{ request.path|urlencode }}" class="block {% if not forloop.last %}pb-2 {% endif %}mx-1 text-gray-300 hover:text-gray-600 print-hide">
+                      <a href="{% url "courses:task_edit" pk=coursework.course_task.id %}?next={{ request.path|urlencode }}" class="block {% if not forloop.last %}pb-2 {% endif %}mx-1 text-gray-300 hover:text-gray-600 print-hide">
                         <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
                       </a>
                     </div>
@@ -125,7 +125,7 @@
               <div class="w-7/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll">No scheduled task</div>
               <div class="w-1/12 py-2 flex justify-center items-center print-hide">
                 <div class="h-4 w-4 mr-2"></div>
-                <a href="{% url "courses:task_create" uuid=course_schedule.course.uuid %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600">
+                <a href="{% url "courses:task_create" pk=course_schedule.course.id %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600">
                   <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/></svg>
                 </a>
               </div>

@@ -36,24 +36,24 @@ class CourseMixin:
 
     @cached_property
     def course(self):
-        course_uuid = self.kwargs["uuid"]
+        course_id = self.kwargs["pk"]
         grade_levels = GradeLevel.objects.filter(
             school_year__school__admin=self.request.user
         )
         return get_object_or_404(
             Course.objects.filter(grade_levels__in=grade_levels).distinct(),
-            uuid=course_uuid,
+            id=course_id,
         )
 
 
-def get_course(user, uuid):
+def get_course(user, pk):
     """Get the course if the user has access.
 
     This is equivalent to the mixin and exists for use with the function-based view.
     """
     grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
     return get_object_or_404(
-        Course.objects.filter(grade_levels__in=grade_levels).distinct(), uuid=uuid
+        Course.objects.filter(grade_levels__in=grade_levels).distinct(), pk=pk
     )
 
 
@@ -110,7 +110,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return reverse("courses:detail", args=[self.object.uuid])
+        return reverse("courses:detail", args=[self.object.id])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -185,9 +185,6 @@ class CourseQuerySetMixin:
 
 
 class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
-
     def get_queryset(self):
         course_qs = self.get_course_queryset()
         return course_qs.prefetch_related(
@@ -224,8 +221,6 @@ class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
 class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):
     form_class = CourseForm
     template_name = "courses/course_form.html"
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
 
     def get_queryset(self):
         return self.get_course_queryset()
@@ -249,13 +244,10 @@ class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):
         }
 
     def get_success_url(self):
-        return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+        return reverse("courses:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
 class CourseDeleteView(LoginRequiredMixin, CourseQuerySetMixin, DeleteView):
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
-
     def get_queryset(self):
         return self.get_course_queryset()
 
@@ -347,7 +339,7 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         next_url = self.request.GET.get("next")
         if next_url:
             return next_url
-        return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+        return reverse("courses:detail", kwargs={"pk": self.kwargs["pk"]})
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -400,13 +392,13 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
 
 
 @login_required
-def bulk_create_course_tasks(request, uuid):
+def bulk_create_course_tasks(request, pk):
     """Bulk create course tasks.
 
     This is using a function-based view because the CBV beat me into submission.
     For some reason, the function view worked where the CBV did not.
     """
-    course = get_course(request.user, uuid)
+    course = get_course(request.user, pk)
     previous_task = CourseTask.get_by_uuid(
         request.user, request.GET.get("previous_task", "")
     )
@@ -430,7 +422,7 @@ def bulk_create_course_tasks(request, uuid):
                     task.below(previous_task)
                     previous_task = task
 
-            url = reverse("courses:detail", kwargs={"uuid": uuid})
+            url = reverse("courses:detail", kwargs={"pk": pk})
             next_url = request.GET.get("next")
             if next_url:
                 url = next_url
@@ -452,12 +444,12 @@ def bulk_create_course_tasks(request, uuid):
 
 
 @login_required
-def get_course_task_bulk_hx(request, uuid, last_form_number):
+def get_course_task_bulk_hx(request, pk, last_form_number):
     """Get the next set of empty forms to display for bulk edit.
 
     This returns an HTML fragment of forms for htmx.
     """
-    course = get_course(request.user, uuid)
+    course = get_course(request.user, pk)
     total_existing_forms = last_form_number + 1
 
     # Formsets won't create the latest forms so this must re-create *all* forms
@@ -487,8 +479,6 @@ def get_course_task_bulk_hx(request, uuid, last_form_number):
 class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
 
     def get_queryset(self):
         return get_course_task_queryset(self.request.user).select_related("course")
@@ -507,7 +497,7 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
         next_url = self.request.GET.get("next")
         if next_url:
             return next_url
-        return reverse("courses:task_edit", kwargs={"uuid": self.object.uuid})
+        return reverse("courses:task_edit", kwargs={"pk": self.object.id})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -519,9 +509,6 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
-    slug_field = "uuid"
-    slug_url_kwarg = "task_uuid"
-
     def get_queryset(self):
         return get_course_task_queryset(self.request.user)
 
@@ -529,15 +516,15 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
         next_url = self.request.GET.get("next")
         if next_url:
             return next_url
-        return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+        return reverse("courses:detail", kwargs={"pk": self.kwargs["course_id"]})
 
 
 @login_required
 @require_http_methods(["DELETE"])
-def course_task_hx_delete(request, uuid):
+def course_task_hx_delete(request, pk):
     """Delete a course task via htmx."""
     task = get_object_or_404(
-        get_course_task_queryset(request.user).select_related("course"), uuid=uuid
+        get_course_task_queryset(request.user).select_related("course"), pk=pk
     )
     context = {
         "course": task.course,
@@ -551,26 +538,26 @@ def course_task_hx_delete(request, uuid):
 
 @login_required
 @require_POST
-def move_task_down(request, uuid):
+def move_task_down(request, pk):
     """Move a task down in the ordering."""
     task = get_object_or_404(
-        get_course_task_queryset(request.user).select_related("course"), uuid=uuid
+        get_course_task_queryset(request.user).select_related("course"), pk=pk
     )
     task.down()
-    url = reverse("courses:detail", args=[task.course.uuid])
+    url = reverse("courses:detail", args=[task.course.id])
     url += f"#task-{task.uuid}"
     return HttpResponseRedirect(url)
 
 
 @login_required
 @require_POST
-def move_task_up(request, uuid):
+def move_task_up(request, pk):
     """Move a task up in the ordering."""
     task = get_object_or_404(
-        get_course_task_queryset(request.user).select_related("course"), uuid=uuid
+        get_course_task_queryset(request.user).select_related("course"), pk=pk
     )
     task.up()
-    url = reverse("courses:detail", args=[task.course.uuid])
+    url = reverse("courses:detail", args=[task.course.id])
     url += f"#task-{task.uuid}"
     return HttpResponseRedirect(url)
 
@@ -586,7 +573,7 @@ class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("courses:detail", kwargs={"uuid": self.kwargs["uuid"]})
+        return reverse("courses:detail", kwargs={"pk": self.kwargs["pk"]})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -597,8 +584,6 @@ class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
 class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CourseResourceForm
     template_name = "courses/courseresource_form.html"
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
 
     def get_queryset(self):
         user = self.request.user
@@ -616,7 +601,7 @@ class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse("courses:detail", kwargs={"uuid": self.object.course.uuid})
+        return reverse("courses:detail", kwargs={"pk": self.object.course.id})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -625,9 +610,6 @@ class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CourseResourceDeleteView(LoginRequiredMixin, DeleteView):
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
-
     def get_queryset(self):
         user = self.request.user
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
@@ -638,4 +620,4 @@ class CourseResourceDeleteView(LoginRequiredMixin, DeleteView):
         )
 
     def get_success_url(self):
-        return reverse("courses:detail", kwargs={"uuid": self.object.course.uuid})
+        return reverse("courses:detail", kwargs={"pk": self.object.course.id})

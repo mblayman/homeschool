@@ -27,7 +27,7 @@
           </a>
         {% else %}
           {# FIXME: Point to the edit page. #}
-          <a href="{% url "courses:detail" course.uuid %}"
+          <a href="{% url "courses:detail" course.id %}"
             class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Cancel
           </a>

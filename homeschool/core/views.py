@@ -334,7 +334,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 continue
             parts = key.split("-")
             student_id = int(parts[1])
-            task_id = int(parts[2])
+            task_id = parts[2]
 
             if student_id not in tasks:
                 tasks[student_id] = {"complete": [], "incomplete": []}
@@ -547,8 +547,7 @@ class StartCourseTaskView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return (
-            reverse("schools:current_school_year")
-            + f"?welcome={self.object.course.uuid}"
+            reverse("schools:current_school_year") + f"?welcome={self.object.course.id}"
         )
 
     def get_form_kwargs(self):

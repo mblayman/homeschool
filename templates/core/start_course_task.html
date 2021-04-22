@@ -17,7 +17,7 @@
           You can check out your school year.
         </p>
         <div class="text-center">
-          <a href="{% url "schools:current_school_year" %}?welcome={{ course.uuid }}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">See Your School Year</a>
+          <a href="{% url "schools:current_school_year" %}?welcome={{ course.id }}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">See Your School Year</a>
         </div>
       {% elif course %}
         <p class="ml-10 mb-2">

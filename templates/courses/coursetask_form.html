@@ -20,7 +20,7 @@
     {% if create %}
       <p class="font-thin text-base text-gray-800 mb-4">
         Want to add more at once?
-        <a class="underline" href="{% url "courses:task_create_bulk" course.uuid %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">Use Bulk Create</a>
+        <a class="underline" href="{% url "courses:task_create_bulk" course.id %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">Use Bulk Create</a>
       </p>
     {% endif %}
 
@@ -68,7 +68,7 @@
           </div>
         {% else %}
           <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
-            <a href="{% url "courses:task_delete" coursetask.course.uuid coursetask.uuid %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
+            <a href="{% url "courses:task_delete" coursetask.course.id coursetask.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
               class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
               Delete
             </a>

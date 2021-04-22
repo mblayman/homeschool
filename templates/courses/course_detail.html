@@ -33,15 +33,15 @@
   {% endif %}
 
   <p class="mb-8 print-hide">
-    <a href="{% url "courses:task_create" uuid=course.uuid %}{% if last_task %}?previous_task={{ last_task.uuid }}&next={{ request.path|urlencode }}%23task-{{ last_task.uuid }}{% endif %}"
+    <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.uuid }}&next={{ request.path|urlencode }}%23task-{{ last_task.uuid }}{% endif %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
       Add New Task
     </a>
-    <a href="{% url "courses:resource_create" uuid=course.uuid %}"
+    <a href="{% url "courses:resource_create" pk=course.id %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
       Add New Resource
     </a>
-    <a href="{% url "courses:edit" uuid=course.uuid %}"
+    <a href="{% url "courses:edit" pk=course.id %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
       Edit Course
     </a>
@@ -61,7 +61,7 @@
       {% for resource in course.resources.all %}
         <li class="border-t border-yellow-400">
           <a class="block px-2 py-4 hover:bg-yellow-200"
-            href="{% url "courses:resource_edit" resource.uuid %}">
+            href="{% url "courses:resource_edit" resource.id %}">
             <div class="font-light">{{ resource.title }}</div>
             <div class="text-sm text-gray-700 font-light">{{ resource.details|linebreaksbr }}</div>
           </a>
@@ -78,7 +78,7 @@
             or any other materials
             related to this course.
           </p>
-          <a href="{% url "courses:resource_create" uuid=course.uuid %}"
+          <a href="{% url "courses:resource_create" pk=course.id %}"
             class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
             Add Resource
           </a>
