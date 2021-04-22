@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from django.http import Http404, HttpRequest
+from django.http import HttpRequest
+from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 
 from homeschool.schools.models import GradeLevel
@@ -20,14 +21,7 @@ class CourseTaskMixin:
         grade_levels = GradeLevel.objects.filter(
             school_year__school__admin=self.request.user
         )
-        task = (
-            CourseTask.objects.filter(
-                uuid=self.kwargs["course_task_uuid"],
-                course__grade_levels__in=grade_levels,
-            )
-            .distinct()
-            .first()
+        return get_object_or_404(
+            CourseTask.objects.filter(course__grade_levels__in=grade_levels).distinct(),
+            pk=self.kwargs["course_task_id"],
         )
-        if not task:
-            raise Http404
-        return task

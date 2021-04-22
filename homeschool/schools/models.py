@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.functional import cached_property
+from hashid_field import HashidAutoField
 
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.users.models import User
@@ -32,6 +33,9 @@ def create_school(sender, instance, created, **kwargs):
 class SchoolYear(DaysOfWeekModel):
     """A school year to bound start and end dates of the academic year"""
 
+    id = HashidAutoField(
+        primary_key=True, salt=f"schoolyear{settings.HASHID_FIELD_SALT}"
+    )
     school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -123,6 +127,9 @@ class SchoolYear(DaysOfWeekModel):
 class GradeLevel(models.Model):
     """A student is in a grade level in a given school year"""
 
+    id = HashidAutoField(
+        primary_key=True, salt=f"gradelevel{settings.HASHID_FIELD_SALT}"
+    )
     name = models.CharField(max_length=128)
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="grade_levels"
@@ -161,6 +168,9 @@ class GradeLevel(models.Model):
 class SchoolBreak(models.Model):
     """A break day in the schedule."""
 
+    id = HashidAutoField(
+        primary_key=True, salt=f"schoolbreak{settings.HASHID_FIELD_SALT}"
+    )
     start_date = models.DateField(db_index=True)
     end_date = models.DateField(db_index=True)
     description = models.TextField(blank=True)

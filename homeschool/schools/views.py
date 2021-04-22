@@ -44,7 +44,7 @@ class CurrentSchoolYearView(LoginRequiredMixin, View):
         if not school_year:
             return HttpResponseRedirect(reverse("schools:school_year_list"))
 
-        return SchoolYearDetailView.as_view()(request, uuid=school_year.uuid)
+        return SchoolYearDetailView.as_view()(request, pk=school_year.id)
 
 
 class SchoolYearCreateView(LoginRequiredMixin, CreateView):
@@ -64,7 +64,7 @@ class SchoolYearCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("schools:school_year_detail", args=[self.object.uuid])
+        return reverse("schools:school_year_detail", args=[self.object.id])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -73,9 +73,6 @@ class SchoolYearCreateView(LoginRequiredMixin, CreateView):
 
 
 class SchoolYearDetailView(LoginRequiredMixin, DetailView):
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
-
     def get_queryset(self):
         user = self.request.user
         return SchoolYear.objects.filter(school__admin=user).prefetch_related(
@@ -108,8 +105,6 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
 class SchoolYearEditView(LoginRequiredMixin, UpdateView):
     form_class = SchoolYearForm
     template_name = "schools/schoolyear_form.html"
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
 
     def get_queryset(self):
         user = self.request.user
@@ -132,9 +127,7 @@ class SchoolYearEditView(LoginRequiredMixin, UpdateView):
         }
 
     def get_success_url(self):
-        return reverse(
-            "schools:school_year_detail", kwargs={"uuid": self.kwargs["uuid"]}
-        )
+        return reverse("schools:school_year_detail", kwargs={"pk": self.kwargs["pk"]})
 
 
 class SchoolYearForecastView(LoginRequiredMixin, TemplateView):
@@ -144,7 +137,7 @@ class SchoolYearForecastView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         school_year = get_object_or_404(
-            SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
+            SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
         )
         context["schoolyear"] = school_year
 
@@ -191,12 +184,12 @@ class GradeLevelCreateView(LoginRequiredMixin, CreateView):
         context["create"] = True
         user = self.request.user
         context["school_year"] = get_object_or_404(
-            SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
+            SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
         )
         return context
 
     def get_success_url(self):
-        return reverse("schools:school_year_detail", args=[self.kwargs["uuid"]])
+        return reverse("schools:school_year_detail", args=[self.kwargs["pk"]])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -207,8 +200,6 @@ class GradeLevelCreateView(LoginRequiredMixin, CreateView):
 class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
     form_class = GradeLevelForm
     template_name = "schools/gradelevel_form.html"
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
 
     def get_queryset(self):
         user = self.request.user
@@ -222,9 +213,7 @@ class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse(
-            "schools:school_year_detail", args=[self.object.school_year.uuid]
-        )
+        return reverse("schools:school_year_detail", args=[self.object.school_year.id])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -232,34 +221,34 @@ class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-def move_course(user, grade_level_uuid, course_uuid, direction):
+def move_course(user, grade_level_id, course_id, direction):
     """Move the course ordering in the specified direction."""
     grade_level = get_object_or_404(
-        GradeLevel, uuid=grade_level_uuid, school_year__school__admin=user
+        GradeLevel, pk=grade_level_id, school_year__school__admin=user
     )
     through = get_object_or_404(
         grade_level.courses.through,
-        grade_level__uuid=grade_level_uuid,
-        course__uuid=course_uuid,
+        grade_level__id=grade_level_id,
+        course__id=course_id,
     )
     getattr(through, direction)()
     return HttpResponseRedirect(
-        reverse("schools:grade_level_edit", args=[grade_level_uuid])
+        reverse("schools:grade_level_edit", args=[grade_level_id])
     )
 
 
 @login_required
 @require_POST
-def move_course_down(request, uuid, course_uuid):
+def move_course_down(request, pk, course_id):
     """Move a course down in the ordering."""
-    return move_course(request.user, uuid, course_uuid, "down")
+    return move_course(request.user, pk, course_id, "down")
 
 
 @login_required
 @require_POST
-def move_course_up(request, uuid, course_uuid):
+def move_course_up(request, pk, course_id):
     """Move a course up in the ordering."""
-    return move_course(request.user, uuid, course_uuid, "up")
+    return move_course(request.user, pk, course_id, "up")
 
 
 class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
@@ -271,12 +260,12 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
         context["create"] = True
         user = self.request.user
         context["school_year"] = get_object_or_404(
-            SchoolYear.objects.filter(school__admin=user), uuid=self.kwargs["uuid"]
+            SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
         )
         return context
 
     def get_success_url(self):
-        return reverse("schools:school_year_detail", args=[self.kwargs["uuid"]])
+        return reverse("schools:school_year_detail", args=[self.kwargs["pk"]])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -287,8 +276,6 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
 class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
     form_class = SchoolBreakForm
     template_name = "schools/schoolbreak_form.html"
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
 
     def get_queryset(self):
         user = self.request.user
@@ -302,9 +289,7 @@ class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse(
-            "schools:school_year_detail", args=[self.object.school_year.uuid]
-        )
+        return reverse("schools:school_year_detail", args=[self.object.school_year.id])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -313,9 +298,6 @@ class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class SchoolBreakDeleteView(LoginRequiredMixin, DeleteView):
-    slug_field = "uuid"
-    slug_url_kwarg = "uuid"
-
     def get_queryset(self):
         user = self.request.user
         return SchoolBreak.objects.filter(
@@ -323,9 +305,7 @@ class SchoolBreakDeleteView(LoginRequiredMixin, DeleteView):
         ).select_related("school_year")
 
     def get_success_url(self):
-        return reverse(
-            "schools:school_year_detail", args=[self.object.school_year.uuid]
-        )
+        return reverse("schools:school_year_detail", args=[self.object.school_year.id])
 
 
 class ReportsIndexView(LoginRequiredMixin, TemplateView):
@@ -354,7 +334,7 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
             Enrollment.objects.select_related(
                 "student", "grade_level", "grade_level__school_year"
             ),
-            uuid=self.kwargs["uuid"],
+            pk=self.kwargs["pk"],
             grade_level__school_year__school=user.school,
         )
         context["grade_level"] = enrollment.grade_level
@@ -461,7 +441,7 @@ class ResourceReportView(LoginRequiredMixin, TemplateView):
             Enrollment.objects.select_related(
                 "student", "grade_level", "grade_level__school_year"
             ),
-            uuid=self.kwargs["uuid"],
+            pk=self.kwargs["pk"],
             grade_level__school_year__school=user.school,
         )
         context["grade_level"] = enrollment.grade_level
@@ -487,7 +467,7 @@ class AttendanceReportView(LoginRequiredMixin, TemplateView):
             Enrollment.objects.select_related(
                 "student", "grade_level", "grade_level__school_year"
             ),
-            uuid=self.kwargs["uuid"],
+            pk=self.kwargs["pk"],
             grade_level__school_year__school=user.school,
         )
         context["grade_level"] = enrollment.grade_level

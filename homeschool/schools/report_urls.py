@@ -6,10 +6,10 @@ app_name = "reports"
 urlpatterns = [
     path("", views.ReportsIndexView.as_view(), name="index"),
     path(
-        "attendance/<uuid:uuid>/",
+        "attendance/<hashid:pk>/",
         views.AttendanceReportView.as_view(),
         name="attendance",
     ),
-    path("progress/<uuid:uuid>/", views.ProgressReportView.as_view(), name="progress"),
-    path("resources/<uuid:uuid>/", views.ResourceReportView.as_view(), name="resource"),
+    path("progress/<hashid:pk>/", views.ProgressReportView.as_view(), name="progress"),
+    path("resources/<hashid:pk>/", views.ResourceReportView.as_view(), name="resource"),
 ]

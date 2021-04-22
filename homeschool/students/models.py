@@ -2,8 +2,10 @@ import datetime
 import uuid
 from typing import TYPE_CHECKING, Optional
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from hashid_field import HashidAutoField
 
 from homeschool.core.schedules import Week
 
@@ -14,6 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class Student(models.Model):
     """The learner"""
 
+    id = HashidAutoField(primary_key=True, salt=f"student{settings.HASHID_FIELD_SALT}")
     school = models.ForeignKey(
         "schools.School", on_delete=models.CASCADE, related_name="students"
     )
@@ -329,6 +332,9 @@ class Student(models.Model):
 class Enrollment(models.Model):
     """The association between a student and grade level"""
 
+    id = HashidAutoField(
+        primary_key=True, salt=f"enrollment{settings.HASHID_FIELD_SALT}"
+    )
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True)

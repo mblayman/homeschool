@@ -347,7 +347,7 @@ class TestCourseDeleteView(TestCase):
         assert Course.objects.count() == 0
         self.response_302(response)
         assert response.get("Location") == self.reverse(
-            "schools:school_year_detail", uuid=grade_level.school_year.uuid
+            "schools:school_year_detail", pk=grade_level.school_year.id
         )
 
 

@@ -17,5 +17,5 @@ class StudentMixin:
     @cached_property
     def student(self):
         return get_object_or_404(
-            Student, uuid=self.kwargs["uuid"], school__admin=self.request.user
+            Student, pk=self.kwargs["pk"], school__admin=self.request.user
         )

@@ -268,7 +268,7 @@ class CourseDeleteView(LoginRequiredMixin, CourseQuerySetMixin, DeleteView):
     def get_success_url(self):
         grade_level = self.object.grade_levels.select_related("school_year").first()
         return reverse(
-            "schools:school_year_detail", kwargs={"uuid": grade_level.school_year.uuid}
+            "schools:school_year_detail", kwargs={"pk": grade_level.school_year.id}
         )
 
 

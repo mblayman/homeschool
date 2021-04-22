@@ -107,9 +107,7 @@ class TestStudentCourseView(TestCase):
     def test_unauthenticated_access(self):
         student = StudentFactory()
         course = CourseFactory()
-        self.assertLoginRequired(
-            "students:course", uuid=student.uuid, course_uuid=course.uuid
-        )
+        self.assertLoginRequired("students:course", pk=student.id, course_id=course.id)
 
     def test_get(self):
         user = self.make_user()
@@ -118,9 +116,7 @@ class TestStudentCourseView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
 
         with self.login(user):
-            self.get_check_200(
-                "students:course", uuid=student.uuid, course_uuid=course.uuid
-            )
+            self.get_check_200("students:course", pk=student.id, course_id=course.id)
 
         assert self.get_context("student") == student
         assert self.get_context("course") == course
@@ -131,9 +127,7 @@ class TestStudentCourseView(TestCase):
         course = CourseFactory()
 
         with self.login(user):
-            response = self.get(
-                "students:course", uuid=student.uuid, course_uuid=course.uuid
-            )
+            response = self.get("students:course", pk=student.id, course_id=course.id)
 
         self.response_404(response)
 
@@ -151,7 +145,7 @@ class TestStudentCourseView(TestCase):
         today = timezone.now().date()
 
         with self.login(user):
-            self.get("students:course", uuid=student.uuid, course_uuid=course.uuid)
+            self.get("students:course", pk=student.id, course_id=course.id)
 
         assert self.get_context("task_items") == [
             {"course_task": task, "planned_date": today, "has_graded_work": False}
@@ -175,9 +169,7 @@ class TestStudentCourseView(TestCase):
         today = timezone.now().date() + datetime.timedelta(days=2)
 
         with self.login(user):
-            self.get_check_200(
-                "students:course", uuid=student.uuid, course_uuid=course.uuid
-            )
+            self.get_check_200("students:course", pk=student.id, course_id=course.id)
 
         self.assertContext(
             "task_items",
@@ -203,8 +195,8 @@ class TestStudentCourseView(TestCase):
         with self.login(user):
             self.get_check_200(
                 "students:course",
-                uuid=student.uuid,
-                course_uuid=course.uuid,
+                pk=student.id,
+                course_id=course.id,
                 data={"completed_tasks": "1"},
             )
 
@@ -229,7 +221,7 @@ class TestStudentCourseView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+                "students:course", pk=enrollment.student.id, course_id=course.id
             )
 
         task_items = self.get_context("task_items")
@@ -257,7 +249,7 @@ class TestStudentCourseView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+                "students:course", pk=enrollment.student.id, course_id=course.id
             )
 
         task_item = self.get_context("task_items")[0]
@@ -288,7 +280,7 @@ class TestStudentCourseView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+                "students:course", pk=enrollment.student.id, course_id=course.id
             )
 
         task_item = self.get_context("task_items")[0]
@@ -316,7 +308,7 @@ class TestStudentCourseView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:course", uuid=enrollment.student.uuid, course_uuid=course.uuid
+                "students:course", pk=enrollment.student.id, course_id=course.id
             )
 
         task_item = self.get_context("task_items")[0]
@@ -328,7 +320,7 @@ class TestCourseworkFormView(TestCase):
         student = StudentFactory()
         course_task = CourseTaskFactory()
         self.assertLoginRequired(
-            "students:coursework", uuid=student.uuid, course_task_uuid=course_task.uuid
+            "students:coursework", pk=student.id, course_task_id=course_task.id
         )
 
     def test_get(self):
@@ -340,9 +332,7 @@ class TestCourseworkFormView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:coursework",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                "students:coursework", pk=student.id, course_task_id=course_task.id
             )
 
         assert self.get_context("student") == student
@@ -361,8 +351,8 @@ class TestCourseworkFormView(TestCase):
         with self.login(user):
             response = self.post(
                 "students:coursework",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                pk=student.id,
+                course_task_id=course_task.id,
                 data=data,
             )
 
@@ -382,9 +372,7 @@ class TestCourseworkFormView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:coursework",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                "students:coursework", pk=student.id, course_task_id=course_task.id
             )
 
         self.response_404(response)
@@ -397,9 +385,7 @@ class TestCourseworkFormView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:coursework",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                "students:coursework", pk=student.id, course_task_id=course_task.id
             )
 
         self.response_404(response)
@@ -418,9 +404,7 @@ class TestCourseworkFormView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:coursework",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                "students:coursework", pk=student.id, course_task_id=course_task.id
             )
 
         assert self.get_context("course_task") == course_task
@@ -431,7 +415,7 @@ class TestGradeFormView(TestCase):
         student = StudentFactory()
         course_task = CourseTaskFactory()
         self.assertLoginRequired(
-            "students:grade_task", uuid=student.uuid, course_task_uuid=course_task.uuid
+            "students:grade_task", pk=student.id, course_task_id=course_task.id
         )
 
     def test_get(self):
@@ -444,9 +428,7 @@ class TestGradeFormView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:grade_task",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                "students:grade_task", pk=student.id, course_task_id=course_task.id
             )
 
         assert self.get_context("student") == student
@@ -466,8 +448,8 @@ class TestGradeFormView(TestCase):
         with self.login(user):
             response = self.post(
                 "students:grade_task",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                pk=student.id,
+                course_task_id=course_task.id,
                 data=data,
             )
 
@@ -486,9 +468,7 @@ class TestGradeFormView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:grade_task",
-                uuid=student.uuid,
-                course_task_uuid=course_task.uuid,
+                "students:grade_task", pk=student.id, course_task_id=course_task.id
             )
 
         self.response_404(response)
@@ -504,7 +484,7 @@ class TestGradeFormView(TestCase):
         GradedWorkFactory(course_task=course_task)
         data = {"score": "100"}
         url = self.reverse(
-            "students:grade_task", uuid=student.uuid, course_task_uuid=course_task.uuid
+            "students:grade_task", pk=student.id, course_task_id=course_task.id
         )
         url += f"?next={next_url}"
 
@@ -613,7 +593,7 @@ class TestEnrollmentCreateView(TestCase):
         school_year = SchoolYearFactory()
 
         self.assertLoginRequired(
-            "students:enrollment_create", school_year_uuid=school_year.uuid
+            "students:enrollment_create", school_year_id=school_year.id
         )
 
     def test_get(self):
@@ -626,7 +606,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "students:enrollment_create", school_year_uuid=school_year.uuid
+                "students:enrollment_create", school_year_id=school_year.id
             )
 
         assert list(self.get_context("grade_levels")) == [grade_level]
@@ -641,7 +621,7 @@ class TestEnrollmentCreateView(TestCase):
         with self.login(user):
             response = self.post(
                 "students:enrollment_create",
-                school_year_uuid=grade_level.school_year.uuid,
+                school_year_id=grade_level.school_year.id,
                 data=data,
             )
 
@@ -649,7 +629,7 @@ class TestEnrollmentCreateView(TestCase):
             student=student, grade_level=grade_level
         ).exists()
         assert response.get("Location") == self.reverse(
-            "schools:school_year_detail", uuid=grade_level.school_year.uuid
+            "schools:school_year_detail", pk=grade_level.school_year.id
         )
 
     def test_no_students(self):
@@ -660,7 +640,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:enrollment_create", school_year_uuid=school_year.uuid
+                "students:enrollment_create", school_year_id=school_year.id
             )
 
         assert response.get("Location") == self.reverse("students:index")
@@ -676,11 +656,11 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:enrollment_create", school_year_uuid=school_year.uuid
+                "students:enrollment_create", school_year_id=school_year.id
             )
 
         assert response.get("Location") == self.reverse(
-            "schools:school_year_detail", uuid=school_year.uuid
+            "schools:school_year_detail", pk=school_year.id
         )
         message = list(get_messages(response.wsgi_request))[0]
         assert str(message) == "All students are enrolled in the school year."
@@ -692,11 +672,11 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:enrollment_create", school_year_uuid=school_year.uuid
+                "students:enrollment_create", school_year_id=school_year.id
             )
 
         assert response.get("Location") == self.reverse(
-            "schools:grade_level_create", uuid=school_year.uuid
+            "schools:grade_level_create", pk=school_year.id
         )
         message = list(get_messages(response.wsgi_request))[0]
         assert (
@@ -711,8 +691,7 @@ class TestEnrollmentCreateView(TestCase):
 
         with self.login(user):
             response = self.get(
-                "students:enrollment_create",
-                school_year_uuid=grade_level.school_year.uuid,
+                "students:enrollment_create", school_year_id=grade_level.school_year.id
             )
 
         self.response_404(response)
@@ -725,8 +704,8 @@ class TestStudentEnrollmentCreateView(TestCase):
 
         self.assertLoginRequired(
             "students:student_enrollment_create",
-            uuid=student.uuid,
-            school_year_uuid=school_year.uuid,
+            pk=student.id,
+            school_year_id=school_year.id,
         )
 
     def test_get(self):
@@ -737,8 +716,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.get_check_200(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=school_year.uuid,
+                pk=student.id,
+                school_year_id=school_year.id,
             )
 
     def test_post(self):
@@ -750,8 +729,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.post(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
                 data=data,
             )
 
@@ -770,8 +749,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.post(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
                 data=data,
             )
 
@@ -789,8 +768,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.post(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
                 data=data,
             )
 
@@ -806,8 +785,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.get(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
             )
 
         assert self.get_context("student") == student
@@ -821,8 +800,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             response = self.get(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
             )
 
         self.response_404(response)
@@ -836,8 +815,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.get(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
             )
 
         assert self.get_context("school_year") == grade_level.school_year
@@ -851,8 +830,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             self.get(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
             )
 
         grade_levels = self.get_context("grade_levels")
@@ -867,8 +846,8 @@ class TestStudentEnrollmentCreateView(TestCase):
         with self.login(user):
             response = self.get(
                 "students:student_enrollment_create",
-                uuid=student.uuid,
-                school_year_uuid=grade_level.school_year.uuid,
+                pk=student.id,
+                school_year_id=grade_level.school_year.id,
             )
 
         self.response_404(response)

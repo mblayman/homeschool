@@ -26,7 +26,7 @@
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
-        <a href="{% url "students:course" student.uuid course_task.course.uuid %}"
+        <a href="{% url "students:course" student.id course_task.course.id %}"
           class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Cancel
         </a>

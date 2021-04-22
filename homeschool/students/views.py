@@ -85,7 +85,7 @@ class StudentCourseView(LoginRequiredMixin, StudentMixin, TemplateView):
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return get_object_or_404(
             Course.objects.filter(grade_levels__in=grade_levels).distinct(),
-            uuid=self.kwargs["course_uuid"],
+            pk=self.kwargs["course_id"],
         )
 
 
@@ -111,7 +111,7 @@ class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, Form
 
     def get_success_url(self):
         return reverse(
-            "students:course", args=[self.kwargs["uuid"], self.course_task.course.uuid]
+            "students:course", args=[self.kwargs["pk"], self.course_task.course.id]
         )
 
     def form_valid(self, form):
@@ -147,8 +147,7 @@ class GradeFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView)
         return self.request.GET.get(
             "next",
             reverse(
-                "students:course",
-                args=[self.kwargs["uuid"], self.course_task.course.uuid],
+                "students:course", args=[self.kwargs["pk"], self.course_task.course.id]
             ),
         )
 
@@ -257,12 +256,12 @@ class GradeView(LoginRequiredMixin, TemplateView):
         raw_scores = {
             k: v for k, v in self.request.POST.items() if k.startswith("graded_work")
         }
-        scores: dict[int, dict[int, str]] = {}
+        scores: dict[str, dict[int, str]] = {}
         for student_work, score in raw_scores.items():
             if not score:
                 continue
             work_parts = student_work.split("-")
-            student_id = int(work_parts[1])
+            student_id = work_parts[1]
             graded_work_id = int(work_parts[2])
             if student_id not in scores:
                 scores[student_id] = {}
@@ -281,13 +280,13 @@ class EnrollmentCreateView(LoginRequiredMixin, CreateView):
         except FullEnrollmentError:
             return HttpResponseRedirect(
                 reverse(
-                    "schools:school_year_detail", args=[self.kwargs["school_year_uuid"]]
+                    "schools:school_year_detail", args=[self.kwargs["school_year_id"]]
                 )
             )
         except NoGradeLevelError:
             return HttpResponseRedirect(
                 reverse(
-                    "schools:grade_level_create", args=[self.kwargs["school_year_uuid"]]
+                    "schools:grade_level_create", args=[self.kwargs["school_year_id"]]
                 )
             )
         except NoStudentError:
@@ -297,7 +296,7 @@ class EnrollmentCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         school_year = get_object_or_404(
             SchoolYear,
-            uuid=self.kwargs["school_year_uuid"],
+            pk=self.kwargs["school_year_id"],
             school__admin=self.request.user,
         )
         context["school_year"] = school_year
@@ -339,7 +338,7 @@ class EnrollmentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse(
-            "schools:school_year_detail", args=[self.kwargs["school_year_uuid"]]
+            "schools:school_year_detail", args=[self.kwargs["school_year_id"]]
         )
 
     def get_form_kwargs(self):
@@ -348,7 +347,7 @@ class EnrollmentCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class StudentEnrollmentCreateView(LoginRequiredMixin, CreateView):
+class StudentEnrollmentCreateView(LoginRequiredMixin, StudentMixin, CreateView):
     """Enroll a student with a simplified form that only presents grade levels."""
 
     template_name = "students/student_enrollment_form.html"
@@ -356,14 +355,11 @@ class StudentEnrollmentCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        student_uuid = self.kwargs["uuid"]
-        context["student"] = get_object_or_404(
-            Student, uuid=student_uuid, school__admin=self.request.user
-        )
+        context["student"] = self.student
 
-        school_year_uuid = self.kwargs["school_year_uuid"]
+        school_year_id = self.kwargs["school_year_id"]
         context["school_year"] = get_object_or_404(
-            SchoolYear, uuid=school_year_uuid, school__admin=self.request.user
+            SchoolYear, pk=school_year_id, school__admin=self.request.user
         )
 
         context["grade_levels"] = GradeLevel.objects.filter(

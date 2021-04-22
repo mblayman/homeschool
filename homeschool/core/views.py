@@ -333,7 +333,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
             if not key.startswith("task"):
                 continue
             parts = key.split("-")
-            student_id = int(parts[1])
+            student_id = parts[1]
             task_id = parts[2]
 
             if student_id not in tasks:
