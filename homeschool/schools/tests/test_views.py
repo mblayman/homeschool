@@ -736,7 +736,7 @@ class TestProgressReportView(TestCase):
         GradeFactory(student=student, graded_work__course_task__course=course_1)
         GradeFactory(student=student, graded_work__course_task__course=course_2)
         url = self.reverse("reports:progress", pk=enrollment.id)
-        url += f"?course={course_1.uuid}"
+        url += f"?course={course_1.id}"
 
         with self.login(user):
             self.get_check_200(url)

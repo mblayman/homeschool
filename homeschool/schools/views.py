@@ -1,5 +1,4 @@
 import datetime
-import uuid
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.contrib.auth.decorators import login_required
@@ -341,9 +340,9 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
         context["school_year"] = enrollment.grade_level.school_year
         context["student"] = enrollment.student
 
-        course_uuid = self._get_course_uuid()
-        if course_uuid:
-            qs_filter = Q(graded_work__course_task__course__uuid=course_uuid)
+        course_id = self.request.GET.get("course")
+        if course_id:
+            qs_filter = Q(graded_work__course_task__course__id=course_id)
         else:
             qs_filter = Q(
                 graded_work__course_task__course__grade_levels__in=[
@@ -364,17 +363,6 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
         self._mixin_coursework(grades, enrollment.student)
         context["courses"] = self._build_courses_info(grades)
         return context
-
-    def _get_course_uuid(self):
-        """Get a course UUID if a valid entry is in the querystring."""
-        course_uuid = self.request.GET.get("course")
-        if course_uuid:
-            try:
-                uuid.UUID(course_uuid)
-            except ValueError:
-                # If the UUID doesn't smell right, skip filtering.
-                return ""
-        return course_uuid
 
     def _mixin_coursework(self, grades, student):
         """Mix in the coursework for the grades.

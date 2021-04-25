@@ -8,7 +8,7 @@
   {% if courses %}
     {% for course_info in courses %}
       <h2 class="font-thin text-xl text-blue-900 mb-2">
-        <a class="hover:underline" href="{{ request.path }}?course={{ course_info.course.uuid }}">
+        <a class="hover:underline" href="{{ request.path }}?course={{ course_info.course.id }}">
           {{ course_info.course }}
         </a>
       </h2>
