@@ -22,7 +22,7 @@
       {% for school_year_info in school_years %}
         {% for courses in school_year_info.grade_levels.values %}
           {% for course in courses %}
-            <a href="{% url "courses:create" %}?{% if request.GET.school_year %}school_year={{ request.GET.school_year }}&amp;{% endif %}copy_from={{ course.uuid }}" class="flex hover:bg-yellow-200">
+            <a href="{% url "courses:create" %}?{% if request.GET.school_year %}school_year={{ request.GET.school_year }}&amp;{% endif %}copy_from={{ course.id }}" class="flex hover:bg-yellow-200">
               <div class="w-1/3 text-sm font-light py-1 border-t border-yellow-400 border-dotted">
                 {{ course }}
               </div>

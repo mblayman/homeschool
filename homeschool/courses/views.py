@@ -28,7 +28,7 @@ from .models import Course, CourseResource, CourseTask
 
 
 class CourseMixin:
-    """Get a course from the uuid URL arg."""
+    """Get a course from the pk URL arg."""
 
     if TYPE_CHECKING:  # pragma: no cover
         kwargs: dict = {}
@@ -167,7 +167,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         try:
             return Course.objects.distinct().get(
-                grade_levels__in=grade_levels, uuid=self.request.GET["copy_from"]
+                grade_levels__in=grade_levels, id=self.request.GET["copy_from"]
             )
         except (Course.DoesNotExist, ValidationError):
             pass

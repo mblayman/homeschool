@@ -162,7 +162,7 @@ class TestCourseCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "courses:create", data={"copy_from": str(course_to_copy.uuid)}
+                "courses:create", data={"copy_from": str(course_to_copy.id)}
             )
 
         form = self.get_context("form")
@@ -177,7 +177,7 @@ class TestCourseCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "courses:create", data={"copy_from": str(course_to_copy.uuid)}
+                "courses:create", data={"copy_from": str(course_to_copy.id)}
             )
 
         assert self.get_context("course_to_copy") is None
@@ -199,7 +199,7 @@ class TestCourseCreateView(TestCase):
             "default_task_duration": 45,
         }
         url = self.reverse("courses:create")
-        url += f"?copy_from={course_to_copy.uuid}"
+        url += f"?copy_from={course_to_copy.id}"
 
         with self.login(user):
             self.post(url, data=data)
