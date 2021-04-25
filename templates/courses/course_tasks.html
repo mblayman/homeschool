@@ -1,12 +1,12 @@
 {% load static %}
 <div id="tasks">
   {% for task in course_tasks %}
-    <div id="task-{{ task.uuid }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
+    <div id="task-{{ task.id }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-2xl">
       <div class="w-1/12 p-2 text-sm font-light overflow-x-scroll">
         {{ forloop.counter }}.
       </div>
       <div class="w-6/12 p-2 text-sm font-light overflow-x-scroll">
-        <a href="{% url "courses:task_edit" pk=task.id %}?next={% url "courses:detail" task.course.id %}%23task-{{ task.uuid }}" class="hover:text-gray-600">
+        <a href="{% url "courses:task_edit" pk=task.id %}?next={% url "courses:detail" task.course.id %}%23task-{{ task.id }}" class="hover:text-gray-600">
           {{ task.description|linebreaksbr }}
         </a>
       </div>
@@ -24,7 +24,7 @@
         {% else %}
           <div class="h-4 w-4 mr-2"></div>
         {% endif %}
-        <a href="{% url "courses:task_create" pk=course.id %}?previous_task={{ task.id }}&next={% url "courses:detail" task.course.id %}%23task-{{ task.uuid }}" class="block mr-2 hover:text-gray-600">
+        <a href="{% url "courses:task_create" pk=course.id %}?previous_task={{ task.id }}&next={% url "courses:detail" task.course.id %}%23task-{{ task.id }}" class="block mr-2 hover:text-gray-600">
           <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <title>Add Task After This Task</title>
             <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>

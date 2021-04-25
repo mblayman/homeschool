@@ -537,7 +537,7 @@ def move_task_down(request, pk):
     )
     task.down()
     url = reverse("courses:detail", args=[task.course.id])
-    url += f"#task-{task.uuid}"
+    url += f"#task-{task.id}"
     return HttpResponseRedirect(url)
 
 
@@ -550,7 +550,7 @@ def move_task_up(request, pk):
     )
     task.up()
     url = reverse("courses:detail", args=[task.course.id])
-    url += f"#task-{task.uuid}"
+    url += f"#task-{task.id}"
     return HttpResponseRedirect(url)
 
 

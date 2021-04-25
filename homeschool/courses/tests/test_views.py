@@ -1027,7 +1027,7 @@ class TestCourseTaskDown(TestCase):
         assert (
             response.get("Location")
             == self.reverse("courses:detail", first_task.course.id)
-            + f"#task-{first_task.uuid}"
+            + f"#task-{first_task.id}"
         )
         assert list(CourseTask.objects.all()) == [second_task, first_task]
 
@@ -1051,7 +1051,7 @@ class TestCourseTaskUp(TestCase):
         assert (
             response.get("Location")
             == self.reverse("courses:detail", second_task.course.id)
-            + f"#task-{second_task.uuid}"
+            + f"#task-{second_task.id}"
         )
         assert list(CourseTask.objects.all()) == [second_task, first_task]
 
