@@ -110,17 +110,13 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        school_year_uuid = self.request.GET.get("school_year")
+        school_year_id = self.request.GET.get("school_year")
 
         school_year = None
-        if school_year_uuid:
-            try:
-                school_year = SchoolYear.objects.filter(
-                    school__admin=self.request.user, uuid=school_year_uuid
-                ).first()
-            except ValidationError:
-                # Bogus uuid. Let it slide.
-                pass
+        if school_year_id:
+            school_year = SchoolYear.objects.filter(
+                school__admin=self.request.user, id=school_year_id
+            ).first()
 
         if not school_year:
             school_year = SchoolYear.get_current_year_for(self.request.user)

@@ -30,7 +30,7 @@ class TestCourseCreateView(TestCase):
 
         assert self.get_context("create")
 
-    def test_school_year_uuid(self):
+    def test_school_year_id(self):
         """A school year is fetched from the querystring."""
         user = self.make_user()
         today = user.get_local_today()
@@ -43,7 +43,7 @@ class TestCourseCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "courses:create", data={"school_year": str(school_year.uuid)}
+                "courses:create", data={"school_year": str(school_year.id)}
             )
 
         form = self.get_context("form")
@@ -57,7 +57,7 @@ class TestCourseCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "courses:create", data={"school_year": str(school_year.uuid)}
+                "courses:create", data={"school_year": str(school_year.id)}
             )
 
         form = self.get_context("form")
@@ -74,7 +74,7 @@ class TestCourseCreateView(TestCase):
         form = self.get_context("form")
         assert form.school_year == school_year
 
-    def test_school_year_uuid_bogus(self):
+    def test_school_year_id_bogus(self):
         """A malformed school year uuid in the querystring is ignored."""
         user = self.make_user()
         school_year = SchoolYearFactory(school__admin=user)
