@@ -743,23 +743,6 @@ class TestProgressReportView(TestCase):
 
         assert len(self.get_context("courses")) == 1
 
-    def test_invalid_course_filter(self):
-        """An invalid course filter is ignored."""
-        user = self.make_user()
-        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
-        student = enrollment.student
-        course_1 = CourseFactory(grade_levels=[enrollment.grade_level])
-        course_2 = CourseFactory(grade_levels=[enrollment.grade_level])
-        GradeFactory(student=student, graded_work__course_task__course=course_1)
-        GradeFactory(student=student, graded_work__course_task__course=course_2)
-        url = self.reverse("reports:progress", pk=enrollment.id)
-        url += "?course=nope"
-
-        with self.login(user):
-            self.get_check_200(url)
-
-        assert len(self.get_context("courses")) == 2
-
 
 class TestResourceReportView(TestCase):
     def test_unauthenticated_access(self):
