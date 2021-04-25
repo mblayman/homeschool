@@ -3,25 +3,25 @@
 {% block head_title %}Tasks To Grade{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900">Tasks To Grade</h1>
+  <h1 class="font-extralight text-2xl text-blue-900">Tasks To Grade</h1>
 
   {% if has_work_to_grade %}
     <form method="POST" class="w-full max-w-3xl">
       {% csrf_token %}
       {% for student_work in work_to_grade %}
         {% if student_work.graded_work %}
-          <h2 class="font-thin text-xl text-blue-900 mt-8">{{ student_work.student.first_name }}</h2>
+          <h2 class="font-extralight text-xl text-blue-900 mt-8">{{ student_work.student.first_name }}</h2>
 
           <div class="flex flex-col sm:flex-row max-w-3xl mt-4">
-            <div class="w-3/12 text-sm uppercase tracking-wide font-thin py-2 text-center">Course</div>
-            <div class="w-7/12 text-sm uppercase tracking-wide font-thin py-2 text-center">Task</div>
-            <div class="w-2/12 text-sm uppercase tracking-wide font-thin py-2 text-center">Score</div>
+            <div class="w-3/12 text-sm uppercase tracking-wide font-extralight py-2 text-center">Course</div>
+            <div class="w-7/12 text-sm uppercase tracking-wide font-extralight py-2 text-center">Task</div>
+            <div class="w-2/12 text-sm uppercase tracking-wide font-extralight py-2 text-center">Score</div>
           </div>
         {% endif %}
 
         {% for work in student_work.graded_work %}
           <div class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-3xl">
-            <div class="w-3/12 text-sm uppercase tracking-wide font-thin py-2 pr-4">
+            <div class="w-3/12 text-sm uppercase tracking-wide font-extralight py-2 pr-4">
               {{ work.course_task.course.name }}
             </div>
             <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">
@@ -39,16 +39,16 @@
       <div class="flex flex-col sm:flex-row items-center justify-end mt-8">
         {% if request.GET.next %}
           <a href="{{ request.GET.next }}"
-            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
             Exit
           </a>
         {% else %}
           <a href="{% url "core:daily" %}"
-            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
             Exit
           </a>
         {% endif %}
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
           Save
         </button>
       </div>

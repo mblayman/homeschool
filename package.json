@@ -6,6 +6,8 @@
     "node": "15.x"
   },
   "dependencies": {
-    "tailwindcss": "^1.9.6"
+    "autoprefixer": "^10.2.5",
+    "postcss": "^8.2.12",
+    "tailwindcss": "^2.1.2"
   }
 }

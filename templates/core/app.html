@@ -17,8 +17,8 @@
     {% include "students/empty_students.html" %}
   {% elif schedules or next_year_schedules %}
     <div class="flex flex-row items-center mb-8 print-hide">
-      <h1 class="flex-grow font-thin text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
-      <div class="text-sm text-blue-900 font-thin">
+      <h1 class="flex-grow font-extralight text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
+      <div class="text-sm text-blue-900 font-extralight">
         <a class="hover:underline" href="{% url "core:weekly" previous_week_date.year previous_week_date.month previous_week_date.day %}">Week of {{ previous_week_date|date:"M j" }}</a>
         <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
         <span class="p-2 bg-gray-200 rounded">Week of {{ first_day|date:"M j" }}</span>
@@ -40,7 +40,7 @@
           you need to enroll a student.
         </p>
         <div class="text-center">
-          <a href="{% url "students:enrollment_create" school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Enroll a Student</a>
+          <a href="{% url "students:enrollment_create" school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Enroll a Student</a>
         </div>
       </div>
       <div class="w-1/2 text-center">
@@ -58,7 +58,7 @@
           to see your schedule here.
         </p>
         <div class="text-center">
-          <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add School Year</a>
+          <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Add School Year</a>
         </div>
       </div>
       <div class="w-1/2 text-center">

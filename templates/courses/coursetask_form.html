@@ -3,22 +3,22 @@
 {% block head_title %}{% if create %}Add{% else %}Edit{% endif %} Course Task{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-8">{% if create %}Add{% else %}Edit{% endif %} Course Task for {{ course }}</h1>
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">{% if create %}Add{% else %}Edit{% endif %} Course Task for {{ course }}</h1>
 
   <div class="max-w-lg">
     {% if previous_task %}
       <div class="bg-blue-100 rounded p-2 mb-4">
-        <p class="font-thin text-base text-gray-800 mb-2">
+        <p class="font-extralight text-base text-gray-800 mb-2">
           <strong>Previous Task:</strong>
         </p>
-        <p class="font-thin text-base text-gray-800">
+        <p class="font-extralight text-base text-gray-800">
           {{ previous_task.description|linebreaksbr }}
         </p>
       </div>
     {% endif %}
 
     {% if create %}
-      <p class="font-thin text-base text-gray-800 mb-4">
+      <p class="font-extralight text-base text-gray-800 mb-4">
         Want to add more at once?
         <a class="underline" href="{% url "courses:task_create_bulk" course.id %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">Use Bulk Create</a>
       </p>
@@ -33,7 +33,7 @@
       {% if course.has_many_grade_levels %}
         <div class="md:flex md:items-center mb-6">
           <div class="md:w-1/4">
-            <label class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4" for="id_grade_level">
+            <label class="block text-gray-800 font-extralight md:text-right mb-1 md:mb-0 pr-4" for="id_grade_level">
               For
             </label>
           </div>
@@ -62,37 +62,37 @@
         <div class="md:w-1/4"></div>
         {% if create %}
           <div class="md:w-3/4 text-right">
-            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
               Add
             </button>
           </div>
         {% else %}
           <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
             <a href="{% url "courses:task_delete" coursetask.course.id coursetask.id %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
-              class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
               Delete
             </a>
             {% if request.GET.next %}
               <div class="flex-grow"></div>
               <a href="{{ request.GET.next }}"
-                class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
                 Cancel
               </a>
             {% else %}
               <div class="flex-grow"></div>
             {% endif %}
-            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
               Update
             </button>
           </div>
         {% endif %}
       </div>
       {% if create %}
-        <h2 class="font-thin text-xl text-blue-900 mt-2 mb-4">More Options</h2>
+        <h2 class="font-extralight text-xl text-blue-900 mt-2 mb-4">More Options</h2>
         <div class="md:flex md:items-center mb-2">
           <div class="md:w-1/4"></div>
           <div class="md:w-3/4">
-            <label class="block w-full pl-1 py-2 text-blue-900 font-thin rounded hover:bg-gray-200">
+            <label class="block w-full pl-1 py-2 text-blue-900 font-extralight rounded hover:bg-gray-200">
               <input onchange="toggleAutonumber(this)" class="mr-2" type="checkbox" name="replicate">
               Replicate <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" type="number" name="replicate_count" value="2" min="1" max="{{ max_tasks }}"> times
             </label>
@@ -101,11 +101,11 @@
         <div class="md:flex md:items-center opacity-0 transition duration-200 ease-in-out" id="autonumber_option">
           <div class="md:w-1/4"></div>
           <div class="md:w-3/4">
-            <label class="block w-full pl-1 py-2 text-blue-900 font-thin rounded hover:bg-gray-200">
+            <label class="block w-full pl-1 py-2 text-blue-900 font-extralight rounded hover:bg-gray-200">
               <input class="mr-2" type="checkbox" name="autonumber">
               Number each task
             </label>
-            <p class="p-1 text-sm text-blue-900 font-thin">
+            <p class="p-1 text-sm text-blue-900 font-extralight">
               Example: “Lesson” creates “Lesson 1”, “Lesson 2”, etc.
             </p>
           </div>

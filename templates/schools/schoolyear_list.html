@@ -4,14 +4,14 @@
 {% block head_title %}School Years{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-4">
+  <h1 class="font-extralight text-2xl text-blue-900 mb-4">
     School Years
   </h1>
 
   {% if schoolyear_list %}
     <p class="mb-8">
       <a href="{% url "schools:school_year_create" %}"
-        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
         Add School Year
       </a>
     </p>
@@ -29,7 +29,7 @@
             Each school year tracks your grade levels and sets when school is in session.
           </p>
           <div class="text-center">
-            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create School Year</a>
+            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Create School Year</a>
           </div>
       </div>
       <div class="w-1/2 text-center">

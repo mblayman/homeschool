@@ -3,7 +3,7 @@
 {% block head_title %}{{ course.name }}{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">
     {% if school_year %}
       <a href="{% url "schools:school_year_detail" school_year.id %}" class="hover:underline">{{ school_year }} School Year</a>
       <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
@@ -18,7 +18,7 @@
   </h1>
 
   {% if enrolled_students %}
-    <p class="font-thin text-base text-gray-800 mb-8">
+    <p class="font-extralight text-base text-gray-800 mb-8">
       See progress for
       {% for student in enrolled_students %}
         <a href="{% url "students:course" student.id course.id %}" class="underline hover:text-gray-600">{{ student.first_name }}</a>{% if forloop.last %}.{% else %},{% endif %}
@@ -27,28 +27,28 @@
   {% endif %}
 
   {% if not course.is_active %}
-    <p class="font-thin text-base text-gray-800 mb-8">
+    <p class="font-extralight text-base text-gray-800 mb-8">
       This course is currently <strong>inactive</strong> and will not appear on the schedule.
     </p>
   {% endif %}
 
   <p class="mb-8 print-hide">
     <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
       Add New Task
     </a>
     <a href="{% url "courses:resource_create" pk=course.id %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
       Add New Resource
     </a>
     <a href="{% url "courses:edit" pk=course.id %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">
       Edit Course
     </a>
   </p>
 
   {% if course_tasks %}
-    <div class="flex flex-col sm:flex-row max-w-2xl text-sm uppercase tracking-wide font-thin">
+    <div class="flex flex-col sm:flex-row max-w-2xl text-sm uppercase tracking-wide font-extralight">
       <div class="p-2 w-10/12">Task</div>
       <div class="p-2 w-2/12"></div>
     </div>
@@ -56,7 +56,7 @@
   {% include "courses/course_tasks.html" %}
 
   {% if course.resources.all %}
-    <h1 class="font-thin text-2xl text-blue-900 mt-8 mb-4">Resources</h1>
+    <h1 class="font-extralight text-2xl text-blue-900 mt-8 mb-4">Resources</h1>
     <ul class="max-w-2xl">
       {% for resource in course.resources.all %}
         <li class="border-t border-yellow-400">
@@ -72,14 +72,14 @@
     <div class="flex flex-row mt-8">
       <div class="w-3/5">
         <div class="">
-          <h2 class="font-thin text-xl text-blue-900 mb-2">Add a Resource</h2>
+          <h2 class="font-extralight text-xl text-blue-900 mb-2">Add a Resource</h2>
           <p class="mb-8 font-light">
             Keep track of your textbooks, workbooks,
             or any other materials
             related to this course.
           </p>
           <a href="{% url "courses:resource_create" pk=course.id %}"
-            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
             Add Resource
           </a>
         </div>

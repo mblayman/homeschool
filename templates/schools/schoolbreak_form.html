@@ -3,7 +3,7 @@
 {% block head_title %}{% if create %}Add{% else %}Edit{% endif %} Break{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-8">
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">
     <a href="{% url "schools:school_year_list" %}" class="hover:underline">School Years</a>
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
     <a href="{% url "schools:school_year_detail" school_year.id %}" class="hover:underline">
@@ -24,16 +24,16 @@
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
         {% if not create %}
           <a href="{% url "schools:school_break_delete" schoolbreak.id %}"
-            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
             Delete
           </a>
         {% endif %}
         <div class="flex-grow"></div>
         <a href="{% url "schools:school_year_detail" school_year.id %}"
-          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
           Cancel
         </a>
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
           {% if create %}Add{% else %}Update{% endif %} Break
         </button>
       </div>

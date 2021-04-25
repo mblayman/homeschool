@@ -14,7 +14,7 @@
           The next step is to create a task for the course.
         </p>
         <div class="text-center">
-          <a href="{% url "core:start-course-task" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Make Your First Task</a>
+          <a href="{% url "core:start-course-task" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Make Your First Task</a>
         </div>
       {% elif grade_level %}
         <p class="ml-10 mb-2">
@@ -46,7 +46,7 @@
           <div class="md:flex md:items-center">
             <div class="md:w-1/4"></div>
             <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
-              <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+              <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
                 Create Course
               </button>
             </div>
@@ -59,7 +59,7 @@
           that can hold all of their courses.
         </p>
         <div class="text-center">
-          <a href="{% url "core:start-grade-level" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create Grade Level</a>
+          <a href="{% url "core:start-grade-level" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Create Grade Level</a>
         </div>
       {% endif %}
     </div>

@@ -15,27 +15,27 @@
 {% block head_title %}Add Course Tasks{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-8">Add Course Tasks for {{ course }}</h1>
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">Add Course Tasks for {{ course }}</h1>
 
   {% if previous_task %}
     <div class="max-w-lg">
       <div class="bg-blue-100 rounded p-2 mb-4">
-        <p class="font-thin text-base text-gray-800 mb-2">
+        <p class="font-extralight text-base text-gray-800 mb-2">
           <strong>Previous Task:</strong>
         </p>
-        <p class="font-thin text-base text-gray-800">
+        <p class="font-extralight text-base text-gray-800">
           {{ previous_task.description|linebreaksbr }}
         </p>
       </div>
     </div>
   {% endif %}
 
-  <p class="font-thin text-base text-gray-800 mb-4">
+  <p class="font-extralight text-base text-gray-800 mb-4">
     This bulk create page will add more tasks as you need them. Tab is your friend.
   </p>
 
   <div class="w-full max-w-3xl">
-    <div class="flex flex-row text-sm uppercase tracking-wide font-thin mb-4">
+    <div class="flex flex-row text-sm uppercase tracking-wide font-extralight mb-4">
       <div class="w-3/6">Description</div>
       <div class="w-2/6">Duration{% if course.has_many_grade_levels %} / Grade Levels{% endif %}</div>
       <div class="w-1/6 text-center">Graded?</div>
@@ -51,7 +51,7 @@
       <div class="md:flex md:items-center">
         <div class="md:w-1/4"></div>
         <div class="md:w-3/4 text-right">
-          <button id="bulk-add-button" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          <button id="bulk-add-button" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
             Add
           </button>
         </div>

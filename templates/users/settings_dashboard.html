@@ -3,49 +3,49 @@
 {% block head_title %}Settings{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">Settings</h1>
+  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">Settings</h1>
 
   {% include "forms/non_field_errors.html" %}
 
   <form method="POST" class="w-full max-w-2xl mb-8">
     {% csrf_token %}
     <div class="mb-8">
-      <label class="p-2 mr-2 font-thin rounded hover:bg-gray-200">
+      <label class="p-2 mr-2 font-extralight rounded hover:bg-gray-200">
         <input class="mr-2" type="checkbox" id="{{ form.wants_announcements.id_for_label }}" name="{{ form.wants_announcements.html_name }}" {% if form.wants_announcements.value %}checked{% endif %}>
         {{ form.wants_announcements.help_text }}
       </label>
     </div>
-    <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+    <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
       Update
     </button>
   </form>
 
-  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-4">Billing</h1>
+  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-4">Billing</h1>
 
   {% if request.account.status == request.account.AccountStatus.ACTIVE %}
-    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+    <p class="font-extralight text-base text-gray-800 mb-2 max-w-lg">
       <a class="underline" id="manage-billing" href="#">Manage Your Billing Information</a>
       at the Stripe customer portal.
     </p>
   {% elif request.account.status == request.account.AccountStatus.TRIALING %}
-    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+    <p class="font-extralight text-base text-gray-800 mb-2 max-w-lg">
       Your account is in the trial period
       and your trial ends on {{ request.account.trial_end|date:"F j, Y" }}.
     </p>
-    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+    <p class="font-extralight text-base text-gray-800 mb-2 max-w-lg">
       Ready to extend beyond your trial?
       <a class="underline" href="{% url "subscriptions:index" %}">Choose Your Plan</a>
     </p>
-    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+    <p class="font-extralight text-base text-gray-800 mb-2 max-w-lg">
       You will not be charged until the end
       of your trial!
     </p>
   {% elif request.account.status == request.account.AccountStatus.EXEMPT %}
-    <p class="font-thin text-base text-gray-800 mb-2">
+    <p class="font-extralight text-base text-gray-800 mb-2">
       Your account is special and you are exempt. No billing required for you!
     </p>
   {% elif request.account.status == request.account.AccountStatus.BETA %}
-    <p class="font-thin text-base text-gray-800 mb-2 max-w-lg">
+    <p class="font-extralight text-base text-gray-800 mb-2 max-w-lg">
       You are a beta user. No billing required for you!
       Please support School Desk by providing your feedback
       as you use the service.

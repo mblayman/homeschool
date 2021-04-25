@@ -3,7 +3,7 @@
 {% block head_title %}Delete Course{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-8">Delete Course: {{ course.name }}</h1>
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">Delete Course: {{ course.name }}</h1>
 
   {% if tasks_count or grades_count or coursework_count or course_resources_count %}
     <p class="mb-4">Deleting this course will also permanently delete:</p>
@@ -27,7 +27,7 @@
   <form method="POST">
     {% csrf_token %}
     <p class="mb-4">Are you sure you want to delete this course?</p>
-    <button class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+    <button class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
       Delete
     </button>
   </form>

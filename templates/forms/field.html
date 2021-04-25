@@ -3,7 +3,7 @@
     <div class="w-full">
   {% else %}
     <div class="md:w-1/4 {% if field.field.widget.input_type == "checkbox" %}self-start{% endif %}">
-      <label class="block text-blue-900 font-thin md:text-right mb-1 md:mb-0 pr-4" for="{{ field.id_for_label }}">
+      <label class="block text-blue-900 font-extralight md:text-right mb-1 md:mb-0 pr-4" for="{{ field.id_for_label }}">
         {{ field.label|title }}
       </label>
     </div>
@@ -21,7 +21,7 @@
     {% elif field.field.widget.input_type == "checkbox" %}
       <input class="ml-1" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.html_name }}" {% if field.value %}checked{% endif %}>
       {% if field.help_text %}
-        <div class="ml-1 mt-2 text-sm text-gray-600 font-thin">{{ field.help_text }}</div>
+        <div class="ml-1 mt-2 text-sm text-gray-600 font-extralight">{{ field.help_text }}</div>
       {% endif %}
     {% else %}
       <input class="bg-white appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none

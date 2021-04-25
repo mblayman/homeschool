@@ -3,17 +3,17 @@
 {% block head_title %}Set completed task date for {{ student }}{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">
     Set completed task date for {{ student }}
   </h1>
 
   <form method="POST" class="w-full max-w-2xl">
     {% if course_task %}
       <div class="bg-blue-100 rounded p-2 mb-8">
-        <p class="font-thin text-base text-gray-800 mb-2">
+        <p class="font-extralight text-base text-gray-800 mb-2">
           <strong>Task:</strong>
         </p>
-        <p class="font-thin text-base text-gray-800">
+        <p class="font-extralight text-base text-gray-800">
           {{ course_task.description|linebreaksbr }}
         </p>
       </div>
@@ -27,10 +27,10 @@
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
         <a href="{% url "students:course" student.id course_task.course.id %}"
-          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
           Cancel
         </a>
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
           Save
         </button>
       </div>

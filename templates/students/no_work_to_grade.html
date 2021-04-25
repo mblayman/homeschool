@@ -8,9 +8,9 @@
     </p>
     <div class="text-center">
       {% if request.GET.next %}
-        <a href="{{ request.GET.net }}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Exit</a>
+        <a href="{{ request.GET.net }}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Exit</a>
       {% else %}
-        <a href="{% url "core:daily" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Exit</a>
+        <a href="{% url "core:daily" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">Exit</a>
       {% endif %}
     </div>
   </div>

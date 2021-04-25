@@ -4,19 +4,19 @@
 {% block head_title %}Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-8">Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
   {% if courses %}
     {% for course_info in courses %}
-      <h2 class="font-thin text-xl text-blue-900 mb-2">
+      <h2 class="font-extralight text-xl text-blue-900 mb-2">
         <a class="hover:underline" href="{{ request.path }}?course={{ course_info.course.id }}">
           {{ course_info.course }}
         </a>
       </h2>
       <div class="flex flex-col max-w-3xl mb-8">
         <div class="flex flex-row">
-          <div class="w-4/6 text-sm uppercase tracking-wide font-thin py-2">Task</div>
-          <div class="w-1/6 text-sm uppercase tracking-wide font-thin py-2">Score</div>
-          <div class="w-1/6 text-sm uppercase tracking-wide font-thin py-2">Completed Date</div>
+          <div class="w-4/6 text-sm uppercase tracking-wide font-extralight py-2">Task</div>
+          <div class="w-1/6 text-sm uppercase tracking-wide font-extralight py-2">Score</div>
+          <div class="w-1/6 text-sm uppercase tracking-wide font-extralight py-2">Completed Date</div>
         </div>
         {% for grade in course_info.grades %}
           <div class="flex flex-row">
@@ -40,7 +40,7 @@
       </div>
       <div class="w-3/5">
         <div class="m-8 ml-12">
-          <h2 class="font-thin text-xl text-blue-900 mb-2">No Grades Yet</h2>
+          <h2 class="font-extralight text-xl text-blue-900 mb-2">No Grades Yet</h2>
           <p class="mb-1 font-light">
             {{ student }} has no posted grades yet for {{ grade_level }}.
           </p>

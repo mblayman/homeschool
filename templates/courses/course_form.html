@@ -3,7 +3,7 @@
 {% block head_title %}{% if create %}Add Course{% else %}Edit {{ course.name }}{% endif %}{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-thin text-2xl text-blue-900 mb-8">
+  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">
     {% if create %}
       Add Course
     {% else %}
@@ -12,7 +12,7 @@
   </h1>
   {% if course_to_copy %}
     {% with task_count=course_to_copy.course_tasks.count resource_count=course_to_copy.resources.count %}
-      <p class="mb-6 text-gray-800 font-thin">
+      <p class="mb-6 text-gray-800 font-extralight">
         Copying “{{ course_to_copy }}” will also copy
         {{ task_count }} task{{ task_count|pluralize }}
         and {{ resource_count }} resource{{ resource_count|pluralize }}.
@@ -29,36 +29,36 @@
     {% include "forms/field.html" with field=form.is_active %}
     <div class="md:flex md:items-center mb-6">
       <div class="md:w-1/4">
-        <div class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4">
+        <div class="block text-gray-800 font-extralight md:text-right mb-1 md:mb-0 pr-4">
           Days of week
         </div>
       </div>
       <div class="md:w-3/4">
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="sunday" {% if form.sunday.value %}checked{% endif %}>
           Sun.
         </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="monday" {% if form.monday.value %}checked{% endif %}>
           Mon.
         </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="tuesday" {% if form.tuesday.value %}checked{% endif %}>
           Tues.
         </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="wednesday" {% if form.wednesday.value %}checked{% endif %}>
           Wed.
         </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="thursday" {% if form.thursday.value %}checked{% endif %}>
           Thurs.
         </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="friday" {% if form.friday.value %}checked{% endif %}>
           Fri.
         </label>
-        <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+        <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
           <input type="checkbox" name="saturday" {% if form.saturday.value %}checked{% endif %}>
           Sat.
         </label>
@@ -66,13 +66,13 @@
     </div>
     <div class="md:flex md:items-center {% if not form.errors.grade_levels %}mb-6{% endif %}">
       <div class="md:w-1/4">
-        <div class="block text-gray-800 font-thin md:text-right mb-1 md:mb-0 pr-4">
+        <div class="block text-gray-800 font-extralight md:text-right mb-1 md:mb-0 pr-4">
           Grade Level
         </div>
       </div>
       <div class="md:w-3/4">
         {% for selectable_grade_level in form.grade_levels %}
-          <label class="p-1 mr-2 text-sm font-thin rounded hover:bg-gray-200">
+          <label class="p-1 mr-2 text-sm font-extralight rounded hover:bg-gray-200">
             <input type="checkbox" value="{{ selectable_grade_level.data.value }}"
               name="grade_levels"
               {% if selectable_grade_level.data.selected %}
@@ -102,27 +102,27 @@
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
         {% if create %}
           <a href="{% url "schools:current_school_year" %}"
-            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
             Cancel
           </a>
           {% if request.GET.copy_from == None %}
             <a href="{% url "courses:copy" %}{% if request.GET.school_year %}?school_year={{ request.GET.school_year }}{% endif %}"
-              class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline">
+              class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring">
               Copy Course
             </a>
           {% endif %}
         {% else %}
           <a href="{% url "courses:delete" course.id %}"
-            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
             Delete
           </a>
           <div class="flex-grow"></div>
           <a href="{% url "courses:detail" course.id %}"
-            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
             Cancel
           </a>
         {% endif %}
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline" type="submit">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
           {% if create %}Add Course{% else %}Update{% endif %}
         </button>
       </div>

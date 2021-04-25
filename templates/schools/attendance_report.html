@@ -4,7 +4,7 @@
 {% block head_title %}Attendance Report for {{ student }} in {{ grade_level }} in {{ school_year }}{% endblock %}
 
 {% block main %}
-  <h1 class="font-thin text-2xl text-blue-900 mb-8">Attendance Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">Attendance Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
 
   {% if school_dates %}
     <div class="flex flex-col max-w-sm mb-8">
@@ -41,7 +41,7 @@
       </div>
       <div class="w-3/5">
         <div class="m-8 ml-12">
-          <h2 class="font-thin text-xl text-blue-900 mb-2">No Dates to Show</h2>
+          <h2 class="font-extralight text-xl text-blue-900 mb-2">No Dates to Show</h2>
           <p class="mb-1 font-light">
             The school year hasn’t started yet.
           </p>
