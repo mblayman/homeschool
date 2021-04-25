@@ -1,4 +1,3 @@
-import uuid
 from typing import Optional
 
 from django.conf import settings
@@ -25,7 +24,6 @@ class Course(DaysOfWeekModel):
         related_name="courses",
         through="courses.GradeLevelCoursesThroughModel",
     )
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
     default_task_duration = models.IntegerField(
         default=30, help_text="The default task duration in minutes"
     )
@@ -116,7 +114,6 @@ class CourseTask(OrderedModel):
     course = models.ForeignKey(
         "courses.Course", on_delete=models.CASCADE, related_name="course_tasks"
     )
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
     description = models.TextField()
     duration = models.PositiveIntegerField(
         help_text="The expected length of the task in minutes"
@@ -171,7 +168,6 @@ class CourseResource(models.Model):
     course = models.ForeignKey(
         "courses.Course", on_delete=models.CASCADE, related_name="resources"
     )
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
     title = models.CharField(max_length=512)
     details = models.TextField(blank=True)
 

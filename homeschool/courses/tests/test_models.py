@@ -1,5 +1,3 @@
-import uuid
-
 import pytest
 
 from homeschool.courses.exceptions import NoSchoolYearError
@@ -26,12 +24,6 @@ class TestCourse(TestCase):
         course = CourseFactory()
 
         assert str(course) == course.name
-
-    def test_has_uuid(self):
-        course_uuid = uuid.uuid4()
-        course = CourseFactory(uuid=course_uuid)
-
-        assert course.uuid == course_uuid
 
     def test_has_name(self):
         name = "Calculus I"
@@ -87,7 +79,6 @@ class TestCourseTask(TestCase):
         other_task = CourseTaskFactory.build()
 
         assert task is not None
-        assert str(task.uuid) != ""
         assert task.description != ""
         assert not hasattr(task, "graded_work")
         assert other_task.id is None
@@ -103,12 +94,6 @@ class TestCourseTask(TestCase):
         task = CourseTaskFactory(course=course)
 
         assert task.course == course
-
-    def test_has_uuid(self):
-        task_uuid = uuid.uuid4()
-        task = CourseTaskFactory(uuid=task_uuid)
-
-        assert task.uuid == task_uuid
 
     def test_has_description(self):
         description = "Chapter 1 from SICP"
@@ -196,7 +181,6 @@ class TestCourseResource(TestCase):
     def test_factory(self):
         resource = CourseResourceFactory()
 
-        assert resource.uuid is not None
         assert resource.title != ""
         assert resource.details != ""
         assert resource.course is not None

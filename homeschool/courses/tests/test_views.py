@@ -75,7 +75,7 @@ class TestCourseCreateView(TestCase):
         assert form.school_year == school_year
 
     def test_school_year_id_bogus(self):
-        """A malformed school year uuid in the querystring is ignored."""
+        """A malformed school year id in the querystring is ignored."""
         user = self.make_user()
         school_year = SchoolYearFactory(school__admin=user)
 

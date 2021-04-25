@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from dateutil.relativedelta import MO, SU, relativedelta
 from django.utils import timezone
@@ -76,12 +75,6 @@ class TestSchoolYear(TestCase):
         grade_level = GradeLevelFactory(school_year=school_year)
 
         assert list(school_year.grade_levels.all()) == [grade_level]
-
-    def test_has_uuid(self):
-        school_year_uuid = uuid.uuid4()
-        school_year = SchoolYearFactory(uuid=school_year_uuid)
-
-        assert school_year.uuid == school_year_uuid
 
     def test_runs_on(self):
         school_year = SchoolYearFactory(days_of_week=SchoolYear.MONDAY)
@@ -336,12 +329,6 @@ class TestGradeLevel(TestCase):
 
         assert list(grade_level.courses.all()) == [course]
 
-    def test_has_uuid(self):
-        grade_level_uuid = uuid.uuid4()
-        grade_level = GradeLevelFactory(uuid=grade_level_uuid)
-
-        assert grade_level.uuid == grade_level_uuid
-
     def test_get_active_course(self):
         """The grade level can get its active courses."""
         grade_level = GradeLevelFactory()
@@ -361,7 +348,6 @@ class TestSchoolBreak(TestCase):
         assert school_break.end_date is not None
         assert school_break.description != ""
         assert school_break.school_year is not None
-        assert school_break.uuid is not None
 
     def test_str(self):
         school_break = SchoolBreakFactory()

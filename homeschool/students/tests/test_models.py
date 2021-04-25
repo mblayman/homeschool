@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 import pytest
 from dateutil.relativedelta import MO, SA, SU, relativedelta
@@ -54,12 +53,6 @@ class TestStudent(TestCase):
         student = StudentFactory(last_name=last_name)
 
         assert student.last_name == last_name
-
-    def test_has_uuid(self):
-        student_uuid = uuid.uuid4()
-        student = StudentFactory(uuid=student_uuid)
-
-        assert student.uuid == student_uuid
 
     def test_full_name(self):
         student = StudentFactory()
@@ -251,7 +244,6 @@ class TestEnrollment(TestCase):
         enrollment = EnrollmentFactory()
 
         assert enrollment is not None
-        assert enrollment.uuid is not None
 
     def test_has_student(self):
         student = StudentFactory()
@@ -317,12 +309,6 @@ class TestGrade(TestCase):
         grade = GradeFactory(graded_work=graded_work)
 
         assert grade.graded_work == graded_work
-
-    def test_has_uuid(self):
-        grade_uuid = uuid.uuid4()
-        grade = GradeFactory(uuid=grade_uuid)
-
-        assert grade.uuid == grade_uuid
 
     def test_has_score(self):
         score = 99

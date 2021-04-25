@@ -1,5 +1,4 @@
 import datetime
-import uuid
 from typing import Optional
 
 from django.conf import settings
@@ -39,7 +38,6 @@ class SchoolYear(DaysOfWeekModel):
     school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     @classmethod
     def get_current_year_for(cls, user: User) -> Optional["SchoolYear"]:
@@ -134,7 +132,6 @@ class GradeLevel(models.Model):
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="grade_levels"
     )
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     def get_ordered_courses(self):
         """Get the courses in their proper order.
@@ -177,7 +174,6 @@ class SchoolBreak(models.Model):
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="breaks"
     )
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     class DateType(models.IntegerChoices):
         SINGLE = 1

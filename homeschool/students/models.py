@@ -1,5 +1,4 @@
 import datetime
-import uuid
 from typing import TYPE_CHECKING, Optional
 
 from django.conf import settings
@@ -22,7 +21,6 @@ class Student(models.Model):
     )
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -337,7 +335,6 @@ class Enrollment(models.Model):
     )
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
     class Meta:
         constraints = [
@@ -363,5 +360,4 @@ class Grade(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     graded_work = models.ForeignKey("courses.GradedWork", on_delete=models.CASCADE)
-    uuid = models.UUIDField(default=uuid.uuid4, db_index=True)
     score = models.PositiveIntegerField(default=0)
