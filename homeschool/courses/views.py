@@ -88,15 +88,11 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["create"] = True
 
-        grade_level_uuid = self.request.GET.get("grade_level")
-        if grade_level_uuid:
-            try:
-                context["grade_level"] = GradeLevel.objects.filter(
-                    school_year__school__admin=self.request.user, uuid=grade_level_uuid
-                ).first()
-            except ValidationError:
-                # Bogus uuid. Let it slide.
-                context["grade_level"] = None
+        grade_level_id = self.request.GET.get("grade_level")
+        if grade_level_id:
+            context["grade_level"] = GradeLevel.objects.filter(
+                school_year__school__admin=self.request.user, id=grade_level_id
+            ).first()
 
         context["course_to_copy"] = self.course_to_copy
         return context

@@ -102,7 +102,7 @@ class TestCourseCreateView(TestCase):
 
         with self.login(user):
             self.get_check_200(
-                "courses:create", data={"grade_level": str(grade_level.uuid)}
+                "courses:create", data={"grade_level": str(grade_level.id)}
             )
 
         assert self.get_context("grade_level") == grade_level
