@@ -421,7 +421,7 @@ class TestCourseTaskCreateView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(course=course)
         url = self.reverse("courses:task_create", pk=course.id)
-        url += f"?previous_task={task.uuid}"
+        url += f"?previous_task={task.id}"
 
         with self.login(user):
             self.get(url)
@@ -487,7 +487,7 @@ class TestCourseTaskCreateView(TestCase):
         task_1 = CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
         url = self.reverse("courses:task_create", pk=course.id)
-        url += f"?previous_task={task_1.uuid}"
+        url += f"?previous_task={task_1.id}"
 
         with self.login(user):
             self.post(url, data=data)
@@ -679,7 +679,7 @@ class TestBulkCreateCourseTasks(TestCase):
         task_1 = CourseTaskFactory(course=course)
         task_2 = CourseTaskFactory(course=course)
         url = self.reverse("courses:task_create_bulk", pk=course.id)
-        url += f"?previous_task={task_1.uuid}"
+        url += f"?previous_task={task_1.id}"
 
         with self.login(user):
             self.post(url, data=data)
@@ -719,7 +719,7 @@ class TestBulkCreateCourseTasks(TestCase):
         course = CourseFactory(grade_levels=[grade_level], default_task_duration=42)
         task = CourseTaskFactory(course=course)
         url = self.reverse("courses:task_create_bulk", pk=course.id)
-        url += f"?previous_task={task.uuid}"
+        url += f"?previous_task={task.id}"
 
         with self.login(user):
             self.get_check_200(url)

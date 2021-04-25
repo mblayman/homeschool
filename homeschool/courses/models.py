@@ -133,16 +133,11 @@ class CourseTask(OrderedModel):
     order_with_respect_to = "course"
 
     @classmethod
-    def get_by_uuid(cls, user: User, uuid_str: str) -> Optional["CourseTask"]:
-        """Get a task for a user by a uuid."""
-        try:
-            task_uuid = uuid.UUID(uuid_str)
-        except ValueError:
-            # A bad UUID should be ignored.
-            return None
+    def get_by_id(cls, user: User, id_str: str) -> Optional["CourseTask"]:
+        """Get a task for a user by an id."""
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return CourseTask.objects.filter(
-            course__grade_levels__in=grade_levels, uuid=task_uuid
+            course__grade_levels__in=grade_levels, id=id_str
         ).first()
 
     @property

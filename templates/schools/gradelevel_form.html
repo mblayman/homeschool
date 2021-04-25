@@ -39,7 +39,7 @@
       {% endif %}
 
       {% for course in courses %}
-        <div id="course-{{ course.uuid }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-lg">
+        <div id="course-{{ course.id }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-lg">
           <div class="w-10/12 p-2 text-sm font-light overflow-x-scroll">
             <a href="{% url "courses:edit" pk=course.id %}" class="hover:text-gray-600">
               {{ course.name }}

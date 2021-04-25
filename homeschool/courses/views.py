@@ -307,7 +307,7 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
 
     @cached_property
     def previous_task(self):
-        return CourseTask.get_by_uuid(
+        return CourseTask.get_by_id(
             self.request.user, self.request.GET.get("previous_task", "")
         )
 
@@ -391,7 +391,7 @@ def bulk_create_course_tasks(request, pk):
     For some reason, the function view worked where the CBV did not.
     """
     course = get_course(request.user, pk)
-    previous_task = CourseTask.get_by_uuid(
+    previous_task = CourseTask.get_by_id(
         request.user, request.GET.get("previous_task", "")
     )
 
