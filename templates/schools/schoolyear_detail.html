@@ -147,7 +147,7 @@
 
   <div class="flex flex-col w-full">
     {% for grade_level_info in grade_levels %}
-      <a id="grade-level-{{ grade_level_info.grade_level.uuid }}"></a>
+      <a id="grade-level-{{ grade_level_info.grade_level.id }}"></a>
       <div class="bg-gray-100 rounded-lg py-4 px-3 mb-8">
         <div class="flex flex-row items-center">
           <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.id %}" class="hover:underline">
