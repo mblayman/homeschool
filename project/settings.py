@@ -1,6 +1,6 @@
 import os
 
-import django_heroku
+import dj_database_url
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -10,6 +10,8 @@ env = environ.Env(
     ALLOWED_HOSTS=(list, []),
     ANYMAIL_ACCOUNT_DEFAULT_HTTP_PROTOCOL=(str, "https"),
     CSRF_COOKIE_SECURE=(bool, True),
+    DATABASE_CONN_MAX_AGE=(int, 600),
+    DATABASE_SSL_REQUIRE=(bool, True),
     DEBUG=(bool, False),
     DEBUG_TOOLBAR=(bool, False),
     DJSTRIPE_WEBHOOK_VALIDATION=(str, "verify_signature"),
@@ -28,10 +30,6 @@ env_file = os.path.join(BASE_DIR, ".env")
 if os.path.exists(env_file):
     environ.Env.read_env(env_file)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
@@ -120,24 +118,11 @@ WSGI_APPLICATION = "project.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
+    "default": dj_database_url.config(
+        conn_max_age=env("DATABASE_CONN_MAX_AGE"),
+        ssl_require=env("DATABASE_SSL_REQUIRE"),
+    )
 }
-
-# For local Postgres testing.
-# TODO: Clean up with Issue #355
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "mylocaldb",
-#         "USER": "postgres",
-#         "PASSWORD": "postgres",
-#         "HOST": "localhost",
-#         "PORT": 5432,
-#     }
-# }
 
 # Email
 EMAIL_BACKEND = env("EMAIL_BACKEND")
@@ -284,15 +269,6 @@ ROLLBAR = {
 
 # WhiteNoise
 WHITENOISE_INDEX_FILE = True
-
-django_heroku.settings(
-    locals(),
-    allowed_hosts=False,
-    secret_key=False,
-    staticfiles=False,
-    test_runner=False,
-    logging=False,
-)
 
 # App settings
 

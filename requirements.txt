@@ -27,7 +27,7 @@ cryptography==3.3.2
 defusedxml==0.6.0
     # via python3-openid
 dj-database-url==0.5.0
-    # via django-heroku
+    # via -r requirements.in
 dj-stripe==2.4.3
     # via -r requirements.in
 django-allauth==0.44.0
@@ -41,8 +41,6 @@ django-environ==0.4.5
 django-extensions==3.1.1
     # via -r requirements.in
 django-hashid-field==3.2.1
-    # via -r requirements.in
-django-heroku==0.3.1
     # via -r requirements.in
 django-hijack==2.3.0
     # via -r requirements.in
@@ -62,7 +60,6 @@ django==3.1.8
     #   django-anymail
     #   django-debug-toolbar
     #   django-hashid-field
-    #   django-heroku
     #   django-hijack
     #   django-tz-detect
     #   jsonfield
@@ -91,7 +88,7 @@ packaging==20.4
     #   bleach
     #   sphinx
 psycopg2==2.8.4
-    # via django-heroku
+    # via -r requirements.in
 pycparser==2.20
     # via cffi
 pygments==2.7.4
@@ -170,9 +167,7 @@ urllib3==1.25.7
 webencodings==0.5.1
     # via bleach
 whitenoise[brotli]==5.2.0
-    # via
-    #   -r requirements.in
-    #   django-heroku
+    # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

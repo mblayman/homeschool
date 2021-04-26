@@ -44,6 +44,7 @@ jobs:
         run: make coverage
         env:
           ALLOWED_HOSTS: '*'
+          DATABASE_SSL_REQUIRE: 'off'
           DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
           DJSTRIPE_WEBHOOK_VALIDATION: ''
           HASHID_FIELD_SALT: 'a secret to everybody'
@@ -60,6 +61,7 @@ jobs:
         run: ./manage.py check --deploy --fail-level WARNING
         env:
           ALLOWED_HOSTS: '*'
+          DATABASE_SSL_REQUIRE: 'off'
           DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
           DJSTRIPE_WEBHOOK_VALIDATION: ''
           HASHID_FIELD_SALT: 'a secret to everybody'
