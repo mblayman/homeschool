@@ -145,17 +145,75 @@ https://homeschoolmanager.com/
 * School Year is bound to student (behaves like Grade Level)
 * Drag and drop functionality for task management
 * Quick add task feature
-* Grade stuff, different task types, grade calculator
+* Grade stuff, different task types, grade calculator, grade scales
+* Define types of tasks, task weighting for grades
 * Volunteer hours tracking
 * Book list tracking
 * Dashboard to track what's overdue (necessary because tasks are pinned to dates)
 * Report cards and past history
 * Transcripts
 * Attendance and time tracking
+* Family logins to allow others to login in with a restricted account
+* Click tracking with clicky.com
+* JavaScript (Angular?) app so most of the links don't show where a user is about to go.
+* Missing many of the empty states on pages
 
-Forum topics:
+Onboarding
 
-Nothing found.
+* Simple form to sign up. No credit card.
+* Create school and student.
+  On first page, sticky footer with "Create my school" CTA.
+  Add multiple students in first step.
+* Land on students page with warnings that each student doesn't have a school year set up.
+* Multi-step wizard to create a school year for a student.
+  * School Year == Grade Level
+  * Subject == Course, grading and scheduling can be done off platform.
+    Quite quick to add multiple subjects for a school year.
+    Subject don't default to running on certain days. Must always pick.
+    Subjects can run on a monthly schedule.
+  * Step 3 is the scheduling for each Subject
+* Received a Welcome Email that includes links to help, link to Facebook group, share link
+* Day +1, start of a drip campaign explaining the service.
+
+UI
+
+Top nav:
+
+* Left side: Dashboard and Students
+* Right side: Help, link to Vimeo video help, account drop down
+
+Dashboard:
+
+* Low information initially
+* Links to student pages of various types
+
+Accounts section:
+
+* Divided into tabs to separate topics.
+* School info, contact info, subscription, holidays, tasks & weighting, grading scales, logins
+
+Student index:
+
+* I can't quickly look at the week view for both of my students at the same time.
+
+Student section:
+
+* Schedule
+  * Task entry doesn't work if school year starts in the future.
+    This is not obvious.
+  * Tasks are draggable to different days.
+    Tasks dragged to "Next week" move to the same day on the following week.
+* Gradebook
+* Book list
+* Documents
+  * This is a section for generating documents.
+    These are reports in formats like PDF and XSLX
+* Admin
+  * School years
+  * Grade scale
+  * Volunteer hours - quick add form
+
+Forum topics: Nothing found.
 
 ### Homeschool Minder
 
