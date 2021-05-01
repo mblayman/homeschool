@@ -8,7 +8,7 @@ pip-tools
 pre-commit
 pygraphviz==1.6
 pytest-cov==2.11.1
-pytest-django==4.1.0
+pytest-django==4.2.0
 pytest-xdist==2.2.1
 pyupgrade==2.13.0
 responses==0.10.15
