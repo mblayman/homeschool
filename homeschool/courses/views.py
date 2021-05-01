@@ -17,6 +17,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from waffle import flag_is_active
 
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
@@ -189,16 +190,21 @@ class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
             self.object.grade_levels.all().order_by("id").select_related("school_year")
         )
         context["grade_levels"] = grade_levels
+
+        enrollments = []
+        students = []
         if grade_levels:
             context["school_year"] = grade_levels[0].school_year
-            context["enrolled_students"] = [
-                enrollment.student
+            enrollments = [
+                enrollment
                 for enrollment in Enrollment.objects.filter(
                     grade_level__in=grade_levels
                 )
                 .select_related("student")
-                .order_by("student__first_name")
+                .order_by("grade_level")
             ]
+            students = [enrollment.student for enrollment in enrollments]
+        context["enrolled_students"] = students
 
         course_tasks = list(self.object.course_tasks.all())
         context["course_tasks"] = course_tasks
@@ -207,7 +213,54 @@ class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
         if course_tasks:
             last_task = course_tasks[-1]
         context["last_task"] = last_task
+
+        if flag_is_active(self.request, "combined_course_flag"):
+            context.update(
+                get_course_tasks_context(self.object, course_tasks, enrollments)
+            )
+
         return context
+
+
+def get_course_tasks_context(course, course_tasks, enrollments):
+    """Get the context required to render the course tasks.
+
+    This context is also required by the htmx delete view.
+    """
+    students = [enrollment.student for enrollment in enrollments]
+    coursework: dict = {student.id: {} for student in students}
+    for work in Coursework.objects.filter(
+        student__in=students, course_task__course=course
+    ):
+        coursework[work.student_id][work.course_task_id] = work
+
+    grades: dict = {student.id: {} for student in students}
+    for grade in Grade.objects.filter(
+        student__in=students, graded_work__course_task__course=course
+    ).select_related("graded_work__course_task"):
+        grades[grade.student_id][grade.graded_work.course_task_id] = grade
+
+    grade_levels_by_student = {
+        enrollment.student: enrollment.grade_level_id for enrollment in enrollments
+    }
+
+    task_details = []
+    for task in course_tasks:
+        task_detail = {"task": task, "student_details": []}
+        for student in students:
+            assigned = (
+                not task.grade_level_id
+                or task.grade_level_id == grade_levels_by_student[student]
+            )
+            student_detail = {
+                "student": student,
+                "coursework": coursework[student.id].get(task.id),
+                "grade": grades[student.id].get(task.id),
+                "assigned": assigned,
+            }
+            task_detail["student_details"].append(student_detail)
+        task_details.append(task_detail)
+    return {"task_details": task_details}
 
 
 class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):
@@ -518,13 +571,28 @@ def course_task_hx_delete(request, pk):
     task = get_object_or_404(
         get_course_task_queryset(request.user).select_related("course"), pk=pk
     )
-    context = {
-        "course": task.course,
-        "course_tasks": task.course.course_tasks.all()
+    course = task.course
+    course_tasks = (
+        task.course.course_tasks.all()
         .select_related("grade_level")
-        .prefetch_related("graded_work"),
-    }
+        .prefetch_related("graded_work")
+    )
+    context = {"course": course, "course_tasks": course_tasks}
+
+    # Context collection evaluates before template rendering
+    # so the task needs to be deleted before getting the new context.
     task.delete()
+
+    if flag_is_active(request, "combined_course_flag"):
+        grade_levels = task.course.grade_levels.all().order_by("id")
+        enrollments = [
+            enrollment
+            for enrollment in Enrollment.objects.filter(grade_level__in=grade_levels)
+            .select_related("student")
+            .order_by("grade_level")
+        ]
+        context.update(get_course_tasks_context(course, course_tasks, enrollments))
+
     return render(request, "courses/course_tasks.html", context)
 
 

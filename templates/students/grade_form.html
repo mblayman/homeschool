@@ -1,4 +1,5 @@
 {% extends "app_base.html" %}
+{% load waffle_tags %}
 
 {% block head_title %}Set score for {{ student }}{% endblock %}
 
@@ -30,8 +31,13 @@
         <a href="{{ request.GET.next }}"
           class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
       {% else %}
+        {% flag combined_course_flag %}
+        <a href="{% url "courses:detail" course_task.course.id %}"
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+        {% else %}
         <a href="{% url "students:course" student.id course_task.course.id %}"
           class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+        {% endflag %}
       {% endif %}
           Cancel
         </a>

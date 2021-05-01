@@ -1,6 +1,8 @@
 import datetime
 from unittest import mock
 
+from waffle.testutils import override_flag
+
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
     CourseFactory,
@@ -218,6 +220,7 @@ class TestCourseDetailView(TestCase):
         course = CourseFactory()
         self.assertLoginRequired("courses:detail", pk=course.id)
 
+    @override_flag("combined_course_flag", active=True)
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -230,6 +233,7 @@ class TestCourseDetailView(TestCase):
         assert self.get_context("school_year") == grade_level.school_year
         assert self.get_context("course_tasks") == []
         assert self.get_context("last_task") is None
+        self.assertInContext("task_details")
 
     def test_grade_level_name_with_task(self):
         """Any grade level specific task has the grade level's name next to it."""
@@ -267,6 +271,34 @@ class TestCourseDetailView(TestCase):
             self.get_check_200("courses:detail", pk=course.id)
 
         assert self.get_context("enrolled_students") == [enrollment.student]
+
+    @override_flag("combined_course_flag", active=True)
+    def test_course_tasks_context(self):
+        """All the task details of an enrolled student are in the context."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+        work = CourseworkFactory(student=enrollment.student, course_task=task)
+        grade = GradeFactory(student=enrollment.student, graded_work__course_task=task)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", pk=course.id)
+
+        assert self.get_context("task_details") == [
+            {
+                "task": task,
+                "student_details": [
+                    {
+                        "student": enrollment.student,
+                        "assigned": True,
+                        "coursework": work,
+                        "grade": grade,
+                    }
+                ],
+            }
+        ]
 
 
 class TestCourseEditView(TestCase):
@@ -983,6 +1015,7 @@ class TestCourseTaskHxDeleteView(TestCase):
         task = CourseTaskFactory()
         self.assertLoginRequired("courses:task_hx_delete", pk=task.id)
 
+    @override_flag("combined_course_flag", active=True)
     def test_delete(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -994,6 +1027,7 @@ class TestCourseTaskHxDeleteView(TestCase):
 
         assert CourseTask.objects.count() == 0
         self.response_200(response)
+        assert "task_details" in response.context
 
     def test_delete_other_user(self):
         """Another user cannot delete a user's task."""

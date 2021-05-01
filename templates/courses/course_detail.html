@@ -1,4 +1,5 @@
 {% extends "app_base.html" %}
+{% load waffle_tags %}
 
 {% block head_title %}{{ course.name }}{% endblock %}
 
@@ -17,14 +18,17 @@
     {{ course.name }}
   </h1>
 
-  {% if enrolled_students %}
-    <p class="font-extralight text-base text-gray-800 mb-8">
-      See progress for
-      {% for student in enrolled_students %}
-        <a href="{% url "students:course" student.id course.id %}" class="underline hover:text-gray-600">{{ student.first_name }}</a>{% if forloop.last %}.{% else %},{% endif %}
-      {% endfor %}
-    </p>
-  {% endif %}
+  {% flag combined_course_flag %}
+  {% else %}
+    {% if enrolled_students %}
+      <p class="font-extralight text-base text-gray-800 mb-8">
+        See progress for
+        {% for student in enrolled_students %}
+          <a href="{% url "students:course" student.id course.id %}" class="underline hover:text-gray-600">{{ student.first_name }}</a>{% if forloop.last %}.{% else %},{% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+  {% endflag %}
 
   {% if not course.is_active %}
     <p class="font-extralight text-base text-gray-800 mb-8">
@@ -33,26 +37,43 @@
   {% endif %}
 
   <p class="mb-8 print-hide">
-    <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
-      Add New Task
-    </a>
-    <a href="{% url "courses:resource_create" pk=course.id %}"
-      class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
-      Add New Resource
-    </a>
+    {% if course_tasks %}
+      <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+        Add New Task
+      </a>
+      <a href="{% url "courses:resource_create" pk=course.id %}"
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+        Add New Resource
+      </a>
+    {% endif %}
+
     <a href="{% url "courses:edit" pk=course.id %}"
       class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">
       Edit Course
     </a>
   </p>
 
-  {% if course_tasks %}
-    <div class="flex flex-col sm:flex-row max-w-2xl text-sm uppercase tracking-wide font-extralight">
-      <div class="p-2 w-10/12">Task</div>
-      <div class="p-2 w-2/12"></div>
-    </div>
-  {% endif %}
+  {% flag combined_course_flag %}
+    {% if task_details %}
+      <div class="flex flex-col sm:flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight">
+        <div class="p-2 w-6/12">Task</div>
+        <div class="p-2 w-2/12"></div>
+        {% if enrolled_students %}
+          {% for enrolled_student in enrolled_students %}
+            <div class="p-2 w-2/12 pl-8">{{ enrolled_student.first_name }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endif %}
+  {% else %}
+    {% if course_tasks %}
+      <div class="flex flex-col sm:flex-row max-w-2xl text-sm uppercase tracking-wide font-extralight">
+        <div class="p-2 w-10/12">Task</div>
+        <div class="p-2 w-2/12"></div>
+      </div>
+    {% endif %}
+  {% endflag %}
   {% include "courses/course_tasks.html" %}
 
   {% if course.resources.all %}

@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.views.generic import CreateView, FormView, TemplateView
+from waffle import flag_is_active
 
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
@@ -110,6 +111,8 @@ class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, Form
         return kwargs
 
     def get_success_url(self):
+        if flag_is_active(self.request, "combined_course_flag"):
+            return reverse("courses:detail", args=[self.course_task.course.id])
         return reverse(
             "students:course", args=[self.kwargs["pk"], self.course_task.course.id]
         )
@@ -144,6 +147,10 @@ class GradeFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView)
         return kwargs
 
     def get_success_url(self):
+        if flag_is_active(self.request, "combined_course_flag"):
+            return self.request.GET.get(
+                "next", reverse("courses:detail", args=[self.course_task.course.id])
+            )
         return self.request.GET.get(
             "next",
             reverse(
