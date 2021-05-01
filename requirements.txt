@@ -46,7 +46,7 @@ django-hijack==2.3.0
     # via -r requirements.in
 django-ordered-model==3.4.3
     # via -r requirements.in
-django-simple-history==2.12.0
+django-simple-history==3.0.0
     # via -r requirements.in
 django-tz-detect==0.3.0
     # via -r requirements.in
@@ -128,7 +128,6 @@ six==1.14.0
     # via
     #   bleach
     #   cryptography
-    #   django-simple-history
     #   django-tz-detect
     #   packaging
     #   python-dateutil
