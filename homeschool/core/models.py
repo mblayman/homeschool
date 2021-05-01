@@ -72,7 +72,7 @@ class DaysOfWeekModel(models.Model):
         day_count = len(display_days)
         # More than 2 days - Monday, Tuesday, and Wednesday
         if day_count > 2:
-            display_days[-1] = "and {}".format(display_days[-1])
+            display_days[-1] = f"and {display_days[-1]}"
             return ", ".join(display_days)
         # 2 days - Monday and Tuesday
         elif day_count == 2:
