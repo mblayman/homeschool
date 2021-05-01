@@ -87,7 +87,7 @@ packaging==20.4
     # via
     #   bleach
     #   sphinx
-psycopg2==2.8.4
+psycopg2==2.8.6
     # via -r requirements.in
 pycparser==2.20
     # via cffi
