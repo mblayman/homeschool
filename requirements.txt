@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
     # via sphinx
-asgiref==3.2.10
+asgiref==3.3.4
     # via django
 babel==2.9.0
     # via sphinx
@@ -52,7 +52,7 @@ django-tz-detect==0.3.0
     # via -r requirements.in
 django-waffle==2.1.0
     # via -r requirements.in
-django==3.1.8
+django==3.2
     # via
     #   -r requirements.in
     #   dj-stripe

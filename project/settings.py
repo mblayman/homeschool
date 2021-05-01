@@ -123,6 +123,9 @@ DATABASES = {
         ssl_require=env("DATABASE_SSL_REQUIRE"),
     )
 }
+# Starting in Django 3.2, the default field is moving to BigAutoField,
+# but I don't want to mess with a bunch of migrations in 3rd party apps.
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Email
 EMAIL_BACKEND = env("EMAIL_BACKEND")
