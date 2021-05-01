@@ -64,7 +64,9 @@ django==3.1.8
     #   django-tz-detect
     #   jsonfield
 docutils==0.16
-    # via sphinx
+    # via
+    #   sphinx
+    #   sphinx-rtd-theme
 freezegun==1.1.0
     # via -r requirements.in
 gunicorn==20.1.0
@@ -135,7 +137,7 @@ snowballstemmer==2.0.0
     # via sphinx
 soupsieve==1.9.5
     # via beautifulsoup4
-sphinx-rtd-theme==0.5.1
+sphinx-rtd-theme==0.5.2
     # via -r requirements.in
 sphinx-sitemap==2.2.0
     # via -r requirements.in
