@@ -27,7 +27,7 @@ urlpatterns = [
     path("courses/", include("homeschool.courses.urls")),
     path("notifications/", include("homeschool.notifications.urls")),
     path("office/", admin.site.urls),
-    path("office/dashboard/", include("homeschool.core.office_dashboard_urls")),
+    path("office-dashboard/", include("homeschool.core.office_dashboard_urls")),
     path("reports/", include("homeschool.schools.report_urls")),
     path("schools/", include("homeschool.schools.urls")),
     path("settings/", include("homeschool.users.settings_urls")),
