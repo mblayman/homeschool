@@ -23,9 +23,31 @@
         {% if student_info.enrollment %}
           <p class="font-light">{{ student_info.student.first_name }} is enrolled in {{ student_info.enrollment.grade_level }} in the {{ school_year }} school year.</p>
         {% elif school_year %}
+          {% if has_grade_levels %}
+            <div class="my-4">
+              <a href="{% url "students:student_enrollment_create" student_info.student.id school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+                Enroll
+              </a>
+            </div>
+          {% else %}
+            <p class="font-light">
+              To enroll {{ student_info.student.first_name }},
+              please add a grade level to the current school year.
+            </p>
+            <div class="my-4">
+              <a href="{% url "schools:grade_level_create" school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+                Create Grade Level
+              </a>
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="font-light">
+            To enroll {{ student_info.student.first_name }},
+            please add a school year and grade level first.
+          </p>
           <div class="my-4">
-            <a href="{% url "students:student_enrollment_create" student_info.student.id school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
-              Enroll
+            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+              Create School Year
             </a>
           </div>
         {% endif %}

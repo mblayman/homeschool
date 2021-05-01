@@ -39,6 +39,8 @@ class TestStudentsIndexView(TestCase):
             self.get_check_200("students:index")
 
         assert self.get_context("nav_link") == "students"
+        assert self.get_context("school_year") is None
+        assert not self.get_context("has_grade_levels")
 
     def test_has_school_year(self):
         """The current school year is in the context."""
@@ -49,6 +51,16 @@ class TestStudentsIndexView(TestCase):
             self.get_check_200("students:index")
 
         assert self.get_context("school_year") == school_year
+
+    def test_has_grade_levels(self):
+        """The boolean check for grade levels is in the context."""
+        user = self.make_user()
+        GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("students:index")
+
+        assert self.get_context("has_grade_levels")
 
     def test_has_roster(self):
         """The user's students are available in the context."""

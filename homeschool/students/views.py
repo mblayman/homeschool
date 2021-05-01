@@ -26,14 +26,19 @@ class StudentIndexView(LoginRequiredMixin, TemplateView):
         context["nav_link"] = "students"
 
         user = self.request.user
-        context["school_year"] = SchoolYear.get_current_year_for(user)
+        school_year = SchoolYear.get_current_year_for(user)
+        context["school_year"] = school_year
+        context["has_grade_levels"] = GradeLevel.objects.filter(
+            school_year=school_year
+        ).exists()
+
         context["roster"] = []
         for student in Student.objects.filter(school=user.school):
             context["roster"].append(
                 {
                     "student": student,
                     "enrollment": Enrollment.objects.filter(
-                        student=student, grade_level__school_year=context["school_year"]
+                        student=student, grade_level__school_year=school_year
                     )
                     .select_related("grade_level")
                     .first(),
