@@ -20,7 +20,7 @@ psycopg2==2.8.6
 python-dateutil==2.8.1
 requests==2.25.1
 rollbar==0.15.2
-Sphinx==3.5.3
+Sphinx==3.5.4
 sphinx-rtd-theme==0.5.2
 sphinx-sitemap==2.2.0
 whitenoise[brotli]==5.2.0
