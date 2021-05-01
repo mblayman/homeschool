@@ -4,9 +4,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 from hashid_field import HashidAutoField
-from ordered_model.models import OrderedModel
+from ordered_model.models import OrderedModel, OrderedModelQuerySet
 
-from homeschool.core.compatibility import OrderedModelQuerySet
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.schools.models import GradeLevel
 from homeschool.users.models import User
