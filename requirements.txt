@@ -44,7 +44,7 @@ django-hashid-field==3.2.1
     # via -r requirements.in
 django-hijack==2.3.0
     # via -r requirements.in
-django-ordered-model==3.4.1
+django-ordered-model==3.4.3
     # via -r requirements.in
 django-simple-history==2.12.0
     # via -r requirements.in
