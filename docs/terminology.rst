@@ -52,3 +52,12 @@ The most critical terminology is listed below.
         in a grade level.
         The student has a schedule that is tailored to them
         and tracks individual progress.
+
+    Resource
+        Any materials related to a course are called resources.
+        Resources are your textbooks,
+        workbooks,
+        multimedia,
+        or any other content
+        that you wish to track
+        with a course's history.
