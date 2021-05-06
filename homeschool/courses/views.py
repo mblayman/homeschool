@@ -246,19 +246,24 @@ def get_course_tasks_context(course, course_tasks, enrollments):
 
     task_details = []
     for task in course_tasks:
-        task_detail = {"task": task, "student_details": []}
+        task_detail = {"task": task, "student_details": [], "complete": bool(students)}
         for student in students:
             assigned = (
                 not task.grade_level_id
                 or task.grade_level_id == grade_levels_by_student[student]
             )
+            work = coursework[student.id].get(task.id)
             student_detail = {
                 "student": student,
-                "coursework": coursework[student.id].get(task.id),
+                "coursework": work,
                 "grade": grades[student.id].get(task.id),
                 "assigned": assigned,
             }
             task_detail["student_details"].append(student_detail)
+
+            if not work:
+                task_detail["complete"] = False
+
         task_details.append(task_detail)
     return {"task_details": task_details}
 

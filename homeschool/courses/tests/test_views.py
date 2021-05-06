@@ -289,6 +289,7 @@ class TestCourseDetailView(TestCase):
         assert self.get_context("task_details") == [
             {
                 "task": task,
+                "complete": True,
                 "student_details": [
                     {
                         "student": enrollment.student,
@@ -299,6 +300,55 @@ class TestCourseDetailView(TestCase):
                 ],
             }
         ]
+
+    @override_flag("combined_course_flag", active=True)
+    def test_task_complete_no_student(self):
+        """When there are no students, a task defaults to incomplete."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", pk=course.id)
+
+        detail = self.get_context("task_details")[0]
+        assert not detail["complete"]
+
+    @override_flag("combined_course_flag", active=True)
+    def test_task_complete_one_student_coursework(self):
+        """When a student has not completed, the task is marked incomplete."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        EnrollmentFactory(grade_level=grade_level)
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+        CourseworkFactory(student=enrollment.student, course_task=task)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", pk=course.id)
+
+        detail = self.get_context("task_details")[0]
+        assert not detail["complete"]
+
+    @override_flag("combined_course_flag", active=True)
+    def test_task_complete_both_students_done(self):
+        """When all students are done with a task, it is marked complete."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        enrollment_1 = EnrollmentFactory(grade_level=grade_level)
+        CourseworkFactory(student=enrollment_1.student, course_task=task)
+        enrollment_2 = EnrollmentFactory(grade_level=grade_level)
+        CourseworkFactory(student=enrollment_2.student, course_task=task)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", pk=course.id)
+
+        detail = self.get_context("task_details")[0]
+        assert detail["complete"]
 
 
 class TestCourseEditView(TestCase):

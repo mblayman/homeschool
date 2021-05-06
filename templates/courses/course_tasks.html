@@ -2,7 +2,7 @@
 <div id="tasks">
 {% flag combined_course_flag %}
   {% for task_detail in task_details %}
-    <div id="task-{{ task_detail.task.id }}" class="flex flex-col sm:flex-row max-w-4xl">
+    <div id="task-{{ task_detail.task.id }}" class="flex flex-col sm:flex-row max-w-4xl {% if task_detail.complete %}text-gray-500{% endif %}">
       <div class="w-1/12 p-2 text-sm font-light overflow-x-scroll border-t border-yellow-400">
         {{ forloop.counter }}.
       </div>
