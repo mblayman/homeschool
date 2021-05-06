@@ -86,6 +86,7 @@ Measurement criteria:
 | CM Organizer | Freemium | $7.95 / month | 2/1/21 |
 | Google Classroom | Free | $0 | 3/12/21 |
 | Homeschool Manager | Subscription | $5.99 / month | 3/13/21 |
+| Homeschool Minder | Subscription | $4.99 / month | 5/3/21 |
 
 ### Charlotte Mason Organizer
 
@@ -218,6 +219,42 @@ Forum topics: Nothing found.
 ### Homeschool Minder
 
 https://www.homeschoolminder.com/
+
+* From 2012
+* Pricing $4.99 / month OR $39.99 / year (free trial, length not on homepage)
+* Broken blog
+* Primary features from intro video
+  * Scheduler (Calendar)
+  * Gradebook
+  * Lesson plans
+  * Skill tracking
+  * Student records
+  * Reports
+* Grade scales - users can define the numbers and symbols used
+* Calendar has some pretty deep recurrence features
+* Lesson plans
+  * a way to group and sub-divide activities within a course.
+  * Tied to a course and term (i.e., intended to be time bound)
+* Skills
+  * Skills track activities within a course too, but are not time bound
+  * A group of Skills is a Standard
+* Student Information
+  * Tracks a bunch of personal identification (:grimacing:)
+  * Can add aribtrary custom fields and values
+  * Tracks contact information
+  * Tracks standardized test scores
+  * Tracks "Readings" aka a book list
+  * Tracks community service information
+* Reports
+  * Lots of different report choices
+  * All seem to be generated PDFs
+* Student Logins
+  * Students get a mostly read only view, but can complete tasks.
+* School Years require terms and courses must be added to a term.
+* Students are added to courses via a Registration
+  * It looks like a registration is needed per course (whoa, heavy).
+* The service can track any random events on the calendar.
+* Assignments have customizable categories.
 
 Forum topics:
 
