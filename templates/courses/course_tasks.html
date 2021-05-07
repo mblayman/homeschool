@@ -72,7 +72,7 @@
             {% if student_detail.assigned %}
               {% if task_detail.task.is_graded %}
                 <a href="{% url "students:grade_task" pk=student_detail.student.id course_task_id=task_detail.task.id %}?previous_task={{ task_detail.task.id }}&next={{ request.path|urlencode }}%23task-{{ task_detail.task.id }}" class="block flex items-center mx-1 mb-1 hover:text-gray-600">
-                  <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <title>Graded Task</title>
                     <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                   </svg>
@@ -87,7 +87,7 @@
               {% endif %}
 
               <a href="{% url "students:coursework" pk=student_detail.student.id course_task_id=task_detail.task.id %}?previous_task={{ task_detail.task.id }}&next={{ request.path|urlencode }}%23task-{{ task_detail.task.id }}" class="block flex items-center mx-1 hover:text-gray-600">
-                <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <title>Set the completed date of the task</title>
                   <path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/>
                 </svg>
@@ -99,6 +99,18 @@
                   {% endif %}
                 </div>
               </a>
+
+              {% if student_detail.planned_date %}
+                <div class="block flex items-center mx-1 mt-1">
+                  <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Projected Completion Date</title>
+                    <path d="M11 9h2v2H9V7h2v2zm-5.82 6.08a6.98 6.98 0 0 1 0-10.16L6 0h8l.82 4.92a6.98 6.98 0 0 1 0 10.16L14 20H6l-.82-4.92zM10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                  </svg>
+                  <div>
+                    {{ student_detail.planned_date|date:"Y-m-d" }}
+                  </div>
+                </div>
+              {% endif %}
             {% endif %}
           </div>
         {% endfor %}

@@ -21,6 +21,7 @@ from waffle import flag_is_active
 
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
+from homeschool.schools.forecaster import Forecaster
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade
 
@@ -244,6 +245,11 @@ def get_course_tasks_context(course, course_tasks, enrollments):
         enrollment.student: enrollment.grade_level_id for enrollment in enrollments
     }
 
+    forecaster = Forecaster()
+    forecasts = {}
+    for student in students:
+        forecasts[student] = forecaster.get_items_by_task(student, course)
+
     task_details = []
     for task in course_tasks:
         task_detail = {"task": task, "student_details": [], "complete": bool(students)}
@@ -258,6 +264,7 @@ def get_course_tasks_context(course, course_tasks, enrollments):
                 "coursework": work,
                 "grade": grades[student.id].get(task.id),
                 "assigned": assigned,
+                "planned_date": forecasts[student].get(task, {}).get("planned_date"),
             }
             task_detail["student_details"].append(student_detail)
 

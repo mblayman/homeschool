@@ -296,6 +296,7 @@ class TestCourseDetailView(TestCase):
                         "assigned": True,
                         "coursework": work,
                         "grade": grade,
+                        "planned_date": None,
                     }
                 ],
             }

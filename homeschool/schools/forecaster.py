@@ -23,6 +23,12 @@ class Forecaster:
             return task_item["planned_date"]
         return task_item["coursework"].completed_date
 
+    def get_items_by_task(self, student, course):
+        """Get information about the tasks keyed by the task."""
+        return {
+            item["course_task"]: item for item in self.get_task_items(student, course)
+        }
+
     def get_task_items(self, student, course):
         today = timezone.localdate()
 
