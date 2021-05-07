@@ -282,12 +282,14 @@ class TestCourseDetailView(TestCase):
         enrollment = EnrollmentFactory(grade_level=grade_level)
         work = CourseworkFactory(student=enrollment.student, course_task=task)
         grade = GradeFactory(student=enrollment.student, graded_work__course_task=task)
+        url = self.reverse("courses:detail", pk=course.id) + "?completed_tasks=1"
 
         with self.login(user):
-            self.get_check_200("courses:detail", pk=course.id)
+            self.get_check_200(url)
 
         assert self.get_context("task_details") == [
             {
+                "number": 1,
                 "task": task,
                 "complete": True,
                 "student_details": [
@@ -344,12 +346,28 @@ class TestCourseDetailView(TestCase):
         CourseworkFactory(student=enrollment_1.student, course_task=task)
         enrollment_2 = EnrollmentFactory(grade_level=grade_level)
         CourseworkFactory(student=enrollment_2.student, course_task=task)
+        url = self.reverse("courses:detail", pk=course.id) + "?completed_tasks=1"
+
+        with self.login(user):
+            self.get_check_200(url)
+
+        detail = self.get_context("task_details")[0]
+        assert detail["complete"]
+
+    @override_flag("combined_course_flag", active=True)
+    def test_hide_complete_tasks(self):
+        """With students enrolled, completed tasks are hidden by default."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+        CourseworkFactory(student=enrollment.student, course_task=task)
 
         with self.login(user):
             self.get_check_200("courses:detail", pk=course.id)
 
-        detail = self.get_context("task_details")[0]
-        assert detail["complete"]
+        assert not self.get_context("task_details")
 
 
 class TestCourseEditView(TestCase):

@@ -4,7 +4,7 @@
   {% for task_detail in task_details %}
     <div id="task-{{ task_detail.task.id }}" class="flex flex-col sm:flex-row max-w-4xl {% if task_detail.complete %}text-gray-500{% endif %}">
       <div class="w-1/12 p-2 text-sm font-light overflow-x-scroll border-t border-yellow-400">
-        {{ forloop.counter }}.
+        {{ task_detail.number }}.
       </div>
 
       <div class="{% if task_detail.task.grade_level and not task_detail.student_details %}w-4/12{% else %}w-5/12{% endif %} p-2 pl-0 text-sm font-light overflow-x-scroll border-t border-yellow-400">
@@ -55,7 +55,7 @@
           </button>
         </form>
         <a class="block mr-2 hover:text-gray-600"
-          hx-delete="{% url "courses:task_hx_delete" task_detail.task.id %}"
+          hx-delete="{% url "courses:task_hx_delete" task_detail.task.id %}{% if request.GET.completed_tasks %}?completed_tasks=1{% endif %}"
           hx-confirm="Are you sure you want to delete this task?"
           hx-target="#tasks"
           hx-swap="outerHTML">

@@ -55,6 +55,18 @@
   </p>
 
   {% flag combined_course_flag %}
+    {% if enrolled_students %}
+      <p class="text-sm text-gray-700 font-light mb-2">
+      {% if request.GET.completed_tasks %}
+        <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
+      {% else %}
+        <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
+      {% endif %}
+      </p>
+    {% endif %}
+  {% endflag %}
+
+  {% flag combined_course_flag %}
     {% if task_details %}
       <div class="flex flex-col sm:flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight">
         <div class="p-2 w-6/12">Task</div>
@@ -75,6 +87,18 @@
     {% endif %}
   {% endflag %}
   {% include "courses/course_tasks.html" %}
+
+  {% flag combined_course_flag %}
+    {% if enrolled_students %}
+      <p class="text-sm text-gray-700 font-light mt-4">
+      {% if request.GET.completed_tasks %}
+        <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
+      {% else %}
+        <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
+      {% endif %}
+      </p>
+    {% endif %}
+  {% endflag %}
 
   {% if course.resources.all %}
     <h1 class="font-extralight text-2xl text-blue-900 mt-8 mb-4">Resources</h1>

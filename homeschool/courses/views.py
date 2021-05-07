@@ -216,14 +216,17 @@ class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
         context["last_task"] = last_task
 
         if flag_is_active(self.request, "combined_course_flag"):
+            show_completed_tasks = bool(self.request.GET.get("completed_tasks"))
             context.update(
-                get_course_tasks_context(self.object, course_tasks, enrollments)
+                get_course_tasks_context(
+                    self.object, course_tasks, enrollments, show_completed_tasks
+                )
             )
 
         return context
 
 
-def get_course_tasks_context(course, course_tasks, enrollments):
+def get_course_tasks_context(course, course_tasks, enrollments, show_completed_tasks):
     """Get the context required to render the course tasks.
 
     This context is also required by the htmx delete view.
@@ -251,8 +254,13 @@ def get_course_tasks_context(course, course_tasks, enrollments):
         forecasts[student] = forecaster.get_items_by_task(student, course)
 
     task_details = []
-    for task in course_tasks:
-        task_detail = {"task": task, "student_details": [], "complete": bool(students)}
+    for number, task in enumerate(course_tasks, start=1):
+        task_detail = {
+            "number": number,
+            "task": task,
+            "student_details": [],
+            "complete": bool(students),
+        }
         for student in students:
             assigned = (
                 not task.grade_level_id
@@ -270,6 +278,9 @@ def get_course_tasks_context(course, course_tasks, enrollments):
 
             if not work:
                 task_detail["complete"] = False
+
+        if task_detail["complete"] and not show_completed_tasks:
+            continue
 
         task_details.append(task_detail)
     return {"task_details": task_details}
@@ -596,6 +607,7 @@ def course_task_hx_delete(request, pk):
     task.delete()
 
     if flag_is_active(request, "combined_course_flag"):
+        show_completed_tasks = bool(request.GET.get("completed_tasks"))
         grade_levels = task.course.grade_levels.all().order_by("id")
         enrollments = [
             enrollment
@@ -603,7 +615,11 @@ def course_task_hx_delete(request, pk):
             .select_related("student")
             .order_by("grade_level")
         ]
-        context.update(get_course_tasks_context(course, course_tasks, enrollments))
+        context.update(
+            get_course_tasks_context(
+                course, course_tasks, enrollments, show_completed_tasks
+            )
+        )
 
     return render(request, "courses/course_tasks.html", context)
 
