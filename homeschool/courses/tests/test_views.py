@@ -2,7 +2,6 @@ import datetime
 from unittest import mock
 
 from freezegun import freeze_time
-from waffle.testutils import override_flag
 
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
@@ -221,7 +220,6 @@ class TestCourseDetailView(TestCase):
         course = CourseFactory()
         self.assertLoginRequired("courses:detail", pk=course.id)
 
-    @override_flag("combined_course_flag", active=True)
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -273,7 +271,6 @@ class TestCourseDetailView(TestCase):
 
         assert self.get_context("enrolled_students") == [enrollment.student]
 
-    @override_flag("combined_course_flag", active=True)
     def test_course_tasks_context(self):
         """All the task details of an enrolled student are in the context."""
         user = self.make_user()
@@ -305,7 +302,6 @@ class TestCourseDetailView(TestCase):
             }
         ]
 
-    @override_flag("combined_course_flag", active=True)
     def test_task_complete_no_student(self):
         """When there are no students, a task defaults to incomplete."""
         user = self.make_user()
@@ -319,7 +315,6 @@ class TestCourseDetailView(TestCase):
         detail = self.get_context("task_details")[0]
         assert not detail["complete"]
 
-    @override_flag("combined_course_flag", active=True)
     def test_task_complete_one_student_coursework(self):
         """When a student has not completed, the task is marked incomplete."""
         user = self.make_user()
@@ -336,7 +331,6 @@ class TestCourseDetailView(TestCase):
         detail = self.get_context("task_details")[0]
         assert not detail["complete"]
 
-    @override_flag("combined_course_flag", active=True)
     def test_task_complete_both_students_done(self):
         """When all students are done with a task, it is marked complete."""
         user = self.make_user()
@@ -355,7 +349,6 @@ class TestCourseDetailView(TestCase):
         detail = self.get_context("task_details")[0]
         assert detail["complete"]
 
-    @override_flag("combined_course_flag", active=True)
     def test_hide_complete_tasks(self):
         """With students enrolled, completed tasks are hidden by default."""
         user = self.make_user()
@@ -370,7 +363,6 @@ class TestCourseDetailView(TestCase):
 
         assert not self.get_context("task_details")
 
-    @override_flag("combined_course_flag", active=True)
     @freeze_time("2021-03-10")  # Wednesday
     def test_no_student_planned_date(self):
         """When no student is enrolled, the tasks have a planned completion date."""
@@ -1100,7 +1092,6 @@ class TestCourseTaskHxDeleteView(TestCase):
         task = CourseTaskFactory()
         self.assertLoginRequired("courses:task_hx_delete", pk=task.id)
 
-    @override_flag("combined_course_flag", active=True)
     def test_delete(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)

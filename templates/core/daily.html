@@ -1,5 +1,5 @@
 {% extends "app_base.html" %}
-{% load static waffle_tags %}
+{% load static %}
 
 {% block head_title %}{% if day %}Day of {{ day|date:"l, N j" }}{% else %}Daily{% endif %}{% endblock %}
 
@@ -52,11 +52,7 @@
         {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
           <div class="flex flex-row border-t border-yellow-400 max-w-3xl">
             <div class="w-3/12 text-sm uppercase tracking-wide font-extralight py-2 pr-4">
-              {% flag combined_course_flag %}
               <a class="hover:underline" href="{% url "courses:detail" course_schedule.course.id %}">{{ course_schedule.course.name }}</a>
-              {% else %}
-              <a class="hover:underline" href="{% url "students:course" schedule.student.id course_schedule.course.id %}">{{ course_schedule.course.name }}</a>
-              {% endflag %}
             </div>
 
             {% if course_schedule.task %}

@@ -1,5 +1,4 @@
 {% extends "app_base.html" %}
-{% load waffle_tags %}
 
 {% block head_title %}{{ course.name }}{% endblock %}
 
@@ -18,27 +17,16 @@
     {{ course.name }}
   </h1>
 
-  {% flag combined_course_flag %}
-    {% if not course.is_running %}
-      <div class="flex flex-row items-center bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mb-8 rounded-lg shadow-sm max-w-xl">
-        <span class="text-yellow-500 mr-4">
-          <svg class="h-8 w-8 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 5h2v6H9V5zm0 8h2v2H9v-2z"/></svg>
-        </span>
-        <div>
-          The course is not running on any days. Projected completion dates are not available.
-        </div>
+  {% if not course.is_running %}
+    <div class="flex flex-row items-center bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mb-8 rounded-lg shadow-sm max-w-xl">
+      <span class="text-yellow-500 mr-4">
+        <svg class="h-8 w-8 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 5h2v6H9V5zm0 8h2v2H9v-2z"/></svg>
+      </span>
+      <div>
+        The course is not running on any days. Projected completion dates are not available.
       </div>
-    {% endif %}
-  {% else %}
-    {% if enrolled_students %}
-      <p class="font-extralight text-base text-gray-800 mb-8">
-        See progress for
-        {% for student in enrolled_students %}
-          <a href="{% url "students:course" student.id course.id %}" class="underline hover:text-gray-600">{{ student.first_name }}</a>{% if forloop.last %}.{% else %},{% endif %}
-        {% endfor %}
-      </p>
-    {% endif %}
-  {% endflag %}
+    </div>
+  {% endif %}
 
   {% if not course.is_active %}
     <p class="font-extralight text-base text-gray-800 mb-8">
@@ -64,63 +52,50 @@
     </a>
   </p>
 
-  {% flag combined_course_flag %}
-    {% if enrolled_students %}
-      <p class="text-sm text-gray-700 font-light mb-2">
-      {% if request.GET.completed_tasks %}
-        <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
-      {% else %}
-        <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
-      {% endif %}
-      </p>
+  {% if enrolled_students %}
+    <p class="text-sm text-gray-700 font-light mb-2">
+    {% if request.GET.completed_tasks %}
+      <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
+    {% else %}
+      <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
     {% endif %}
-  {% endflag %}
+    </p>
+  {% endif %}
 
-  {% flag combined_course_flag %}
-    {% if task_details %}
-      <div class="flex flex-col sm:flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight">
-        <div class="p-2 w-6/12">Task</div>
-        <div class="p-2 w-2/12"></div>
-        {% if enrolled_students %}
-          {% for enrolled_student in enrolled_students %}
-            <div class="p-2 w-2/12 pl-9">{{ enrolled_student.first_name }}</div>
-          {% endfor %}
-        {% elif course.is_running %}
-          <div class="flex flex-row items-center p-2 w-4/12 pl-9">
-            <div class="text-blue-800">
-              <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <title>Projected Completion Date</title>
-                <path d="M11 9h2v2H9V7h2v2zm-5.82 6.08a6.98 6.98 0 0 1 0-10.16L6 0h8l.82 4.92a6.98 6.98 0 0 1 0 10.16L14 20H6l-.82-4.92zM10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
-              </svg>
-            </div>
-            <div>
-              Planned Completion
-            </div>
+  {% if task_details %}
+    <div class="flex flex-col sm:flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight">
+      <div class="p-2 w-6/12">Task</div>
+      <div class="p-2 w-2/12"></div>
+      {% if enrolled_students %}
+        {% for enrolled_student in enrolled_students %}
+          <div class="p-2 w-2/12 pl-9">{{ enrolled_student.first_name }}</div>
+        {% endfor %}
+      {% elif course.is_running %}
+        <div class="flex flex-row items-center p-2 w-4/12 pl-9">
+          <div class="text-blue-800">
+            <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <title>Projected Completion Date</title>
+              <path d="M11 9h2v2H9V7h2v2zm-5.82 6.08a6.98 6.98 0 0 1 0-10.16L6 0h8l.82 4.92a6.98 6.98 0 0 1 0 10.16L14 20H6l-.82-4.92zM10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+            </svg>
           </div>
-        {% endif %}
-      </div>
-    {% endif %}
-  {% else %}
-    {% if course_tasks %}
-      <div class="flex flex-col sm:flex-row max-w-2xl text-sm uppercase tracking-wide font-extralight">
-        <div class="p-2 w-10/12">Task</div>
-        <div class="p-2 w-2/12"></div>
-      </div>
-    {% endif %}
-  {% endflag %}
+          <div>
+            Planned Completion
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
   {% include "courses/course_tasks.html" %}
 
-  {% flag combined_course_flag %}
-    {% if enrolled_students %}
-      <p class="text-sm text-gray-700 font-light mt-4">
-      {% if request.GET.completed_tasks %}
-        <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
-      {% else %}
-        <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
-      {% endif %}
-      </p>
+  {% if enrolled_students %}
+    <p class="text-sm text-gray-700 font-light mt-4">
+    {% if request.GET.completed_tasks %}
+      <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
+    {% else %}
+      <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
     {% endif %}
-  {% endflag %}
+    </p>
+  {% endif %}
 
   {% if course.resources.all %}
     <h1 class="font-extralight text-2xl text-blue-900 mt-8 mb-4">Resources</h1>

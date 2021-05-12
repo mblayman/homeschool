@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.messages import get_messages
 from django.utils import timezone
 from freezegun import freeze_time
-from waffle.testutils import override_flag
 
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import (
@@ -375,31 +374,6 @@ class TestCourseworkFormView(TestCase):
             == 1
         )
 
-    @override_flag("combined_course_flag", active=True)
-    def test_post_with_flag(self):
-        """REMOVE. A POST creates a coursework."""
-        user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        EnrollmentFactory(student=student, grade_level=grade_level)
-        course = CourseFactory(grade_levels=[grade_level])
-        course_task = CourseTaskFactory(course=course)
-        data = {"completed_date": str(grade_level.school_year.start_date)}
-
-        with self.login(user):
-            response = self.post(
-                "students:coursework",
-                pk=student.id,
-                course_task_id=course_task.id,
-                data=data,
-            )
-
-        self.response_302(response)
-        assert (
-            Coursework.objects.filter(student=student, course_task=course_task).count()
-            == 1
-        )
-
     def test_other_user_student(self):
         """A student belonging to another user is a 404."""
         user = self.make_user()
@@ -474,31 +448,6 @@ class TestGradeFormView(TestCase):
 
     def test_post(self):
         """A POST creates a grade."""
-        user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        EnrollmentFactory(student=student, grade_level=grade_level)
-        course = CourseFactory(grade_levels=[grade_level])
-        course_task = CourseTaskFactory(course=course)
-        graded_work = GradedWorkFactory(course_task=course_task)
-        data = {"score": "100"}
-
-        with self.login(user):
-            response = self.post(
-                "students:grade_task",
-                pk=student.id,
-                course_task_id=course_task.id,
-                data=data,
-            )
-
-        self.response_302(response)
-        assert (
-            Grade.objects.filter(student=student, graded_work=graded_work).count() == 1
-        )
-
-    @override_flag("combined_course_flag", active=True)
-    def test_post_with_flag(self):
-        """REMOVE WITH FLAG CLEANUP. A POST creates a grade."""
         user = self.make_user()
         student = StudentFactory(school=user.school)
         grade_level = GradeLevelFactory(school_year__school=user.school)

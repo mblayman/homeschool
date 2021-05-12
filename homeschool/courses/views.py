@@ -17,7 +17,6 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from waffle import flag_is_active
 
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
@@ -215,13 +214,12 @@ class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
             last_task = course_tasks[-1]
         context["last_task"] = last_task
 
-        if flag_is_active(self.request, "combined_course_flag"):
-            show_completed_tasks = bool(self.request.GET.get("completed_tasks"))
-            context.update(
-                get_course_tasks_context(
-                    self.object, course_tasks, enrollments, show_completed_tasks
-                )
+        show_completed_tasks = bool(self.request.GET.get("completed_tasks"))
+        context.update(
+            get_course_tasks_context(
+                self.object, course_tasks, enrollments, show_completed_tasks
             )
+        )
 
         return context
 
@@ -624,20 +622,19 @@ def course_task_hx_delete(request, pk):
     # so the task needs to be deleted before getting the new context.
     task.delete()
 
-    if flag_is_active(request, "combined_course_flag"):
-        show_completed_tasks = bool(request.GET.get("completed_tasks"))
-        grade_levels = task.course.grade_levels.all().order_by("id")
-        enrollments = [
-            enrollment
-            for enrollment in Enrollment.objects.filter(grade_level__in=grade_levels)
-            .select_related("student")
-            .order_by("grade_level")
-        ]
-        context.update(
-            get_course_tasks_context(
-                course, course_tasks, enrollments, show_completed_tasks
-            )
+    show_completed_tasks = bool(request.GET.get("completed_tasks"))
+    grade_levels = task.course.grade_levels.all().order_by("id")
+    enrollments = [
+        enrollment
+        for enrollment in Enrollment.objects.filter(grade_level__in=grade_levels)
+        .select_related("student")
+        .order_by("grade_level")
+    ]
+    context.update(
+        get_course_tasks_context(
+            course, course_tasks, enrollments, show_completed_tasks
         )
+    )
 
     return render(request, "courses/course_tasks.html", context)
 

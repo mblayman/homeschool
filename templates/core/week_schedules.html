@@ -1,4 +1,3 @@
-{% load waffle_tags %}
 {% for schedule in schedules %}
 <div class="print-break-after-page">
   <h2 class="font-extralight text-xl text-blue-900">{{ schedule.student.first_name }}</h2>
@@ -27,11 +26,7 @@
   {% for course_schedule in schedule.courses %}
     <div class="flex flex-row border-t border-yellow-400 {% if forloop.last %}mb-16{% endif %}">
       <div class="flex-1 text-sm uppercase tracking-wide font-extralight py-2 pr-4">
-        {% flag combined_course_flag %}
         <a class="hover:underline" href="{% url "courses:detail" course_schedule.course.id %}">{{ course_schedule.course.name }}</a>
-        {% else %}
-        <a class="hover:underline" href="{% url "students:course" schedule.student.id course_schedule.course.id %}">{{ course_schedule.course.name }}</a>
-        {% endflag %}
       </div>
 
       {% with last_row=forloop.last %}
