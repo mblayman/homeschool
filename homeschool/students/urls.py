@@ -7,11 +7,6 @@ urlpatterns = [
     path("", views.StudentIndexView.as_view(), name="index"),
     path("create/", views.StudentCreateView.as_view(), name="create"),
     path(
-        "<hashid:pk>/courses/<hashid:course_id>/",
-        views.StudentCourseView.as_view(),
-        name="course",
-    ),
-    path(
         "<hashid:pk>/tasks/<hashid:course_task_id>/",
         views.CourseworkFormView.as_view(),
         name="coursework",

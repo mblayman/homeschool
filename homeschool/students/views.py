@@ -8,7 +8,6 @@ from django.views.generic import CreateView, FormView, TemplateView
 
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
-from homeschool.schools.forecaster import Forecaster
 from homeschool.schools.models import GradeLevel, SchoolYear
 
 from .exceptions import FullEnrollmentError, NoGradeLevelError, NoStudentError
@@ -66,32 +65,6 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
             data["school"] = self.request.user.school
             kwargs["data"] = data
         return kwargs
-
-
-class StudentCourseView(LoginRequiredMixin, StudentMixin, TemplateView):
-    template_name = "students/course.html"
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        user = self.request.user
-        context["student"] = self.student
-        context["course"] = self.get_course(user)
-        forecaster = Forecaster()
-        context["task_items"] = forecaster.get_task_items(
-            context["student"], context["course"]
-        )
-        if not self.request.GET.get("completed_tasks"):
-            context["task_items"] = [
-                item for item in context["task_items"] if "coursework" not in item
-            ]
-        return context
-
-    def get_course(self, user):
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return get_object_or_404(
-            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
-            pk=self.kwargs["course_id"],
-        )
 
 
 class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView):
