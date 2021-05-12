@@ -13,8 +13,6 @@ can be time consuming.
 We want to give you some shortcuts
 to make common task creation actions easy.
 
-<!--more-->
-
 School Desk now includes options and improvements
 that should be a boon
 for school year planning.
