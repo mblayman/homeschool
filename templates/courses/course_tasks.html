@@ -114,6 +114,12 @@
             {% endif %}
           </div>
         {% endfor %}
+      {% else %}
+        {% if course.is_running %}
+          <div class="w-3/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll border-t border-yellow-400 text-center">
+            {{ task_detail.planned_date|date:"Y-m-d" }}
+          </div>
+        {% endif %}
       {% endif %}
     </div>
   {% empty %}

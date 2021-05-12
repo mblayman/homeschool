@@ -248,10 +248,7 @@ def get_course_tasks_context(course, course_tasks, enrollments, show_completed_t
         enrollment.student: enrollment.grade_level_id for enrollment in enrollments
     }
 
-    forecaster = Forecaster()
-    forecasts = {}
-    for student in students:
-        forecasts[student] = forecaster.get_items_by_task(student, course)
+    forecasts = _get_forecasts(students, course)
 
     task_details = []
     for number, task in enumerate(course_tasks, start=1):
@@ -279,11 +276,32 @@ def get_course_tasks_context(course, course_tasks, enrollments, show_completed_t
             if not work:
                 task_detail["complete"] = False
 
+        if not students:
+            task_detail["planned_date"] = (
+                forecasts[None].get(task, {}).get("planned_date")
+            )
+
         if task_detail["complete"] and not show_completed_tasks:
             continue
 
         task_details.append(task_detail)
     return {"task_details": task_details}
+
+
+def _get_forecasts(students, course):
+    """Get the forecast dates for all the students.
+
+    If there are no students, a generic forecast is added to the None key.
+    """
+    forecaster = Forecaster()
+    forecasts = {}
+    for student in students:
+        forecasts[student] = forecaster.get_items_by_task(student, course)
+
+    if not students:
+        forecasts[None] = forecaster.get_items_by_task(student=None, course=course)
+
+    return forecasts
 
 
 class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):

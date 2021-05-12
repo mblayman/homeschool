@@ -1,6 +1,7 @@
 import datetime
 from unittest import mock
 
+from freezegun import freeze_time
 from waffle.testutils import override_flag
 
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
@@ -368,6 +369,21 @@ class TestCourseDetailView(TestCase):
             self.get_check_200("courses:detail", pk=course.id)
 
         assert not self.get_context("task_details")
+
+    @override_flag("combined_course_flag", active=True)
+    @freeze_time("2021-03-10")  # Wednesday
+    def test_no_student_planned_date(self):
+        """When no student is enrolled, the tasks have a planned completion date."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", pk=course.id)
+
+        planned_date = self.get_context("task_details")[0]["planned_date"]
+        assert planned_date == datetime.date.today()
 
 
 class TestCourseEditView(TestCase):

@@ -23,7 +23,7 @@ class Forecaster:
             return task_item["planned_date"]
         return task_item["coursework"].completed_date
 
-    def get_items_by_task(self, student, course):
+    def get_items_by_task(self, student: Optional[Student], course: Course) -> dict:
         """Get information about the tasks keyed by the task."""
         return {
             item["course_task"]: item for item in self.get_task_items(student, course)
@@ -46,7 +46,12 @@ class Forecaster:
 
         course_is_running = course.is_running
         coursework_by_task = self._get_course_work_by_task(student, course)
-        course_tasks = student.get_tasks_for(course).select_related("graded_work")
+
+        if student:
+            course_tasks = student.get_tasks_for(course).select_related("graded_work")
+        else:
+            course_tasks = course.course_tasks.all()
+
         task_items = []
         for course_task in course_tasks:
             task_item = {

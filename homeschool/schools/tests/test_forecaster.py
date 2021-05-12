@@ -48,3 +48,15 @@ class TestForecaster(TestCase):
         last_date = forecaster.get_last_forecast_date(student, course)
 
         assert last_date == coursework.completed_date
+
+    @freeze_time("2021-03-10")  # Wednesday
+    def test_no_student_forecast(self):
+        """The forecaster can produce a forecast for no student."""
+        enrollment = EnrollmentFactory()
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        task = CourseTaskFactory(course=course)
+        forecaster = Forecaster()
+
+        items = forecaster.get_items_by_task(None, course)
+
+        assert items[task]["planned_date"] == datetime.date.today()

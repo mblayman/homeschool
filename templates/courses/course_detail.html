@@ -85,6 +85,18 @@
           {% for enrolled_student in enrolled_students %}
             <div class="p-2 w-2/12 pl-9">{{ enrolled_student.first_name }}</div>
           {% endfor %}
+        {% elif course.is_running %}
+          <div class="flex flex-row items-center p-2 w-4/12 pl-9">
+            <div class="text-blue-800">
+              <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <title>Projected Completion Date</title>
+                <path d="M11 9h2v2H9V7h2v2zm-5.82 6.08a6.98 6.98 0 0 1 0-10.16L6 0h8l.82 4.92a6.98 6.98 0 0 1 0 10.16L14 20H6l-.82-4.92zM10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+              </svg>
+            </div>
+            <div>
+              Planned Completion
+            </div>
+          </div>
         {% endif %}
       </div>
     {% endif %}
