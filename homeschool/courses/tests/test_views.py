@@ -577,10 +577,11 @@ class TestCourseTaskCreateView(TestCase):
         self.assertContext("course", course)
 
     def test_has_grade_levels(self):
+        """The grade levels for selection match the grades that have the course."""
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
         other_grade_level = GradeLevelFactory(school_year=grade_level.school_year)
-        course = CourseFactory(grade_levels=[grade_level])
+        course = CourseFactory(grade_levels=[grade_level, other_grade_level])
 
         with self.login(user):
             self.get("courses:task_create", pk=course.id)
@@ -933,10 +934,11 @@ class TestCourseTaskUpdateView(TestCase):
         self.assertContext("course", task.course)
 
     def test_has_grade_levels(self):
+        """The grade levels for selection match the grades that have the course."""
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
         other_grade_level = GradeLevelFactory(school_year=grade_level.school_year)
-        course = CourseFactory(grade_levels=[grade_level])
+        course = CourseFactory(grade_levels=[grade_level, other_grade_level])
         task = CourseTaskFactory(course=course)
 
         with self.login(user):

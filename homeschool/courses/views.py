@@ -408,10 +408,7 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         context["create"] = True
 
         context["course"] = self.course
-        grade_level = self.course.grade_levels.first()
-        context["grade_levels"] = GradeLevel.objects.filter(
-            school_year=grade_level.school_year_id
-        )
+        context["grade_levels"] = self.course.grade_levels.all()
         context["previous_task"] = self.previous_task
         context["max_tasks"] = schools_constants.MAX_ALLOWED_DAYS
         return context
@@ -570,10 +567,7 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["course"] = self.object.course
-        grade_level = self.object.course.grade_levels.first()
-        context["grade_levels"] = GradeLevel.objects.filter(
-            school_year=grade_level.school_year_id
-        )
+        context["grade_levels"] = self.object.course.grade_levels.all()
         context["previous_task"] = self.object.previous()
         return context
 
