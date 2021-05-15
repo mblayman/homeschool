@@ -35,7 +35,7 @@ you can:
   when a course is shared
   with multiple grade levels
 * View the projected completion dates for all tasks
-  (included different dates if your students progress at different rates)
+  (including different dates if your students progress at different rates)
 * Show and hide completed tasks
   so you can stay focused
   on what is left for the year
