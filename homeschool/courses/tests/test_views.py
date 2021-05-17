@@ -349,6 +349,24 @@ class TestCourseDetailView(TestCase):
         detail = self.get_context("task_details")[0]
         assert detail["complete"]
 
+    def test_task_complete_grade_specific_task(self):
+        """A grade specific task is complete when the students in the grade are done."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        other_grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level, other_grade_level])
+        task = CourseTaskFactory(course=course, grade_level=grade_level)
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+        CourseworkFactory(student=enrollment.student, course_task=task)
+        EnrollmentFactory(grade_level=other_grade_level)
+        url = self.reverse("courses:detail", pk=course.id) + "?completed_tasks=1"
+
+        with self.login(user):
+            self.get_check_200(url)
+
+        detail = self.get_context("task_details")[0]
+        assert detail["complete"]
+
     def test_hide_complete_tasks(self):
         """With students enrolled, completed tasks are hidden by default."""
         user = self.make_user()

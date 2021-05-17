@@ -256,7 +256,8 @@ def get_course_tasks_context(course, course_tasks, enrollments, show_completed_t
             "student_details": [],
             "complete": bool(students),
         }
-        for student in students:
+        for enrollment in enrollments:
+            student = enrollment.student
             assigned = (
                 not task.grade_level_id
                 or task.grade_level_id == grade_levels_by_student[student]
@@ -271,7 +272,11 @@ def get_course_tasks_context(course, course_tasks, enrollments, show_completed_t
             }
             task_detail["student_details"].append(student_detail)
 
-            if not work:
+            # Only check grade level specific tasks when the student is in the grade.
+            if (
+                task.grade_level_id is None
+                or task.grade_level_id == enrollment.grade_level_id
+            ) and not work:
                 task_detail["complete"] = False
 
         if not students:
