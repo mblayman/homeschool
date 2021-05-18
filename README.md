@@ -255,6 +255,36 @@ https://www.homeschoolminder.com/
   * It looks like a registration is needed per course (whoa, heavy).
 * The service can track any random events on the calendar.
 * Assignments have customizable categories.
+* Sign up experience
+  * Sign up directly from landing page
+  * Dumps into an intro flow popover
+    * Step 1: Long (7 minute) intro video
+    * Step 2: Asks for a bunch of teacher settings
+    * Step 3: Sets up a year and some terms based on pre-configured dates
+    * Step 4: Create student
+    * Step 5: Create courses
+    * Step 6: Weird old message about getting docs together and a "beta"
+      (what? This isn't 2012 any more)
+    * Land on an empty calendar after filling out details
+  * Received welcome email
+  * Discovered from settings page that the trial is 30 days long
+
+UI
+
+* Main section: Student Planner
+  * Calendar
+    * One student at a time
+    * Add items from the calendar
+    * Highly interactive
+    * Week view expands into hourly view
+  * Skills
+    * A bit confusing to add a standard, then add a skill.
+* Only other tab: "Resources" - unclickable and "coming soon"
+* Secondary tabs
+  * Settings
+  * Help - links out to /docs
+  * Log out
+
 
 Forum topics:
 
