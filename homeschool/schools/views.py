@@ -196,6 +196,19 @@ class GradeLevelCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
+class GradeLevelDetailView(LoginRequiredMixin, DetailView):
+    def get_queryset(self):
+        user = self.request.user
+        return GradeLevel.objects.filter(
+            school_year__school__admin=user
+        ).select_related("school_year")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["school_year"] = self.object.school_year
+        return context
+
+
 class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
     form_class = GradeLevelForm
     template_name = "schools/gradelevel_form.html"
@@ -220,7 +233,7 @@ class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-def move_course(user, grade_level_id, course_id, direction):
+def move_course(user, grade_level_id, course_id, direction, next_url):
     """Move the course ordering in the specified direction."""
     grade_level = get_object_or_404(
         GradeLevel, pk=grade_level_id, school_year__school__admin=user
@@ -231,23 +244,24 @@ def move_course(user, grade_level_id, course_id, direction):
         course__id=course_id,
     )
     getattr(through, direction)()
-    return HttpResponseRedirect(
-        reverse("schools:grade_level_edit", args=[grade_level_id])
-    )
+
+    if next_url is None:
+        next_url = reverse("schools:grade_level_edit", args=[grade_level_id])
+    return HttpResponseRedirect(next_url)
 
 
 @login_required
 @require_POST
 def move_course_down(request, pk, course_id):
     """Move a course down in the ordering."""
-    return move_course(request.user, pk, course_id, "down")
+    return move_course(request.user, pk, course_id, "down", request.GET.get("next"))
 
 
 @login_required
 @require_POST
 def move_course_up(request, pk, course_id):
     """Move a course up in the ordering."""
-    return move_course(request.user, pk, course_id, "up")
+    return move_course(request.user, pk, course_id, "up", request.GET.get("next"))
 
 
 class SchoolBreakCreateView(LoginRequiredMixin, CreateView):

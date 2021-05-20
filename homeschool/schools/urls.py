@@ -37,6 +37,11 @@ urlpatterns = [
     ),
     path(
         "grade-levels/<hashid:pk>/",
+        views.GradeLevelDetailView.as_view(),
+        name="grade_level_detail",
+    ),
+    path(
+        "grade-levels/<hashid:pk>/edit/",
         views.GradeLevelUpdateView.as_view(),
         name="grade_level_edit",
     ),

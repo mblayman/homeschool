@@ -154,7 +154,7 @@
       <a id="grade-level-{{ grade_level_info.grade_level.id }}"></a>
       <div class="bg-gray-100 rounded-lg py-4 px-3 mb-8">
         <div class="flex flex-row items-center">
-          <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.id %}" class="hover:underline">
+          <a href="{% url "schools:grade_level_detail" grade_level_info.grade_level.id %}" class="hover:underline">
             <h2 class="font-extralight text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
           </a>
           <div class="flex-grow"></div>

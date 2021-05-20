@@ -1,0 +1,39 @@
+{% with courses=gradelevel.get_ordered_courses %}
+  {% if courses %}
+    <div class="flex flex-col sm:flex-row max-w-lg text-sm uppercase tracking-wide font-extralight">
+      <div class="p-2 w-10/12">Course</div>
+      <div class="p-2 w-2/12"></div>
+    </div>
+  {% endif %}
+
+  {% for course in courses %}
+    <div id="course-{{ course.id }}" class="flex flex-col sm:flex-row border-t border-yellow-400 max-w-lg">
+      <div class="w-10/12 p-2 text-sm font-light overflow-x-scroll">
+        <a href="{% url "courses:edit" pk=course.id %}" class="hover:text-gray-600">
+          {{ course.name }}
+        </a>
+      </div>
+      <div class="p-2 flex items-center justify-center w-2/12 text-gray-300">
+        <div class="h-4 w-8 mr-2"></div>
+        <form method="POST" action="{% url "schools:course_up" gradelevel.id course.id %}?next={{ request.path|urlencode }}">
+          {% csrf_token %}
+          <button type="submit" class="block mr-2 hover:text-gray-600">
+            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <title>Move Course Up</title>
+              <path d="M0 10a10 10 0 1 1 20 0 10 10 0 0 1-20 0zm10 8a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm.7-10.54L14.25 11l-1.41 1.41L10 9.6l-2.83 2.8L5.76 11 10 6.76l.7.7z"/>
+            </svg>
+          </button>
+        </form>
+        <form method="POST" action="{% url "schools:course_down" gradelevel.id course.id %}?next={{ request.path|urlencode }}">
+          {% csrf_token %}
+          <button type="submit" class="block mr-2 hover:text-gray-600">
+            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <title>Move Course Down</title>
+              <path d="M20 10a10 10 0 1 1-20 0 10 10 0 0 1 20 0zM10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm-.7 10.54L5.75 9l1.41-1.41L10 10.4l2.83-2.82L14.24 9 10 13.24l-.7-.7z"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+{% endwith %}

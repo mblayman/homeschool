@@ -281,6 +281,31 @@ class TestSchoolYearListView(TestCase):
         assert school_year not in self.get_context("schoolyear_list")
 
 
+class TestGradeLevelDetailView(TestCase):
+    def test_unauthenticated_access(self):
+        grade_level = GradeLevelFactory()
+        self.assertLoginRequired("schools:grade_level_detail", pk=grade_level.id)
+
+    def test_get(self):
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("schools:grade_level_detail", pk=grade_level.id)
+
+        assert self.get_context("school_year") == grade_level.school_year
+
+    def test_only_users_grade_levels(self):
+        """A user can only view their own grade levels."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory()
+
+        with self.login(user):
+            response = self.get("schools:grade_level_detail", pk=grade_level.id)
+
+        self.response_404(response)
+
+
 class TestGradeLevelCreateView(TestCase):
     def test_unauthenticated_access(self):
         school_year = SchoolYearFactory()
@@ -368,7 +393,7 @@ class TestGradeLevelUpdateView(TestCase):
         self.response_404(response)
 
 
-class TestCourseTaskDown(TestCase):
+class TestCourseDown(TestCase):
     def test_unauthenticated_access(self):
         grade_level = GradeLevelFactory()
         course = CourseFactory(grade_levels=[grade_level])
@@ -393,8 +418,25 @@ class TestCourseTaskDown(TestCase):
         )
         assert list(grade_level.get_ordered_courses()) == [second_course, first_course]
 
+    def test_next_url(self):
+        """The view redirects to the next URL when present."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        first_course = CourseFactory(grade_levels=[grade_level])
+        CourseFactory(grade_levels=[grade_level])
+        url = self.reverse(
+            "schools:course_down", pk=grade_level.id, course_id=first_course.id
+        )
+        next_url = self.reverse("core:terms")
+        url += f"?next={next_url}"
 
-class TestCourseTaskUp(TestCase):
+        with self.login(user):
+            response = self.post(url)
+
+        assert response.get("Location") == next_url
+
+
+class TestCourseUp(TestCase):
     def test_unauthenticated_access(self):
         grade_level = GradeLevelFactory()
         course = CourseFactory(grade_levels=[grade_level])
@@ -418,6 +460,23 @@ class TestCourseTaskUp(TestCase):
             "schools:grade_level_edit", grade_level.id
         )
         assert list(grade_level.get_ordered_courses()) == [second_course, first_course]
+
+    def test_next_url(self):
+        """The view redirects to the next URL when present."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        CourseFactory(grade_levels=[grade_level])
+        second_course = CourseFactory(grade_levels=[grade_level])
+        url = self.reverse(
+            "schools:course_up", pk=grade_level.id, course_id=second_course.id
+        )
+        next_url = self.reverse("core:terms")
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url)
+
+        assert response.get("Location") == next_url
 
 
 class TestSchoolBreakCreateView(TestCase):
