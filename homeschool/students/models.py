@@ -334,7 +334,9 @@ class Enrollment(models.Model):
         primary_key=True, salt=f"enrollment{settings.HASHID_FIELD_SALT}"
     )
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    grade_level = models.ForeignKey("schools.GradeLevel", on_delete=models.CASCADE)
+    grade_level = models.ForeignKey(
+        "schools.GradeLevel", on_delete=models.CASCADE, related_name="enrollments"
+    )
 
     class Meta:
         constraints = [

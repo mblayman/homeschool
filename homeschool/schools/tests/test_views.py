@@ -289,11 +289,13 @@ class TestGradeLevelDetailView(TestCase):
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(grade_level=grade_level)
 
         with self.login(user):
             self.get_check_200("schools:grade_level_detail", pk=grade_level.id)
 
         assert self.get_context("school_year") == grade_level.school_year
+        assert list(self.get_context("enrollments")) == [enrollment]
 
     def test_only_users_grade_levels(self):
         """A user can only view their own grade levels."""

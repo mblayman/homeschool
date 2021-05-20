@@ -18,5 +18,16 @@
     </a>
   </h1>
 
+  <p class="font-extralight text-base text-gray-800 mb-8">
+    {% if enrollments %}
+      <strong>Enrolled:</strong>
+      {% for enrollment in enrollments %}
+        {{ enrollment.student.full_name }}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    {% else %}
+      No students are currently enrolled in this grade level.
+    {% endif %}
+  </p>
+
   {% include "schools/gradelevel_courses.html" %}
 {% endblock %}

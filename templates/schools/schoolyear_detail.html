@@ -153,21 +153,6 @@
     {% for grade_level_info in grade_levels %}
       <a id="grade-level-{{ grade_level_info.grade_level.id }}"></a>
       <div class="bg-gray-100 rounded-lg py-4 px-3 mb-8">
-        <div class="flex flex-row items-center">
-          <a href="{% url "schools:grade_level_detail" grade_level_info.grade_level.id %}" class="hover:underline">
-            <h2 class="font-extralight text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
-          </a>
-          <div class="flex-grow"></div>
-          <div>
-            <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.id %}" class="text-gray-400 hover:text-gray-700">
-              <svg class="h-4 w-4 mr-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <title>Edit Grade Level</title>
-                <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
         {% if grade_level_info.courses and not grade_level_info.has_students %}
           <div class="flex m-3 bg-white border border-blue-500 p-6 rounded-md shadow-md items-center mx-auto max-w-xl">
             <div class="text-blue-700">
@@ -185,6 +170,21 @@
           </div>
         {% endif %}
 
+        <div class="flex flex-row items-center">
+          <a href="{% url "schools:grade_level_detail" grade_level_info.grade_level.id %}" class="hover:underline">
+            <h2 class="font-extralight text-2xl text-blue-900 ml-6">{{ grade_level_info.grade_level.name }}</h2>
+          </a>
+          <div class="flex-grow"></div>
+          <div>
+            <a href="{% url "schools:grade_level_edit" grade_level_info.grade_level.id %}" class="text-gray-400 hover:text-gray-700">
+              <svg class="h-4 w-4 mr-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <title>Edit Grade Level</title>
+                <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
         <div class="flex flex-row flex-wrap">
           {% for course in grade_level_info.courses %}
             {% include "schools/course_summary.html" %}
@@ -193,7 +193,7 @@
                 <div class="m-3">
                   <div class="px-8 text-center">
                     <a href="{% url "courses:create" %}?school_year={{ schoolyear.id }}&grade_level={{ grade_level_info.grade_level.id }}"
-                      class="block rounded-md text-yellow-500 border border-gray-100 hover:border-yellow-400 hover:bg-gray-200 px-3 xl:px-4 py-4">
+                      class="block rounded-md text-yellow-500 border border-gray-100 hover:border-yellow-400 hover:bg-gray-200 px-3 xl:px-4 py-4 transition duration-300 ease-in-out">
                       <div class="flex items-center justify-center border-b border-yellow-400 mb-3 pb-1">
                         <svg class="h-4 w-4 mr-1 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                           <path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/>
