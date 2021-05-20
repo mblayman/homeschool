@@ -345,6 +345,14 @@ class Enrollment(models.Model):
             )
         ]
 
+    @classmethod
+    def has_unenrolled_students(cls, school_year):
+        """Check if the school year has unenrolled students."""
+        return (
+            cls.objects.filter(grade_level__school_year=school_year).count()
+            < Student.objects.filter(school=school_year.school_id).count()
+        )
+
 
 class Coursework(models.Model):
     """The work that student completes for course tasks"""

@@ -205,8 +205,10 @@ class GradeLevelDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["school_year"] = self.object.school_year
+        school_year = self.object.school_year
+        context["school_year"] = school_year
         context["enrollments"] = self.object.enrollments.select_related("student").all()
+        context["show_enroll_cta"] = Enrollment.has_unenrolled_students(school_year)
         return context
 
 
