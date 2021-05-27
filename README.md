@@ -87,6 +87,7 @@ Measurement criteria:
 | Google Classroom | Free | $0 | 3/12/21 |
 | Homeschool Manager | Subscription | $5.99 / month | 3/13/21 |
 | Homeschool Minder | Subscription | $4.99 / month | 5/3/21 |
+| Homeschool Planet | Subscription | $7.95 / month | 5/20/21 |
 
 ### Charlotte Mason Organizer
 
@@ -294,6 +295,32 @@ Forum topics:
 ### Homeschool Planet
 
 https://homeschoolplanet.com/
+
+"Synchronize your home, school, and work into a single place"
+
+* Landing page
+  * Email list capture
+* Pricing
+  * 30 day trial
+  * $69.95 / year
+  * $7.95 / month
+* Social Media
+  * Heavy activity on Facebook (at least daily)
+  * Pinterest
+  * YouTube to host help docs
+  * Instagram
+  * Blog (infrequent posts - handful per year, guest posts)
+* Marketplace
+  * Other vendors provide lesson plans
+* Features
+  * Daily digest email
+  * Text messaging
+  * Widgets with the calendar
+* Testimonials
+  * User reviews (but they are old! 2017!)
+  * Featured reviews (appear "fresh" from 2019, but are recycled old reviews),
+    seems shady
+  * Lots of undated testimonials (current user reviews?)
 
 Forum topics:
 

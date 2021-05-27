@@ -12,6 +12,7 @@ graph:
 		core \
 		courses \
 		notifications \
+		referrals \
 		schools \
 		students \
 		users \
