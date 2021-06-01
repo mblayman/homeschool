@@ -1,5 +1,5 @@
 coverage
-django-test-plus==1.4.0
+django-test-plus==2.2.0
 factory-boy
 flake8==3.9.1
 isort==5.5.4
