@@ -10,5 +10,5 @@ pygraphviz==1.7
 pytest-cov==2.11.1
 pytest-django==4.2.0
 pytest-xdist==2.2.1
-pyupgrade==2.13.0
+pyupgrade==2.19.1
 responses==0.10.15
