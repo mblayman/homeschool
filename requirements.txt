@@ -164,7 +164,7 @@ sqlparse==0.3.0
     #   django-debug-toolbar
 stripe==2.55.2
     # via dj-stripe
-urllib3==1.25.8
+urllib3==1.26.5
     # via requests
 webencodings==0.5.1
     # via bleach
