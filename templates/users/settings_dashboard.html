@@ -54,7 +54,8 @@
   {% endif %}
 
   {% flag referral_flag %}
-  <form method="POST" action="">
+  <form method="POST" action="{% url 'referrals:create' %}">
+    {% csrf_token %}
     <div class="bg-blue-100 w-full max-w-2xl rounded-lg p-8 pb-4 mt-8 mb-4 text-blue-900 font-extralight">
       <h2 class="text-2xl mb-4 w-full border-b border-blue-500">Refer a Friend</h2>
       <p class="mb-6">
