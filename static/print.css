@@ -13,3 +13,7 @@
 .print-break-after-page {
     break-after: page;
 }
+
+.print-w-full {
+    width: 100%;
+}

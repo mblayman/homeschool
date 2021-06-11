@@ -1,7 +1,7 @@
 {% load static %}
 <div id="tasks">
   {% for task_detail in task_details %}
-    <div id="task-{{ task_detail.task.id }}" class="flex flex-col sm:flex-row max-w-4xl {% if task_detail.complete %}text-gray-500{% endif %}">
+    <div id="task-{{ task_detail.task.id }}" class="flex flex-row max-w-4xl {% if task_detail.complete %}text-gray-500{% endif %} print-no-max-width print-w-full">
       <div class="w-1/12 p-2 text-sm font-light overflow-x-scroll border-t border-yellow-400">
         {{ task_detail.number }}.
       </div>
@@ -67,7 +67,7 @@
 
       {% if task_detail.student_details %}
         {% for student_detail in task_detail.student_details %}
-          <div class="flex flex-col justify-center w-2/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll border-t border-yellow-400">
+          <div class="flex flex-col justify-center w-2/12 print:w-3/12 p-2 text-sm text-gray-500 font-light overflow-x-scroll border-t border-yellow-400">
             {% if student_detail.assigned %}
               {% if task_detail.task.is_graded %}
                 <a href="{% url "students:grade_task" pk=student_detail.student.id course_task_id=task_detail.task.id %}?previous_task={{ task_detail.task.id }}&next={{ request.path|urlencode }}%23task-{{ task_detail.task.id }}" class="block flex items-center mx-1 mb-1 hover:text-gray-600">
