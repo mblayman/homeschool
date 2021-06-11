@@ -60,6 +60,12 @@ to learn more about how School Desk works.
    faq.rst
    terminology.rst
 
+.. toctree::
+   :caption: Reference
+   :maxdepth: 2
+
+   courses.rst
+
 How Does School Desk Stack Up?
 ------------------------------
 
