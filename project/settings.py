@@ -190,6 +190,10 @@ SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
 
 SILENCED_SYSTEM_CHECKS: list[str] = []
 
+# Sessions
+# Allow users to be logged in for a month.
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
+
 # django.contrib.sites
 SITE_ID = 1
 
