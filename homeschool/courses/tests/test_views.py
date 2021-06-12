@@ -715,6 +715,7 @@ class TestCourseTaskCreateView(TestCase):
             "replicate": "on",
             "replicate_count": "2",
             "autonumber": "on",
+            "starting_at": "5",
         }
 
         with self.login(user):
@@ -726,7 +727,28 @@ class TestCourseTaskCreateView(TestCase):
                 "description", flat=True
             )
         )
-        assert descriptions == ["A new task 1", "A new task 2"]
+        assert descriptions == ["A new task 5", "A new task 6"]
+
+    def test_replicates_with_autonumber_bad_starting_at(self):
+        """A bad starting_at does not replicate."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        data = {
+            "course": str(course.id),
+            "description": "A new task",
+            "duration": "30",
+            "replicate": "on",
+            "replicate_count": "2",
+            "autonumber": "on",
+            "starting_at": "boom",
+        }
+
+        with self.login(user):
+            self.post("courses:task_create", pk=course.id, data=data)
+
+        task = CourseTask.objects.get(course=course)
+        assert task.description == "A new task"
 
 
 class TestBulkCreateCourseTasks(TestCase):

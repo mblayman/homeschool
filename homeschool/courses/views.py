@@ -456,15 +456,28 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
             return
 
         original_description = self.object.description
+
         autonumber = self.request.POST.get("autonumber")
         if autonumber:
-            self.object.description = f"{original_description} 1"
+            try:
+                starting_at = int(self.request.POST.get("starting_at", 1))
+            except ValueError:
+                # Bad POST data. Stop.
+                return
+
+            self.object.description = f"{original_description} {starting_at}"
             self.object.save()
+        else:
+            starting_at = 1
 
         previous_task = self.object
         # A copy of the POST is needed for mutable access for autonumber to work.
         data = self.request.POST.copy()
-        for autonumber_counter, _ in enumerate(range(replicate_count), start=2):
+        # The first autonumber is handled separately so bump the starting counter.
+        starting_at += 1
+        for autonumber_counter, _ in enumerate(
+            range(replicate_count), start=starting_at
+        ):
             if autonumber:
                 data["description"] = f"{original_description} {autonumber_counter}"
 
