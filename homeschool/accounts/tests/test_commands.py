@@ -12,7 +12,7 @@ from homeschool.test import TestCase
 
 class TestExpireTrials(TestCase):
     def test_expires_trials(self):
-        """"Old trials are marked as expired."""
+        """Old trials are marked as expired."""
         stdout = StringIO()
         trialing = Account.AccountStatus.TRIALING
         account = AccountFactory(
