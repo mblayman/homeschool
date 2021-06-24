@@ -16,6 +16,7 @@ env = environ.Env(
     DJSTRIPE_WEBHOOK_VALIDATION=(str, "verify_signature"),
     EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
     EMAIL_TESTING=(bool, False),
+    IS_SECURE=(bool, True),
     ROLLBAR_ENABLED=(bool, True),
     ROLLBAR_ENVIRONMENT=(str, "production"),
     SECURE_HSTS_PRELOAD=(bool, True),
@@ -266,6 +267,9 @@ ROLLBAR = {
 WHITENOISE_INDEX_FILE = True
 
 # App settings
+
+# Is the app in a secure context or not?
+IS_SECURE = env("IS_SECURE")
 
 # Add extra output directories that WhiteNoise can serve as static files
 # *outside* of `staticfiles`.

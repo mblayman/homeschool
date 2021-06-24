@@ -1,0 +1,10 @@
+Hello,
+
+A friend using School Desk recommends you give it a try!
+
+Check out {{ account_signup_link }} to sign up for your free trial
+and get started with School Desk.
+
+Regards,
+Matt
+Founder of School Desk
