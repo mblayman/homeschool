@@ -5,6 +5,21 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-20.04
+    env:
+      ALLOWED_HOSTS: '*'
+      DATABASE_SSL_REQUIRE: 'off'
+      DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
+      DJSTRIPE_WEBHOOK_VALIDATION: ''
+      HASHID_FIELD_SALT: 'a secret to everybody'
+      IS_SECURE: 'off'
+      ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
+      SECRET_KEY: 'a secret to everybody'
+      SECURE_SSL_REDIRECT: 'off'
+      SENDGRID_API_KEY: 'a secret to everybody'
+      STRIPE_LIVE_MODE: 'off'
+      STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
+      STRIPE_TEST_SECRET_KEY: 'sk_test_asecrettoeverybody'
+      STRIPE_TEST_PUBLISHABLE_KEY: 'pk_test_asecrettoeverybody'
     steps:
       - name: Get the code
         uses: actions/checkout@v1
@@ -42,36 +57,9 @@ jobs:
 
       - name: Test it
         run: make coverage
-        env:
-          ALLOWED_HOSTS: '*'
-          DATABASE_SSL_REQUIRE: 'off'
-          DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
-          DJSTRIPE_WEBHOOK_VALIDATION: ''
-          HASHID_FIELD_SALT: 'a secret to everybody'
-          ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
-          SECRET_KEY: 'a secret to everybody'
-          SECURE_SSL_REDIRECT: 'off'
-          SENDGRID_API_KEY: 'a secret to everybody'
-          STRIPE_LIVE_MODE: 'off'
-          STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
-          STRIPE_TEST_SECRET_KEY: 'sk_test_asecrettoeverybody'
-          STRIPE_TEST_PUBLISHABLE_KEY: 'pk_test_asecrettoeverybody'
 
       - name: Check deploy configuration
         run: ./manage.py check --deploy --fail-level WARNING
-        env:
-          ALLOWED_HOSTS: '*'
-          DATABASE_SSL_REQUIRE: 'off'
-          DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
-          DJSTRIPE_WEBHOOK_VALIDATION: ''
-          HASHID_FIELD_SALT: 'a secret to everybody'
-          ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
-          SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'
-          SENDGRID_API_KEY: 'a secret to everybody'
-          STRIPE_LIVE_MODE: 'off'
-          STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
-          STRIPE_TEST_SECRET_KEY: 'sk_test_asecrettoeverybody'
-          STRIPE_TEST_PUBLISHABLE_KEY: 'pk_test_asecrettoeverybody'
 
       - name: Check documentation build
         run: make -C docs html
