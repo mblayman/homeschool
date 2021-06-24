@@ -60,6 +60,9 @@ jobs:
 
       - name: Check deploy configuration
         run: ./manage.py check --deploy --fail-level WARNING
+        env:
+          SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'
+          SECURE_SSL_REDIRECT: 'on'
 
       - name: Check documentation build
         run: make -C docs html
