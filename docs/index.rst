@@ -65,6 +65,7 @@ to learn more about how School Desk works.
    :maxdepth: 2
 
    courses.rst
+   referrals.rst
 
 How Does School Desk Stack Up?
 ------------------------------
