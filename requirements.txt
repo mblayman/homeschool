@@ -28,7 +28,7 @@ defusedxml==0.6.0
     # via python3-openid
 dj-database-url==0.5.0
     # via -r requirements.in
-dj-stripe==2.4.4
+dj-stripe==2.5.0
     # via -r requirements.in
 django==3.2.4
     # via
@@ -44,7 +44,7 @@ django==3.2.4
     #   jsonfield
 django-allauth==0.44.0
     # via -r requirements.in
-django-anymail[sendgrid]==8.3
+django-anymail[sendgrid]==8.4
     # via -r requirements.in
 django-debug-toolbar==3.2.1
     # via -r requirements.in
@@ -122,7 +122,7 @@ requests==2.25.1
     #   stripe
 requests-oauthlib==1.3.0
     # via django-allauth
-rollbar==0.15.2
+rollbar==0.16.1
     # via -r requirements.in
 six==1.14.0
     # via
