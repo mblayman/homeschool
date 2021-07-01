@@ -316,6 +316,12 @@ https://homeschoolplanet.com/
   * Daily digest email
   * Text messaging
   * Widgets with the calendar
+  * Assignment == School Desk Task
+  * Grades have different types and calculations
+  * Tracks attendance
+  * Tracks resources
+  * Profiles (pictures, emails for sending digests, phone number for text messages)
+  * Lookup widget (embedded search of other services)
 * Testimonials
   * User reviews (but they are old! 2017!)
   * Featured reviews (appear "fresh" from 2019, but are recycled old reviews),
