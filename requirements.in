@@ -3,7 +3,7 @@ bleach==3.3.0
 dj-database-url==0.5.0
 Django==3.2.4
 django-allauth==0.44.0
-django-anymail[sendgrid]==8.3
+django-anymail[sendgrid]==8.4
 django-debug-toolbar==3.2.1
 django-environ==0.4.5
 django-extensions==3.1.3
