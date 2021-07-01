@@ -164,6 +164,18 @@ sqlparse==0.3.0
     #   django-debug-toolbar
 stripe==2.55.2
     # via dj-stripe
+types-bleach==3.3.3
+    # via -r requirements.in
+types-python-dateutil==0.1.4
+    # via -r requirements.in
+types-pytz==2021.1.0
+    # via -r requirements.in
+types-requests==2.25.0
+    # via -r requirements.in
+types-six==0.1.7
+    # via -r requirements.in
+types-toml==0.1.3
+    # via -r requirements.in
 urllib3==1.26.5
     # via requests
 webencodings==0.5.1
