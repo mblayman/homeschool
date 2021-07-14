@@ -569,7 +569,7 @@ def office_onboarding(request):
         account.user
         for account in Account.objects.filter(
             status=Account.AccountStatus.TRIALING
-        ).order_by("user")
+        ).order_by("-user")
     ]
     user_stats = []
     # Yeah, this is pretty dumb. Optimization is not important here.
