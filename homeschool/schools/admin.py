@@ -12,7 +12,8 @@ class SchoolAdmin(admin.ModelAdmin):
 
 @admin.register(SchoolYear)
 class SchoolYearAdmin(admin.ModelAdmin):
-    list_display = ("school", "start_date")
+    list_display = ("id", "school", "start_date")
+    search_fields = ("id",)
 
 
 class GradeLevelCoursesThroughModelTabularInline(OrderedTabularInline):
