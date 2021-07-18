@@ -7,7 +7,7 @@ from homeschool.schools.models import GradeLevel, School, SchoolBreak, SchoolYea
 
 @admin.register(School)
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ("admin",)
+    list_display = ("id", "admin")
 
 
 @admin.register(SchoolYear)

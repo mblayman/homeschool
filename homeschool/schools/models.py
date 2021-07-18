@@ -21,6 +21,9 @@ class School(models.Model):
         help_text="The school administrator",
     )
 
+    def __str__(self):
+        return f"School ({self.admin.email})"
+
 
 @receiver(post_save, sender=User)
 def create_school(sender, instance, created, **kwargs):

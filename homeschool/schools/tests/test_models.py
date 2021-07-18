@@ -34,6 +34,11 @@ class TestSchool(TestCase):
 
         assert list(school.students.all()) == [student]
 
+    def test_str(self):
+        school = SchoolFactory()
+
+        assert school.admin.email in str(school)
+
 
 class TestSchoolYear(TestCase):
     def test_factory(self):

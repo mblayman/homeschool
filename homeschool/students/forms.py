@@ -73,7 +73,10 @@ class EnrollmentForm(forms.ModelForm):
             raise forms.ValidationError("You may not enroll that student.")
 
         grade_level = self.cleaned_data.get("grade_level")
-        if grade_level and grade_level.school_year.school != self.user.school:
+        if not grade_level:
+            raise forms.ValidationError("There is no matching grade level.")
+
+        if grade_level.school_year.school != self.user.school:
             raise forms.ValidationError("You may not enroll to that grade level.")
 
         enrollment = (

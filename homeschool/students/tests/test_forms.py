@@ -193,6 +193,21 @@ class TestEnrollmentForm(TestCase):
             in form.non_field_errors()
         )
 
+    def test_no_grade_level(self):
+        """A missing grade level raises a validation error."""
+        user = self.make_user()
+        school = user.school
+        enrollment = EnrollmentFactory(
+            student__school=school, grade_level__school_year__school=school
+        )
+        data = {"student": str(enrollment.student.id), "grade_level": "0"}
+        form = EnrollmentForm(user=user, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "There is no matching grade level." in form.non_field_errors()
+
 
 class TestGradeForm(TestCase):
     def test_is_valid(self):
