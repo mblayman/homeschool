@@ -261,6 +261,7 @@ ROLLBAR = {
     "environment": env("ROLLBAR_ENVIRONMENT"),
     "branch": "master",
     "root": BASE_DIR,
+    "capture_email": True,
 }
 
 # WhiteNoise
