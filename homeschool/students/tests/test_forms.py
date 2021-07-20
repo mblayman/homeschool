@@ -206,7 +206,7 @@ class TestEnrollmentForm(TestCase):
         is_valid = form.is_valid()
 
         assert not is_valid
-        assert "There is no matching grade level." in form.non_field_errors()
+        assert "You need to select a grade level." in form.non_field_errors()
 
 
 class TestGradeForm(TestCase):
