@@ -565,6 +565,7 @@ def office_dashboard(request):
 @staff_member_required
 def office_onboarding(request):
     """Show how new users are doing in the onboarding process."""
+    now = timezone.now()
     trialing_users = [
         account.user
         for account in Account.objects.filter(
@@ -576,21 +577,36 @@ def office_onboarding(request):
     for user in trialing_users:
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
-        user_stats.append(
-            {
-                "user": user,
-                "school_years": SchoolYear.objects.filter(school__admin=user).count(),
-                "grade_levels": len(grade_levels),
-                "courses": len(courses),
-                "tasks": CourseTask.objects.filter(course__in=courses).count(),
-                "students": Student.objects.filter(school__admin=user).count(),
-                "enrollments": Enrollment.objects.filter(
-                    student__school__admin=user
-                ).count(),
-            }
-        )
+        stats = {
+            "user": user,
+            "school_years": SchoolYear.objects.filter(school__admin=user).count(),
+            "grade_levels": len(grade_levels),
+            "courses": len(courses),
+            "tasks": CourseTask.objects.filter(course__in=courses).count(),
+            "students": Student.objects.filter(school__admin=user).count(),
+            "enrollments": Enrollment.objects.filter(
+                student__school__admin=user
+            ).count(),
+            "tirekicker": False,
+        }
+        user_stats.append(stats)
 
-    context = {"user_stats": user_stats}
+        tirekicker_cutoff = user.date_joined + datetime.timedelta(days=7)
+        data_keys = [
+            "school_years",
+            "grade_levels",
+            "courses",
+            "tasks",
+            "students",
+            "enrollments",
+        ]
+        if now > tirekicker_cutoff and any(stats[key] == 0 for key in data_keys):
+            stats["tirekicker"] = True
+
+    context = {
+        "user_stats": user_stats,
+        "tirekicker_count": len([u for u in user_stats if u["tirekicker"]]),
+    }
     return render(request, "core/office/onboarding.html", context)
 
 

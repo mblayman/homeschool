@@ -22,17 +22,21 @@
       <div class="w-1/12">Enrollments</div>
     </div>
     {% for stats in user_stats %}
-      <div class="flex flex-row {% cycle 'bg-white' 'bg-gray-100' %} py-2">
-        <div class="w-1/12">{{ stats.user.id }}</div>
-        <div class="w-2/12">{{ stats.user.username }}</div>
-        <div class="w-1/12">{{ stats.user.date_joined|date:"Y-m-d" }}</div>
-        <div class="w-1/12">{{ stats.school_years }}</div>
-        <div class="w-1/12">{{ stats.grade_levels }}</div>
-        <div class="w-1/12">{{ stats.courses }}</div>
-        <div class="w-1/12">{{ stats.tasks }}</div>
-        <div class="w-1/12">{{ stats.students }}</div>
-        <div class="w-1/12">{{ stats.enrollments }}</div>
-      </div>
+      {% if not stats.tirekicker %}
+        <div class="flex flex-row {% cycle 'bg-white' 'bg-gray-100' %} py-2">
+          <div class="w-1/12">{{ stats.user.id }}</div>
+          <div class="w-2/12">{{ stats.user.username }}</div>
+          <div class="w-1/12">{{ stats.user.date_joined|date:"Y-m-d" }}</div>
+          <div class="w-1/12">{{ stats.school_years }}</div>
+          <div class="w-1/12">{{ stats.grade_levels }}</div>
+          <div class="w-1/12">{{ stats.courses }}</div>
+          <div class="w-1/12">{{ stats.tasks }}</div>
+          <div class="w-1/12">{{ stats.students }}</div>
+          <div class="w-1/12">{{ stats.enrollments }}</div>
+        </div>
+      {% endif %}
     {% endfor %}
   </div>
+
+  <p class="my-4">+{{ tirekicker_count }} tirekickers</p>
 {% endblock %}

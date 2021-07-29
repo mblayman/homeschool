@@ -1341,6 +1341,20 @@ class TestOfficeOnboarding(TestCase):
         with self.login(user):
             self.get_check_200("office:onboarding")
 
+    def test_marks_tirekicker(self):
+        """A tirekicker that is not using the app is marked for the context."""
+        tirekicker_cutoff = timezone.now() - datetime.timedelta(days=8)
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year__school__admin__date_joined=tirekicker_cutoff
+        )
+        CourseTaskFactory(course__grade_levels=[enrollment.grade_level])
+
+        with self.login(user):
+            self.get_check_200("office:onboarding")
+
+        assert self.get_context("tirekicker_count") == 1
+
 
 class TestBoom(TestCase):
     def test_non_staff(self):
