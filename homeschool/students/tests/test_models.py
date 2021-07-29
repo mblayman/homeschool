@@ -4,6 +4,7 @@ import pytest
 from dateutil.relativedelta import MO, SA, SU, relativedelta
 from django.db import IntegrityError
 from django.utils import timezone
+from freezegun import freeze_time
 
 from homeschool.core.schedules import Week
 from homeschool.courses.models import Course
@@ -15,6 +16,7 @@ from homeschool.courses.tests.factories import (
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
+    SchoolBreakFactory,
     SchoolFactory,
     SchoolYearFactory,
 )
@@ -100,6 +102,32 @@ class TestStudent(TestCase):
         week_schedule = student.get_week_schedule(school_year, today, week)
 
         assert "task" not in week_schedule["courses"][0]["days"][0]
+
+    @pytest.mark.xfail(reason="Not implemented yet. See #433")
+    @freeze_time("2021-07-21")  # Wednesday
+    def test_get_week_with_breaks(self):
+        """Next week starts with the correct task when the current week has breaks."""
+        today = timezone.now().date()
+        next_week = Week(today + datetime.timedelta(days=7))
+        enrollment = EnrollmentFactory()
+        school_year = enrollment.grade_level.school_year
+        student = enrollment.student
+        course = CourseFactory(grade_levels=[enrollment.grade_level])
+        CourseworkFactory(
+            student=student, course_task__course=course, completed_date=today
+        )
+        task = CourseTaskFactory(course=course)
+        # TODO: remove wrong task
+        CourseTaskFactory(course=course)
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=today + datetime.timedelta(days=1),
+            end_date=today + datetime.timedelta(days=2),
+        )
+
+        week_schedule = student.get_week_schedule(school_year, today, next_week)
+
+        assert week_schedule["courses"][0]["days"][0]["task"] == task
 
     def test_week_schedule_future_after_school_week(self):
         """Looking at future weeks pulls in unfinished tasks after the school week.

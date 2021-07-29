@@ -176,6 +176,9 @@ class GradeView(LoginRequiredMixin, TemplateView):
             course_task__in=completed_task_ids
         ).select_related("course_task", "course_task__course")
 
+        # TODO: sort the graded work based on the order of the ordered courses
+        # for a student.
+
         already_graded_work_ids = set(
             Grade.objects.filter(
                 student=student, graded_work__in=graded_work
