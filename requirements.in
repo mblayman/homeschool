@@ -12,7 +12,7 @@ django-hijack==2.3.0
 django-ordered-model==3.4.3
 django-simple-history==3.0.0
 django-tz-detect==0.3.0
-django-waffle==2.2.0
+django-waffle==2.2.1
 dj-stripe==2.5.0
 freezegun==1.1.0
 gunicorn==20.1.0
