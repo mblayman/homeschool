@@ -42,7 +42,7 @@ django==3.2.5
     #   django-hijack
     #   django-tz-detect
     #   jsonfield
-django-allauth==0.44.0
+django-allauth==0.45.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.4
     # via -r requirements.in
