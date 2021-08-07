@@ -26,7 +26,11 @@
       </div>
       {% for course_info in student_info.courses %}
         <div class="flex flex-row">
-          <div class="w-3/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ course_info.course }}</div>
+          <div class="w-3/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">
+            <a class="hover:text-gray-600" href="{% url 'courses:detail' course_info.course.id %}">
+              {{ course_info.course }}
+            </a>
+          </div>
           <div class="w-3/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ course_info.last_forecast_date|date:"Y-m-d"|default:"Unable to forecast" }}</div>
         </div>
       {% endfor %}
