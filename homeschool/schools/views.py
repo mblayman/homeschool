@@ -501,7 +501,9 @@ class AttendanceReportView(LoginRequiredMixin, TemplateView):
                 {
                     "date": school_date,
                     "is_school_day": school_year.runs_on(school_date),
-                    "is_break": school_year.is_break(school_date),
+                    "is_break": school_year.is_break(
+                        school_date, student=enrollment.student
+                    ),
                     "attended": school_date in dates_with_work,
                 }
             )

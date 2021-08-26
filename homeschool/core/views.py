@@ -121,7 +121,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         """Build the week dates for the context."""
         week_dates = []
         for week_date in school_year.get_week_dates_for(week):
-            school_break = school_year.get_break(week_date)
+            # TODO 434: the weekly is affected too.
+            school_break = school_year.get_break(week_date, student=None)
             week_date_data = {"date": week_date, "school_break": school_break}
             if school_break:
                 week_date_data["date_type"] = school_break.get_date_type(week_date)
@@ -247,14 +248,26 @@ class DailyView(LoginRequiredMixin, TemplateView):
             context["tomorrow"] = day + datetime.timedelta(days=1)
             context["overmorrow"] = day + datetime.timedelta(days=2)
 
-        context["is_break_day"] = bool(school_year and school_year.is_break(day))
-        context["schedules"] = self.get_schedules(school_year, today, day)
+        is_break_day = self.is_break_for_everyone(day, school_year)
+        context["is_break_day"] = is_break_day
+        context["schedules"] = self.get_schedules(school_year, today, day, is_break_day)
         return context
 
-    def get_schedules(self, school_year, today, day):
+    def is_break_for_everyone(
+        self, day: datetime.date, school_year: Optional[SchoolYear]
+    ) -> bool:
+        """Check if this is a break day for all students."""
+        if school_year is None:
+            return False
+        return all(
+            school_year.is_break(day, student=student)
+            for student in Student.get_students_for(school_year)
+        )
+
+    def get_schedules(self, school_year, today, day, is_break_for_everyone):
         """Get the schedules for each student."""
         schedules: list = []
-        if not school_year or not school_year.runs_on(day) or school_year.is_break(day):
+        if not school_year or not school_year.runs_on(day) or is_break_for_everyone:
             return schedules
 
         for student in Student.get_students_for(school_year):
@@ -265,6 +278,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
     def get_student_schedule(self, student, today, day, school_year):
         """Get the daily schedule for the student."""
+        # TODO 434: this matters when *at least one* of the students has a break.
         courses = student.get_active_courses(school_year)
         day_coursework = student.get_day_coursework(day)
         completed_task_ids = list(

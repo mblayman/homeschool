@@ -9,6 +9,7 @@ from django.utils.functional import cached_property
 from hashid_field import HashidAutoField
 
 from homeschool.core.models import DaysOfWeekModel
+from homeschool.students.models import Student
 from homeschool.users.models import User
 
 
@@ -69,12 +70,17 @@ class SchoolYear(DaysOfWeekModel):
         """Check if the day is in the school year."""
         return self.start_date <= day <= self.end_date
 
-    def is_break(self, break_date):
+    def is_break(
+        self, break_date: datetime.date, *, student: Optional[Student]
+    ) -> bool:
         """Check if the break date is a school break."""
-        return self.get_break(break_date) is not None
+        return self.get_break(break_date, student=student) is not None
 
-    def get_break(self, break_date) -> Optional["SchoolBreak"]:
+    def get_break(
+        self, break_date: datetime.date, *, student: Optional[Student]
+    ) -> Optional["SchoolBreak"]:
         """Get a school break if the date is contained in the break."""
+        # TODO 434: use the student parameter
         return self._school_breaks_by_date.get(break_date)
 
     @cached_property
@@ -88,7 +94,7 @@ class SchoolYear(DaysOfWeekModel):
                 current_date = current_date + datetime.timedelta(days=1)
         return breaks_by_date
 
-    def get_task_count_in_range(self, course, start_date, end_date):
+    def get_task_count_in_range(self, course, start_date, end_date, student):
         """Get the task count for a course and factor in any breaks.
 
         Be inclusive of start and end.
@@ -99,13 +105,15 @@ class SchoolYear(DaysOfWeekModel):
         task_count = 0
         date_to_check = start_date
         while date_to_check <= end_date:
-            if not self.is_break(date_to_check) and course.runs_on(date_to_check):
+            if not self.is_break(date_to_check, student=student) and course.runs_on(
+                date_to_check
+            ):
                 task_count += 1
             date_to_check += datetime.timedelta(days=1)
 
         return task_count
 
-    def get_next_course_day(self, course, day):
+    def get_next_course_day(self, course, day, student):
         """Get the next course day after the provided day (considering breaks)."""
         next_course_day = course.get_next_day_from(day)
         # When the course isn't meeting the next day is the same. Bail early.
@@ -113,7 +121,7 @@ class SchoolYear(DaysOfWeekModel):
             return day
 
         while next_course_day < self.end_date:
-            if not self.is_break(next_course_day):
+            if not self.is_break(next_course_day, student=student):
                 return next_course_day
             next_course_day = course.get_next_day_from(next_course_day)
 

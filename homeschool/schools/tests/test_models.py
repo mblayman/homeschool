@@ -194,7 +194,9 @@ class TestSchoolYear(TestCase):
         expected_school_break = SchoolBreakFactory()
         school_year = expected_school_break.school_year
 
-        school_break = school_year.get_break(expected_school_break.start_date)
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=None
+        )
 
         assert school_break == expected_school_break
 
@@ -202,19 +204,27 @@ class TestSchoolYear(TestCase):
         """A data with no break is a null result."""
         school_year = SchoolYearFactory()
 
-        school_break = school_year.get_break(school_year.start_date)
+        school_break = school_year.get_break(school_year.start_date, student=None)
 
         assert school_break is None
+
+    def test_get_break_for_student(self):
+        # TODO 434: write this.
+        pass
 
     def test_is_break(self):
         """A school year can check if a date is a break day."""
         school_break = SchoolBreakFactory()
         school_year = school_break.school_year
 
-        assert school_year.is_break(school_break.start_date)
+        assert school_year.is_break(school_break.start_date, student=None)
         assert not school_year.is_break(
-            school_break.end_date + datetime.timedelta(days=1)
+            school_break.end_date + datetime.timedelta(days=1), student=None
         )
+
+    def test_is_break_for_student(self):
+        # TODO 434: write this.
+        pass
 
     def test_start_after_end(self):
         school_year = SchoolYearFactory()
@@ -223,7 +233,9 @@ class TestSchoolYear(TestCase):
         start_date = datetime.date(2020, 5, 7)
         end_date = datetime.date(2020, 5, 5)
 
-        count = school_year.get_task_count_in_range(course, start_date, end_date)
+        count = school_year.get_task_count_in_range(
+            course, start_date, end_date, student=None
+        )
 
         assert count == 1
 
@@ -246,6 +258,7 @@ class TestSchoolYear(TestCase):
             course,
             school_year.start_date,
             school_year.start_date + datetime.timedelta(days=1),
+            student=None,
         )
 
         assert count == 1
@@ -264,7 +277,7 @@ class TestSchoolYear(TestCase):
         )
 
         next_course_day = school_year.get_next_course_day(
-            course, school_year.start_date
+            course, school_year.start_date, student=None
         )
 
         assert next_course_day == school_year.start_date + datetime.timedelta(days=2)
@@ -283,7 +296,7 @@ class TestSchoolYear(TestCase):
         )
 
         next_course_day = school_year.get_next_course_day(
-            course, school_year.start_date
+            course, school_year.start_date, student=None
         )
 
         assert next_course_day == school_year.end_date
@@ -297,7 +310,7 @@ class TestSchoolYear(TestCase):
         )
 
         next_course_day = school_year.get_next_course_day(
-            course, school_year.start_date
+            course, school_year.start_date, student=None
         )
 
         assert next_course_day == school_year.start_date
