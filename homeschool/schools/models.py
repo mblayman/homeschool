@@ -3,9 +3,9 @@ from typing import Optional
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.functional import cached_property
 from hashid_field import HashidAutoField
 
 from homeschool.core.models import DaysOfWeekModel
@@ -43,6 +43,10 @@ class SchoolYear(DaysOfWeekModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._school_breaks_by_student = {}
+
     @classmethod
     def get_current_year_for(cls, user: User) -> Optional["SchoolYear"]:
         """Get a current school year for the user.
@@ -79,15 +83,27 @@ class SchoolYear(DaysOfWeekModel):
     def get_break(
         self, break_date: datetime.date, *, student: Optional[Student]
     ) -> Optional["SchoolBreak"]:
-        """Get a school break if the date is contained in the break."""
-        # TODO 434: use the student parameter
-        return self._school_breaks_by_date.get(break_date)
+        """Get a school break if the date is contained in the break.
 
-    @cached_property
-    def _school_breaks_by_date(self) -> dict[datetime.date, "SchoolBreak"]:
+        When student is None, get *all* the breaks.
+        """
+        if student not in self._school_breaks_by_student:
+            self._school_breaks_by_student[student] = self._get_breaks_for_student(
+                student
+            )
+        return self._school_breaks_by_student[student].get(break_date)
+
+    def _get_breaks_for_student(
+        self, student: Optional[Student]
+    ) -> dict[datetime.date, "SchoolBreak"]:
         """Get the school breaks grouped by the dates."""
+        # TODO 434: Test this.
+        if student is None:
+            breaks = self.breaks.all()
+        else:
+            breaks = self.breaks.filter(Q(students=None) | Q(students=student))
         breaks_by_date = {}
-        for school_break in self.breaks.all():
+        for school_break in breaks:
             current_date = school_break.start_date
             while current_date <= school_break.end_date:
                 breaks_by_date[current_date] = school_break
@@ -185,6 +201,7 @@ class SchoolBreak(models.Model):
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="breaks"
     )
+    students = models.ManyToManyField(Student)
 
     class DateType(models.IntegerChoices):
         SINGLE = 1

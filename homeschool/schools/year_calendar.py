@@ -55,7 +55,6 @@ class YearCalendar:
 
     def _build_date(self, current_date):
         """Build a date dictionary with all the data to render."""
-        # TODO 434: pass in a student
         school_break = self.school_year.get_break(current_date, student=None)
         return {
             "date": current_date,

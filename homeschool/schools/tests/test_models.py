@@ -208,9 +208,44 @@ class TestSchoolYear(TestCase):
 
         assert school_break is None
 
+    def test_get_break_for_all_students(self):
+        """Get a break for a student for a break that applies to all students."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+        student = StudentFactory()
+
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=student
+        )
+
+        assert school_break == expected_school_break
+
     def test_get_break_for_student(self):
-        # TODO 434: write this.
-        pass
+        """Get a break for a student for a break that applies to that student only."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+        student = StudentFactory()
+        expected_school_break.students.add(student)
+
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=student
+        )
+
+        assert school_break == expected_school_break
+
+    def test_get_break_for_other_student_break(self):
+        """A break for another student will return None for a different student."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+        student = StudentFactory()
+        other_student = StudentFactory()
+        expected_school_break.students.add(other_student)
+
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=student
+        )
+
+        assert school_break is None
 
     def test_is_break(self):
         """A school year can check if a date is a break day."""
@@ -221,10 +256,6 @@ class TestSchoolYear(TestCase):
         assert not school_year.is_break(
             school_break.end_date + datetime.timedelta(days=1), student=None
         )
-
-    def test_is_break_for_student(self):
-        # TODO 434: write this.
-        pass
 
     def test_start_after_end(self):
         school_year = SchoolYearFactory()
