@@ -164,7 +164,7 @@ sqlparse==0.3.0
     #   django-debug-toolbar
 stripe==2.55.2
     # via dj-stripe
-types-bleach==3.3.3
+types-bleach==4.1.0
     # via -r requirements.in
 types-python-dateutil==0.1.6
     # via -r requirements.in

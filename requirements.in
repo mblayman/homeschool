@@ -23,7 +23,7 @@ rollbar==0.16.1
 Sphinx==4.1.2
 sphinx-rtd-theme==0.5.2
 sphinx-sitemap==2.2.0
-types-bleach==3.3.3
+types-bleach==4.1.0
 types-python-dateutil==0.1.6
 types-pytz==2021.1.0
 types-requests==2.25.1
