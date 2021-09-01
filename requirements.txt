@@ -170,7 +170,7 @@ types-python-dateutil==0.1.6
     # via -r requirements.in
 types-pytz==2021.1.2
     # via -r requirements.in
-types-requests==2.25.1
+types-requests==2.25.6
     # via -r requirements.in
 types-six==1.16.1
     # via -r requirements.in
