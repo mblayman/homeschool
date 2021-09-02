@@ -97,7 +97,6 @@ class SchoolYear(DaysOfWeekModel):
         self, student: Optional[Student]
     ) -> dict[datetime.date, "SchoolBreak"]:
         """Get the school breaks grouped by the dates."""
-        # TODO 434: Test this.
         if student is None:
             breaks = self.breaks.all()
         else:

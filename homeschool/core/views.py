@@ -105,8 +105,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             if today < school_year.start_date:
                 today = school_year.start_date
 
-            context["week_dates"] = self.build_week_dates(school_year, week)
-
             # Check if this is the last week of the school year.
             # If so, there might be another school year immediately following this one.
             if school_year.end_date < week.last_day:
@@ -117,27 +115,29 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["schedules"] = self.get_schedules(school_year, today, week)
         return context
 
-    def build_week_dates(self, school_year, week):
-        """Build the week dates for the context."""
-        week_dates = []
-        for week_date in school_year.get_week_dates_for(week):
-            # TODO 434: the weekly is affected too.
-            school_break = school_year.get_break(week_date, student=None)
-            week_date_data = {"date": week_date, "school_break": school_break}
-            if school_break:
-                week_date_data["date_type"] = school_break.get_date_type(week_date)
-            week_dates.append(week_date_data)
-        return week_dates
-
     def get_schedules(self, school_year, today, week):
         """Get the schedules for each student."""
         if school_year is None:
             return []
 
-        return [
-            student.get_week_schedule(school_year, today, week)
-            for student in Student.get_students_for(school_year)
-        ]
+        schedules = []
+        for student in Student.get_students_for(school_year):
+            schedule = student.get_week_schedule(school_year, today, week)
+            schedule["week_dates"] = self.build_week_dates(school_year, week, student)
+            schedules.append(schedule)
+
+        return schedules
+
+    def build_week_dates(self, school_year, week, student):
+        """Build the week dates for the context."""
+        week_dates = []
+        for week_date in school_year.get_week_dates_for(week):
+            school_break = school_year.get_break(week_date, student=student)
+            week_date_data = {"date": week_date, "school_break": school_break}
+            if school_break:
+                week_date_data["date_type"] = school_break.get_date_type(week_date)
+            week_dates.append(week_date_data)
+        return week_dates
 
     def get_next_school_year(self, context, today, week):
         """Get the next year.
@@ -156,9 +156,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
         if next_school_year:
             context["school_year"] = next_school_year
-            context["next_year_week_dates"] = self.build_week_dates(
-                next_school_year, week
-            )
 
         # When the school year isn't in progress yet,
         # the offset calculations should come

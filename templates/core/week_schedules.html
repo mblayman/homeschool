@@ -5,7 +5,7 @@
   <div class="flex flex-row">
     <div class="flex-1 py-2 pr-4"></div>
 
-    {% for week_date in week_dates %}
+    {% for week_date in schedule.week_dates %}
     <a href="{% url "core:daily_for_date" week_date.date.year week_date.date.month week_date.date.day %}"class="flex-1 text-sm text-center uppercase tracking-wide font-extralight p-2
       {% if week_date.school_break %}
         bg-yellow-200
