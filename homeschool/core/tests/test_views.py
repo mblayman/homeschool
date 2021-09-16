@@ -726,8 +726,35 @@ class TestDaily(TestCase):
                 {"course": course_3},
                 {"course": course_4, "no_scheduled_task": True},
             ],
+            "is_break": False,
         }
         self.assertContext("schedules", [expected_schedule])
+
+    @mock.patch("homeschool.users.models.timezone")
+    def test_is_break_for_student(self, mock_timezone):
+        """A student's break day appears in the schedule."""
+        friday = timezone.localdate() + relativedelta(weekday=FR)
+        mock_timezone.localdate.return_value = friday
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(
+            school=user.school, days_of_week=SchoolYear.FRIDAY
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        other_enrollment = EnrollmentFactory(grade_level=grade_level)
+        school_break = SchoolBreakFactory(
+            start_date=friday, end_date=friday, school_year=school_year
+        )
+        school_break.students.add(student)
+
+        with self.login(user):
+            self.get("core:daily")
+
+        assert self.get_context("schedules") == [
+            {"student": student, "courses": [], "is_break": True},
+            {"student": other_enrollment.student, "courses": [], "is_break": False},
+        ]
 
     @mock.patch("homeschool.users.models.timezone")
     def test_no_scheduled_task_for_course(self, mock_timezone):
@@ -777,6 +804,7 @@ class TestDaily(TestCase):
         expected_schedule = {
             "student": student,
             "courses": [{"course": course, "task": task}],
+            "is_break": False,
         }
         self.assertContext("schedules", [expected_schedule])
 

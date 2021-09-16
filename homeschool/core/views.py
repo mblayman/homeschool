@@ -261,7 +261,13 @@ class DailyView(LoginRequiredMixin, TemplateView):
             for student in Student.get_students_for(school_year)
         )
 
-    def get_schedules(self, school_year, today, day, is_break_for_everyone):
+    def get_schedules(
+        self,
+        school_year,
+        today: datetime.date,
+        day: datetime.date,
+        is_break_for_everyone,
+    ):
         """Get the schedules for each student."""
         schedules: list = []
         if not school_year or not school_year.runs_on(day) or is_break_for_everyone:
@@ -273,9 +279,10 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
         return schedules
 
-    def get_student_schedule(self, student, today, day, school_year):
+    def get_student_schedule(
+        self, student, today: datetime.date, day: datetime.date, school_year
+    ):
         """Get the daily schedule for the student."""
-        # TODO 434: this matters when *at least one* of the students has a break.
         courses = student.get_active_courses(school_year)
         day_coursework = student.get_day_coursework(day)
         completed_task_ids = list(
@@ -283,7 +290,11 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 student=student, course_task__course__in=courses
             ).values_list("course_task_id", flat=True)
         )
-        schedule = {"student": student, "courses": []}
+        is_break = school_year.is_break(day, student=student)
+        schedule = {"student": student, "courses": [], "is_break": is_break}
+        if is_break:
+            return schedule
+
         for course in courses:
             course_schedule = {"course": course}
             if course.id in day_coursework:
