@@ -275,9 +275,14 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["create"] = True
         user = self.request.user
-        context["school_year"] = get_object_or_404(
+        school_year = get_object_or_404(
             SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
         )
+        context["school_year"] = school_year
+        # TODO 434: test this
+        # TODO 434: add students to the update view
+        # TODO 434: fix the template to show the right checkboxes for the update view.
+        context["students"] = Enrollment.get_students_for_school_year(school_year)
         return context
 
     def get_success_url(self):

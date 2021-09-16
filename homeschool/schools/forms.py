@@ -2,6 +2,7 @@ from django import forms
 
 from homeschool.core.forms import DaysOfWeekModelForm
 from homeschool.courses.models import Course
+from homeschool.students.models import Enrollment
 
 from . import constants
 from .models import GradeLevel, SchoolBreak, SchoolYear
@@ -103,6 +104,31 @@ class SchoolBreakForm(forms.ModelForm):
                 "The dates provided overlap with the school break "
                 f"from {school_break.start_date} to {school_break.end_date}.",
             )
+
+    def save(self):
+        """Save the break and record any student-specific breaks."""
+        # TODO 434: at least one student must be checked if there are enrolled students.
+        school_break = super().save()
+        school_year = self.cleaned_data["school_year"]
+        enrolled_students = Enrollment.get_students_for_school_year(school_year)
+        student_ids = [
+            student_id
+            for key, student_id in self.data.items()
+            if key.startswith("student-")
+        ]
+
+        all_students_on_break = bool(
+            enrolled_students and len(student_ids) == len(enrolled_students)
+        )
+        if all_students_on_break:
+            school_break.students.clear()
+        else:
+            students = [
+                student for student in enrolled_students if student.id in student_ids
+            ]
+            school_break.students.set(students)
+
+        return school_break
 
 
 class SchoolYearForm(DaysOfWeekModelForm):

@@ -358,6 +358,16 @@ class Enrollment(models.Model):
             < Student.objects.filter(school=school_year.school_id).count()
         )
 
+    @classmethod
+    def get_students_for_school_year(cls, school_year):
+        """Get all the enrolled students in the school year."""
+        enrollments = (
+            cls.objects.filter(grade_level__school_year=school_year)
+            .select_related("student")
+            .order_by("student__first_name")
+        )
+        return [enrollment.student for enrollment in enrollments]
+
 
 class Coursework(models.Model):
     """The work that student completes for course tasks"""
