@@ -62,6 +62,12 @@ class SchoolBreakForm(forms.ModelForm):
                 self.check_in_school_year(school_year, start_date, end_date)
                 self.check_overlap(school_year, start_date, end_date)
 
+        if self.instance.id is not None:
+            has_student_ids = any(
+                key for key in self.data if key.startswith("student-")
+            )
+            if self.instance.students.count() > 0 and not has_student_ids:
+                self.add_error(None, "At least one student must be on break.")
         return self.cleaned_data
 
     def check_in_school_year(self, school_year, start_date, end_date):
@@ -107,7 +113,6 @@ class SchoolBreakForm(forms.ModelForm):
 
     def save(self):
         """Save the break and record any student-specific breaks."""
-        # TODO 434: at least one student must be checked if there are enrolled students.
         school_break = super().save()
         school_year = self.cleaned_data["school_year"]
         enrolled_students = Enrollment.get_students_for_school_year(school_year)

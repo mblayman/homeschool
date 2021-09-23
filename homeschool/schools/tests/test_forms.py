@@ -387,3 +387,24 @@ class TestSchoolBreakForm(TestCase):
         form.save()
 
         assert school_break.students.first() == enrollment_2.student
+
+    def test_at_least_one_enrolled(self):
+        """When students are enrolled, at least one must be on a break."""
+        school = SchoolFactory()
+        school_break = SchoolBreakFactory(school_year__school=school)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=school_break.school_year
+        )
+        school_break.students.add(enrollment.student)
+        EnrollmentFactory(grade_level=enrollment.grade_level)
+        data = {
+            "school_year": str(school_break.school_year.id),
+            "start_date": str(school_break.start_date),
+            "end_date": str(school_break.end_date),
+        }
+        form = SchoolBreakForm(user=school.admin, instance=school_break, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "At least one student must be on break." in form.non_field_errors()[0]

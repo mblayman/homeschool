@@ -294,6 +294,16 @@ class TestEnrollment(TestCase):
                 student=enrollment.student, grade_level=enrollment.grade_level
             )
 
+    def test_get_students_for_school_year(self):
+        """Finds any students that are part of a school year."""
+        enrollment = EnrollmentFactory()
+        school_year = enrollment.grade_level.school_year
+        StudentFactory(school=school_year.school)
+
+        students = Enrollment.get_students_for_school_year(school_year)
+
+        assert students == [enrollment.student]
+
 
 class TestCoursework(TestCase):
     def test_factory(self):

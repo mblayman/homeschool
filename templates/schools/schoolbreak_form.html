@@ -34,6 +34,8 @@
                 <input class="mr-2" type="checkbox" value="{{ student.id }}" id="student-{{ student.id }}" name="student-{{ student.id }}"
                 {% if create %}
                   checked
+                {% else %}
+                  {% if student.is_on_break %}checked{% endif %}
                 {% endif %}
                 >
                 {{ student }}
