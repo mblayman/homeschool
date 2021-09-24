@@ -64,6 +64,7 @@ to learn more about how School Desk works.
    :caption: Reference
    :maxdepth: 2
 
+   school-years.rst
    courses.rst
    referrals.rst
 

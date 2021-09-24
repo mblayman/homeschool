@@ -22,8 +22,6 @@ in many ways.
 Now, the course page and the student's progress page are combined
 into a single page!
 
-<!--more-->
-
 The combined course page replaces both
 of the previous versions.
 From this new page,
