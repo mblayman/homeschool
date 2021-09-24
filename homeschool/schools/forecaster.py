@@ -39,10 +39,10 @@ class Forecaster:
         if today < school_year.start_date:
             today = school_year.start_date
 
-        if not school_year.is_break(today) and course.runs_on(today):
+        if not school_year.is_break(today, student=student) and course.runs_on(today):
             next_course_day = today
         else:
-            next_course_day = school_year.get_next_course_day(course, today)
+            next_course_day = school_year.get_next_course_day(course, today, student)
 
         course_is_running = course.is_running
         coursework_by_task = self._get_course_work_by_task(student, course)
@@ -63,13 +63,13 @@ class Forecaster:
                 # Advance the next course day to deconflict with coursework.
                 if coursework.completed_date == next_course_day:
                     next_course_day = school_year.get_next_course_day(
-                        course, next_course_day
+                        course, next_course_day, student
                     )
                 task_item["coursework"] = coursework
             elif course_is_running:
                 task_item["planned_date"] = next_course_day
                 next_course_day = school_year.get_next_course_day(
-                    course, next_course_day
+                    course, next_course_day, student
                 )
             task_items.append(task_item)
 

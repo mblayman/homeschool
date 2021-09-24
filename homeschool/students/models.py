@@ -86,7 +86,7 @@ class Student(models.Model):
             )
 
             for week_date in week_dates:
-                school_break = school_year.get_break(week_date)
+                school_break = school_year.get_break(week_date, student=self)
                 course_schedule_item = {
                     "week_date": week_date,
                     "school_break": school_break,
@@ -247,7 +247,7 @@ class Student(models.Model):
             # This means the unfinished work is everything from today to the end
             # of the last school day.
             unfinished_tasks_this_week = school_year.get_task_count_in_range(
-                course, today, last_school_day_this_week
+                course, today, last_school_day_this_week, self
             )
             # TODO: subtract out the actually completed tasks from this number. See #433
         else:
@@ -260,6 +260,7 @@ class Student(models.Model):
             course,
             last_school_day_this_week + datetime.timedelta(days=1),
             week_start_date - datetime.timedelta(days=1),
+            self,
         )
         return unfinished_tasks_this_week + tasks_between
 
@@ -320,7 +321,9 @@ class Student(models.Model):
 
         Be inclusive of start and end date.
         """
-        task_count = school_year.get_task_count_in_range(course, start_date, end_date)
+        task_count = school_year.get_task_count_in_range(
+            course, start_date, end_date, self
+        )
         coursework_count = Coursework.objects.filter(
             course_task__course=course,
             student=self,
@@ -354,6 +357,16 @@ class Enrollment(models.Model):
             cls.objects.filter(grade_level__school_year=school_year).count()
             < Student.objects.filter(school=school_year.school_id).count()
         )
+
+    @classmethod
+    def get_students_for_school_year(cls, school_year):
+        """Get all the enrolled students in the school year."""
+        enrollments = (
+            cls.objects.filter(grade_level__school_year=school_year)
+            .select_related("student")
+            .order_by("student__first_name")
+        )
+        return [enrollment.student for enrollment in enrollments]
 
 
 class Coursework(models.Model):

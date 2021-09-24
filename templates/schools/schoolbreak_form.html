@@ -19,6 +19,33 @@
     {% include "forms/field.html" with field=form.start_date placeholder="7/4/2020" autofocus=True %}
     {% include "forms/field.html" with field=form.end_date placeholder="7/8/2020" %}
     {% include "forms/field.html" with field=form.description placeholder="e.g., “Independence Day getaway”" %}
+
+    {% if students %}
+      <div class="md:flex md:items-center mb-4">
+        <div class="md:w-1/4">
+          <label class="block text-blue-900 font-extralight md:text-right mb-1 md:mb-0 pr-4" for="{{ field.id_for_label }}">
+            Student
+          </label>
+        </div>
+        <div class="md:w-3/4">
+          {% for student in students %}
+            <div class="py-1">
+              <label class="p-4 w-full inline-block hover:bg-gray-200 rounded" for="student-{{ student.id }}">
+                <input class="mr-2" type="checkbox" value="{{ student.id }}" id="student-{{ student.id }}" name="student-{{ student.id }}"
+                {% if create %}
+                  checked
+                {% else %}
+                  {% if student.is_on_break %}checked{% endif %}
+                {% endif %}
+                >
+                {{ student }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center">

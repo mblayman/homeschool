@@ -3,12 +3,13 @@ from typing import Optional
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.functional import cached_property
 from hashid_field import HashidAutoField
 
 from homeschool.core.models import DaysOfWeekModel
+from homeschool.students.models import Student
 from homeschool.users.models import User
 
 
@@ -42,6 +43,10 @@ class SchoolYear(DaysOfWeekModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._school_breaks_by_student = {}
+
     @classmethod
     def get_current_year_for(cls, user: User) -> Optional["SchoolYear"]:
         """Get a current school year for the user.
@@ -69,26 +74,42 @@ class SchoolYear(DaysOfWeekModel):
         """Check if the day is in the school year."""
         return self.start_date <= day <= self.end_date
 
-    def is_break(self, break_date):
+    def is_break(
+        self, break_date: datetime.date, *, student: Optional[Student]
+    ) -> bool:
         """Check if the break date is a school break."""
-        return self.get_break(break_date) is not None
+        return self.get_break(break_date, student=student) is not None
 
-    def get_break(self, break_date) -> Optional["SchoolBreak"]:
-        """Get a school break if the date is contained in the break."""
-        return self._school_breaks_by_date.get(break_date)
+    def get_break(
+        self, break_date: datetime.date, *, student: Optional[Student]
+    ) -> Optional["SchoolBreak"]:
+        """Get a school break if the date is contained in the break.
 
-    @cached_property
-    def _school_breaks_by_date(self) -> dict[datetime.date, "SchoolBreak"]:
+        When student is None, get *all* the breaks.
+        """
+        if student not in self._school_breaks_by_student:
+            self._school_breaks_by_student[student] = self._get_breaks_for_student(
+                student
+            )
+        return self._school_breaks_by_student[student].get(break_date)
+
+    def _get_breaks_for_student(
+        self, student: Optional[Student]
+    ) -> dict[datetime.date, "SchoolBreak"]:
         """Get the school breaks grouped by the dates."""
+        if student is None:
+            breaks = self.breaks.all()
+        else:
+            breaks = self.breaks.filter(Q(students=None) | Q(students=student))
         breaks_by_date = {}
-        for school_break in self.breaks.all():
+        for school_break in breaks:
             current_date = school_break.start_date
             while current_date <= school_break.end_date:
                 breaks_by_date[current_date] = school_break
                 current_date = current_date + datetime.timedelta(days=1)
         return breaks_by_date
 
-    def get_task_count_in_range(self, course, start_date, end_date):
+    def get_task_count_in_range(self, course, start_date, end_date, student):
         """Get the task count for a course and factor in any breaks.
 
         Be inclusive of start and end.
@@ -99,13 +120,15 @@ class SchoolYear(DaysOfWeekModel):
         task_count = 0
         date_to_check = start_date
         while date_to_check <= end_date:
-            if not self.is_break(date_to_check) and course.runs_on(date_to_check):
+            if not self.is_break(date_to_check, student=student) and course.runs_on(
+                date_to_check
+            ):
                 task_count += 1
             date_to_check += datetime.timedelta(days=1)
 
         return task_count
 
-    def get_next_course_day(self, course, day):
+    def get_next_course_day(self, course, day, student):
         """Get the next course day after the provided day (considering breaks)."""
         next_course_day = course.get_next_day_from(day)
         # When the course isn't meeting the next day is the same. Bail early.
@@ -113,7 +136,7 @@ class SchoolYear(DaysOfWeekModel):
             return day
 
         while next_course_day < self.end_date:
-            if not self.is_break(next_course_day):
+            if not self.is_break(next_course_day, student=student):
                 return next_course_day
             next_course_day = course.get_next_day_from(next_course_day)
 
@@ -177,6 +200,7 @@ class SchoolBreak(models.Model):
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="breaks"
     )
+    students = models.ManyToManyField(Student)
 
     class DateType(models.IntegerChoices):
         SINGLE = 1

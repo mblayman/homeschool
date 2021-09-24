@@ -492,12 +492,14 @@ class TestSchoolBreakCreateView(TestCase):
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
 
         with self.login(user):
             self.get_check_200("schools:school_break_create", pk=school_year.id)
 
         assert self.get_context("school_year") == school_year
         assert self.get_context("create")
+        assert self.get_context("students") == [enrollment.student]
 
     def test_post(self):
         """A user can create a school break for their school year."""
@@ -586,11 +588,24 @@ class TestSchoolBreakUpdateView(TestCase):
     def test_get(self):
         user = self.make_user()
         school_break = SchoolBreakFactory(school_year__school=user.school)
+        # Make only one student on break.
+        enrollment_1 = EnrollmentFactory(
+            student__first_name="Alice",
+            grade_level__school_year=school_break.school_year,
+        )
+        school_break.students.add(enrollment_1.student)
+        enrollment_2 = EnrollmentFactory(
+            student__first_name="Bob", grade_level=enrollment_1.grade_level
+        )
 
         with self.login(user):
             self.get_check_200("schools:school_break_edit", pk=school_break.id)
 
         assert self.get_context("school_year") == school_break.school_year
+        students = self.get_context("students")
+        assert students == [enrollment_1.student, enrollment_2.student]
+        assert students[0].is_on_break
+        assert not students[1].is_on_break
 
     def test_post(self):
         """A user can update a school break for their school year."""

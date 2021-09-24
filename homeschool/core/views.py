@@ -105,8 +105,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             if today < school_year.start_date:
                 today = school_year.start_date
 
-            context["week_dates"] = self.build_week_dates(school_year, week)
-
             # Check if this is the last week of the school year.
             # If so, there might be another school year immediately following this one.
             if school_year.end_date < week.last_day:
@@ -117,26 +115,29 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["schedules"] = self.get_schedules(school_year, today, week)
         return context
 
-    def build_week_dates(self, school_year, week):
-        """Build the week dates for the context."""
-        week_dates = []
-        for week_date in school_year.get_week_dates_for(week):
-            school_break = school_year.get_break(week_date)
-            week_date_data = {"date": week_date, "school_break": school_break}
-            if school_break:
-                week_date_data["date_type"] = school_break.get_date_type(week_date)
-            week_dates.append(week_date_data)
-        return week_dates
-
     def get_schedules(self, school_year, today, week):
         """Get the schedules for each student."""
         if school_year is None:
             return []
 
-        return [
-            student.get_week_schedule(school_year, today, week)
-            for student in Student.get_students_for(school_year)
-        ]
+        schedules = []
+        for student in Student.get_students_for(school_year):
+            schedule = student.get_week_schedule(school_year, today, week)
+            schedule["week_dates"] = self.build_week_dates(school_year, week, student)
+            schedules.append(schedule)
+
+        return schedules
+
+    def build_week_dates(self, school_year, week, student):
+        """Build the week dates for the context."""
+        week_dates = []
+        for week_date in school_year.get_week_dates_for(week):
+            school_break = school_year.get_break(week_date, student=student)
+            week_date_data = {"date": week_date, "school_break": school_break}
+            if school_break:
+                week_date_data["date_type"] = school_break.get_date_type(week_date)
+            week_dates.append(week_date_data)
+        return week_dates
 
     def get_next_school_year(self, context, today, week):
         """Get the next year.
@@ -155,9 +156,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
         if next_school_year:
             context["school_year"] = next_school_year
-            context["next_year_week_dates"] = self.build_week_dates(
-                next_school_year, week
-            )
 
         # When the school year isn't in progress yet,
         # the offset calculations should come
@@ -247,14 +245,32 @@ class DailyView(LoginRequiredMixin, TemplateView):
             context["tomorrow"] = day + datetime.timedelta(days=1)
             context["overmorrow"] = day + datetime.timedelta(days=2)
 
-        context["is_break_day"] = bool(school_year and school_year.is_break(day))
-        context["schedules"] = self.get_schedules(school_year, today, day)
+        is_break_day = self.is_break_for_everyone(day, school_year)
+        context["is_break_day"] = is_break_day
+        context["schedules"] = self.get_schedules(school_year, today, day, is_break_day)
         return context
 
-    def get_schedules(self, school_year, today, day):
+    def is_break_for_everyone(
+        self, day: datetime.date, school_year: Optional[SchoolYear]
+    ) -> bool:
+        """Check if this is a break day for all students."""
+        if school_year is None:
+            return False
+        return all(
+            school_year.is_break(day, student=student)
+            for student in Student.get_students_for(school_year)
+        )
+
+    def get_schedules(
+        self,
+        school_year,
+        today: datetime.date,
+        day: datetime.date,
+        is_break_for_everyone,
+    ):
         """Get the schedules for each student."""
         schedules: list = []
-        if not school_year or not school_year.runs_on(day) or school_year.is_break(day):
+        if not school_year or not school_year.runs_on(day) or is_break_for_everyone:
             return schedules
 
         for student in Student.get_students_for(school_year):
@@ -263,7 +279,9 @@ class DailyView(LoginRequiredMixin, TemplateView):
 
         return schedules
 
-    def get_student_schedule(self, student, today, day, school_year):
+    def get_student_schedule(
+        self, student, today: datetime.date, day: datetime.date, school_year
+    ):
         """Get the daily schedule for the student."""
         courses = student.get_active_courses(school_year)
         day_coursework = student.get_day_coursework(day)
@@ -272,7 +290,11 @@ class DailyView(LoginRequiredMixin, TemplateView):
                 student=student, course_task__course__in=courses
             ).values_list("course_task_id", flat=True)
         )
-        schedule = {"student": student, "courses": []}
+        is_break = school_year.is_break(day, student=student)
+        schedule = {"student": student, "courses": [], "is_break": is_break}
+        if is_break:
+            return schedule
+
         for course in courses:
             course_schedule = {"course": course}
             if course.id in day_coursework:

@@ -194,7 +194,9 @@ class TestSchoolYear(TestCase):
         expected_school_break = SchoolBreakFactory()
         school_year = expected_school_break.school_year
 
-        school_break = school_year.get_break(expected_school_break.start_date)
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=None
+        )
 
         assert school_break == expected_school_break
 
@@ -202,7 +204,46 @@ class TestSchoolYear(TestCase):
         """A data with no break is a null result."""
         school_year = SchoolYearFactory()
 
-        school_break = school_year.get_break(school_year.start_date)
+        school_break = school_year.get_break(school_year.start_date, student=None)
+
+        assert school_break is None
+
+    def test_get_break_for_all_students(self):
+        """Get a break for a student for a break that applies to all students."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+        student = StudentFactory()
+
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=student
+        )
+
+        assert school_break == expected_school_break
+
+    def test_get_break_for_student(self):
+        """Get a break for a student for a break that applies to that student only."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+        student = StudentFactory()
+        expected_school_break.students.add(student)
+
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=student
+        )
+
+        assert school_break == expected_school_break
+
+    def test_get_break_for_other_student_break(self):
+        """A break for another student will return None for a different student."""
+        expected_school_break = SchoolBreakFactory()
+        school_year = expected_school_break.school_year
+        student = StudentFactory()
+        other_student = StudentFactory()
+        expected_school_break.students.add(other_student)
+
+        school_break = school_year.get_break(
+            expected_school_break.start_date, student=student
+        )
 
         assert school_break is None
 
@@ -211,9 +252,9 @@ class TestSchoolYear(TestCase):
         school_break = SchoolBreakFactory()
         school_year = school_break.school_year
 
-        assert school_year.is_break(school_break.start_date)
+        assert school_year.is_break(school_break.start_date, student=None)
         assert not school_year.is_break(
-            school_break.end_date + datetime.timedelta(days=1)
+            school_break.end_date + datetime.timedelta(days=1), student=None
         )
 
     def test_start_after_end(self):
@@ -223,7 +264,9 @@ class TestSchoolYear(TestCase):
         start_date = datetime.date(2020, 5, 7)
         end_date = datetime.date(2020, 5, 5)
 
-        count = school_year.get_task_count_in_range(course, start_date, end_date)
+        count = school_year.get_task_count_in_range(
+            course, start_date, end_date, student=None
+        )
 
         assert count == 1
 
@@ -246,6 +289,7 @@ class TestSchoolYear(TestCase):
             course,
             school_year.start_date,
             school_year.start_date + datetime.timedelta(days=1),
+            student=None,
         )
 
         assert count == 1
@@ -264,7 +308,7 @@ class TestSchoolYear(TestCase):
         )
 
         next_course_day = school_year.get_next_course_day(
-            course, school_year.start_date
+            course, school_year.start_date, student=None
         )
 
         assert next_course_day == school_year.start_date + datetime.timedelta(days=2)
@@ -283,7 +327,7 @@ class TestSchoolYear(TestCase):
         )
 
         next_course_day = school_year.get_next_course_day(
-            course, school_year.start_date
+            course, school_year.start_date, student=None
         )
 
         assert next_course_day == school_year.end_date
@@ -297,7 +341,7 @@ class TestSchoolYear(TestCase):
         )
 
         next_course_day = school_year.get_next_course_day(
-            course, school_year.start_date
+            course, school_year.start_date, student=None
         )
 
         assert next_course_day == school_year.start_date

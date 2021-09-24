@@ -9,6 +9,7 @@ from homeschool.schools.tests.factories import (
     SchoolFactory,
     SchoolYearFactory,
 )
+from homeschool.students.tests.factories import EnrollmentFactory
 from homeschool.test import TestCase
 
 
@@ -193,6 +194,23 @@ class TestSchoolYearForm(TestCase):
 
 
 class TestSchoolBreakForm(TestCase):
+    def test_create(self):
+        """A school break is created."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        data = {
+            "school_year": str(school_year.id),
+            "start_date": str(school_year.start_date),
+            "end_date": str(school_year.start_date),
+        }
+        form = SchoolBreakForm(user=school.admin, data=data)
+        is_valid = form.is_valid()
+
+        form.save()
+
+        assert is_valid
+        assert school_year.breaks.count() == 1
+
     def test_start_before_end(self):
         """The start date must be before the end date."""
         school = SchoolFactory()
@@ -299,3 +317,94 @@ class TestSchoolBreakForm(TestCase):
                 assert (
                     "A break must be in the school year." in form.non_field_errors()[0]
                 )
+
+    def test_school_break_create_applies_to_one_student(self):
+        """A school break is specific to a single student."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+        EnrollmentFactory(grade_level__school_year=school_year)
+        data = {
+            "school_year": str(school_year.id),
+            "start_date": str(school_year.start_date),
+            "end_date": str(school_year.start_date),
+            f"student-{enrollment.student.id}": str(enrollment.student.id),
+        }
+        form = SchoolBreakForm(user=school.admin, data=data)
+        form.is_valid()
+
+        form.save()
+
+        school_break = school_year.breaks.first()
+        student_on_break = school_break.students.first()
+        assert enrollment.student == student_on_break
+
+    def test_school_break_edit_clears_m2m(self):
+        """A school break will clear m2m students if all students are on break."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        enrollment_1 = EnrollmentFactory(grade_level__school_year=school_year)
+        enrollment_2 = EnrollmentFactory(grade_level__school_year=school_year)
+        start = school_year.start_date
+        school_break = SchoolBreakFactory(
+            school_year=school_year, start_date=start, end_date=start
+        )
+        school_break.students.add(enrollment_1.student)
+        data = {
+            "school_year": str(school_year.id),
+            "start_date": str(start),
+            "end_date": str(start),
+            f"student-{enrollment_1.student.id}": str(enrollment_1.student.id),
+            f"student-{enrollment_2.student.id}": str(enrollment_2.student.id),
+        }
+        form = SchoolBreakForm(user=school.admin, instance=school_break, data=data)
+        form.is_valid()
+
+        form.save()
+
+        assert school_break.students.count() == 0
+
+    def test_school_break_edit_switches_student_break(self):
+        """A school break will switch student who is on break."""
+        school = SchoolFactory()
+        school_year = SchoolYearFactory(school=school)
+        enrollment_1 = EnrollmentFactory(grade_level__school_year=school_year)
+        enrollment_2 = EnrollmentFactory(grade_level__school_year=school_year)
+        start = school_year.start_date
+        school_break = SchoolBreakFactory(
+            school_year=school_year, start_date=start, end_date=start
+        )
+        school_break.students.add(enrollment_1.student)
+        data = {
+            "school_year": str(school_year.id),
+            "start_date": str(start),
+            "end_date": str(start),
+            f"student-{enrollment_2.student.id}": str(enrollment_2.student.id),
+        }
+        form = SchoolBreakForm(user=school.admin, instance=school_break, data=data)
+        form.is_valid()
+
+        form.save()
+
+        assert school_break.students.first() == enrollment_2.student
+
+    def test_at_least_one_enrolled(self):
+        """When students are enrolled, at least one must be on a break."""
+        school = SchoolFactory()
+        school_break = SchoolBreakFactory(school_year__school=school)
+        enrollment = EnrollmentFactory(
+            grade_level__school_year=school_break.school_year
+        )
+        school_break.students.add(enrollment.student)
+        EnrollmentFactory(grade_level=enrollment.grade_level)
+        data = {
+            "school_year": str(school_break.school_year.id),
+            "start_date": str(school_break.start_date),
+            "end_date": str(school_break.end_date),
+        }
+        form = SchoolBreakForm(user=school.admin, instance=school_break, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "At least one student must be on break." in form.non_field_errors()[0]

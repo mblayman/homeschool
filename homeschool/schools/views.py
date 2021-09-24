@@ -275,9 +275,11 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["create"] = True
         user = self.request.user
-        context["school_year"] = get_object_or_404(
+        school_year = get_object_or_404(
             SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
         )
+        context["school_year"] = school_year
+        context["students"] = Enrollment.get_students_for_school_year(school_year)
         return context
 
     def get_success_url(self):
@@ -302,6 +304,15 @@ class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["school_year"] = self.object.school_year
+        students = Enrollment.get_students_for_school_year(self.object.school_year)
+
+        students_on_break = self.object.students.all()
+        for student in students:
+            student.is_on_break = not bool(
+                students_on_break and student not in students_on_break
+            )
+
+        context["students"] = students
         return context
 
     def get_success_url(self):
@@ -501,7 +512,9 @@ class AttendanceReportView(LoginRequiredMixin, TemplateView):
                 {
                     "date": school_date,
                     "is_school_day": school_year.runs_on(school_date),
-                    "is_break": school_year.is_break(school_date),
+                    "is_break": school_year.is_break(
+                        school_date, student=enrollment.student
+                    ),
                     "attended": school_date in dates_with_work,
                 }
             )
