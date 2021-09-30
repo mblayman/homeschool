@@ -23,6 +23,11 @@ urlpatterns = [
         name="task_create_bulk_hx",
     ),
     path(
+        "<hashid:pk>/tasks/bulk/delete/",
+        views.bulk_delete_course_tasks,
+        name="task_delete_bulk",
+    ),
+    path(
         "<hashid:course_id>/tasks/<hashid:pk>/delete/",
         views.CourseTaskDeleteView.as_view(),
         name="task_delete",

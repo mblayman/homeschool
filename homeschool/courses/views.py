@@ -140,9 +140,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
 
         course_to_copy = self.course_to_copy
         if course_to_copy is None:
-            messages.add_message(
-                self.request, messages.ERROR, "Sorry, you can’t copy that course."
-            )
+            messages.error(self.request, "Sorry, you can’t copy that course.")
             return {}
 
         return {
@@ -602,6 +600,23 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_initial(self):
         return {"is_graded": hasattr(self.object, "graded_work")}
+
+
+@login_required
+def bulk_delete_course_tasks(request, pk):
+    """Bulk delete course tasks."""
+    course = get_course(request.user, pk)
+    tasks = get_course_task_queryset(request.user).filter(course=course)
+
+    if request.method == "DELETE":
+        # TODO 446: form
+        # TODO 446: POST/DELETE handling
+        # TODO 446: message number of tasks deleted
+        messages.info(request, "Deleted 42 tasks.")
+        return HttpResponseRedirect(reverse("courses:detail", args=[course.id]))
+
+    context = {"course": course, "course_tasks": tasks}
+    return render(request, "courses/coursetask_bulk_delete.html", context)
 
 
 class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
