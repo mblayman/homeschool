@@ -9,6 +9,6 @@ pre-commit
 pygraphviz==1.7
 pytest-cov==2.12.1
 pytest-django==4.4.0
-pytest-xdist==2.3.0
+pytest-xdist==2.4.0
 pyupgrade==2.23.1
 responses==0.10.15
