@@ -467,19 +467,42 @@ class TestBulkDeleteCourseTasks(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
         task = CourseTaskFactory(course=course)
         undeleted_task = CourseTaskFactory(course=course)
-        data = {f"task-{task.id}": "on"}
+        data = {f"task-{task.id}": f"{task.id}"}
 
         with self.login(user):
-            response = self.delete("courses:task_delete_bulk", pk=course.id, data=data)
+            response = self.post("courses:task_delete_bulk", pk=course.id, data=data)
 
         self.response_302(response)
         assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
         assert CourseTask.objects.filter(id=undeleted_task.id).count() == 1
-        # TODO 446
-        # assert CourseTask.objects.filter(id=task.id).count() == 0
+        assert CourseTask.objects.filter(id=task.id).count() == 0
         message = list(get_messages(response.wsgi_request))[0]
-        # TODO 446: assert proper count
-        assert str(message) == "Deleted 42 tasks."
+        assert str(message) == "Deleted 1 tasks."
+
+    def test_error_redirect(self):
+        """An error will redirect to the same page."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        another_task = CourseTaskFactory()
+        data = {
+            f"task-{task.id}": f"{task.id}",
+            f"task-{another_task.id}": f"{another_task.id}",
+        }
+
+        with self.login(user):
+            response = self.post("courses:task_delete_bulk", pk=course.id, data=data)
+
+        self.response_302(response)
+        assert response.get("Location") == self.reverse(
+            "courses:task_delete_bulk", pk=course.id
+        )
+        message = list(get_messages(response.wsgi_request))[0]
+        assert (
+            str(message)
+            == "Sorry, you do not have permission to delete the selected tasks."
+        )
 
 
 class TestCourseDeleteView(TestCase):

@@ -24,7 +24,12 @@ from homeschool.schools.forecaster import Forecaster
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade
 
-from .forms import CourseForm, CourseResourceForm, CourseTaskForm
+from .forms import (
+    CourseForm,
+    CourseResourceForm,
+    CourseTaskBulkDeleteForm,
+    CourseTaskForm,
+)
 from .models import Course, CourseResource, CourseTask
 
 
@@ -608,12 +613,19 @@ def bulk_delete_course_tasks(request, pk):
     course = get_course(request.user, pk)
     tasks = get_course_task_queryset(request.user).filter(course=course)
 
-    if request.method == "DELETE":
-        # TODO 446: form
-        # TODO 446: POST/DELETE handling
-        # TODO 446: message number of tasks deleted
-        messages.info(request, "Deleted 42 tasks.")
-        return HttpResponseRedirect(reverse("courses:detail", args=[course.id]))
+    # TODO 446: What about a user that is deleting zero tasks?
+    if request.method == "POST":
+        form = CourseTaskBulkDeleteForm(request.POST, user=request.user)
+        if form.is_valid():
+            deleted_tasks_count = form.save()
+            messages.info(request, f"Deleted {deleted_tasks_count} tasks.")
+            return HttpResponseRedirect(reverse("courses:detail", args=[course.id]))
+
+        error_message = form.non_field_errors()[0]
+        messages.error(request, error_message)
+        return HttpResponseRedirect(
+            reverse("courses:task_delete_bulk", args=[course.id])
+        )
 
     context = {"course": course, "course_tasks": tasks}
     return render(request, "courses/coursetask_bulk_delete.html", context)

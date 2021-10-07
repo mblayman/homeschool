@@ -1,5 +1,10 @@
-from homeschool.courses.forms import CourseForm, CourseResourceForm, CourseTaskForm
-from homeschool.courses.tests.factories import CourseFactory
+from homeschool.courses.forms import (
+    CourseForm,
+    CourseResourceForm,
+    CourseTaskBulkDeleteForm,
+    CourseTaskForm,
+)
+from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
 from homeschool.schools.models import SchoolYear
 from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
 from homeschool.test import TestCase
@@ -76,6 +81,29 @@ class TestCourseResourceForm(TestCase):
 
         assert not is_valid
         assert "You may not add a resource to another" in form.non_field_errors()[0]
+
+
+class TestCourseTaskBulkDeleteForm(TestCase):
+    def test_only_delete_users_tasks(self):
+        """A user may only delete tasks for their school."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task_to_delete = CourseTaskFactory(course=course)
+        another_task = CourseTaskFactory()
+        data = {
+            f"task-{task_to_delete.id}": str(task_to_delete.id),
+            f"task-{another_task.id}": str(another_task.id),
+        }
+        form = CourseTaskBulkDeleteForm(user=user, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert (
+            "Sorry, you do not have permission to delete the selected tasks."
+            in form.non_field_errors()
+        )
 
 
 class TestCourseTaskForm(TestCase):
