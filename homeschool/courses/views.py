@@ -619,7 +619,11 @@ def bulk_delete_course_tasks(request, pk):
         if form.is_valid():
             deleted_tasks_count = form.save()
             messages.info(request, f"Deleted {deleted_tasks_count} tasks.")
-            return HttpResponseRedirect(reverse("courses:detail", args=[course.id]))
+            # TODO 446: Replace with HttpResponseClientRedirect from django-htmx
+            url = reverse("courses:detail", args=[course.id])
+            response = HttpResponseRedirect(url)
+            response["HX-Redirect"] = url
+            return response
 
         error_message = form.non_field_errors()[0]
         messages.error(request, error_message)
