@@ -174,7 +174,7 @@ types-requests==2.25.11
     # via -r requirements.in
 types-six==1.16.1
     # via -r requirements.in
-types-toml==0.10.0
+types-toml==0.10.1
     # via -r requirements.in
 urllib3==1.26.5
     # via requests
