@@ -1,7 +1,7 @@
 coverage
 django-test-plus==2.2.0
 factory-boy
-flake8==3.9.2
+flake8==4.0.1
 isort==5.5.4
 mypy==0.910
 pip-tools
