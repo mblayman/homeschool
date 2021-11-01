@@ -24,7 +24,7 @@ Sphinx==4.2.0
 sphinx-rtd-theme==1.0.0
 sphinx-sitemap==2.2.0
 types-bleach==4.1.0
-types-python-dateutil==2.8.0
+types-python-dateutil==2.8.2
 types-pytz==2021.3.0
 types-requests==2.25.11
 types-six==1.16.1
