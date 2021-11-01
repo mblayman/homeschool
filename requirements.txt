@@ -54,7 +54,7 @@ django-extensions==3.1.3
     # via -r requirements.in
 django-hashid-field==3.3.1
     # via -r requirements.in
-django-hijack==3.0.3
+django-hijack==3.1.1
     # via -r requirements.in
 django-ordered-model==3.4.3
     # via -r requirements.in
