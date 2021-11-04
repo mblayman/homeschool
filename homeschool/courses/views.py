@@ -17,6 +17,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from django_htmx.http import HttpResponseClientRedirect
 
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
@@ -613,23 +614,18 @@ def bulk_delete_course_tasks(request, pk):
     course = get_course(request.user, pk)
     tasks = get_course_task_queryset(request.user).filter(course=course)
 
-    # TODO 446: What about a user that is deleting zero tasks?
     if request.method == "POST":
         form = CourseTaskBulkDeleteForm(request.POST, user=request.user)
         if form.is_valid():
             deleted_tasks_count = form.save()
             messages.info(request, f"Deleted {deleted_tasks_count} tasks.")
-            # TODO 446: Replace with HttpResponseClientRedirect from django-htmx
             url = reverse("courses:detail", args=[course.id])
-            response = HttpResponseRedirect(url)
-            response["HX-Redirect"] = url
-            return response
+            return HttpResponseClientRedirect(url)
 
         error_message = form.non_field_errors()[0]
         messages.error(request, error_message)
-        return HttpResponseRedirect(
-            reverse("courses:task_delete_bulk", args=[course.id])
-        )
+        url = reverse("courses:task_delete_bulk", args=[course.id])
+        return HttpResponseClientRedirect(url)
 
     context = {"course": course, "course_tasks": tasks}
     return render(request, "courses/coursetask_bulk_delete.html", context)

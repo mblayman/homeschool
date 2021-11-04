@@ -30,18 +30,6 @@ dj-database-url==0.5.0
     # via -r requirements.in
 dj-stripe==2.5.1
     # via -r requirements.in
-django==3.2.7
-    # via
-    #   -r requirements.in
-    #   dj-stripe
-    #   django-allauth
-    #   django-anymail
-    #   django-debug-toolbar
-    #   django-extensions
-    #   django-hashid-field
-    #   django-hijack
-    #   django-tz-detect
-    #   jsonfield
 django-allauth==0.45.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.4
@@ -56,6 +44,8 @@ django-hashid-field==3.3.1
     # via -r requirements.in
 django-hijack==3.0.3
     # via -r requirements.in
+django-htmx==1.6.0
+    # via -r requirements.in
 django-ordered-model==3.4.3
     # via -r requirements.in
 django-simple-history==3.0.0
@@ -64,6 +54,19 @@ django-tz-detect==0.3.0
     # via -r requirements.in
 django-waffle==2.2.1
     # via -r requirements.in
+django==3.2.7
+    # via
+    #   -r requirements.in
+    #   dj-stripe
+    #   django-allauth
+    #   django-anymail
+    #   django-debug-toolbar
+    #   django-extensions
+    #   django-hashid-field
+    #   django-hijack
+    #   django-htmx
+    #   django-tz-detect
+    #   jsonfield
 docutils==0.16
     # via
     #   sphinx
@@ -111,6 +114,8 @@ pytz==2019.3
     #   babel
     #   django
     #   django-tz-detect
+requests-oauthlib==1.3.0
+    # via django-allauth
 requests==2.26.0
     # via
     #   -r requirements.in
@@ -120,8 +125,6 @@ requests==2.26.0
     #   rollbar
     #   sphinx
     #   stripe
-requests-oauthlib==1.3.0
-    # via django-allauth
 rollbar==0.16.2
     # via -r requirements.in
 six==1.14.0
@@ -137,15 +140,15 @@ snowballstemmer==2.0.0
     # via sphinx
 soupsieve==1.9.5
     # via beautifulsoup4
+sphinx-rtd-theme==1.0.0
+    # via -r requirements.in
+sphinx-sitemap==2.2.0
+    # via -r requirements.in
 sphinx==4.2.0
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
     #   sphinx-sitemap
-sphinx-rtd-theme==1.0.0
-    # via -r requirements.in
-sphinx-sitemap==2.2.0
-    # via -r requirements.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
 sphinxcontrib-devhelp==1.0.2

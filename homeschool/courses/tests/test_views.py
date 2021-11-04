@@ -472,8 +472,10 @@ class TestBulkDeleteCourseTasks(TestCase):
         with self.login(user):
             response = self.post("courses:task_delete_bulk", pk=course.id, data=data)
 
-        self.response_302(response)
-        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
+        self.response_200(response)
+        assert response.get("HX-Redirect") == self.reverse(
+            "courses:detail", pk=course.id
+        )
         assert CourseTask.objects.filter(id=undeleted_task.id).count() == 1
         assert CourseTask.objects.filter(id=task.id).count() == 0
         message = list(get_messages(response.wsgi_request))[0]
@@ -494,8 +496,8 @@ class TestBulkDeleteCourseTasks(TestCase):
         with self.login(user):
             response = self.post("courses:task_delete_bulk", pk=course.id, data=data)
 
-        self.response_302(response)
-        assert response.get("Location") == self.reverse(
+        self.response_200(response)
+        assert response.get("HX-Redirect") == self.reverse(
             "courses:task_delete_bulk", pk=course.id
         )
         message = list(get_messages(response.wsgi_request))[0]

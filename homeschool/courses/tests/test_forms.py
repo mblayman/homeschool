@@ -105,6 +105,20 @@ class TestCourseTaskBulkDeleteForm(TestCase):
             in form.non_field_errors()
         )
 
+    def test_error_no_tasks(self):
+        """When no tasks are selected, inform the user."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+        data: dict = {}
+        form = CourseTaskBulkDeleteForm(user=user, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "You need to select at least one task." in form.non_field_errors()
+
 
 class TestCourseTaskForm(TestCase):
     def test_invalid_course(self):

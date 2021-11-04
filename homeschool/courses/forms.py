@@ -70,6 +70,9 @@ class CourseTaskBulkDeleteForm(forms.Form):
         """Ensure the tasks IDs only apply to the user's school."""
         task_ids = [id_ for key, id_ in self.data.items() if key.startswith("task-")]
 
+        if not task_ids:
+            raise forms.ValidationError("You need to select at least one task.")
+
         grade_levels = GradeLevel.objects.filter(
             school_year__school__admin=self.user
         ).values_list("id", flat=True)
