@@ -1,0 +1,53 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Delete Course Tasks{% endblock %}
+
+{% block main %}
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">Delete Course Tasks for {{ course }}</h1>
+
+  <div class="max-w-lg">
+    <div class="bg-blue-100 rounded p-2 mb-4">
+      <p class="font-extralight text-base text-gray-800">
+        <strong>Note:</strong>
+        If you delete a task from this list,
+        you will also delete any associated school work.
+        <span class="italic">Deletion is permanent!</span>
+      </p>
+    </div>
+  </div>
+
+  <form method="POST" action="?next={{ request.path|urlencode }}">
+    {% csrf_token %}
+
+    <div class="flex flex-row max-w-lg print-hide">
+      <div class="w-10/12 text-sm uppercase tracking-wide font-extralight p-2">Description</div>
+      <div class="w-2/12 text-sm text-center uppercase tracking-wide font-extralight py-2">Delete?</div>
+    </div>
+
+    {% for course_task in course_tasks %}
+      <div class="flex flex-row border-t border-yellow-400 max-w-lg">
+
+        <div class="w-10/12 p-2 text-sm font-light overflow-x-scroll">{{ course_task.description|urlize|linebreaksbr }}</div>
+
+        <div class="w-2/12 text-sm text-center py-2">
+          <input name="task-{{ course_task.id }}" type="checkbox" value="{{ course_task.id }}">
+        </div>
+
+      </div>
+    {% endfor %}
+
+    <div class="flex flex-row max-w-lg justify-end print-hide mt-8">
+      <a href="{% url 'courses:detail' course.id %}"
+        class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+        Cancel
+      </a>
+      <button class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring"
+        type="submit"
+        hx-post="{{ request.path }}"
+        hx-confirm="Are you sure you want to delete these tasks?"
+        >
+        Delete
+      </button>
+    </div>
+  </form>
+{% endblock %}

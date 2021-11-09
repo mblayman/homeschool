@@ -16,8 +16,6 @@ of school breaks
 that applied school breaks
 to all students unconditionally.
 
-<!--more-->
-
 When our family takes breaks
 from school,
 we usually have both of our kids

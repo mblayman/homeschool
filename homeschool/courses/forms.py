@@ -61,6 +61,38 @@ class CourseResourceForm(forms.ModelForm):
         return self.cleaned_data
 
 
+class CourseTaskBulkDeleteForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        """Ensure the tasks IDs only apply to the user's school."""
+        task_ids = [id_ for key, id_ in self.data.items() if key.startswith("task-")]
+
+        if not task_ids:
+            raise forms.ValidationError("You need to select at least one task.")
+
+        grade_levels = GradeLevel.objects.filter(
+            school_year__school__admin=self.user
+        ).values_list("id", flat=True)
+        users_deletable_tasks = CourseTask.objects.filter(
+            course__grade_levels__in=grade_levels, id__in=task_ids
+        )
+        if len(task_ids) != users_deletable_tasks.count():
+            raise forms.ValidationError(
+                "Sorry, you do not have permission to delete the selected tasks."
+            )
+
+        return self.cleaned_data
+
+    def save(self):
+        """Delete the selected tasks."""
+        task_ids = [id_ for key, id_ in self.data.items() if key.startswith("task-")]
+        _, deleted_info = CourseTask.objects.filter(id__in=task_ids).delete()
+        return deleted_info["courses.CourseTask"]
+
+
 class CourseTaskForm(forms.ModelForm):
     class Meta:
         model = CourseTask

@@ -17,6 +17,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from django_htmx.http import HttpResponseClientRedirect
 
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
@@ -24,7 +25,12 @@ from homeschool.schools.forecaster import Forecaster
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade
 
-from .forms import CourseForm, CourseResourceForm, CourseTaskForm
+from .forms import (
+    CourseForm,
+    CourseResourceForm,
+    CourseTaskBulkDeleteForm,
+    CourseTaskForm,
+)
 from .models import Course, CourseResource, CourseTask
 
 
@@ -140,9 +146,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
 
         course_to_copy = self.course_to_copy
         if course_to_copy is None:
-            messages.add_message(
-                self.request, messages.ERROR, "Sorry, you can’t copy that course."
-            )
+            messages.error(self.request, "Sorry, you can’t copy that course.")
             return {}
 
         return {
@@ -602,6 +606,29 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_initial(self):
         return {"is_graded": hasattr(self.object, "graded_work")}
+
+
+@login_required
+def bulk_delete_course_tasks(request, pk):
+    """Bulk delete course tasks."""
+    course = get_course(request.user, pk)
+    tasks = get_course_task_queryset(request.user).filter(course=course)
+
+    if request.method == "POST":
+        form = CourseTaskBulkDeleteForm(request.POST, user=request.user)
+        if form.is_valid():
+            deleted_tasks_count = form.save()
+            messages.info(request, f"Deleted {deleted_tasks_count} tasks.")
+            url = reverse("courses:detail", args=[course.id])
+            return HttpResponseClientRedirect(url)
+
+        error_message = form.non_field_errors()[0]
+        messages.error(request, error_message)
+        url = reverse("courses:task_delete_bulk", args=[course.id])
+        return HttpResponseClientRedirect(url)
+
+    context = {"course": course, "course_tasks": tasks}
+    return render(request, "courses/coursetask_bulk_delete.html", context)
 
 
 class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):

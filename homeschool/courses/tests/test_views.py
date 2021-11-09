@@ -1,6 +1,7 @@
 import datetime
 from unittest import mock
 
+from django.contrib.messages import get_messages
 from freezegun import freeze_time
 
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
@@ -429,6 +430,81 @@ class TestCourseEditView(TestCase):
         assert course.name == "New course name"
         assert course.days_of_week == Course.WEDNESDAY + Course.FRIDAY
         assert not course.is_active
+
+
+class TestBulkDeleteCourseTasks(TestCase):
+    def test_unauthenticated_access(self):
+        course = CourseFactory()
+        self.assertLoginRequired("courses:task_delete_bulk", pk=course.id)
+
+    def test_only_users_course(self):
+        """The user can only modify their own course tasks."""
+        user = self.make_user()
+        course = CourseFactory()
+
+        with self.login(user):
+            response = self.get("courses:task_delete_bulk", pk=course.id)
+
+        self.response_404(response)
+
+    def test_ok(self):
+        """The view renders ok."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("courses:task_delete_bulk", pk=course.id)
+
+        assert self.get_context("course") == course
+        assert list(self.get_context("course_tasks")) == [task]
+
+    def test_delete(self):
+        """The selected tasks are deleted."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        undeleted_task = CourseTaskFactory(course=course)
+        data = {f"task-{task.id}": f"{task.id}"}
+
+        with self.login(user):
+            response = self.post("courses:task_delete_bulk", pk=course.id, data=data)
+
+        self.response_200(response)
+        assert response.get("HX-Redirect") == self.reverse(
+            "courses:detail", pk=course.id
+        )
+        assert CourseTask.objects.filter(id=undeleted_task.id).count() == 1
+        assert CourseTask.objects.filter(id=task.id).count() == 0
+        message = list(get_messages(response.wsgi_request))[0]
+        assert str(message) == "Deleted 1 tasks."
+
+    def test_error_redirect(self):
+        """An error will redirect to the same page."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        another_task = CourseTaskFactory()
+        data = {
+            f"task-{task.id}": f"{task.id}",
+            f"task-{another_task.id}": f"{another_task.id}",
+        }
+
+        with self.login(user):
+            response = self.post("courses:task_delete_bulk", pk=course.id, data=data)
+
+        self.response_200(response)
+        assert response.get("HX-Redirect") == self.reverse(
+            "courses:task_delete_bulk", pk=course.id
+        )
+        message = list(get_messages(response.wsgi_request))[0]
+        assert (
+            str(message)
+            == "Sorry, you do not have permission to delete the selected tasks."
+        )
 
 
 class TestCourseDeleteView(TestCase):
