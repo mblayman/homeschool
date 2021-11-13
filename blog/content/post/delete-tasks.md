@@ -19,7 +19,7 @@ that you don't want?
 
 You can now delete many tasks
 from a single page
-instead of delete one at a time.
+instead of deleting one at a time.
 This should save you some clicks
 and time
 if you happen to goof
