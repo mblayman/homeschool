@@ -103,7 +103,6 @@ class TestStudent(TestCase):
 
         assert "task" not in week_schedule["courses"][0]["days"][0]
 
-    @pytest.mark.xfail(reason="Not implemented yet. See #433")
     @freeze_time("2021-07-21")  # Wednesday
     def test_get_week_with_breaks(self):
         """Next week starts with the correct task when the current week has breaks."""
@@ -117,7 +116,6 @@ class TestStudent(TestCase):
             student=student, course_task__course=course, completed_date=today
         )
         task = CourseTaskFactory(course=course)
-        # TODO: remove wrong task
         CourseTaskFactory(course=course)
         SchoolBreakFactory(
             school_year=school_year,

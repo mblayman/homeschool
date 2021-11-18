@@ -240,16 +240,24 @@ class Student(models.Model):
             if start_date < school_year.start_date:
                 start_date = school_year.start_date
 
+        # TODO: Why is start_date not used? See #495
+
         last_school_day_this_week = school_year.last_school_day_for(this_week)
         is_current_week_active = today <= last_school_day_this_week
         if is_current_week_active:
             # During the active part of the week, tasks roll forward each day.
             # This means the unfinished work is everything from today to the end
             # of the last school day.
-            unfinished_tasks_this_week = school_year.get_task_count_in_range(
+            remaining_tasks = school_year.get_task_count_in_range(
                 course, today, last_school_day_this_week, self
             )
-            # TODO: subtract out the actually completed tasks from this number. See #433
+            completed_tasks = Coursework.objects.filter(
+                student=self,
+                course_task__course=course,
+                completed_date__gte=today,
+                completed_date__lte=last_school_day_this_week,
+            ).count()
+            unfinished_tasks_this_week = max(remaining_tasks - completed_tasks, 0)
         else:
             # On the weekend, don't count unfinished tasks and roll everything forward.
             unfinished_tasks_this_week = 0
