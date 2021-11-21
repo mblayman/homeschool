@@ -590,9 +590,9 @@ def office_onboarding(request):
     now = timezone.now()
     trialing_users = [
         account.user
-        for account in Account.objects.filter(
-            status=Account.AccountStatus.TRIALING
-        ).order_by("-user")
+        for account in Account.objects.filter(status=Account.AccountStatus.TRIALING)
+        .select_related("user")
+        .order_by("-user")
     ]
     user_stats = []
     # Yeah, this is pretty dumb. Optimization is not important here.
@@ -601,6 +601,7 @@ def office_onboarding(request):
         courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
         stats = {
             "user": user,
+            "email_address": user.emailaddress_set.first(),
             "school_years": SchoolYear.objects.filter(school__admin=user).count(),
             "grade_levels": len(grade_levels),
             "courses": len(courses),
@@ -622,7 +623,7 @@ def office_onboarding(request):
             "students",
             "enrollments",
         ]
-        if now > tirekicker_cutoff and any(stats[key] == 0 for key in data_keys):
+        if now > tirekicker_cutoff and all(stats[key] <= 1 for key in data_keys):
             stats["tirekicker"] = True
 
     context = {
