@@ -77,7 +77,7 @@
 
   {% if grade_levels %}
     <h2 class="font-extralight text-2xl text-blue-900 mb-4">Calendar</h2>
-    <div class="flex flex-row flex-wrap max-w-5xl {% if not is_in_school_year %}mb-8{% endif %}">
+    <div class="flex flex-row flex-wrap max-w-5xl">
       {% for month in calendar.months %}
         <div class="mr-4 mb-4">
           <div class="font-base text-center mb-2">{{ month.name }}</div>
@@ -138,15 +138,14 @@
       {% endfor %}
     </div>
 
-    {% if is_in_school_year %}
-      <div class="text-sm text-gray-700 font-light mb-8">
-      {% if request.GET.show_all_months %}
-        <a class="hover:underline" href="{{ request.path }}">Hide months</a>
-      {% else %}
-        <a class="hover:underline" href="{{ request.path }}?show_all_months=1">Show all months</a>
-      {% endif %}
-      </div>
+    <div class="text-sm text-gray-700 font-light mb-8">
+    {% if request.GET.show_all_months %}
+      <a class="hover:underline" href="{{ request.path }}">Hide months</a>
+    {% else %}
+      <a class="hover:underline" href="{{ request.path }}?show_all_months=1">Show all months</a>
     {% endif %}
+    </div>
+
   {% endif %}
 
   <div class="flex flex-col w-full">

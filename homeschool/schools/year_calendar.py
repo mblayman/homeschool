@@ -19,11 +19,7 @@ class YearCalendar:
 
     def build(self, *, show_all=False):
         """Build a calendar structure that can be rendered."""
-        # Use the 1st so any school year ending on a 1st of the month isn't skipped.
-        if self.is_current_school_year and not show_all:
-            current_date = self.today + relativedelta(day=1)
-            months_to_build = self.months_to_look_ahead
-        else:
+        if show_all:
             current_date = self.school_year.start_date + relativedelta(day=1)
             # Get the delta to be inclusive of the start and end months.
             delta = relativedelta(
@@ -31,6 +27,13 @@ class YearCalendar:
                 self.school_year.start_date + relativedelta(months=-1, day=31),
             )
             months_to_build = delta.years * 12 + delta.months
+        else:
+            # Use the 1st so any school year ending on a 1st of the month isn't skipped.
+            if self.is_current_school_year:
+                current_date = self.today + relativedelta(day=1)
+            else:
+                current_date = self.school_year.start_date + relativedelta(day=1)
+            months_to_build = self.months_to_look_ahead
 
         months: list = []
         while months_to_build != 0 and current_date <= self.school_year.end_date:
