@@ -88,7 +88,10 @@ class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, Form
         return kwargs
 
     def get_success_url(self):
-        return reverse("courses:detail", args=[self.course_task.course.id])
+        course_url = reverse("courses:detail", args=[self.course_task.course.id])
+        if self.course_task.is_graded:
+            return reverse("students:grade") + f"?next={course_url}"
+        return course_url
 
     def form_valid(self, form):
         form.save()

@@ -198,6 +198,29 @@ class TestCourseworkFormView(TestCase):
 
         assert self.get_context("course_task") == course_task
 
+    def test_grade_next(self):
+        """A graded task sends the user to the grade page after submission."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+        GradedWorkFactory(course_task=course_task)
+        data = {"completed_date": str(grade_level.school_year.start_date)}
+
+        with self.login(user):
+            response = self.post(
+                "students:coursework",
+                pk=student.id,
+                course_task_id=course_task.id,
+                data=data,
+            )
+
+        self.response_302(response)
+        grade_url = self.reverse("students:grade")
+        assert grade_url in response.get("Location")
+
 
 class TestGradeFormView(TestCase):
     def test_unauthenticated_access(self):
