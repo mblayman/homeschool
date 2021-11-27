@@ -184,6 +184,26 @@ class GradeLevel(models.Model):
         """Get the courses that are active."""
         return [course for course in self.get_ordered_courses() if course.is_active]
 
+    def move_course_down(self, course):
+        """Move a course down in the grade level ordering.
+
+        This method assumes that the course is part of the grade level.
+        """
+        through = self.courses.through.objects.get(
+            grade_level_id=self.id, course_id=course.id
+        )
+        through.down()
+
+    def move_course_up(self, course):
+        """Move a course up in the grade level ordering.
+
+        This method assumes that the course is part of the grade level.
+        """
+        through = self.courses.through.objects.get(
+            grade_level_id=self.id, course_id=course.id
+        )
+        through.up()
+
     def __str__(self):
         return self.name
 

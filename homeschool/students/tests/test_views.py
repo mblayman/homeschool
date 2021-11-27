@@ -345,8 +345,11 @@ class TestGradeView(TestCase):
 
     def test_fetch_graded_work(self):
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        student = enrollment.student
+        grade_level = enrollment.grade_level
         course = CourseFactory(grade_levels=[grade_level])
         graded_work_1 = GradedWorkFactory(course_task__course=course)
         CourseworkFactory(student=student, course_task=graded_work_1.course_task)
@@ -364,8 +367,11 @@ class TestGradeView(TestCase):
 
     def test_not_graded_work_from_other_school(self):
         user = self.make_user()
-        student = StudentFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        student = enrollment.student
+        grade_level = enrollment.grade_level
         course = CourseFactory(grade_levels=[grade_level])
         graded_work_1 = GradedWorkFactory(course_task__course=course)
         CourseworkFactory(student=student, course_task=graded_work_1.course_task)
@@ -398,6 +404,33 @@ class TestGradeView(TestCase):
         assert response.get("Location") == self.reverse("core:daily")
         grade = Grade.objects.get(student=student, graded_work=graded_work)
         assert grade.score == 100
+
+    def test_grades_in_course_order(self):
+        """The grades are in the course order set by the user.
+
+        Courses have a set order for a grade level that users can adjust.
+        Customers would like to see the things to grade in the same ordering scheme.
+        """
+        user = self.make_user()
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        student = enrollment.student
+        grade_level = enrollment.grade_level
+        course_1 = CourseFactory(grade_levels=[grade_level])
+        graded_work_1 = GradedWorkFactory(course_task__course=course_1)
+        CourseworkFactory(student=student, course_task=graded_work_1.course_task)
+        course_2 = CourseFactory(grade_levels=[grade_level])
+        graded_work_2 = GradedWorkFactory(course_task__course=course_2)
+        CourseworkFactory(student=student, course_task=graded_work_2.course_task)
+        grade_level.move_course_down(course_1)
+
+        with self.login(user):
+            self.get("students:grade")
+
+        assert self.get_context("work_to_grade") == [
+            {"student": student, "graded_work": [graded_work_2, graded_work_1]}
+        ]
 
 
 class TestEnrollmentCreateView(TestCase):

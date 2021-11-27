@@ -241,12 +241,8 @@ def move_course(user, grade_level_id, course_id, direction, next_url):
     grade_level = get_object_or_404(
         GradeLevel, pk=grade_level_id, school_year__school__admin=user
     )
-    through = get_object_or_404(
-        grade_level.courses.through,
-        grade_level__id=grade_level_id,
-        course__id=course_id,
-    )
-    getattr(through, direction)()
+    course = grade_level.courses.get(id=course_id)
+    getattr(grade_level, direction)(course)
 
     if next_url is None:
         next_url = reverse("schools:grade_level_edit", args=[grade_level_id])
@@ -257,14 +253,18 @@ def move_course(user, grade_level_id, course_id, direction, next_url):
 @require_POST
 def move_course_down(request, pk, course_id):
     """Move a course down in the ordering."""
-    return move_course(request.user, pk, course_id, "down", request.GET.get("next"))
+    return move_course(
+        request.user, pk, course_id, "move_course_down", request.GET.get("next")
+    )
 
 
 @login_required
 @require_POST
 def move_course_up(request, pk, course_id):
     """Move a course up in the ordering."""
-    return move_course(request.user, pk, course_id, "up", request.GET.get("next"))
+    return move_course(
+        request.user, pk, course_id, "move_course_up", request.GET.get("next")
+    )
 
 
 class SchoolBreakCreateView(LoginRequiredMixin, CreateView):

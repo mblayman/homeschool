@@ -169,8 +169,13 @@ class GradeView(LoginRequiredMixin, TemplateView):
         if not school_year:
             return []
 
-        grade_levels = GradeLevel.objects.filter(school_year=school_year)
-        courses = Course.objects.filter(grade_levels__in=grade_levels)
+        enrollment = get_object_or_404(
+            Enrollment.objects.select_related("grade_level"),
+            student=student,
+            grade_level__school_year=school_year,
+        )
+        courses = enrollment.grade_level.get_ordered_courses()
+
         completed_task_ids = Coursework.objects.filter(
             student=student, course_task__course__in=courses
         ).values_list("course_task_id", flat=True)
@@ -178,16 +183,17 @@ class GradeView(LoginRequiredMixin, TemplateView):
         graded_work = GradedWork.objects.filter(
             course_task__in=completed_task_ids
         ).select_related("course_task", "course_task__course")
-
-        # TODO: sort the graded work based on the order of the ordered courses
-        # for a student. See #414
+        # Sort the graded work based on the order of the ordered courses.
+        sorted_work = sorted(
+            graded_work, key=lambda work: courses.index(work.course_task.course)
+        )
 
         already_graded_work_ids = set(
             Grade.objects.filter(
                 student=student, graded_work__in=graded_work
             ).values_list("graded_work_id", flat=True)
         )
-        return [work for work in graded_work if work.id not in already_graded_work_ids]
+        return [work for work in sorted_work if work.id not in already_graded_work_ids]
 
     def post(self, request, *args, **kwargs):
         self.persist_grades()
