@@ -21,7 +21,7 @@ psycopg2==2.9.1
 python-dateutil==2.8.2
 requests==2.26.0
 rollbar==0.16.2
-Sphinx==4.2.0
+Sphinx==4.3.1
 sphinx-rtd-theme==1.0.0
 sphinx-sitemap==2.2.0
 types-bleach==4.1.1
