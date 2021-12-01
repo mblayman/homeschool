@@ -8,6 +8,7 @@ deploy:
 
 graph:
 	./manage.py graph_models \
+		--rankdir BT \
 		accounts \
 		core \
 		courses \
