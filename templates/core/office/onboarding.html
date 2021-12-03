@@ -11,7 +11,7 @@
 
   <div class="flex flex-col w-full text-center">
     <div class="flex flex-row mb-2 border-b">
-      <div class="w-2/12">Email</div>
+      <div class="w-3/12">Email</div>
       <div class="w-1/12">Created</div>
       <div class="w-1/12">School Years</div>
       <div class="w-1/12">Grades</div>
@@ -23,7 +23,7 @@
     {% for stats in user_stats %}
       {% if not stats.tirekicker %}
         <div class="flex flex-row {% cycle 'bg-white' 'bg-gray-100' %} py-2">
-          <div class="w-2/12">{{ stats.email_address.email }}</div>
+          <div class="w-3/12">{{ stats.email_address.email }}</div>
           <div class="w-1/12">{{ stats.user.date_joined|date:"Y-m-d" }}</div>
           <div class="w-1/12">{{ stats.school_years }}</div>
           <div class="w-1/12">{{ stats.grade_levels }}</div>
