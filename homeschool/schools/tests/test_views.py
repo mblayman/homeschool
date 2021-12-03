@@ -1,7 +1,7 @@
 import datetime
 
+import time_machine
 from django.utils import timezone
-from freezegun import freeze_time
 
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseResourceFactory
@@ -869,7 +869,7 @@ class TestAttendanceReportView(TestCase):
         assert self.get_context("school_year") == enrollment.grade_level.school_year
         assert self.get_context("student") == enrollment.student
 
-    @freeze_time("2021-04-01")  # A Thursday
+    @time_machine.travel("2021-04-01")  # A Thursday
     def test_school_dates(self):
         """The dates on the report have the expected states."""
         user = self.make_user()

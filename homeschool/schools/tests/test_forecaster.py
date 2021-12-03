@@ -1,8 +1,8 @@
 import datetime
 
+import time_machine
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-from freezegun import freeze_time
 
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory, CourseTaskFactory
@@ -14,7 +14,7 @@ from homeschool.test import TestCase
 
 
 class TestForecaster(TestCase):
-    @freeze_time("2021-03-10")  # Wednesday
+    @time_machine.travel("2021-03-10")  # Wednesday
     def test_get_last_forecast_date(self):
         """The forecast returns the final projected date of a course."""
         enrollment = EnrollmentFactory()
@@ -40,7 +40,7 @@ class TestForecaster(TestCase):
 
         assert last_date is None
 
-    @freeze_time("2021-03-10")  # Wednesday
+    @time_machine.travel("2021-03-10")  # Wednesday
     def test_all_tasks_completed(self):
         """The last date matched the coursework completion."""
         enrollment = EnrollmentFactory()
@@ -54,7 +54,7 @@ class TestForecaster(TestCase):
 
         assert last_date == coursework.completed_date
 
-    @freeze_time("2021-03-10")  # Wednesday
+    @time_machine.travel("2021-03-10")  # Wednesday
     def test_no_student_forecast(self):
         """The forecaster can produce a forecast for no student."""
         enrollment = EnrollmentFactory()
