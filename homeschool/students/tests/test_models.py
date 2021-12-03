@@ -1,7 +1,7 @@
 import datetime
 
-import time_machine
 import pytest
+import time_machine
 from dateutil.relativedelta import MO, SA, SU, relativedelta
 from django.db import IntegrityError
 from django.utils import timezone
