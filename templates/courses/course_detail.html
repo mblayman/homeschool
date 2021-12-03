@@ -58,15 +58,7 @@
 
   </p>
 
-  {% if enrolled_students and course_tasks %}
-    <p class="text-sm text-gray-700 font-light mb-2 print-hide">
-    {% if request.GET.completed_tasks %}
-      <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
-    {% else %}
-      <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
-    {% endif %}
-    </p>
-  {% endif %}
+  {% include "courses/_toggle_completed_tasks.html" with css_classes="mb-2" %}
 
   {% if task_details %}
     <div class="flex flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight print-no-max-width print-w-full">
@@ -93,15 +85,7 @@
   {% endif %}
   {% include "courses/course_tasks.html" %}
 
-  {% if enrolled_students and course_tasks %}
-    <p class="text-sm text-gray-700 font-light mt-4 print-hide">
-    {% if request.GET.completed_tasks %}
-      <a class="hover:underline" href="{% url 'courses:detail' course.id %}">Hide completed tasks</a>
-    {% else %}
-      <a class="hover:underline" href="{% url 'courses:detail' course.id %}?completed_tasks=1">Show completed tasks</a>
-    {% endif %}
-    </p>
-  {% endif %}
+  {% include "courses/_toggle_completed_tasks.html" with css_classes="mt-4" %}
 
   {% if course.resources.all %}
     <h1 class="font-extralight text-2xl text-blue-900 mt-8 mb-4">Resources</h1>

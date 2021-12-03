@@ -627,7 +627,23 @@ def bulk_delete_course_tasks(request, pk):
         url = reverse("courses:task_delete_bulk", args=[course.id])
         return HttpResponseClientRedirect(url)
 
-    context = {"course": course, "course_tasks": tasks}
+    show_completed_tasks = bool(request.GET.get("completed_tasks"))
+    grade_levels = course.grade_levels.all().order_by("id")
+    enrollments = [
+        enrollment
+        for enrollment in Enrollment.objects.filter(grade_level__in=grade_levels)
+        .select_related("student")
+        .order_by("grade_level")
+    ]
+
+    context = {
+        "course": course,
+        "course_tasks": tasks,
+        "enrolled_students": [enrollment.student for enrollment in enrollments],
+    }
+    context.update(
+        get_course_tasks_context(course, tasks, enrollments, show_completed_tasks)
+    )
     return render(request, "courses/coursetask_bulk_delete.html", context)
 
 
