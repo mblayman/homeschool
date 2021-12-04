@@ -1,9 +1,9 @@
-import os
+from pathlib import Path
 
 import dj_database_url
 import environ
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
     ALLOWED_HOSTS=(list, []),
@@ -26,8 +26,8 @@ env = environ.Env(
     SLACK_WEBHOOK=(str, ""),
     STRIPE_LIVE_MODE=(bool, True),
 )
-env_file = os.path.join(BASE_DIR, ".env")
-if os.path.exists(env_file):
+env_file = BASE_DIR / ".env"
+if env_file.exists():
     environ.Env.read_env(env_file)
 
 SECRET_KEY = env("SECRET_KEY")
@@ -103,7 +103,7 @@ ROOT_URLCONF = "project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -191,9 +191,9 @@ SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
 SITE_ID = 1
 
 # Static files (CSS, JavaScript, Images)
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Logging
@@ -279,8 +279,8 @@ IS_SECURE = env("IS_SECURE")
 # Add extra output directories that WhiteNoise can serve as static files
 # *outside* of `staticfiles`.
 MORE_WHITENOISE = [
-    {"directory": os.path.join(BASE_DIR, "blog_out"), "prefix": "blog/"},
-    {"directory": os.path.join(BASE_DIR, "docs", "_build", "html"), "prefix": "docs/"},
+    {"directory": BASE_DIR / "blog_out", "prefix": "blog/"},
+    {"directory": BASE_DIR / "docs" / "_build" / "html", "prefix": "docs/"},
 ]
 
 # accounts
