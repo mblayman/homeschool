@@ -459,6 +459,7 @@ class TestBulkDeleteCourseTasks(TestCase):
 
         assert self.get_context("course") == course
         assert list(self.get_context("course_tasks")) == [task]
+        assert list(self.get_context("enrolled_students")) == []
 
     def test_delete(self):
         """The selected tasks are deleted."""
@@ -505,6 +506,24 @@ class TestBulkDeleteCourseTasks(TestCase):
             str(message)
             == "Sorry, you do not have permission to delete the selected tasks."
         )
+
+    def test_hide_complete_tasks(self):
+        """Completed tasks are hidden by default."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level=grade_level
+        )
+        student = enrollment.student
+        course = CourseFactory(grade_levels=[grade_level])
+        completed_task = CourseTaskFactory(course=course)
+        CourseworkFactory(student=student, course_task=completed_task)
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("courses:task_delete_bulk", pk=course.id)
+
+        assert self.get_context("task_details")[0]["task"] == task
 
 
 class TestCourseDeleteView(TestCase):

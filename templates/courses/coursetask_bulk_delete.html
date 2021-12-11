@@ -20,21 +20,23 @@
     {% csrf_token %}
 
     <div class="flex flex-row max-w-lg print-hide">
-      <div class="w-10/12 text-sm uppercase tracking-wide font-extralight p-2">Description</div>
+      <div class="w-10/12 text-sm uppercase tracking-wide font-extralight p-2 pl-0">Description</div>
       <div class="w-2/12 text-sm text-center uppercase tracking-wide font-extralight py-2">Delete?</div>
     </div>
 
-    {% for course_task in course_tasks %}
+    {% for task_detail in task_details %}
       <div class="flex flex-row border-t border-yellow-400 max-w-lg">
 
-        <div class="w-10/12 p-2 text-sm font-light overflow-x-scroll">{{ course_task.description|urlize|linebreaksbr }}</div>
+        <div class="w-10/12 p-2 pl-0 text-sm font-light overflow-x-scroll">{{ task_detail.task.description|urlize|linebreaksbr }}</div>
 
         <div class="w-2/12 text-sm text-center py-2">
-          <input name="task-{{ course_task.id }}" type="checkbox" value="{{ course_task.id }}">
+          <input name="task-{{ task_detail.task.id }}" type="checkbox" value="{{ task_detail.task.id }}">
         </div>
 
       </div>
     {% endfor %}
+
+    {% include "courses/_toggle_completed_tasks.html" with css_classes="mt-4" %}
 
     <div class="flex flex-row max-w-lg justify-end print-hide mt-8">
       <a href="{% url 'courses:detail' course.id %}"

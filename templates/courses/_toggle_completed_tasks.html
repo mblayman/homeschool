@@ -1,0 +1,9 @@
+{% if enrolled_students and course_tasks %}
+  <p class="text-sm text-gray-700 font-light {{ css_classes }} print-hide">
+  {% if request.GET.completed_tasks %}
+    <a class="hover:underline" href="{{ request.path }}">Hide completed tasks</a>
+  {% else %}
+    <a class="hover:underline" href="{{ request.path }}?completed_tasks=1">Show completed tasks</a>
+  {% endif %}
+  </p>
+{% endif %}
