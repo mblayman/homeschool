@@ -1,8 +1,8 @@
 import datetime
 from unittest import mock
 
+import time_machine
 from django.contrib.messages import get_messages
-from freezegun import freeze_time
 
 from homeschool.courses.models import Course, CourseResource, CourseTask, GradedWork
 from homeschool.courses.tests.factories import (
@@ -382,7 +382,7 @@ class TestCourseDetailView(TestCase):
 
         assert not self.get_context("task_details")
 
-    @freeze_time("2021-03-10")  # Wednesday
+    @time_machine.travel("2021-03-10")  # Wednesday
     def test_no_student_planned_date(self):
         """When no student is enrolled, the tasks have a planned completion date."""
         user = self.make_user()

@@ -1,10 +1,10 @@
 import datetime
 
 import pytest
+import time_machine
 from dateutil.relativedelta import MO, SA, SU, relativedelta
 from django.db import IntegrityError
 from django.utils import timezone
-from freezegun import freeze_time
 
 from homeschool.core.schedules import Week
 from homeschool.courses.models import Course
@@ -103,7 +103,7 @@ class TestStudent(TestCase):
 
         assert "task" not in week_schedule["courses"][0]["days"][0]
 
-    @freeze_time("2021-07-21")  # Wednesday
+    @time_machine.travel("2021-07-21")  # Wednesday
     def test_get_week_with_breaks(self):
         """Next week starts with the correct task when the current week has breaks."""
         today = timezone.now().date()

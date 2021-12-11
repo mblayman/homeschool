@@ -98,7 +98,7 @@ class DaysOfWeekModel(models.Model):
         return [day for day in self.WEEK if self.runs_on(day)]
 
     def get_week_dates_for(self, week):
-        """Get the list of week dates that the record runs on for the given week. """
+        """Get the list of week dates that the record runs on for the given week."""
         week_date = week.first_day
         week_dates = []
         for day in self.WEEK:
