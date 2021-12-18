@@ -28,7 +28,7 @@ tag = "tags"
 category = "categories"
 
 [params]
-description = "Homeschool Planning Simplified"
+description = "Homeschool Planning Software Simplified"
 share = true
 homepageImage = "/images/organizing.svg"
 customCSS = ["school-desk.css"]
