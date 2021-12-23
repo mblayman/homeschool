@@ -46,6 +46,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
         user = self.request.user
 
+        today = user.get_local_today()
+        day = self._get_day(today)
+        self._set_week_dates_context(day, today, context)
+
         has_school_years = SchoolYear.objects.filter(school=user.school).exists()
         context["has_school_years"] = has_school_years
 
@@ -53,7 +57,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["has_students"] = has_students
 
         if has_school_years and has_students:
-            self.get_week_context_data(context)
+            self.get_week_context_data(context, day, today)
         else:
             context["has_tasks"] = CourseTask.objects.filter(
                 course__grade_levels__school_year__school=user.school
@@ -62,9 +66,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["show_whats_new"] = self.show_whats_new
         return context
 
-    def get_week_context_data(self, context):
-        """Get the context data for a week."""
-        today = self.request.user.get_local_today()
+    def _get_day(self, today):
+        """Find the appropriate day to use for week calculation."""
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")
         day = self.kwargs.get("day")
@@ -72,8 +75,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             day = datetime.date(year, month, day)
         else:
             day = today
-        context["day"] = day
+        return day
 
+    def _set_week_dates_context(self, day, today, context):
+        """Set the dates for the primary week navigation element."""
+        context["day"] = day
         week = Week(day)
 
         # Fix the corner case when the weekly view is used and today falls in the week.
@@ -88,9 +94,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
         context["next_week_date"] = context["first_day"] + datetime.timedelta(days=7)
 
+    def get_week_context_data(self, context, day, today):
+        """Get the context data for a week."""
+        week = Week(day)
+
+        school = self.request.user.school
         school_year = (
             SchoolYear.objects.filter(
-                school=self.request.user.school, start_date__lte=day, end_date__gte=day
+                school=school, start_date__lte=day, end_date__gte=day
             )
             .prefetch_related("grade_levels")
             .first()
@@ -113,6 +124,25 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             self.get_next_school_year(context, today, week)
 
         context["schedules"] = self.get_schedules(school_year, today, week)
+
+        if not context["schedules"]:
+            future_school_year = (
+                SchoolYear.objects.filter(school=school, start_date__gt=week.last_day)
+                .order_by("start_date")
+                .first()
+            )
+            if future_school_year:
+                context["future_school_year"] = future_school_year
+                future_week_start = Week(future_school_year.start_date).first_day
+                context["future_school_year_week_url"] = reverse(
+                    "core:weekly",
+                    args=[
+                        future_week_start.year,
+                        future_week_start.month,
+                        future_week_start.day,
+                    ],
+                )
+
         return context
 
     def get_schedules(self, school_year, today, week):

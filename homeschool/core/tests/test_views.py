@@ -622,6 +622,28 @@ class TestDashboard(TestCase):
         assert not self.get_context("has_students")
         assert self.get_context("has_tasks")
 
+    @mock.patch("homeschool.users.models.timezone")
+    def test_future_school_year_cta(self, mock_timezone):
+        """When on a week with no schedule, the future school CTA is present."""
+        sunday = timezone.localdate() + relativedelta(weekday=SU)
+        mock_timezone.localdate.return_value = sunday
+        user = self.make_user()
+        StudentFactory(school=user.school)
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=sunday + datetime.timedelta(90),
+            end_date=sunday + datetime.timedelta(290),
+            days_of_week=SchoolYear.ALL_DAYS,
+        )
+
+        with self.login(user):
+            self.get("core:dashboard")
+
+        assert self.get_context("future_school_year") == school_year
+        start = Week(school_year.start_date).first_day
+        url = self.reverse("core:weekly", start.year, start.month, start.day)
+        assert self.get_context("future_school_year_week_url") == url
+
 
 class TestDaily(TestCase):
     def test_unauthenticated_access(self):
