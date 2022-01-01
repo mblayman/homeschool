@@ -513,6 +513,7 @@ class TestDashboard(TestCase):
         schedule = self.get_context("schedules")[0]
         assert schedule["courses"][0]["days"][0]["task"] == task
 
+    @time_machine.travel("2021-11-28")
     def test_two_school_years_same_week(self):
         """When two school years are in the same week, both are in the context."""
         today = timezone.localdate()
