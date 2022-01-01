@@ -118,6 +118,7 @@ staticfiles/
 # Blog
 blog_out/
 resources/
+.hugo_build.lock
 
 # JavaScript
 node_modules/

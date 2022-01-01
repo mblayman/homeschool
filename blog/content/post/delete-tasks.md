@@ -15,8 +15,6 @@ What do you do when you make a mistake
 and create tasks
 that you don't want?
 
-<!--more-->
-
 You can now delete many tasks
 from a single page
 instead of deleting one at a time.
