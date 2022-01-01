@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
     # via sphinx
-asgiref==3.3.4
+asgiref==3.4.1
     # via django
 babel==2.9.1
     # via sphinx
@@ -30,7 +30,7 @@ dj-database-url==0.5.0
     # via -r requirements.in
 dj-stripe==2.5.1
     # via -r requirements.in
-django==3.2.9
+django==4.0
     # via
     #   -r requirements.in
     #   dj-stripe
@@ -110,7 +110,6 @@ python3-openid==3.1.0
 pytz==2019.3
     # via
     #   babel
-    #   django
     #   django-tz-detect
 requests==2.26.0
     # via
