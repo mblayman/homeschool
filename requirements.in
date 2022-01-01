@@ -16,7 +16,7 @@ django-tz-detect==0.3.0
 django-waffle==2.2.1
 dj-stripe==2.5.1
 gunicorn==20.1.0
-psycopg2==2.9.2
+psycopg2==2.9.3
 python-dateutil==2.8.2
 requests==2.26.0
 rollbar==0.16.2
