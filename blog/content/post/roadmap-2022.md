@@ -1,6 +1,6 @@
 ---
 title: "School Desk in 2022"
-date: 2022-01-31T23:07:29-05:00
+date: 2022-01-01T00:07:29-05:00
 images: ["/images/new-year.jpg"]
 categories: []
 tags: ["roadmap"]
