@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 import pytz
+import time_machine
 from dateutil.relativedelta import FR, MO, SA, SU, WE, relativedelta
 from django.conf import settings
 from django.contrib import messages
@@ -429,8 +430,17 @@ class TestDashboard(TestCase):
         assert schedules[0]["student"] == enrollment_2.student
         assert schedules[1]["student"] == enrollment.student
 
+    @time_machine.travel("2021-11-28")
     def test_future_school_year(self):
-        """A future school year shows the task in a week at the school year start."""
+        """A future school year shows the task in a week at the school year start.
+
+        This test setup has a problem where the school year conditions to make
+        this line up are annoying. This started failing when the test looked
+        ahead to 2023 when the week start perfectly lined up with 1/1
+        which is the same date as the school year start. This caused the "future"
+        school year to look like a current school year. Freeze time to make
+        the test conditions right.
+        """
         today = timezone.localdate()
         user = self.make_user()
         school_year = SchoolYearFactory(
