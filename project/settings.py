@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "homeschool.courses",
     "homeschool.notifications",
     "homeschool.referrals",
+    "homeschool.reports",
     "homeschool.schools",
     "homeschool.students",
     "homeschool.users",

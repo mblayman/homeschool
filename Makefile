@@ -14,6 +14,7 @@ graph:
 		courses \
 		notifications \
 		referrals \
+		reports \
 		schools \
 		students \
 		users \
