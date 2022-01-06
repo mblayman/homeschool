@@ -45,6 +45,51 @@ class TestReportsIndex(TestCase):
 
         assert list(self.get_context("enrollments")) == []
 
+    def test_has_school_years(self):
+        """The school years are in the context."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("reports:index")
+
+        assert list(self.get_context("school_years")) == [school_year]
+
+    def test_no_other_school_years(self):
+        """Another user's school years are not in the context."""
+        user = self.make_user()
+        SchoolYearFactory()
+
+        with self.login(user):
+            self.get_check_200("reports:index")
+
+        assert list(self.get_context("school_years")) == []
+
+
+class TestBundleView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        self.assertLoginRequired("reports:bundle", school_year.pk)
+
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            self.get_check_200("reports:bundle", school_year.pk)
+
+        assert self.get_context("school_year") == school_year
+
+    def test_no_other_school_years(self):
+        """A user cannot access another user's bundle."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            response = self.get("reports:bundle", school_year.pk)
+
+        self.response_404(response)
+
 
 class TestProgressReportView(TestCase):
     def test_unauthenticated_access(self):

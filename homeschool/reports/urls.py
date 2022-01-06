@@ -5,6 +5,7 @@ from . import views
 app_name = "reports"
 urlpatterns = [
     path("", views.ReportsIndexView.as_view(), name="index"),
+    path("bundle/<hashid:pk>/", views.BundleView.as_view(), name="bundle"),
     path(
         "attendance/<hashid:pk>/",
         views.AttendanceReportView.as_view(),

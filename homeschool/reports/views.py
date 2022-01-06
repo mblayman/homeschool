@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 
 from homeschool.courses.models import CourseResource
+from homeschool.schools.models import SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade
 
 
@@ -22,6 +23,21 @@ class ReportsIndexView(LoginRequiredMixin, TemplateView):
             Enrollment.objects.filter(grade_level__school_year__school__admin=user)
             .select_related("student", "grade_level", "grade_level__school_year")
             .order_by("-grade_level__school_year__start_date", "student")
+        )
+        context["school_years"] = SchoolYear.objects.filter(
+            school__admin=user
+        ).order_by("-start_date")
+        return context
+
+
+class BundleView(LoginRequiredMixin, TemplateView):
+    template_name = "reports/bundle.html"
+
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        context = super().get_context_data(**kwargs)
+        context["school_year"] = get_object_or_404(
+            SchoolYear, pk=self.kwargs["pk"], school__admin=user
         )
         return context
 
