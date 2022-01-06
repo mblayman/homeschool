@@ -11,7 +11,7 @@ from homeschool.students.models import Coursework, Enrollment, Grade
 
 
 class ReportsIndexView(LoginRequiredMixin, TemplateView):
-    template_name = "schools/reports_index.html"
+    template_name = "reports/index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,7 +27,7 @@ class ReportsIndexView(LoginRequiredMixin, TemplateView):
 
 
 class AttendanceReportView(LoginRequiredMixin, TemplateView):
-    template_name = "schools/attendance_report.html"
+    template_name = "reports/attendance_report.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -76,7 +76,7 @@ class AttendanceReportView(LoginRequiredMixin, TemplateView):
 
 
 class ProgressReportView(LoginRequiredMixin, TemplateView):
-    template_name = "schools/progress_report.html"
+    template_name = "reports/progress_report.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -172,7 +172,7 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
 
 
 class ResourceReportView(LoginRequiredMixin, TemplateView):
-    template_name = "schools/resource_report.html"
+    template_name = "reports/resource_report.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
