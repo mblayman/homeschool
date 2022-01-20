@@ -128,7 +128,7 @@ pytz==2019.3
     #   babel
     #   django
     #   django-tz-detect
-requests==2.26.0
+requests==2.27.1
     # via
     #   -r requirements.in
     #   django-allauth
