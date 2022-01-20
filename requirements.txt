@@ -190,7 +190,7 @@ tinycss2==1.1.1
     #   weasyprint
 types-bleach==4.1.4
     # via -r requirements.in
-types-python-dateutil==2.8.3
+types-python-dateutil==2.8.8
     # via -r requirements.in
 types-pytz==2021.3.4
     # via -r requirements.in
