@@ -196,7 +196,7 @@ types-pytz==2021.3.3
     # via -r requirements.in
 types-requests==2.26.1
     # via -r requirements.in
-types-six==1.16.3
+types-six==1.16.10
     # via -r requirements.in
 types-toml==0.10.3
     # via -r requirements.in
