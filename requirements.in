@@ -4,7 +4,7 @@ dj-database-url==0.5.0
 Django==3.2.11
 django-allauth==0.47.0
 django-anymail[sendgrid]==8.4
-django-debug-toolbar==3.2.2
+django-debug-toolbar==3.2.4
 django-environ==0.8.1
 django-extensions==3.1.5
 django-hashid-field==3.3.3
