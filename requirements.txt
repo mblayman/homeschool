@@ -155,7 +155,7 @@ snowballstemmer==2.0.0
     # via sphinx
 soupsieve==1.9.5
     # via beautifulsoup4
-sphinx==4.3.1
+sphinx==4.4.0
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
