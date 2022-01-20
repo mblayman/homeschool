@@ -264,7 +264,7 @@ ROLLBAR = {
     "enabled": env("ROLLBAR_ENABLED"),
     "access_token": env("ROLLBAR_ACCESS_TOKEN"),
     "environment": env("ROLLBAR_ENVIRONMENT"),
-    "branch": "master",
+    "branch": "main",
     "root": BASE_DIR,
     "capture_email": True,
 }

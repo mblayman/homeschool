@@ -4,7 +4,7 @@ local:
 	heroku local
 
 deploy:
-	git push heroku master
+	git push heroku main
 
 graph:
 	./manage.py graph_models \
