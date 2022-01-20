@@ -34,7 +34,7 @@ defusedxml==0.6.0
     # via python3-openid
 dj-database-url==0.5.0
     # via -r requirements.in
-dj-stripe==2.5.1
+dj-stripe==2.6.0
     # via -r requirements.in
 django==3.2.11
     # via
@@ -49,11 +49,11 @@ django==3.2.11
     #   django-htmx
     #   django-tz-detect
     #   jsonfield
-django-allauth==0.46.0
+django-allauth==0.47.0
     # via -r requirements.in
-django-anymail[sendgrid]==8.4
+django-anymail[sendgrid]==8.5
     # via -r requirements.in
-django-debug-toolbar==3.2.2
+django-debug-toolbar==3.2.4
     # via -r requirements.in
 django-environ==0.8.1
     # via -r requirements.in
@@ -61,17 +61,17 @@ django-extensions==3.1.5
     # via -r requirements.in
 django-hashid-field==3.3.3
     # via -r requirements.in
-django-hijack==3.1.3
+django-hijack==3.1.4
     # via -r requirements.in
-django-htmx==1.6.0
+django-htmx==1.8.0
     # via -r requirements.in
-django-ordered-model==3.4.3
+django-ordered-model==3.5
     # via -r requirements.in
 django-simple-history==3.0.0
     # via -r requirements.in
 django-tz-detect==0.3.0
     # via -r requirements.in
-django-waffle==2.2.1
+django-waffle==2.3.0
     # via -r requirements.in
 docutils==0.16
     # via
@@ -128,7 +128,7 @@ pytz==2019.3
     #   babel
     #   django
     #   django-tz-detect
-requests==2.26.0
+requests==2.27.1
     # via
     #   -r requirements.in
     #   django-allauth
@@ -182,24 +182,26 @@ sqlparse==0.3.0
     #   django-debug-toolbar
 stripe==2.55.2
     # via dj-stripe
-time-machine==2.4.1
+time-machine==2.6.0
     # via -r requirements.in
 tinycss2==1.1.1
     # via
     #   cssselect2
     #   weasyprint
-types-bleach==4.1.2
+types-bleach==4.1.4
     # via -r requirements.in
-types-python-dateutil==2.8.3
+types-python-dateutil==2.8.8
     # via -r requirements.in
-types-pytz==2021.3.3
+types-pytz==2021.3.4
     # via -r requirements.in
-types-requests==2.26.1
+types-requests==2.27.7
     # via -r requirements.in
-types-six==1.16.3
+types-six==1.16.10
     # via -r requirements.in
-types-toml==0.10.1
+types-toml==0.10.3
     # via -r requirements.in
+types-urllib3==1.26.7
+    # via types-requests
 urllib3==1.26.5
     # via requests
 weasyprint==54.0
