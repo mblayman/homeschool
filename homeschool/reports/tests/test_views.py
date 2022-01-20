@@ -91,6 +91,32 @@ class TestBundleView(TestCase):
         self.response_404(response)
 
 
+class TestCreateBundleView(TestCase):
+    def test_unauthenticated_access(self):
+        school_year = SchoolYearFactory()
+        self.assertLoginRequired("reports:bundle_create", school_year.pk)
+
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            response = self.get_check_200("reports:bundle_create", school_year.pk)
+
+        assert response["Content-Type"] == "application/zip"
+        assert "bundle.zip" in response["Content-Disposition"]
+
+    def test_no_other_school_years(self):
+        """A user cannot access another user's bundle."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+
+        with self.login(user):
+            response = self.get("reports:bundle_create", school_year.pk)
+
+        self.response_404(response)
+
+
 class TestProgressReportView(TestCase):
     def test_unauthenticated_access(self):
         enrollment = EnrollmentFactory()

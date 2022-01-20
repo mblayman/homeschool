@@ -1,8 +1,12 @@
 import datetime
+import io
+import zipfile
 from decimal import ROUND_HALF_UP, Decimal
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 
@@ -40,6 +44,26 @@ class BundleView(LoginRequiredMixin, TemplateView):
             SchoolYear, pk=self.kwargs["pk"], school__admin=user
         )
         return context
+
+
+@login_required
+def create_bundle(request, pk):
+    user = request.user
+    get_object_or_404(SchoolYear, pk=pk, school__admin=user)
+
+    zip_file_data = io.BytesIO()
+    with zipfile.ZipFile(zip_file_data, "w") as zip_file:
+        zip_file.writestr("file1.txt", b"hello world")
+        zip_file.writestr("file2.txt", b"hello world")
+
+    filename = "bundle.zip"
+    return HttpResponse(
+        zip_file_data.getbuffer(),
+        headers={
+            "Content-Type": "application/zip",
+            "Content-Disposition": f'attachment; filename="{filename}"',
+        },
+    )
 
 
 class AttendanceReportView(LoginRequiredMixin, TemplateView):
