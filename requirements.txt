@@ -15,15 +15,21 @@ beautifulsoup4==4.10.0
 bleach==4.1.0
     # via -r requirements.in
 brotli==1.0.9
-    # via whitenoise
+    # via
+    #   fonttools
+    #   whitenoise
 certifi==2019.11.28
     # via requests
 cffi==1.14.3
-    # via cryptography
+    # via
+    #   cryptography
+    #   weasyprint
 charset-normalizer==2.0.4
     # via requests
 cryptography==3.3.2
     # via pyjwt
+cssselect2==0.4.1
+    # via weasyprint
 defusedxml==0.6.0
     # via python3-openid
 dj-database-url==0.5.0
@@ -71,10 +77,14 @@ docutils==0.16
     # via
     #   sphinx
     #   sphinx-rtd-theme
+fonttools[woff]==4.28.5
+    # via weasyprint
 gunicorn==20.1.0
     # via -r requirements.in
 hashids==1.3.1
     # via django-hashid-field
+html5lib==1.1
+    # via weasyprint
 idna==2.8
     # via requests
 imagesize==1.2.0
@@ -91,16 +101,22 @@ packaging==20.4
     # via
     #   bleach
     #   sphinx
+pillow==9.0.0
+    # via weasyprint
 psycopg2==2.9.3
     # via -r requirements.in
 pycparser==2.20
     # via cffi
+pydyf==0.1.2
+    # via weasyprint
 pygments==2.7.4
     # via sphinx
 pyjwt[crypto]==1.7.1
     # via django-allauth
 pyparsing==2.4.7
     # via packaging
+pyphen==0.12.0
+    # via weasyprint
 python-dateutil==2.8.2
     # via
     #   -r requirements.in
@@ -130,6 +146,7 @@ six==1.14.0
     #   bleach
     #   cryptography
     #   django-tz-detect
+    #   html5lib
     #   packaging
     #   python-dateutil
     #   rollbar
@@ -167,6 +184,10 @@ stripe==2.55.2
     # via dj-stripe
 time-machine==2.4.1
     # via -r requirements.in
+tinycss2==1.1.1
+    # via
+    #   cssselect2
+    #   weasyprint
 types-bleach==4.1.2
     # via -r requirements.in
 types-python-dateutil==2.8.3
@@ -181,10 +202,18 @@ types-toml==0.10.1
     # via -r requirements.in
 urllib3==1.26.5
     # via requests
+weasyprint==54.0
+    # via -r requirements.in
 webencodings==0.5.1
-    # via bleach
+    # via
+    #   bleach
+    #   cssselect2
+    #   html5lib
+    #   tinycss2
 whitenoise[brotli]==5.3.0
     # via -r requirements.in
+zopfli==0.1.9
+    # via fonttools
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

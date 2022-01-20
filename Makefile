@@ -44,3 +44,6 @@ docs:
 
 servedocs:
 	cd docs/_build/html && python3 -m http.server
+
+pip:
+	pip-compile --output-file requirements.txt requirements.in
