@@ -27,4 +27,9 @@ urlpatterns = [
         views.StudentEnrollmentCreateView.as_view(),
         name="student_enrollment_create",
     ),
+    path(
+        "enrollment/<hashid:pk>/",
+        views.EnrollmentDeleteView.as_view(),
+        name="enrollment_delete",
+    ),
 ]

@@ -4,7 +4,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
-from django.views.generic import CreateView, FormView, TemplateView
+from django.views.generic import CreateView, DeleteView, FormView, TemplateView
 
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
@@ -359,3 +359,14 @@ class StudentEnrollmentCreateView(LoginRequiredMixin, StudentMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+
+class EnrollmentDeleteView(LoginRequiredMixin, DeleteView):
+    def get_queryset(self):
+        user = self.request.user
+        return Enrollment.objects.filter(student__school=user.school).select_related(
+            "student", "grade_level"
+        )
+
+    def get_success_url(self):
+        return reverse("students:index")

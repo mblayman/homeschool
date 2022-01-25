@@ -696,3 +696,37 @@ class TestStudentEnrollmentCreateView(TestCase):
             )
 
         self.response_404(response)
+
+
+class TestEnrollmentDeleteView(TestCase):
+    def test_unauthenticated_access(self):
+        enrollment = EnrollmentFactory()
+        self.assertLoginRequired("students:enrollment_delete", pk=enrollment.id)
+
+    def test_get(self):
+        user = self.make_user()
+        enrollment = EnrollmentFactory(student__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("students:enrollment_delete", pk=enrollment.id)
+
+    def test_post(self):
+        user = self.make_user()
+        enrollment = EnrollmentFactory(student__school=user.school)
+
+        with self.login(user):
+            response = self.post("students:enrollment_delete", pk=enrollment.id)
+
+        assert Enrollment.objects.count() == 0
+        self.response_302(response)
+        assert response.get("Location") == self.reverse("students:index")
+
+    def test_post_other_user(self):
+        """A user may not delete another user's enrollment."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post("students:enrollment_delete", pk=enrollment.id)
+
+        self.response_404(response)

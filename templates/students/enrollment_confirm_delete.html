@@ -1,0 +1,20 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Remove enrollment{% endblock %}
+
+{% block main %}
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">Remove {{ enrollment.student.first_name }} from {{ enrollment.grade_level }}</h1>
+
+  <p class="mb-4 max-w-xl">
+    Removing this student from {{ enrollment.grade_level }} will
+    make any associated school work inaccessible.
+    Are you sure you want to remove {{ enrollment.student.first_name }}?
+  </p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <button class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+      Remove
+    </button>
+  </form>
+{% endblock %}
