@@ -211,6 +211,106 @@ class TestSchoolYearEditView(TestCase):
         )
 
 
+class TestGradeLevelDown(TestCase):
+    def test_unauthenticated_access(self):
+        grade_level = GradeLevelFactory()
+        self.assertLoginRequired("schools:grade_level_down", pk=grade_level.id)
+
+    def test_post(self):
+        """A grade level is moved down."""
+        user = self.make_user()
+        first_grade_level = GradeLevelFactory(school_year__school=user.school)
+        school_year = first_grade_level.school_year
+        second_grade_level = GradeLevelFactory(school_year=school_year)
+
+        with self.login(user):
+            response = self.post("schools:grade_level_down", pk=first_grade_level.id)
+
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_edit", school_year.id
+        )
+        assert list(school_year.grade_levels.all()) == [
+            second_grade_level,
+            first_grade_level,
+        ]
+
+    def test_other_school_year(self):
+        """A user may not edit the order of another school year's grade levels."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+        first_grade_level = GradeLevelFactory(school_year=school_year)
+
+        with self.login(user):
+            response = self.post("schools:grade_level_down", pk=first_grade_level.id)
+
+        self.response_404(response)
+
+    def test_next_url(self):
+        """The view redirects to the next URL when present."""
+        user = self.make_user()
+        first_grade_level = GradeLevelFactory(school_year__school=user.school)
+        school_year = first_grade_level.school_year
+        GradeLevelFactory(school_year=school_year)
+        url = self.reverse("schools:grade_level_down", pk=first_grade_level.id)
+        next_url = self.reverse("core:terms")
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url)
+
+        assert response.get("Location") == next_url
+
+
+class TestGradeLevelUp(TestCase):
+    def test_unauthenticated_access(self):
+        grade_level = GradeLevelFactory()
+        self.assertLoginRequired("schools:grade_level_up", pk=grade_level.id)
+
+    def test_post(self):
+        """A grade level is moved up."""
+        user = self.make_user()
+        first_grade_level = GradeLevelFactory(school_year__school=user.school)
+        school_year = first_grade_level.school_year
+        second_grade_level = GradeLevelFactory(school_year=school_year)
+
+        with self.login(user):
+            response = self.post("schools:grade_level_up", pk=second_grade_level.id)
+
+        assert response.get("Location") == self.reverse(
+            "schools:school_year_edit", school_year.id
+        )
+        assert list(school_year.grade_levels.all()) == [
+            second_grade_level,
+            first_grade_level,
+        ]
+
+    def test_other_school_year(self):
+        """A user may not edit the order of another school year's grade levels."""
+        user = self.make_user()
+        school_year = SchoolYearFactory()
+        first_grade_level = GradeLevelFactory(school_year=school_year)
+
+        with self.login(user):
+            response = self.post("schools:grade_level_up", pk=first_grade_level.id)
+
+        self.response_404(response)
+
+    def test_next_url(self):
+        """The view redirects to the next URL when present."""
+        user = self.make_user()
+        first_grade_level = GradeLevelFactory(school_year__school=user.school)
+        school_year = first_grade_level.school_year
+        GradeLevelFactory(school_year=school_year)
+        url = self.reverse("schools:grade_level_up", pk=first_grade_level.id)
+        next_url = self.reverse("core:terms")
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            response = self.post(url)
+
+        assert response.get("Location") == next_url
+
+
 class TestSchoolYearForecastView(TestCase):
     def test_unauthenticated_access(self):
         school_year = SchoolYearFactory()

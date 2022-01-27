@@ -9,7 +9,7 @@
     {% if create %}Add{% else %}Edit{% endif %} School Year
   </h1>
   {% include "forms/non_field_errors.html" %}
-  <form method="post" class="w-full max-w-2xl">
+  <form method="post" class="w-full max-w-2xl mb-8">
     {% csrf_token %}
     <input type="hidden" name="school" value="{{ user.school.id }}">
     {% include "forms/field.html" with field=form.start_date placeholder="9/1/2020" autofocus=True %}
@@ -72,4 +72,8 @@
       </div>
     </div>
   </form>
+
+  {% if not create %}
+    {% include "schools/school_year_grade_levels.html" %}
+  {% endif %}
 {% endblock %}

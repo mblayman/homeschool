@@ -124,6 +124,34 @@ class SchoolYearEditView(LoginRequiredMixin, UpdateView):
         return reverse("schools:school_year_detail", kwargs={"pk": self.kwargs["pk"]})
 
 
+def move_grade_level(user, grade_level_id, direction, next_url):
+    """Move the grade level ordering in the specified direction."""
+    grade_level = get_object_or_404(
+        GradeLevel, pk=grade_level_id, school_year__school__admin=user
+    )
+    getattr(grade_level, direction)()
+
+    if next_url is None:
+        next_url = reverse(
+            "schools:school_year_edit", args=[grade_level.school_year_id]
+        )
+    return HttpResponseRedirect(next_url)
+
+
+@login_required
+@require_POST
+def move_grade_level_down(request, pk):
+    """Move a grade level down in the ordering."""
+    return move_grade_level(request.user, pk, "down", request.GET.get("next"))
+
+
+@login_required
+@require_POST
+def move_grade_level_up(request, pk):
+    """Move a grade level up in the ordering."""
+    return move_grade_level(request.user, pk, "up", request.GET.get("next"))
+
+
 class SchoolYearForecastView(LoginRequiredMixin, TemplateView):
     template_name = "schools/schoolyear_forecast.html"
 

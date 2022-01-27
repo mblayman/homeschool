@@ -25,6 +25,14 @@ urlpatterns = [
         name="school_year_edit",
     ),
     path(
+        "grade-levels/<hashid:pk>/down/",
+        views.move_grade_level_down,
+        name="grade_level_down",
+    ),
+    path(
+        "grade-levels/<hashid:pk>/up/", views.move_grade_level_up, name="grade_level_up"
+    ),
+    path(
         "school-years/<hashid:pk>/forecast/",
         views.SchoolYearForecastView.as_view(),
         name="school_year_forecast",
