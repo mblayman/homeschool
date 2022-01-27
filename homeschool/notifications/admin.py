@@ -69,3 +69,4 @@ class AnnouncementAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ("user", "announcement", "status")
+    list_filter = ("status",)
