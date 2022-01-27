@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from hashid_field import HashidAutoField
+from ordered_model.models import OrderedModel
 
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.students.models import Student
@@ -148,7 +149,7 @@ class SchoolYear(DaysOfWeekModel):
         return f"{self.start_date.year}–{self.end_date.year}"
 
 
-class GradeLevel(models.Model):
+class GradeLevel(OrderedModel):
     """A student is in a grade level in a given school year"""
 
     id = HashidAutoField(
@@ -158,6 +159,7 @@ class GradeLevel(models.Model):
     school_year = models.ForeignKey(
         "schools.SchoolYear", on_delete=models.CASCADE, related_name="grade_levels"
     )
+    order_with_respect_to = "school_year"
 
     def get_ordered_courses(self):
         """Get the courses in their proper order.
