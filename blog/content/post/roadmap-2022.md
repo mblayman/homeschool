@@ -2,7 +2,6 @@
 title: "School Desk in 2022"
 date: 2022-01-01T00:07:29-05:00
 images: ["/images/new-year.jpg"]
-categories: []
 tags: ["roadmap"]
 authors: ["Matt Layman"]
 
@@ -24,8 +23,6 @@ School Desk is maturing continuously,
 and I want to describe some
 of the "big rocks"
 that are coming up.
-
-<!--more-->
 
 My family runs our homeschool on the calendar year,
 so my wife just finished off the school year
