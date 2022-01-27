@@ -24,10 +24,10 @@
             <div class="w-3/12 text-sm uppercase tracking-wide font-extralight py-2 pr-4">
               {{ work.course_task.course.name }}
             </div>
-            <div class="w-7/12 p-2 text-sm font-light overflow-x-scroll">
+            <div class="w-7/12 p-2 text-sm font-light overflow-x-auto">
               {{ work.course_task.description|linebreaksbr }}
             </div>
-            <div class="w-2/12 p-2 text-sm font-light overflow-x-scroll">
+            <div class="w-2/12 p-2 text-sm font-light overflow-x-auto">
               <input class="bg-white appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
                 {% if forloop.first %}autofocus{% endif %}
                 type="number" min="0" name="graded_work-{{ student_work.student.id }}-{{ work.id }}" autocomplete="off">
