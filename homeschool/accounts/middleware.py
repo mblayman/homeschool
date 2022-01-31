@@ -17,7 +17,7 @@ class AccountGateMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.allow_list_patterns = [
-            re.compile(fr"^{allowed}$") for allowed in settings.ACCOUNT_GATE_ALLOW_LIST
+            re.compile(rf"^{allowed}$") for allowed in settings.ACCOUNT_GATE_ALLOW_LIST
         ]
 
     def __call__(self, request):
