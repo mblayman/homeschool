@@ -1,0 +1,19 @@
+<h1 class="font-extralight text-2xl text-blue-900 mb-8">Resource Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+
+{% regroup resources by course as course_list %}
+
+{% for course, resources in course_list %}
+  <h2 class="font-extralight text-xl text-blue-900 mb-2">{{ course }}</h2>
+  <div class="flex flex-col max-w-2xl mb-8">
+    <div class="flex flex-row">
+      <div class="w-2/6 text-sm uppercase tracking-wide font-extralight py-2">Title</div>
+      <div class="w-4/6 text-sm uppercase tracking-wide font-extralight py-2">Details</div>
+    </div>
+    {% for resource in resources %}
+      <div class="flex flex-row">
+        <div class="w-2/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ resource.title }}</div>
+        <div class="w-4/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ resource.details|linebreaksbr }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}

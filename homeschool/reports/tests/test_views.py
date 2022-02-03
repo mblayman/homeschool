@@ -11,6 +11,27 @@ from homeschool.students.tests.factories import (
     GradeFactory,
 )
 from homeschool.test import TestCase
+from homeschool.users.tests.factories import UserFactory
+
+
+class TestPDFsDashboard(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("office:pdfs:dashboard")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+
+        with self.login(user):
+            response = self.get("office:pdfs:dashboard")
+
+        assert response.status_code == 200
 
 
 class TestReportsIndex(TestCase):
@@ -233,6 +254,29 @@ class TestProgressReportView(TestCase):
             self.get_check_200(url)
 
         assert len(self.get_context("courses")) == 1
+
+
+class TestOfficeResourceReport(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.post("office:pdfs:resource")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post(
+                "office:pdfs:resource", data={"enrollment_id": enrollment.id}
+            )
+
+        assert response.status_code == 200
 
 
 class TestResourceReportView(TestCase):

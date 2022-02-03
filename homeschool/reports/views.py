@@ -1,18 +1,29 @@
 import datetime
 import io
 import zipfile
+from dataclasses import asdict
 from decimal import ROUND_HALF_UP, Decimal
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
-from homeschool.courses.models import CourseResource
 from homeschool.schools.models import SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade
+
+from . import pdfs
+from .contexts import ResourceReportContext
+
+
+@staff_member_required
+def pdfs_dashboard(request):
+    context: dict = {}
+    return render(request, "reports/pdfs_dashboard.html", context)
 
 
 class ReportsIndexView(LoginRequiredMixin, TemplateView):
@@ -211,6 +222,27 @@ class ProgressReportView(LoginRequiredMixin, TemplateView):
         course_info["course_average"] = int(Decimal(average).quantize(0, ROUND_HALF_UP))
 
 
+@staff_member_required
+@require_POST
+def resource_report(request):
+    enrollment_id = request.POST["enrollment_id"]
+    enrollment = get_object_or_404(
+        Enrollment.objects.select_related(
+            "student", "grade_level", "grade_level__school_year"
+        ),
+        pk=enrollment_id,
+    )
+    context = ResourceReportContext.from_enrollment(enrollment)
+    pdf_data = pdfs.make_resource_report(context)
+    return HttpResponse(
+        pdf_data,
+        headers={
+            "Content-Type": "application/pdf",
+            "Content-Disposition": 'attachment; filename="resource-report.pdf"',
+        },
+    )
+
+
 class ResourceReportView(LoginRequiredMixin, TemplateView):
     template_name = "reports/resource_report.html"
 
@@ -224,14 +256,6 @@ class ResourceReportView(LoginRequiredMixin, TemplateView):
             pk=self.kwargs["pk"],
             grade_level__school_year__school=user.school,
         )
-        context["grade_level"] = enrollment.grade_level
-        context["school_year"] = enrollment.grade_level.school_year
-        context["student"] = enrollment.student
-        context["resources"] = (
-            CourseResource.objects.filter(
-                course__grade_levels__in=[enrollment.grade_level]
-            )
-            .select_related("course")
-            .order_by("course")
-        )
+        resource_report_context = ResourceReportContext.from_enrollment(enrollment)
+        context.update(asdict(resource_report_context))
         return context
