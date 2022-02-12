@@ -69,7 +69,7 @@ django-ordered-model==3.5
     # via -r requirements.in
 django-simple-history==3.0.0
     # via -r requirements.in
-django-tz-detect==0.3.0
+django-tz-detect==0.4.0
     # via -r requirements.in
 django-waffle==2.3.0
     # via -r requirements.in
@@ -147,7 +147,6 @@ six==1.14.0
     # via
     #   bleach
     #   cryptography
-    #   django-tz-detect
     #   html5lib
     #   packaging
     #   python-dateutil
