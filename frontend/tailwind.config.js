@@ -1,5 +1,5 @@
 module.exports = {
-  purge: [
+  content: [
     './templates/**/*.html',
   ],
   theme: {
@@ -139,6 +139,5 @@ module.exports = {
       }
     }
   },
-  variants: {},
   plugins: []
 }
