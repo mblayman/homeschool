@@ -30,7 +30,7 @@
   </p>
 
   {% if show_enroll_cta %}
-    <p class="mb-8 print-hide">
+    <p class="mb-8 print:hidden">
       <a href="{% url "students:enrollment_create" school_year.id %}"
         class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
         Enroll a Student

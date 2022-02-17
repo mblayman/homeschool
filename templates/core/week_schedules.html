@@ -1,5 +1,5 @@
 {% for schedule in schedules %}
-<div class="print-break-after-page">
+<div class="print:break-after-page">
   <h2 class="font-extralight text-xl text-blue-900">{{ schedule.student.first_name }}</h2>
 
   <div class="flex flex-row">
@@ -17,7 +17,7 @@
           rounded-tr-lg
         {% endif %}
       {% elif week_date.date == day %}
-        bg-gray-100 print-no-color rounded-t-lg
+        bg-gray-100 print:bg-white rounded-t-lg
       {% endif %}
       hover:underline">{{ week_date.date|date:"l, n/j" }}{% if week_date.school_break %} <br>(Break){% endif %}</a>
     {% endfor %}
@@ -43,15 +43,15 @@
                 {% endif %}
               {% endif %}"></div>
           {% elif course_schedule_day.task %}
-            <div class="flex-1 p-2 text-sm font-light overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ course_schedule_day.task.description|urlize|linebreaksbr }}</div>
+            <div class="flex-1 p-2 text-sm font-light overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print:bg-white {% if last_row %}rounded-b-lg{% endif %}{% endif %}">{{ course_schedule_day.task.description|urlize|linebreaksbr }}</div>
           {% elif course_schedule_day.coursework %}
-            <div class="flex-1 p-2 overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
+            <div class="flex-1 p-2 overflow-x-auto {% if course_schedule_day.week_date == day %}bg-gray-100 print:bg-white {% if last_row %}rounded-b-lg{% endif %}{% endif %}">
               {% for coursework in course_schedule_day.coursework %}
                 <div class="text-sm font-light text-gray-400">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
               {% endfor %}
             </div>
           {% else %}
-            <div class="flex-1 p-2 {% if course_schedule_day.week_date == day %}bg-gray-100 print-no-color {% if last_row %}rounded-b-lg{% endif %}{% endif %}"></div>
+            <div class="flex-1 p-2 {% if course_schedule_day.week_date == day %}bg-gray-100 print:bg-white {% if last_row %}rounded-b-lg{% endif %}{% endif %}"></div>
           {% endif %}
         {% endfor %}
       {% endwith %}

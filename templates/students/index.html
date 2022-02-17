@@ -8,11 +8,11 @@
 
   {% if roster %}
     <div class="mb-8 pt-2">
-      <a href="{% url "students:create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold mr-2 py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+      <a href="{% url "students:create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold mr-2 py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
         Add Student
       </a>
 
-      <a href="{% url "students:grade" %}?next={{ request.path|urlencode }}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+      <a href="{% url "students:grade" %}?next={{ request.path|urlencode }}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
         Input Scores
       </a>
     </div>
@@ -37,7 +37,7 @@
         {% elif school_year %}
           {% if has_grade_levels %}
             <div class="my-4">
-              <a href="{% url "students:student_enrollment_create" student_info.student.id school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+              <a href="{% url "students:student_enrollment_create" student_info.student.id school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
                 Enroll
               </a>
             </div>
@@ -47,7 +47,7 @@
               please add a grade level to the current school year.
             </p>
             <div class="my-4">
-              <a href="{% url "schools:grade_level_create" school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+              <a href="{% url "schools:grade_level_create" school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
                 Create Grade Level
               </a>
             </div>
@@ -58,7 +58,7 @@
             please add a school year and grade level first.
           </p>
           <div class="my-4">
-            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print-hide">
+            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
               Create School Year
             </a>
           </div>

@@ -7,7 +7,7 @@
 
   {% trial_banner %}
 
-  <div class="flex flex-row items-center mb-8 print-hide">
+  <div class="flex flex-row items-center mb-8 print:hidden">
     <h1 class="grow font-extralight text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
     <div class="text-sm text-blue-900 font-extralight">
       <a class="hover:underline" href="{% url "core:weekly" previous_week_date.year previous_week_date.month previous_week_date.day %}">Week of {{ previous_week_date|date:"M j" }}</a>

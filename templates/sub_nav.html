@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-  <nav class="flex bg-gray-100 text-blue-800 border-b border-gray-300 items-center print-hide">
+  <nav class="flex bg-gray-100 text-blue-800 border-b border-gray-300 items-center print:hidden">
     <div class="w-full max-w-6xl relative mx-auto px-6">
       <div class="flex flex-col sm:flex-row sm:items-center">
         <a href="{% url "core:dashboard" %}" class="block sm:-ml-2 p-2 flex items-center hover:bg-gray-200

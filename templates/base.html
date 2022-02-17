@@ -33,7 +33,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{% static "favicon/favicon-16x16.png" %}">
   <link rel="manifest" href="{% static "favicon/site.webmanifest" %}">
   <link href="{% static "site.css" %}" rel="stylesheet">
-  <link href="{% static "print.css" %}" rel="stylesheet" media="print">
   {% block styles %}{% endblock %}
   <title>{% block head_title %}{% endblock %} &ndash; School Desk</title>
 </head>
@@ -44,7 +43,7 @@
     {% include "sub_nav.html" %}
   {% endblock %}
 
-  <main class="{% block main_css_classes %}container mx-auto p-8 grow print-no-max-width{% endblock %}">
+  <main class="{% block main_css_classes %}container mx-auto p-8 grow print:max-w-none{% endblock %}">
 
     {% if messages %}
     <ul class="flex flex-row justify-center mx-4 -mt-4 mb-4 w-full">
@@ -59,7 +58,7 @@
     {% block main %}{% endblock %}
   </main>
 
-  <footer class="container mx-auto {% block footer_css_border %}border-t border-gray-400{% endblock %} p-4 text-center text-sm text-gray-600 print-hide">
+  <footer class="container mx-auto {% block footer_css_border %}border-t border-gray-400{% endblock %} p-4 text-center text-sm text-gray-600 print:hidden">
     <span class="mx-1">
       <a href="{% url "core:index" %}" class="hover:text-gray-900">&copy; {% now "Y" %} School Desk</a>
     </span>

@@ -15,7 +15,7 @@
       <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
     {% endif %}
     {{ course.name }}
-    <a href="{% url "courses:edit" course.id %}" class="text-gray-400 hover:text-gray-700 print-hide">
+    <a href="{% url "courses:edit" course.id %}" class="text-gray-400 hover:text-gray-700 print:hidden">
       <svg class="h-5 w-5 ml-2 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
         <title>Edit Course</title>
         <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/>
@@ -40,7 +40,7 @@
     </p>
   {% endif %}
 
-  <p class="mb-8 print-hide">
+  <p class="mb-8 print:hidden">
     {% if course_tasks %}
       <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
         class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
@@ -61,9 +61,9 @@
   {% include "courses/_toggle_completed_tasks.html" with css_classes="mb-2" %}
 
   {% if task_details %}
-    <div class="flex flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight print-no-max-width print-w-full">
+    <div class="flex flex-row max-w-4xl text-sm uppercase tracking-wide font-extralight print:max-w-none print:max-w-full">
       <div class="p-2 w-6/12">Task</div>
-      <div class="p-2 w-2/12 print-hide"></div>
+      <div class="p-2 w-2/12 print:hidden"></div>
       {% if enrolled_students %}
         {% for enrolled_student in enrolled_students %}
           <div class="p-2 w-2/12 print:w-3/12 pl-9">{{ enrolled_student.first_name }}</div>
