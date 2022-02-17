@@ -22,7 +22,7 @@
         <h2 class="font-extralight text-xl text-blue-900 mb-3 pb-1 border-b border-yellow-400">{{ student_info.student.full_name }}</h2>
         {% if student_info.enrollment %}
           <div class="flex items-center">
-            <div class="flex-grow">
+            <div class="grow">
               <p class="font-light">{{ student_info.student.first_name }} is enrolled in {{ student_info.enrollment.grade_level }} in the {{ school_year }} school year.</p>
             </div>
             <div class="text-gray-500 hover:text-gray-600">

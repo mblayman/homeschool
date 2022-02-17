@@ -3,7 +3,7 @@
 {% block head_title %}{% if create %}Add Course{% else %}Edit {{ course.name }}{% endif %}{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">
+  <h1 class="grow font-extralight text-2xl text-blue-900 mb-8">
     {% if create %}
       Add Course
     {% else %}
@@ -116,7 +116,7 @@
             class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
             Delete
           </a>
-          <div class="flex-grow"></div>
+          <div class="grow"></div>
           <a href="{% url "courses:detail" course.id %}"
             class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
             Cancel
