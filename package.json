@@ -3,11 +3,11 @@
     "build": "tailwindcss build frontend/site.css -c frontend/tailwind.config.js -o static/site.css"
   },
   "engines": {
-    "node": "15.x"
+    "node": "16.x"
   },
-  "dependencies": {
-    "autoprefixer": "^10.2.5",
-    "postcss": "^8.2.13",
-    "tailwindcss": "^2.1.2"
+  "devDependencies": {
+    "autoprefixer": "^10.4.2",
+    "postcss": "^8.4.6",
+    "tailwindcss": "^3.0.23"
   }
 }
