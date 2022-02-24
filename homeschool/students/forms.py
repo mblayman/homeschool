@@ -27,11 +27,14 @@ class CourseworkForm(EnrolledTaskMixin, forms.ModelForm):
 
         # Any of these being None is field level validation failure,
         # but a guard is needed to prevent unnecessary processing.
-        if student is None or course_task is None or completed_date is None:
+        if student is None or course_task is None:
             return
 
         self._is_enrolled_task(student, course_task)
-        self._check_completed_date_in_school_year(completed_date, course_task)
+
+        if completed_date is not None:
+            self._check_completed_date_in_school_year(completed_date, course_task)
+
         return self.cleaned_data
 
     def _check_completed_date_in_school_year(self, completed_date, course_task):
@@ -50,11 +53,20 @@ class CourseworkForm(EnrolledTaskMixin, forms.ModelForm):
 
     def save(self):
         """Create or update a coursework."""
-        Coursework.objects.update_or_create(
-            student=self.cleaned_data["student"],
-            course_task=self.cleaned_data["course_task"],
-            defaults={"completed_date": self.cleaned_data["completed_date"]},
-        )
+        completed_date = self.cleaned_data.get("completed_date")
+        if completed_date:
+            Coursework.objects.update_or_create(
+                student=self.cleaned_data["student"],
+                course_task=self.cleaned_data["course_task"],
+                defaults={"completed_date": completed_date},
+            )
+        else:
+            # The user removed the completed date,
+            # so they were trying to clear the associated coursework.
+            Coursework.objects.filter(
+                student=self.cleaned_data["student"],
+                course_task=self.cleaned_data["course_task"],
+            ).delete()
 
 
 class EnrollmentForm(forms.ModelForm):
