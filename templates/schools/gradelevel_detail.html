@@ -3,7 +3,7 @@
 {% block head_title %}{{ gradelevel.name }}{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">
+  <h1 class="grow font-extralight text-2xl text-blue-900 mb-8">
     <a href="{% url "schools:school_year_detail" school_year.id %}" class="hover:underline">{{ school_year }} School Year</a>
 
     <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
@@ -30,7 +30,7 @@
   </p>
 
   {% if show_enroll_cta %}
-    <p class="mb-8 print-hide">
+    <p class="mb-8 print:hidden">
       <a href="{% url "students:enrollment_create" school_year.id %}"
         class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
         Enroll a Student

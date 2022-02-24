@@ -4,7 +4,7 @@
 {% block head_title %}Settings{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">Settings</h1>
+  <h1 class="grow font-extralight text-2xl text-blue-900 mb-8">Settings</h1>
 
   {% include "forms/non_field_errors.html" %}
 
@@ -21,7 +21,7 @@
     </button>
   </form>
 
-  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-4">Billing</h1>
+  <h1 class="grow font-extralight text-2xl text-blue-900 mb-4">Billing</h1>
 
   {% if request.account.status == request.account.AccountStatus.ACTIVE %}
     <p class="font-extralight text-base text-gray-800 mb-2 max-w-lg">

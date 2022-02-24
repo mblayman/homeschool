@@ -387,7 +387,8 @@ class Coursework(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course_task = models.ForeignKey("courses.CourseTask", on_delete=models.CASCADE)
-    completed_date = models.DateField(db_index=True)
+    # Allow blank to delete coursework via an empty completed date in the form.
+    completed_date = models.DateField(db_index=True, blank=True)
 
 
 class Grade(models.Model):

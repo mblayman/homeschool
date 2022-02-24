@@ -7,8 +7,8 @@
 
   {% trial_banner %}
 
-  <div class="flex flex-row items-center mb-8 print-hide">
-    <h1 class="flex-grow font-extralight text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
+  <div class="flex flex-row items-center mb-8 print:hidden">
+    <h1 class="grow font-extralight text-2xl text-blue-900">Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}</h1>
     <div class="text-sm text-blue-900 font-extralight">
       <a class="hover:underline" href="{% url "core:weekly" previous_week_date.year previous_week_date.month previous_week_date.day %}">Week of {{ previous_week_date|date:"M j" }}</a>
       <svg class="h-6 w-6 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>

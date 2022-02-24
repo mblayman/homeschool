@@ -105,6 +105,29 @@ class TestCourseworkForm(TestCase):
             == 1
         )
 
+    def test_save_deletes_coursework(self):
+        """A blank completed date deletes an existing coursework."""
+        user = self.make_user()
+        student = StudentFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        course_task = CourseTaskFactory(course=course)
+        CourseworkFactory(student=student, course_task=course_task)
+        data = {
+            "student": str(student.id),
+            "course_task": str(course_task.id),
+        }
+        form = CourseworkForm(data=data)
+        form.is_valid()
+
+        form.save()
+
+        assert (
+            Coursework.objects.filter(student=student, course_task=course_task).count()
+            == 0
+        )
+
     def test_completed_date_outside_school_year(self):
         """The completed data must be in the school year."""
         user = self.make_user()

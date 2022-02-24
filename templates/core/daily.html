@@ -14,8 +14,8 @@
     {% include "students/empty_students.html" %}
   {% else %}
     <div class="flex flex-row items-center">
-      <h1 class="flex-grow font-extralight text-2xl text-blue-900">Day of {{ day|date:"l, M j" }}</h1>
-      <div class="text-sm text-blue-900 font-extralight print-hide">
+      <h1 class="grow font-extralight text-2xl text-blue-900">Day of {{ day|date:"l, M j" }}</h1>
+      <div class="text-sm text-blue-900 font-extralight print:hidden">
         <a class="hover:underline" href="{% url "core:daily_for_date" ereyesterday.year ereyesterday.month ereyesterday.day %}">{{ ereyesterday|date:"M j" }}</a>
         <svg class="h-6 w-6 pb-1 inline fill-current"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.05 9.293L6.343 10 12 15.657l1.414-1.414L9.172 10l4.242-4.243L12 4.343z"/></svg>
         <a class="hover:underline" href="{% url "core:daily_for_date" yesterday.year yesterday.month yesterday.day %}">{{ yesterday|date:"M j" }}</a>
@@ -28,15 +28,12 @@
       </div>
     </div>
 
-    <p class="font-extralight text-base text-gray-800 my-2 print-hide">
+    <p class="font-extralight text-base text-gray-800 my-2 print:hidden">
       <a class="underline" href="{{ weekly_url }}">Switch to week view</a>
     </p>
 
     {% include "print_link.html" %}
 
-    <form method="POST" action="?next={{ request.path|urlencode }}">
-      {% csrf_token %}
-      <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
     {% for schedule in schedules %}
       {% if schedule.is_break %}
         <div>
@@ -46,101 +43,110 @@
           </p>
         </div>
       {% else %}
-        <div class="print-break-after-page">
+        <div class="print:break-after-page">
           <h2 class="font-extralight text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
 
-          <div class="flex flex-row max-w-3xl print-hide">
-            <div class="w-3/12"></div>
-            <div class="w-1/12 text-sm text-center py-2">
-              <input type="checkbox" onclick="checkTasks(this, '{{ schedule.student.id }}')">
-            </div>
-            <div class="text-sm text-center uppercase tracking-wide font-extralight -ml-2 py-2 w-20">Complete?</div>
-          </div>
-          {% for course_schedule in schedule.courses %}
-            {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
-              <div class="flex flex-row border-t border-yellow-400 max-w-3xl">
-                <div class="w-3/12 text-sm uppercase tracking-wide font-extralight py-2 pr-4">
-                  <a class="hover:underline" href="{% url "courses:detail" course_schedule.course.id %}">{{ course_schedule.course.name }}</a>
-                </div>
-
-                {% if course_schedule.task %}
-                  <div class="w-1/12 text-sm text-center py-2">
-                    <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
-                    <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
-                  </div>
-                  <div class="w-7/12 p-2 text-sm font-light overflow-x-auto">{{ course_schedule.task.description|urlize|linebreaksbr }}</div>
-
-                  <div class="w-1/12 py-2 flex justify-center items-center">
-
-                    {% if course_schedule.task.is_graded %}
-                      <a href="{% url "students:grade_task" pk=schedule.student.id course_task_id=course_schedule.task.id %}?next={{ request.path|urlencode }}" class="block text-gray-300 hover:text-gray-600">
-                        <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                          <title>Graded Task</title>
-                          <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                        </svg>
-                      </a>
-                    {% else %}
-                      <div class="h-4 w-4 mr-2"></div>
-                    {% endif %}
-
-                    <a href="{% url "courses:task_edit" pk=course_schedule.task.id %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600 print-hide">
-                      <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
-                    </a>
-                  </div>
-                {% elif course_schedule.coursework %}
-                  <div class="w-1/12 text-sm text-center py-2">
-                    <div class="flex flex-col justify-around h-full">
-                      {% for coursework in course_schedule.coursework %}
-                        <div>
-                          <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
-                          <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked>
-                        </div>
-                      {% endfor %}
-                    </div>
-                  </div>
-                  <div class="w-7/12 p-2">
-                    <div class="flex flex-col justify-around h-full">
-                      {% for coursework in course_schedule.coursework %}
-                        <div class="text-sm font-light text-gray-400 overflow-x-auto">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
-                      {% endfor %}
-                    </div>
-                  </div>
-
-                  <div class="w-1/12 py-2">
-                    <div class="flex flex-col justify-around h-full">
-                      {% for coursework in course_schedule.coursework %}
-                        <div class="flex justify-center items-center">
-                          {% if coursework.course_task.is_graded %}
-                            <a href="{% url "students:grade_task" pk=schedule.student.id course_task_id=coursework.course_task.id %}?next={{ request.path|urlencode }}" class="{% if not forloop.last %}pb-2 {% endif %}block text-gray-300 hover:text-gray-600">
-                              <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <title>Graded Task</title>
-                                <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                              </svg>
-                            </a>
-                          {% else %}
-                            <div class="h-4 w-4 mr-2"></div>
-                          {% endif %}
-
-                          <a href="{% url "courses:task_edit" pk=coursework.course_task.id %}?next={{ request.path|urlencode }}" class="block {% if not forloop.last %}pb-2 {% endif %}mx-1 text-gray-300 hover:text-gray-600 print-hide">
-                            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
-                          </a>
-                        </div>
-                      {% endfor %}
-                    </div>
-                  </div>
-                {% elif course_schedule.no_scheduled_task %}
-                  <div class="w-1/12 text-sm text-center py-2"></div>
-                  <div class="w-7/12 p-2 text-sm text-gray-500 font-light overflow-x-auto">No scheduled task</div>
-                  <div class="w-1/12 py-2 flex justify-center items-center print-hide">
-                    <div class="h-4 w-4 mr-2"></div>
-                    <a href="{% url "courses:task_create" pk=course_schedule.course.id %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600">
-                      <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/></svg>
-                    </a>
-                  </div>
-                {% endif %}
+          <form method="POST" action="?next={{ request.path|urlencode }}">
+            {% csrf_token %}
+            <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
+            <div class="flex flex-row max-w-3xl print:hidden">
+              <div class="w-3/12"></div>
+              <div class="w-1/12 text-sm text-center py-2">
+                <input type="checkbox" onclick="checkTasks(this, '{{ schedule.student.id }}')">
               </div>
-            {% endif %}
-          {% endfor %}
+              <div class="text-sm text-center uppercase tracking-wide font-extralight -ml-2 py-2 w-20">Complete?</div>
+            </div>
+            {% for course_schedule in schedule.courses %}
+              {% if course_schedule.task or course_schedule.coursework or course_schedule.no_scheduled_task %}
+                <div class="flex flex-row border-t border-yellow-400 max-w-3xl">
+                  <div class="w-3/12 text-sm uppercase tracking-wide font-extralight py-2 pr-4">
+                    <a class="hover:underline" href="{% url "courses:detail" course_schedule.course.id %}">{{ course_schedule.course.name }}</a>
+                  </div>
+
+                  {% if course_schedule.task %}
+                    <div class="w-1/12 text-sm text-center py-2">
+                      <input name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="hidden" value="off">
+                      <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ course_schedule.task.id }}" type="checkbox" value="on">
+                    </div>
+                    <div class="w-7/12 p-2 text-sm font-light overflow-x-auto">{{ course_schedule.task.description|urlize|linebreaksbr }}</div>
+
+                    <div class="w-1/12 py-2 flex justify-center items-center">
+
+                      {% if course_schedule.task.is_graded %}
+                        <a href="{% url "students:grade_task" pk=schedule.student.id course_task_id=course_schedule.task.id %}?next={{ request.path|urlencode }}" class="block text-gray-300 hover:text-gray-600">
+                          <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <title>Graded Task</title>
+                            <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                          </svg>
+                        </a>
+                      {% else %}
+                        <div class="h-4 w-4 mr-2"></div>
+                      {% endif %}
+
+                      <a href="{% url "courses:task_edit" pk=course_schedule.task.id %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600 print:hidden">
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
+                      </a>
+                    </div>
+                  {% elif course_schedule.coursework %}
+                    <div class="w-1/12 text-sm text-center py-2">
+                      <div class="flex flex-col justify-around h-full">
+                        {% for coursework in course_schedule.coursework %}
+                          <div>
+                            <input name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="hidden" value="off">
+                            <input class="task-{{ schedule.student.id }}" name="task-{{ schedule.student.id }}-{{ coursework.course_task.id }}" type="checkbox" value="on" checked>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <div class="w-7/12 p-2">
+                      <div class="flex flex-col justify-around h-full">
+                        {% for coursework in course_schedule.coursework %}
+                          <div class="text-sm font-light text-gray-400 overflow-x-auto">{{ coursework.course_task.description|urlize|linebreaksbr }}</div>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                    <div class="w-1/12 py-2">
+                      <div class="flex flex-col justify-around h-full">
+                        {% for coursework in course_schedule.coursework %}
+                          <div class="flex justify-center items-center">
+                            {% if coursework.course_task.is_graded %}
+                              <a href="{% url "students:grade_task" pk=schedule.student.id course_task_id=coursework.course_task.id %}?next={{ request.path|urlencode }}" class="{% if not forloop.last %}pb-2 {% endif %}block text-gray-300 hover:text-gray-600">
+                                <svg class="h-4 w-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                  <title>Graded Task</title>
+                                  <path d="M7.03 2.6a3 3 0 0 1 5.94 0L15 3v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h1V3l2.03-.4zM5 6H4v12h12V6h-1v1H5V6zm5-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg>
+                              </a>
+                            {% else %}
+                              <div class="h-4 w-4 mr-2"></div>
+                            {% endif %}
+
+                            <a href="{% url "courses:task_edit" pk=coursework.course_task.id %}?next={{ request.path|urlencode }}" class="block {% if not forloop.last %}pb-2 {% endif %}mx-1 text-gray-300 hover:text-gray-600 print:hidden">
+                              <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
+                            </a>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% elif course_schedule.no_scheduled_task %}
+                    <div class="w-1/12 text-sm text-center py-2"></div>
+                    <div class="w-7/12 p-2 text-sm text-gray-500 font-light overflow-x-auto">No scheduled task</div>
+                    <div class="w-1/12 py-2 flex justify-center items-center print:hidden">
+                      <div class="h-4 w-4 mr-2"></div>
+                      <a href="{% url "courses:task_create" pk=course_schedule.course.id %}?next={{ request.path|urlencode }}" class="block mx-1 text-gray-300 hover:text-gray-600">
+                        <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/></svg>
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="flex flex-row max-w-3xl justify-end print:hidden">
+              <button class="mt-8 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+                Save
+              </button>
+            </div>
+          </form>
         </div>
       {% endif %}
     {% empty %}
@@ -165,14 +171,6 @@
       </div>
     {% endfor %}
 
-    {% if schedules %}
-      <div class="flex flex-row max-w-3xl justify-end print-hide">
-        <button class="mt-8 bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
-          Save
-        </button>
-      </div>
-    {% endif %}
-    </form>
   {% endif %}
 {% endblock %}
 

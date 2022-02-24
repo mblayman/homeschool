@@ -3,7 +3,7 @@
 {% block head_title %}Set completed task date for {{ student }}{% endblock %}
 
 {% block main %}
-  <h1 class="flex-grow font-extralight text-2xl text-blue-900 mb-8">
+  <h1 class="grow font-extralight text-2xl text-blue-900 mb-8">
     Set completed task date for {{ student }}
   </h1>
 
@@ -22,7 +22,7 @@
     {% include "forms/non_field_errors.html" %}
 
     {% csrf_token %}
-    {% include "forms/field.html" with field=form.completed_date autofocus=True placeholder=user.get_local_today|date:"n/j/Y" %}
+    {% include "forms/field.html" with field=form.completed_date autofocus=True dont_require=True placeholder=user.get_local_today|date:"n/j/Y" %}
     <div class="md:flex md:items-center">
       <div class="md:w-1/4"></div>
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center justify-end">
