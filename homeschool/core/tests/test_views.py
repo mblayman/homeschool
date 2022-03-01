@@ -1,8 +1,8 @@
 import datetime
+from datetime import timezone as tz
 from unittest import mock
 
 import pytest
-import pytz
 import time_machine
 from dateutil.relativedelta import FR, MO, SA, SU, WE, relativedelta
 from django.conf import settings
@@ -118,7 +118,7 @@ class TestDashboard(TestCase):
     def test_has_days(self, timezone):
         """The context has the first and last day of the week."""
         user = self.make_user()
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 26, tzinfo=tz.utc)
         first_day = now.date() + relativedelta(weekday=SU(-1))
         last_day = now.date() + relativedelta(weekday=SA(+1))
         timezone.localdate.return_value = now.date()
@@ -139,7 +139,7 @@ class TestDashboard(TestCase):
     def test_has_surrounding_week_dates(self, timezone):
         """The context has the previous and next week dates."""
         user = self.make_user()
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 26, tzinfo=tz.utc)
         sunday = now.date() + relativedelta(weekday=SU(-1))
         previous_sunday = sunday - datetime.timedelta(days=7)
         next_sunday = sunday + datetime.timedelta(days=7)
@@ -189,7 +189,7 @@ class TestDashboard(TestCase):
     @mock.patch("homeschool.users.models.timezone")
     def test_has_schedules(self, timezone):
         """The schedules are in the context."""
-        now = datetime.datetime(2020, 1, 23, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 23, tzinfo=tz.utc)
         thursday = now.date()
         monday = thursday - datetime.timedelta(days=3)
         friday = thursday + datetime.timedelta(days=1)
@@ -265,7 +265,7 @@ class TestDashboard(TestCase):
     @mock.patch("homeschool.users.models.timezone")
     def test_weekly(self, timezone):
         """The weekly schedule is available in the context."""
-        now = datetime.datetime(2020, 1, 24, tzinfo=pytz.utc)  # A Friday
+        now = datetime.datetime(2020, 1, 24, tzinfo=tz.utc)  # A Friday
         friday = now.date()
         monday = friday - datetime.timedelta(days=4)
         timezone.localdate.return_value = now.date()
@@ -351,7 +351,7 @@ class TestDashboard(TestCase):
 
     @mock.patch("homeschool.users.models.timezone")
     def test_no_tasks_in_past_week(self, timezone):
-        now = datetime.datetime(2020, 1, 26, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 26, tzinfo=tz.utc)
         sunday = now.date()
         monday = sunday - datetime.timedelta(days=6)
         timezone.localdate.return_value = now.date()
@@ -381,7 +381,7 @@ class TestDashboard(TestCase):
 
     @mock.patch("homeschool.users.models.timezone")
     def test_do_not_show_course_when_no_days(self, timezone):
-        now = datetime.datetime(2020, 1, 23, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 23, tzinfo=tz.utc)
         thursday = now.date()
         timezone.localdate.return_value = now.date()
         user = self.make_user()
@@ -398,7 +398,7 @@ class TestDashboard(TestCase):
     @mock.patch("homeschool.users.models.timezone")
     def test_show_course_when_no_days_in_past(self, timezone):
         """When the week is in the past, show the course, even if it's not running."""
-        now = datetime.datetime(2020, 1, 25, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 25, tzinfo=tz.utc)
         saturday = now.date()
         timezone.localdate.return_value = now.date()
         user = self.make_user()
@@ -809,7 +809,7 @@ class TestDaily(TestCase):
 
     @mock.patch("homeschool.users.models.timezone")
     def test_far_future_day_schedule(self, timezone):
-        now = datetime.datetime(2020, 1, 23, tzinfo=pytz.utc)
+        now = datetime.datetime(2020, 1, 23, tzinfo=tz.utc)
         thursday = now.date()
         timezone.localdate.return_value = now.date()
         user = self.make_user()
