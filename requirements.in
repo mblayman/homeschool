@@ -29,6 +29,6 @@ types-python-dateutil==2.8.9
 types-pytz==2021.3.4
 types-requests==2.27.8
 types-six==1.16.10
-types-toml==0.10.3
+types-toml==0.10.4
 weasyprint==54.1
 whitenoise[brotli]==6.0.0
