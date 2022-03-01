@@ -205,7 +205,7 @@ types-urllib3==1.26.7
     # via types-requests
 urllib3==1.26.5
     # via requests
-weasyprint==54.1
+weasyprint==54.2
     # via -r requirements.in
 webencodings==0.5.1
     # via
