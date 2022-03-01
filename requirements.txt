@@ -193,7 +193,7 @@ types-bleach==4.1.4
     # via -r requirements.in
 types-python-dateutil==2.8.9
     # via -r requirements.in
-types-pytz==2021.3.4
+types-pytz==2021.3.5
     # via -r requirements.in
 types-requests==2.27.8
     # via -r requirements.in
