@@ -199,7 +199,7 @@ types-requests==2.27.8
     # via -r requirements.in
 types-six==1.16.10
     # via -r requirements.in
-types-toml==0.10.3
+types-toml==0.10.4
     # via -r requirements.in
 types-urllib3==1.26.7
     # via types-requests
@@ -213,7 +213,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-whitenoise[brotli]==5.3.0
+whitenoise[brotli]==6.0.0
     # via -r requirements.in
 zipp==3.7.0
     # via importlib-metadata
