@@ -14,7 +14,7 @@ django-ordered-model==3.5
 django-simple-history==3.0.0
 django-tz-detect==0.4.0
 django-waffle==2.3.0
-dj-stripe==2.6.0
+dj-stripe==2.6.1
 gunicorn==20.1.0
 psycopg2==2.9.3
 python-dateutil==2.8.2
@@ -31,4 +31,4 @@ types-requests==2.27.8
 types-six==1.16.10
 types-toml==0.10.3
 weasyprint==54.1
-whitenoise[brotli]==5.3.0
+whitenoise[brotli]==6.0.0
