@@ -51,6 +51,9 @@ jobs:
       - name: Install packages
         run: pip install -r requirements.txt -r requirements-dev.txt
 
+      - name: Fake build the site.css
+        run: touch static/site.css
+
       - name: Check types
         run: make mypy
 

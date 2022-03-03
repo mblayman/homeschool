@@ -11,6 +11,27 @@ from homeschool.students.tests.factories import (
     GradeFactory,
 )
 from homeschool.test import TestCase
+from homeschool.users.tests.factories import UserFactory
+
+
+class TestPDFsDashboard(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("office:pdfs:dashboard")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+
+        with self.login(user):
+            response = self.get("office:pdfs:dashboard")
+
+        assert response.status_code == 200
 
 
 class TestReportsIndex(TestCase):
@@ -99,6 +120,7 @@ class TestCreateBundleView(TestCase):
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school__admin=user)
+        EnrollmentFactory(grade_level__school_year=school_year)
 
         with self.login(user):
             response = self.get_check_200("reports:bundle_create", school_year.pk)
@@ -233,6 +255,29 @@ class TestProgressReportView(TestCase):
             self.get_check_200(url)
 
         assert len(self.get_context("courses")) == 1
+
+
+class TestOfficeResourceReport(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.post("office:pdfs:resource")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post(
+                "office:pdfs:resource", data={"enrollment_id": enrollment.id}
+            )
+
+        assert response.status_code == 200
 
 
 class TestResourceReportView(TestCase):
