@@ -1,10 +1,8 @@
 from dataclasses import asdict
 from io import BytesIO
 
-from django.conf import settings
-from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib.staticfiles import finders
 from django.template.loader import render_to_string
-from django.templatetags.static import static
 from weasyprint import CSS, HTML
 
 from .contexts import ResourceReportContext
@@ -16,11 +14,16 @@ def make_resource_report(context: ResourceReportContext) -> bytes:
     Return raw PDF data.
     """
     # TODO: Needs tests.
-    site_css = static("site.css")
-    site_css_path = settings.STATIC_ROOT / site_css.replace(settings.STATIC_URL, "")
-    site_css_path = staticfiles_storage.path("site.css")
+    site_css_path = finders.find("site.css")
+    with open(site_css_path) as f:
+        css_content = f.read()
+    # Weasyprint doesn't render the Tailwind font properly.
+    # The default font failed to render numbers.
+    # Use a safe, albeit boring, font of Arial.
+    css_content += "\nhtml { font-family: Arial; }"
+
     rendered = render_to_string("reports/resource_report_pdf.html", asdict(context))
     html = HTML(string=rendered)
     io = BytesIO()
-    html.write_pdf(io, stylesheets=[CSS(site_css_path)])
+    html.write_pdf(io, stylesheets=[CSS(string=css_content)])
     return io.getvalue()
