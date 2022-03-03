@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
     # via sphinx
-asgiref==3.3.4
+asgiref==3.5.0
     # via django
 babel==2.9.1
     # via sphinx
@@ -34,9 +34,9 @@ defusedxml==0.6.0
     # via python3-openid
 dj-database-url==0.5.0
     # via -r requirements.in
-dj-stripe==2.6.0
+dj-stripe==2.6.1
     # via -r requirements.in
-django==3.2.12
+django==4.0.3
     # via
     #   -r requirements.in
     #   dj-stripe
@@ -49,7 +49,7 @@ django==3.2.12
     #   django-htmx
     #   django-tz-detect
     #   jsonfield
-django-allauth==0.47.0
+django-allauth==0.49.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.5
     # via -r requirements.in
@@ -59,9 +59,9 @@ django-environ==0.8.1
     # via -r requirements.in
 django-extensions==3.1.5
     # via -r requirements.in
-django-hashid-field==3.3.3
+django-hashid-field==3.3.4
     # via -r requirements.in
-django-hijack==3.1.4
+django-hijack==3.1.6
     # via -r requirements.in
 django-htmx==1.8.0
     # via -r requirements.in
@@ -128,7 +128,6 @@ python3-openid==3.1.0
 pytz==2019.3
     # via
     #   babel
-    #   django
     #   django-tz-detect
 requests==2.27.1
     # via
@@ -193,19 +192,19 @@ types-bleach==4.1.4
     # via -r requirements.in
 types-python-dateutil==2.8.9
     # via -r requirements.in
-types-pytz==2021.3.4
+types-pytz==2021.3.5
     # via -r requirements.in
-types-requests==2.27.8
+types-requests==2.27.11
     # via -r requirements.in
-types-six==1.16.10
+types-six==1.16.11
     # via -r requirements.in
-types-toml==0.10.3
+types-toml==0.10.4
     # via -r requirements.in
 types-urllib3==1.26.7
     # via types-requests
 urllib3==1.26.5
     # via requests
-weasyprint==54.1
+weasyprint==54.2
     # via -r requirements.in
 webencodings==0.5.1
     # via
@@ -213,7 +212,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-whitenoise[brotli]==5.3.0
+whitenoise[brotli]==6.0.0
     # via -r requirements.in
 zipp==3.7.0
     # via importlib-metadata
