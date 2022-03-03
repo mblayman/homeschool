@@ -120,6 +120,7 @@ class TestCreateBundleView(TestCase):
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school__admin=user)
+        EnrollmentFactory(grade_level__school_year=school_year)
 
         with self.login(user):
             response = self.get_check_200("reports:bundle_create", school_year.pk)

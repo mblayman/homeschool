@@ -13,7 +13,6 @@ def make_resource_report(context: ResourceReportContext) -> bytes:
 
     Return raw PDF data.
     """
-    # TODO: Needs tests.
     site_css_path = finders.find("site.css")
     with open(site_css_path) as f:
         css_content = f.read()

@@ -59,13 +59,22 @@ class BundleView(LoginRequiredMixin, TemplateView):
 
 @login_required
 def create_bundle(request, pk):
+    """Create a bundle of year end PDF reports."""
     user = request.user
-    get_object_or_404(SchoolYear, pk=pk, school__admin=user)
+    school_year = get_object_or_404(SchoolYear, pk=pk, school__admin=user)
+
+    enrollments = Enrollment.objects.filter(
+        grade_level__school_year=school_year
+    ).select_related("student", "grade_level", "grade_level__school_year")
 
     zip_file_data = io.BytesIO()
     with zipfile.ZipFile(zip_file_data, "w") as zip_file:
-        zip_file.writestr("file1.txt", b"hello world")
-        zip_file.writestr("file2.txt", b"hello world")
+        for enrollment in enrollments:
+            resource_report_context = ResourceReportContext.from_enrollment(enrollment)
+            zip_file.writestr(
+                f"{enrollment.student} Resource Report.pdf",
+                pdfs.make_resource_report(resource_report_context),
+            )
 
     filename = "bundle.zip"
     return HttpResponse(
