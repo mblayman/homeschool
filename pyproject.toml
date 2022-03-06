@@ -1,6 +1,10 @@
 [tool.bandit]
 skips = ["B101"]
 
+[tool.isort]
+profile = "black"
+src_paths = ["homeschool"]
+
 [tool.mypy]
 check_untyped_defs = true
 
