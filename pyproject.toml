@@ -1,3 +1,6 @@
+[tool.bandit]
+skips = ["B101"]
+
 [tool.mypy]
 check_untyped_defs = true
 
