@@ -24,3 +24,14 @@ module = [
     "whitenoise.middleware",
 ]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--nomigrations --disable-socket"
+DJANGO_SETTINGS_MODULE = "project.testing_settings"
+# filterwarnings =
+# This warning is coming from dj-stripe 2.5.1 (Example)
+#    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning
+#    ignore:.*The providing_args argument is deprecated\..*:PendingDeprecationWarning
+testpaths = [
+    "homeschool",
+]
