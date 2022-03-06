@@ -5,6 +5,7 @@ from .views import boom, handle_500, office_dashboard, office_onboarding, social
 app_name = "office"
 urlpatterns = [
     path("", office_dashboard, name="dashboard"),
+    path("accounts/", include("homeschool.accounts.office_urls")),
     path("onboarding/", office_onboarding, name="onboarding"),
     path("boom/", boom, name="boom"),
     path("pdfs/", include("homeschool.reports.office_urls")),

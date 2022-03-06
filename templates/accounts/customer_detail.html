@@ -1,0 +1,13 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Customer: {{ account.user.username }}{% endblock %}
+
+{% block main %}
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">
+    Customer: {{ account.user.username }}
+  </h1>
+
+  <div class="mb-2"><strong>Joined:</strong> {{ account.user.date_joined }}</div>
+  <div class="mb-2"><strong>Last login:</strong> {{ account.user.last_login }}</div>
+
+{% endblock %}

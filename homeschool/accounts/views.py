@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
@@ -11,7 +12,26 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from djstripe.models import Price
 
+from .models import Account
 from .stripe_gateway import stripe_gateway
+
+
+@staff_member_required
+def customers_dashboard(request):
+    """Display info about current customers."""
+    context = {
+        "accounts": Account.objects.filter(
+            status=Account.AccountStatus.ACTIVE
+        ).select_related("user")
+    }
+    return render(request, "accounts/customers_dashboard.html", context)
+
+
+@staff_member_required
+def customer_detail(request, id):
+    """Display info about a customer."""
+    context = {"account": Account.objects.select_related("user").get(id=id)}
+    return render(request, "accounts/customer_detail.html", context)
 
 
 @login_required

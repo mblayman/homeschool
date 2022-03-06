@@ -3,8 +3,51 @@ from unittest import mock
 from django.conf import settings
 from django.contrib.messages import get_messages
 
-from homeschool.accounts.tests.factories import PriceFactory
+from homeschool.accounts.tests.factories import AccountFactory, PriceFactory
 from homeschool.test import TestCase
+from homeschool.users.tests.factories import UserFactory
+
+
+class TestCustomersDashboard(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.get("office:accounts:customers_dashboard")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+
+        with self.login(user):
+            response = self.get("office:accounts:customers_dashboard")
+
+        assert response.status_code == 200
+
+
+class TestCustomerDetail(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+        account = AccountFactory()
+
+        with self.login(user):
+            response = self.get("office:accounts:customer_detail", account.id)
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        account = AccountFactory()
+
+        with self.login(user):
+            response = self.get("office:accounts:customer_detail", account.id)
+
+        assert response.status_code == 200
 
 
 class TestSubscriptionsView(TestCase):

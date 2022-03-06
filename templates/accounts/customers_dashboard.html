@@ -1,0 +1,16 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Customers Dashboard{% endblock %}
+
+{% block main %}
+  <h1 class="font-extralight text-2xl text-blue-900 mb-8">
+    Customers Dashboard
+  </h1>
+
+  {% for account in accounts %}
+    <div class="mb-2">
+      <a class="underline hover:text-gray-600" href="{% url "office:accounts:customer_detail" account.id %}">{{ account.user.username }}</a>
+    </div>
+  {% endfor %}
+
+{% endblock %}
