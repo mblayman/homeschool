@@ -1,0 +1,23 @@
+[tool.mypy]
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "allauth.account.signals",
+    "dj_database_url",
+    "django.*",
+    "djstripe.*",
+    "environ",
+    "factory",
+    "hashid_field.*",
+    "ordered_model.*",
+    "responses",
+    "rollbar",
+    "simple_history.*",
+    "stripe",
+    "test_plus.test",
+    "waffle.*",
+    "weasyprint",
+    "whitenoise.middleware",
+]
+ignore_missing_imports = true
