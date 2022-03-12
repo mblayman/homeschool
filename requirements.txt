@@ -103,7 +103,7 @@ packaging==20.4
     # via
     #   bleach
     #   sphinx
-pillow==9.0.0
+pillow==9.0.1
     # via weasyprint
 psycopg2==2.9.3
     # via -r requirements.in
