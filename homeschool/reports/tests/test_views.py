@@ -142,6 +142,29 @@ class TestCreateBundleView(TestCase):
         self.response_404(response)
 
 
+class TestOfficeProgressReport(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.post("office:pdfs:progress")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post(
+                "office:pdfs:progress", data={"enrollment_id": enrollment.id}
+            )
+
+        assert response.status_code == 200
+
+
 class TestProgressReportView(TestCase):
     def test_unauthenticated_access(self):
         enrollment = EnrollmentFactory()

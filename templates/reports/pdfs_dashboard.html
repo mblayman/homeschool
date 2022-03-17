@@ -7,7 +7,16 @@
     PDFs Dashboard
   </h1>
 
-  <div class="mb-2">
+  <div class="mb-8">
+    <h2>Progress Report</h2>
+    <form method="POST" action="{% url 'office:pdfs:progress' %}">
+      {% csrf_token %}
+      <input type="text" name="enrollment_id" class="border">
+      <input type="submit" value="Generate">
+    </form>
+  </div>
+
+  <div class="mb-8">
     <h2>Resource Report</h2>
     <form method="POST" action="{% url 'office:pdfs:resource' %}">
       {% csrf_token %}

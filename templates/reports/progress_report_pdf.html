@@ -1,0 +1,24 @@
+  <h1 class="font-extralight text-xl text-blue-900 mb-8">Progress Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+
+{% for course_info in courses %}
+  <h2 class="font-extralight text-xl text-blue-900 mb-2">{{ course_info.course }}</h2>
+
+  <div class="flex flex-col max-w-3xl mb-8">
+    <div class="flex flex-row">
+      <div class="w-3/6 text-sm uppercase tracking-wide font-extralight py-2">Task</div>
+      <div class="w-1/6 text-sm uppercase tracking-wide font-extralight py-2">Score</div>
+      <div class="w-2/6 text-sm uppercase tracking-wide font-extralight py-2">Completed Date</div>
+    </div>
+    {% for grade in course_info.grades %}
+      <div class="flex flex-row">
+        <div class="w-3/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ grade.graded_work.course_task.description }}</div>
+        <div class="w-1/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ grade.score }}</div>
+        <div class="w-2/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ grade.coursework.completed_date|date:"Y-m-d"|default:"No completed date" }}</div>
+      </div>
+    {% endfor %}
+    <div class="flex flex-row">
+      <div class="w-3/6 text-right text-sm font-light pr-4 py-4 border-t border-yellow-400 border-dotted">Average</div>
+      <div class="w-3/6 text-sm font-light pl-3 py-4 border-t border-yellow-400 border-dotted">{{ course_info.course_average }}</div>
+    </div>
+  </div>
+{% endfor %}
