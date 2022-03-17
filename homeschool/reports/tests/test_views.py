@@ -127,7 +127,7 @@ class TestCreateBundleView(TestCase):
 
         assert response["Content-Type"] == "application/zip"
         assert (
-            f"School_Desk_bundle_{school_year.start_date:%Y}"
+            f"School Desk bundle {school_year.start_date:%Y}"
             in response["Content-Disposition"]
         )
 

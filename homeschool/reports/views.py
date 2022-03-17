@@ -68,6 +68,12 @@ def create_bundle(request, pk):
     zip_file_data = io.BytesIO()
     with zipfile.ZipFile(zip_file_data, "w") as zip_file:
         for enrollment in enrollments:
+            progress_report_context = ProgressReportContext.from_enrollment(enrollment)
+            zip_file.writestr(
+                f"{school_year} - {enrollment.student} Progress Report.pdf",
+                pdfs.make_progress_report(progress_report_context),
+            )
+
             resource_report_context = ResourceReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Resource Report.pdf",
@@ -75,6 +81,9 @@ def create_bundle(request, pk):
             )
 
     filename = f"School Desk bundle {school_year}.zip"
+    # The "dash" character is an emdash from the SchoolYear.__str__ method.
+    # Replace with a regular dash to avoid header character encoding weirdness.
+    filename = filename.replace("–", "-")
     return HttpResponse(
         zip_file_data.getbuffer(),
         headers={
