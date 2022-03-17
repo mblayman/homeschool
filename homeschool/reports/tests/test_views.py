@@ -126,7 +126,10 @@ class TestCreateBundleView(TestCase):
             response = self.get_check_200("reports:bundle_create", school_year.pk)
 
         assert response["Content-Type"] == "application/zip"
-        assert "bundle.zip" in response["Content-Disposition"]
+        assert (
+            f"School_Desk_bundle_{school_year.start_date:%Y}"
+            in response["Content-Disposition"]
+        )
 
     def test_no_other_school_years(self):
         """A user cannot access another user's bundle."""

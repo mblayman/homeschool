@@ -72,11 +72,11 @@ def create_bundle(request, pk):
         for enrollment in enrollments:
             resource_report_context = ResourceReportContext.from_enrollment(enrollment)
             zip_file.writestr(
-                f"{enrollment.student} Resource Report.pdf",
+                f"{school_year} - {enrollment.student} Resource Report.pdf",
                 pdfs.make_resource_report(resource_report_context),
             )
 
-    filename = "bundle.zip"
+    filename = f"School Desk bundle {school_year}.zip"
     return HttpResponse(
         zip_file_data.getbuffer(),
         headers={
