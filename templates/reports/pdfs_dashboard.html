@@ -8,6 +8,15 @@
   </h1>
 
   <div class="mb-8">
+    <h2>Attendance Report</h2>
+    <form method="POST" action="{% url 'office:pdfs:attendance' %}">
+      {% csrf_token %}
+      <input type="text" name="enrollment_id" class="border">
+      <input type="submit" value="Generate">
+    </form>
+  </div>
+
+  <div class="mb-8">
     <h2>Progress Report</h2>
     <form method="POST" action="{% url 'office:pdfs:progress' %}">
       {% csrf_token %}

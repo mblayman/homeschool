@@ -336,6 +336,29 @@ class TestResourceReportView(TestCase):
         self.response_404(response)
 
 
+class TestOfficeAttendanceReport(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.post("office:pdfs:attendance")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post(
+                "office:pdfs:attendance", data={"enrollment_id": enrollment.id}
+            )
+
+        assert response.status_code == 200
+
+
 class TestAttendanceReportView(TestCase):
     def test_unauthenticated_access(self):
         enrollment = EnrollmentFactory()

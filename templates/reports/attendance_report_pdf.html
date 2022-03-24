@@ -1,0 +1,26 @@
+<h1 class="font-extralight text-xl text-blue-900 mb-8">Attendance Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+
+{% for school_date in school_dates %}
+  <div class="flex flex-row">
+    <div class="w-3/6 text-sm font-light text-center pr-8 py-1 border-t border-yellow-400 border-dotted">{{ school_date.date|date:"Y-m-d" }}</div>
+    <div class="w-3/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">
+      {% if school_date.is_break %}
+        No school scheduled
+      {% elif school_date.is_school_day %}
+        {% if school_date.attended %}
+          Attended
+        {% else %}
+          Absent
+        {% endif %}
+      {% else %}
+        Not a school day
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
+
+<div class="flex flex-row">
+  <div class="w-3/6 text-sm font-light text-right font-bold pr-2 py-2 border-t border-yellow-400 border-dotted">Total Days Attended:</div>
+  <div class="w-3/6 text-sm font-light text-left pr-8 py-2 border-t border-yellow-400 border-dotted">{{ total_days_attended }}</div>
+
+</div>

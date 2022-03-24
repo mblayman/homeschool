@@ -1,4 +1,3 @@
-import datetime
 import io
 import zipfile
 from dataclasses import asdict
@@ -12,10 +11,14 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
 from homeschool.schools.models import SchoolYear
-from homeschool.students.models import Coursework, Enrollment
+from homeschool.students.models import Enrollment
 
 from . import pdfs
-from .contexts import ProgressReportContext, ResourceReportContext
+from .contexts import (
+    AttendanceReportContext,
+    ProgressReportContext,
+    ResourceReportContext,
+)
 
 
 @staff_member_required
@@ -93,6 +96,29 @@ def create_bundle(request, pk):
     )
 
 
+@staff_member_required
+@require_POST
+def attendance_report(request):
+    enrollment_id = request.POST["enrollment_id"]
+    enrollment = get_object_or_404(
+        Enrollment.objects.select_related(
+            "student", "grade_level", "grade_level__school_year"
+        ),
+        pk=enrollment_id,
+    )
+    context = AttendanceReportContext.from_enrollment(
+        enrollment, request.user.get_local_today()
+    )
+    pdf_data = pdfs.make_attendance_report(context)
+    return HttpResponse(
+        pdf_data,
+        headers={
+            "Content-Type": "application/pdf",
+            "Content-Disposition": 'attachment; filename="attendance-report.pdf"',
+        },
+    )
+
+
 class AttendanceReportView(LoginRequiredMixin, TemplateView):
     template_name = "reports/attendance_report.html"
 
@@ -106,40 +132,11 @@ class AttendanceReportView(LoginRequiredMixin, TemplateView):
             pk=self.kwargs["pk"],
             grade_level__school_year__school=user.school,
         )
-        context["grade_level"] = enrollment.grade_level
-        context["school_year"] = enrollment.grade_level.school_year
-        context["student"] = enrollment.student
-        context["school_dates"] = self._build_school_dates(enrollment)
-        context["total_days_attended"] = sum(
-            1 for school_date in context["school_dates"] if school_date["attended"]
+        attendance_report_context = AttendanceReportContext.from_enrollment(
+            enrollment, self.request.user.get_local_today()
         )
+        context.update(asdict(attendance_report_context))
         return context
-
-    def _build_school_dates(self, enrollment):
-        """Collect all the school dates in the year to the end or today."""
-        dates_with_work = set(
-            Coursework.objects.filter(
-                student=enrollment.student,
-                course_task__course__grade_levels__in=[enrollment.grade_level],
-            ).values_list("completed_date", flat=True)
-        )
-        school_dates = []
-        school_year = enrollment.grade_level.school_year
-        school_date = school_year.start_date
-        end_date = min(school_year.end_date, self.request.user.get_local_today())
-        while school_date <= end_date:
-            school_dates.append(
-                {
-                    "date": school_date,
-                    "is_school_day": school_year.runs_on(school_date),
-                    "is_break": school_year.is_break(
-                        school_date, student=enrollment.student
-                    ),
-                    "attended": school_date in dates_with_work,
-                }
-            )
-            school_date += datetime.timedelta(days=1)
-        return school_dates
 
 
 @staff_member_required

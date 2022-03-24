@@ -1,3 +1,5 @@
+import datetime
+
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -16,7 +18,7 @@ class User(AbstractUser):
     def school(self):
         return self.school_set.latest("id")
 
-    def get_local_today(self):
+    def get_local_today(self) -> datetime.date:
         """Get the current date from the user's timezone point of view.
 
         Use tz_detect so that localdate is pulling the current timezone

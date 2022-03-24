@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -8,6 +9,58 @@ from django.db.models import Q
 from homeschool.courses.models import Course, CourseResource
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
+
+
+@dataclass
+class AttendanceReportContext:
+    student: Student
+    grade_level: GradeLevel
+    school_year: SchoolYear
+    school_dates: list
+    total_days_attended: int
+
+    @classmethod
+    def from_enrollment(
+        cls, enrollment: Enrollment, today: datetime.date
+    ) -> AttendanceReportContext:
+        school_dates = cls._build_school_dates(enrollment, today)
+        total_days_attended = sum(
+            1 for school_date in school_dates if school_date["attended"]
+        )
+        return cls(
+            enrollment.student,
+            enrollment.grade_level,
+            enrollment.grade_level.school_year,
+            school_dates,
+            total_days_attended,
+        )
+
+    @classmethod
+    def _build_school_dates(cls, enrollment: Enrollment, today: datetime.date) -> list:
+        """Collect all the school dates in the year to the end or today."""
+        dates_with_work = set(
+            Coursework.objects.filter(
+                student=enrollment.student,
+                course_task__course__grade_levels__in=[enrollment.grade_level],
+            ).values_list("completed_date", flat=True)
+        )
+        school_dates = []
+        school_year = enrollment.grade_level.school_year
+        school_date = school_year.start_date
+        end_date = min(school_year.end_date, today)
+        while school_date <= end_date:
+            school_dates.append(
+                {
+                    "date": school_date,
+                    "is_school_day": school_year.runs_on(school_date),
+                    "is_break": school_year.is_break(
+                        school_date, student=enrollment.student
+                    ),
+                    "attended": school_date in dates_with_work,
+                }
+            )
+            school_date += datetime.timedelta(days=1)
+        return school_dates
 
 
 @dataclass

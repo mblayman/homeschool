@@ -5,7 +5,19 @@ from django.contrib.staticfiles import finders
 from django.template.loader import render_to_string
 from weasyprint import CSS, HTML
 
-from .contexts import ProgressReportContext, ResourceReportContext
+from .contexts import (
+    AttendanceReportContext,
+    ProgressReportContext,
+    ResourceReportContext,
+)
+
+
+def make_attendance_report(context: AttendanceReportContext) -> bytes:
+    """Make a attendance report for the given student.
+
+    Return raw PDF data.
+    """
+    return _make_report("reports/attendance_report_pdf.html", asdict(context))
 
 
 def make_progress_report(context: ProgressReportContext) -> bytes:
