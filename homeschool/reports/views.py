@@ -71,6 +71,14 @@ def create_bundle(request, pk):
     zip_file_data = io.BytesIO()
     with zipfile.ZipFile(zip_file_data, "w") as zip_file:
         for enrollment in enrollments:
+            attendance_report_context = AttendanceReportContext.from_enrollment(
+                enrollment, user.get_local_today()
+            )
+            zip_file.writestr(
+                f"{school_year} - {enrollment.student} Attendance Report.pdf",
+                pdfs.make_attendance_report(attendance_report_context),
+            )
+
             progress_report_context = ProgressReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Progress Report.pdf",
