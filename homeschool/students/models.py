@@ -353,6 +353,12 @@ class Student(models.Model):
 
 
 class EnrollmentQuerySet(models.QuerySet):
+    def all_in_year(self, school_year: SchoolYear) -> EnrollmentQuerySet:
+        """Get all the enrollments for a school year."""
+        return self.filter(grade_level__school_year=school_year).select_related(
+            "student"
+        )
+
     def for_year(
         self, student: Student, school_year: SchoolYear | None
     ) -> Enrollment | None:

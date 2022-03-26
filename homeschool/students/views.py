@@ -7,11 +7,11 @@ from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, FormView, TemplateView
 
+from homeschool.core.view_helpers import flash_info
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
 from homeschool.schools.models import GradeLevel, SchoolYear
 
-from .exceptions import FullEnrollmentError, NoGradeLevelError, NoStudentError
 from .forms import CourseworkForm, EnrollmentForm, GradeForm
 from .mixins import StudentMixin
 from .models import Coursework, Enrollment, Grade, Student
@@ -247,81 +247,46 @@ class GradeView(LoginRequiredMixin, TemplateView):
         return scores
 
 
-class EnrollmentCreateView(LoginRequiredMixin, CreateView):
-    template_name = "students/enrollment_form.html"
-    form_class = EnrollmentForm
+@login_required
+def enrollment_create(request, school_year_id):
+    school_year = get_object_or_404(
+        SchoolYear, pk=school_year_id, school__admin=request.user
+    )
+    grade_levels = GradeLevel.objects.filter(school_year=school_year)
+    if not grade_levels:
+        message = "You need to create a grade level for a student to enroll in."
+        url = reverse("schools:grade_level_create", args=[school_year_id])
+        return flash_info(request, message, url)
 
-    def dispatch(self, *args, **kwargs):
-        try:
-            return super().dispatch(*args, **kwargs)
-        except FullEnrollmentError:
-            return HttpResponseRedirect(
-                reverse(
-                    "schools:school_year_detail", args=[self.kwargs["school_year_id"]]
-                )
-            )
-        except NoGradeLevelError:
-            return HttpResponseRedirect(
-                reverse(
-                    "schools:grade_level_create", args=[self.kwargs["school_year_id"]]
-                )
-            )
-        except NoStudentError:
-            return HttpResponseRedirect(reverse("students:index"))
+    students = Student.objects.for_school(request.user.school)
+    if not students:
+        url = reverse("students:index")
+        return flash_info(request, "You need to add a student to enroll.", url)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        school_year = get_object_or_404(
-            SchoolYear,
-            pk=self.kwargs["school_year_id"],
-            school__admin=self.request.user,
-        )
-        context["school_year"] = school_year
-        context["grade_levels"] = self._get_grade_levels(school_year)
-        context["students"] = self._get_students(school_year)
-        return context
+    enrollments = Enrollment.objects.all_in_year(school_year)
+    if len(students) == len(enrollments):
+        url = reverse("schools:school_year_detail", args=[school_year_id])
+        return flash_info(request, "All students are enrolled in the school year.", url)
 
-    def _get_grade_levels(self, school_year):
-        grade_levels = GradeLevel.objects.filter(school_year=school_year)
-        if not grade_levels:
-            messages.add_message(
-                self.request,
-                messages.INFO,
-                "You need to create a grade level for a student to enroll in.",
-            )
-            raise NoGradeLevelError()
-        return grade_levels
+    enrolled_students = {enrollment.student for enrollment in enrollments}
+    students = [student for student in students if student not in enrolled_students]
 
-    def _get_students(self, school_year):
-        students = Student.objects.filter(school__admin=self.request.user)
-        if not students:
-            messages.add_message(
-                self.request, messages.INFO, "You need to add a student to enroll."
-            )
-            raise NoStudentError()
+    if request.method == "POST":
+        form = EnrollmentForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            url = reverse("schools:school_year_detail", args=[school_year_id])
+            return HttpResponseRedirect(url)
+    else:
+        form = EnrollmentForm(user=request.user)
 
-        enrollments = Enrollment.objects.filter(
-            grade_level__school_year=school_year
-        ).select_related("student")
-        if len(students) == len(enrollments):
-            messages.add_message(
-                self.request,
-                messages.INFO,
-                "All students are enrolled in the school year.",
-            )
-            raise FullEnrollmentError()
-        enrolled_students = {enrollment.student for enrollment in enrollments}
-        return [student for student in students if student not in enrolled_students]
-
-    def get_success_url(self):
-        return reverse(
-            "schools:school_year_detail", args=[self.kwargs["school_year_id"]]
-        )
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+    context = {
+        "form": form,
+        "grade_levels": grade_levels,
+        "school_year": school_year,
+        "students": students,
+    }
+    return render(request, "students/enrollment_form.html", context)
 
 
 class StudentEnrollmentCreateView(LoginRequiredMixin, StudentMixin, CreateView):

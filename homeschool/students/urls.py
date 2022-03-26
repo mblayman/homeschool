@@ -19,7 +19,7 @@ urlpatterns = [
     path("grade/", views.GradeView.as_view(), name="grade"),
     path(
         "enroll/<hashid:school_year_id>/",
-        views.EnrollmentCreateView.as_view(),
+        views.enrollment_create,
         name="enrollment_create",
     ),
     path(
