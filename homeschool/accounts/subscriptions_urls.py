@@ -10,8 +10,8 @@ urlpatterns = [
         views.create_checkout_session,
         name="create_checkout_session",
     ),
-    path("success/", views.SuccessView.as_view(), name="success"),
-    path("stripe-cancel/", views.StripeCancelView.as_view(), name="stripe_cancel"),
+    path("success/", views.success, name="success"),
+    path("stripe-cancel/", views.stripe_cancel, name="stripe_cancel"),
     path(
         "stripe-billing-portal/",
         views.create_billing_portal_session,
