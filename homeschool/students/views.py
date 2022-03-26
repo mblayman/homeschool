@@ -1,7 +1,8 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, FormView, TemplateView
@@ -16,33 +17,24 @@ from .mixins import StudentMixin
 from .models import Coursework, Enrollment, Grade, Student
 
 
-class StudentIndexView(LoginRequiredMixin, TemplateView):
-    template_name = "students/index.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["nav_link"] = "students"
-
-        user = self.request.user
-        school_year = SchoolYear.get_current_year_for(user)
-        context["school_year"] = school_year
-        context["has_grade_levels"] = GradeLevel.objects.filter(
-            school_year=school_year
-        ).exists()
-
-        context["roster"] = []
-        for student in Student.objects.filter(school=user.school):
-            context["roster"].append(
-                {
-                    "student": student,
-                    "enrollment": Enrollment.objects.filter(
-                        student=student, grade_level__school_year=school_year
-                    )
-                    .select_related("grade_level")
-                    .first(),
-                }
-            )
-        return context
+@login_required
+def students_index(request):
+    user = request.user
+    school_year = SchoolYear.get_current_year_for(user)
+    roster = [
+        {
+            "student": student,
+            "enrollment": Enrollment.objects.for_year(student, school_year),
+        }
+        for student in Student.objects.for_school(user.school)
+    ]
+    context = {
+        "nav_link": "students",
+        "school_year": school_year,
+        "has_grade_levels": GradeLevel.objects.filter(school_year=school_year).exists(),
+        "roster": roster,
+    }
+    return render(request, "students/index.html", context)
 
 
 class StudentCreateView(LoginRequiredMixin, CreateView):

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.db import models
@@ -10,6 +12,12 @@ from homeschool.core.schedules import Week
 
 if TYPE_CHECKING:  # pragma: no cover
     from homeschool.courses.models import Course
+    from homeschool.schools.models import School, SchoolYear
+
+
+class StudentQuerySet(models.QuerySet):
+    def for_school(self, school: School) -> StudentQuerySet:
+        return self.filter(school=school)
 
 
 class Student(models.Model):
@@ -21,6 +29,8 @@ class Student(models.Model):
     )
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
+
+    objects = StudentQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -275,8 +285,8 @@ class Student(models.Model):
         return unfinished_tasks_this_week + tasks_between
 
     def get_last_coursework_date(
-        self, week_coursework: dict, course: "Course"
-    ) -> Optional[datetime.date]:
+        self, week_coursework: dict, course: Course
+    ) -> datetime.date | None:
         """Get the last date of coursework if the course has any."""
         coursework_by_dates = week_coursework.get(course.id)
         return max(coursework_by_dates.keys()) if coursework_by_dates else None
@@ -342,6 +352,18 @@ class Student(models.Model):
         return task_count - coursework_count
 
 
+class EnrollmentQuerySet(models.QuerySet):
+    def for_year(
+        self, student: Student, school_year: SchoolYear | None
+    ) -> Enrollment | None:
+        """Get the enrollment for a student in a school year, if it exists."""
+        return (
+            self.filter(student=student, grade_level__school_year=school_year)
+            .select_related("student", "grade_level")
+            .first()
+        )
+
+
 class Enrollment(models.Model):
     """The association between a student and grade level"""
 
@@ -352,6 +374,8 @@ class Enrollment(models.Model):
     grade_level = models.ForeignKey(
         "schools.GradeLevel", on_delete=models.CASCADE, related_name="enrollments"
     )
+
+    objects = EnrollmentQuerySet.as_manager()
 
     class Meta:
         constraints = [
