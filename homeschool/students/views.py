@@ -289,33 +289,29 @@ def enrollment_create(request, school_year_id):
     return render(request, "students/enrollment_form.html", context)
 
 
-class StudentEnrollmentCreateView(LoginRequiredMixin, StudentMixin, CreateView):
+@login_required
+def student_enrollment_create(request, pk, school_year_id):
     """Enroll a student with a simplified form that only presents grade levels."""
+    user = request.user
+    school_year = get_object_or_404(SchoolYear, pk=school_year_id, school__admin=user)
+    student = get_object_or_404(Student, pk=pk, school__admin=user)
 
-    template_name = "students/student_enrollment_form.html"
-    form_class = EnrollmentForm
+    if request.method == "POST":
+        form = EnrollmentForm(request.POST, user=user)
+        if form.is_valid():
+            form.save()
+            url = reverse("students:index")
+            return HttpResponseRedirect(url)
+    else:
+        form = EnrollmentForm(user=user)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["student"] = self.student
-
-        school_year_id = self.kwargs["school_year_id"]
-        context["school_year"] = get_object_or_404(
-            SchoolYear, pk=school_year_id, school__admin=self.request.user
-        )
-
-        context["grade_levels"] = GradeLevel.objects.filter(
-            school_year=context["school_year"]
-        )
-        return context
-
-    def get_success_url(self):
-        return reverse("students:index")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+    context = {
+        "form": form,
+        "grade_levels": GradeLevel.objects.filter(school_year=school_year),
+        "school_year": school_year,
+        "student": student,
+    }
+    return render(request, "students/student_enrollment_form.html", context)
 
 
 class EnrollmentDeleteView(LoginRequiredMixin, DeleteView):

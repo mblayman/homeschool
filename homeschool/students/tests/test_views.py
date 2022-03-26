@@ -572,7 +572,7 @@ class TestStudentEnrollmentCreateView(TestCase):
         data = {"student": str(student.id), "grade_level": str(grade_level.id)}
 
         with self.login(user):
-            self.post(
+            response = self.post(
                 "students:student_enrollment_create",
                 pk=student.id,
                 school_year_id=grade_level.school_year.id,
@@ -582,6 +582,7 @@ class TestStudentEnrollmentCreateView(TestCase):
         assert Enrollment.objects.filter(
             student=student, grade_level=grade_level
         ).exists()
+        assert response["Location"] == self.reverse("students:index")
 
     def test_invalid_student_submission(self):
         """An invalid POST for a student is rejected."""
