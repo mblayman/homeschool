@@ -73,11 +73,11 @@ class TestSubscriptionsView(TestCase):
         )
 
 
-@mock.patch("homeschool.accounts.views.stripe_gateway", autospec=True)
 class TestCreateCheckoutSession(TestCase):
-    def test_unauthenticated_access(self, mock_stripe_gateway):
+    def test_unauthenticated_access(self):
         self.assertLoginRequired("subscriptions:create_checkout_session")
 
+    @mock.patch("homeschool.accounts.views.stripe_gateway", autospec=True)
     def test_ok(self, mock_stripe_gateway):
         """The view gets a session from the gateway."""
         price = PriceFactory(nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME)
@@ -95,7 +95,7 @@ class TestCreateCheckoutSession(TestCase):
         assert response.status_code == 200
         assert response.json()["session_id"] == "session_fake_id"
 
-    def test_invalid_price(self, mock_stripe_gateway):
+    def test_invalid_price(self):
         """If the price doesn't match an accepted active price, redirect with error."""
         user = self.make_user()
         PriceFactory(nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME)
@@ -114,7 +114,6 @@ class TestCreateCheckoutSession(TestCase):
             str(message)
             == "That plan price is not available. Please contact support for help."
         )
-        assert not mock_stripe_gateway.create_checkout_session.called
 
 
 class TestSuccessView(TestCase):

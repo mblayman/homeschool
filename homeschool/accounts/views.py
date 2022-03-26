@@ -8,7 +8,6 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from djstripe.models import Price
 
 from .models import Account
 from .stripe_gateway import stripe_gateway
@@ -35,14 +34,9 @@ def customer_detail(request, id):
 @login_required
 def subscriptions_index(request):
     """Show the subscription plan options."""
-    livemode = settings.STRIPE_LIVE_MODE
     context = {
-        "monthly_price": Price.objects.get(
-            nickname=settings.ACCOUNTS_MONTHLY_PRICE_NICKNAME, livemode=livemode
-        ),
-        "annual_price": Price.objects.get(
-            nickname=settings.ACCOUNTS_ANNUAL_PRICE_NICKNAME, livemode=livemode
-        ),
+        "monthly_price": stripe_gateway.get_monthly_price(),
+        "annual_price": stripe_gateway.get_annual_price(),
         "stripe_publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
     }
     return render(request, "accounts/subscriptions_index.html", context)
@@ -55,9 +49,7 @@ def create_checkout_session(request):
     data = json.loads(request.body)
     price_id = data.get("price_id")
 
-    if not Price.objects.filter(
-        id=price_id, nickname__in=settings.ACCOUNTS_PRICE_NICKNAMES
-    ).exists():
+    if not stripe_gateway.has_price(price_id):
         messages.add_message(
             request,
             messages.ERROR,
