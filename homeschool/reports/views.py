@@ -1,5 +1,4 @@
 import io
-import time
 import zipfile
 from dataclasses import asdict
 
@@ -73,7 +72,6 @@ def create_bundle(request, pk):
     zip_file_data = io.BytesIO()
     with zipfile.ZipFile(zip_file_data, "w") as zip_file:
         for enrollment in enrollments:
-            print("attendance", time.time())
             attendance_context = AttendanceReportContext.from_enrollment(
                 enrollment, user.get_local_today()
             )
@@ -82,28 +80,24 @@ def create_bundle(request, pk):
                 pdfs.make_attendance_report(attendance_context),
             )
 
-            print("coursework", time.time())
             coursework_context = CourseworkReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Courses Report.pdf",
                 pdfs.make_coursework_report(coursework_context),
             )
 
-            print("progress", time.time())
             progress_context = ProgressReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Progress Report.pdf",
                 pdfs.make_progress_report(progress_context),
             )
 
-            print("resource", time.time())
             resource_context = ResourceReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Resource Report.pdf",
                 pdfs.make_resource_report(resource_context),
             )
 
-    print("end", time.time())
     filename = f"School Desk bundle {school_year}.zip"
     # The "dash" character is an emdash from the SchoolYear.__str__ method.
     # Replace with a regular dash to avoid header character encoding weirdness.
