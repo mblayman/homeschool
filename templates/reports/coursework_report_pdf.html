@@ -1,0 +1,14 @@
+<h1 class="font-extralight text-xl">Courses Report for {{ student }} in {{ grade_level }} in {{ school_year }}</h1>
+
+{% for course in courses %}
+
+  <h1 class="font-extralight text-lg mt-8 mb-4">{{ course }}</h1>
+
+  {% for course_task, coursework in course.tasks %}
+    <div class="flex flex-row">
+      <div class="w-5/6 text-sm font-light pr-8 py-1 border-t border-dotted">{{ course_task.description|linebreaksbr }}</div>
+      <div class="w-1/6 text-sm font-light text-center pr-8 py-1 border-t border-dotted">{{ coursework.completed_date|date:"Y-m-d" }}</div>
+    </div>
+  {% endfor %}
+
+{% endfor %}

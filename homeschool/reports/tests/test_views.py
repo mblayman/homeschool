@@ -443,3 +443,26 @@ class TestAttendanceReportView(TestCase):
             response = self.get("reports:attendance", pk=enrollment.id)
 
         self.response_404(response)
+
+
+class TestOfficeCourseworkReport(TestCase):
+    def test_non_staff(self):
+        """A non-staff user cannot access the page."""
+        user = self.make_user()
+
+        with self.login(user):
+            response = self.post("office:pdfs:coursework")
+
+        self.response_302(response)
+
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post(
+                "office:pdfs:coursework", data={"enrollment_id": enrollment.id}
+            )
+
+        assert response.status_code == 200

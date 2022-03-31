@@ -16,6 +16,7 @@ from homeschool.students.models import Enrollment
 from . import pdfs
 from .contexts import (
     AttendanceReportContext,
+    CourseworkReportContext,
     ProgressReportContext,
     ResourceReportContext,
 )
@@ -71,24 +72,30 @@ def create_bundle(request, pk):
     zip_file_data = io.BytesIO()
     with zipfile.ZipFile(zip_file_data, "w") as zip_file:
         for enrollment in enrollments:
-            attendance_report_context = AttendanceReportContext.from_enrollment(
+            attendance_context = AttendanceReportContext.from_enrollment(
                 enrollment, user.get_local_today()
             )
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Attendance Report.pdf",
-                pdfs.make_attendance_report(attendance_report_context),
+                pdfs.make_attendance_report(attendance_context),
             )
 
-            progress_report_context = ProgressReportContext.from_enrollment(enrollment)
+            coursework_context = CourseworkReportContext.from_enrollment(enrollment)
+            zip_file.writestr(
+                f"{school_year} - {enrollment.student} Courses Report.pdf",
+                pdfs.make_coursework_report(coursework_context),
+            )
+
+            progress_context = ProgressReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Progress Report.pdf",
-                pdfs.make_progress_report(progress_report_context),
+                pdfs.make_progress_report(progress_context),
             )
 
-            resource_report_context = ResourceReportContext.from_enrollment(enrollment)
+            resource_context = ResourceReportContext.from_enrollment(enrollment)
             zip_file.writestr(
                 f"{school_year} - {enrollment.student} Resource Report.pdf",
-                pdfs.make_resource_report(resource_report_context),
+                pdfs.make_resource_report(resource_context),
             )
 
     filename = f"School Desk bundle {school_year}.zip"
@@ -100,6 +107,27 @@ def create_bundle(request, pk):
         headers={
             "Content-Type": "application/zip",
             "Content-Disposition": f'attachment; filename="{filename}"',
+        },
+    )
+
+
+@staff_member_required
+@require_POST
+def coursework_report(request):
+    enrollment_id = request.POST["enrollment_id"]
+    enrollment = get_object_or_404(
+        Enrollment.objects.select_related(
+            "student", "grade_level", "grade_level__school_year"
+        ),
+        pk=enrollment_id,
+    )
+    context = CourseworkReportContext.from_enrollment(enrollment)
+    pdf_data = pdfs.make_coursework_report(context)
+    return HttpResponse(
+        pdf_data,
+        headers={
+            "Content-Type": "application/pdf",
+            "Content-Disposition": 'attachment; filename="coursework-report.pdf"',
         },
     )
 

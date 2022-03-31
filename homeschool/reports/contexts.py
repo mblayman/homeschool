@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+from collections import defaultdict
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -61,6 +62,41 @@ class AttendanceReportContext:
             )
             school_date += datetime.timedelta(days=1)
         return school_dates
+
+
+@dataclass
+class CourseworkReportContext:
+    student: Student
+    grade_level: GradeLevel
+    school_year: SchoolYear
+    courses: list[Course]
+
+    @classmethod
+    def from_enrollment(cls, enrollment: Enrollment) -> CourseworkReportContext:
+        courses = enrollment.grade_level.get_ordered_courses()
+        all_coursework = (
+            Coursework.objects.filter(
+                student=enrollment.student, course_task__course__in=courses
+            )
+            .select_related("course_task")
+            .order_by("completed_date")
+        )
+
+        coursework_by_course = defaultdict(list)
+        for coursework in all_coursework:
+            coursework_by_course[coursework.course_task.course_id].append(
+                (coursework.course_task, coursework)
+            )
+
+        for course in courses:
+            course.tasks = coursework_by_course[course.id]
+
+        return cls(
+            enrollment.student,
+            enrollment.grade_level,
+            enrollment.grade_level.school_year,
+            courses,
+        )
 
 
 @dataclass

@@ -7,17 +7,26 @@ from weasyprint import CSS, HTML
 
 from .contexts import (
     AttendanceReportContext,
+    CourseworkReportContext,
     ProgressReportContext,
     ResourceReportContext,
 )
 
 
 def make_attendance_report(context: AttendanceReportContext) -> bytes:
-    """Make a attendance report for the given student.
+    """Make an attendance report for the given student.
 
     Return raw PDF data.
     """
     return _make_report("reports/attendance_report_pdf.html", asdict(context))
+
+
+def make_coursework_report(context: CourseworkReportContext) -> bytes:
+    """Make a coursework report for the given student.
+
+    Return raw PDF data.
+    """
+    return _make_report("reports/coursework_report_pdf.html", asdict(context))
 
 
 def make_progress_report(context: ProgressReportContext) -> bytes:
