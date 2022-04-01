@@ -49,7 +49,7 @@ django==4.0.3
     #   django-htmx
     #   django-tz-detect
     #   jsonfield
-django-allauth==0.49.0
+django-allauth==0.50.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.5
     # via -r requirements.in
