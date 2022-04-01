@@ -89,8 +89,6 @@ idna==2.8
     # via requests
 imagesize==1.2.0
     # via sphinx
-importlib-metadata==4.10.1
-    # via sphinx
 jinja2==2.11.3
     # via sphinx
 jsonfield==3.1.0
@@ -188,7 +186,7 @@ tinycss2==1.1.1
     # via
     #   cssselect2
     #   weasyprint
-types-bleach==4.1.4
+types-bleach==4.1.5
     # via -r requirements.in
 types-python-dateutil==2.8.9
     # via -r requirements.in
@@ -214,8 +212,6 @@ webencodings==0.5.1
     #   tinycss2
 whitenoise[brotli]==6.0.0
     # via -r requirements.in
-zipp==3.7.0
-    # via importlib-metadata
 zopfli==0.1.9
     # via fonttools
 
