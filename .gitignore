@@ -110,6 +110,7 @@ venv.bak/
 models.png
 
 # Django
+media/
 staticfiles/
 
 # macOS

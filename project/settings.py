@@ -160,6 +160,7 @@ SERVER_EMAIL = f"noreply@{domain}"
 
 # Files
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+MEDIA_ROOT = str(BASE_DIR / "media/")
 
 # Forms
 # This setting lets Django form widget templates be used or overridden.
