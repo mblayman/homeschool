@@ -11,3 +11,14 @@ class TestBundle(TestCase):
         assert bundle.updated_at is not None
         assert bundle.report is not None
         assert bundle.status == Bundle.Status.PENDING
+
+    def test_stores_report_data(self):
+        """The bundle stores the report data."""
+        bundle = BundleFactory(status=Bundle.Status.PENDING)
+        report_data = b"report"
+
+        bundle.store(report_data)
+
+        bundle.refresh_from_db()
+        assert bundle.status == Bundle.Status.COMPLETE
+        assert bundle.report.read() == report_data

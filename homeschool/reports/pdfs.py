@@ -1,9 +1,14 @@
+import zipfile
 from dataclasses import asdict
 from io import BytesIO
 
 from django.contrib.staticfiles import finders
 from django.template.loader import render_to_string
+from django.utils import timezone
 from weasyprint import CSS, HTML
+
+from homeschool.schools.models import SchoolYear
+from homeschool.students.models import Enrollment
 
 from .contexts import (
     AttendanceReportContext,
@@ -11,6 +16,36 @@ from .contexts import (
     ProgressReportContext,
     ResourceReportContext,
 )
+
+
+def make_bundle(school_year: SchoolYear) -> bytes:
+    """Make the zip file bundle."""
+    enrollments = Enrollment.objects.filter(
+        grade_level__school_year=school_year
+    ).select_related("student", "grade_level", "grade_level__school_year")
+
+    zip_file_data = BytesIO()
+    with zipfile.ZipFile(zip_file_data, "w") as zip_file:
+        for enrollment in enrollments:
+            attendance_context = AttendanceReportContext.from_enrollment(
+                enrollment, timezone.localdate()
+            )
+            name = f"{school_year} - {enrollment.student} Attendance Report.pdf"
+            zip_file.writestr(name, make_attendance_report(attendance_context))
+
+            coursework_context = CourseworkReportContext.from_enrollment(enrollment)
+            name = f"{school_year} - {enrollment.student} Courses Report.pdf"
+            zip_file.writestr(name, make_coursework_report(coursework_context))
+
+            progress_context = ProgressReportContext.from_enrollment(enrollment)
+            name = f"{school_year} - {enrollment.student} Progress Report.pdf"
+            zip_file.writestr(name, make_progress_report(progress_context))
+
+            resource_context = ResourceReportContext.from_enrollment(enrollment)
+            name = f"{school_year} - {enrollment.student} Resource Report.pdf"
+            zip_file.writestr(name, make_resource_report(resource_context))
+
+    return zip_file_data.getbuffer()
 
 
 def make_attendance_report(context: AttendanceReportContext) -> bytes:
