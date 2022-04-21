@@ -5,6 +5,8 @@ from django.core.files.base import ContentFile
 from django.db import models
 from hashid_field import HashidAutoField
 
+from homeschool.schools.models import SchoolYear
+
 
 def report_path(bundle, filename):
     """The path to the report bundle"""
@@ -15,6 +17,9 @@ def report_path(bundle, filename):
 class BundleQuerySet(models.QuerySet):
     def pending(self) -> BundleQuerySet:
         return self.filter(status=self.model.Status.PENDING)
+
+    def by_school_year(self, school_year: SchoolYear) -> Bundle | None:
+        return self.filter(school_year=school_year).first()
 
 
 class Bundle(models.Model):

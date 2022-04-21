@@ -29,15 +29,34 @@
           <li class="mb-2">All course resources</li>
           <li class="mb-2">List of all completed tasks</li>
         </ul>
-        <p class="mb-8 font-light">
-          This may take a bit, so please hang tight!
-        </p>
-        <p class="mb-4">
-          <a href="{% url 'reports:bundle_create' school_year.id %}"
-            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
-            Create Bundle
-          </a>
-        </p>
+        {% if bundle %}
+          {% if bundle.status == bundle.Status.PENDING %}
+            <p class="mb-8 font-light">
+              We’re building your bundle.
+              Please check later.
+            </p>
+          {% else %}
+            <p class="mb-8 font-light">
+              Your bundle is ready.
+            </p>
+
+            {# TODO: Regenerate #}
+          {% endif %}
+        {% else %}
+          <p class="mb-8 font-light">
+            Bundles take time to build.
+            You can request a bundle,
+            and it should be ready within an hour.
+          </p>
+          <p class="mb-4">
+            <form method="POST" action"{% url 'reports:bundle' school_year.id %}">
+              {% csrf_token %}
+              <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+                Create Bundle
+              </button>
+            </form>
+          </p>
+        {% endif %}
       </div>
     </div>
   </div>

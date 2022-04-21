@@ -4,6 +4,7 @@ import time_machine
 from django.utils import timezone
 
 from homeschool.courses.tests.factories import CourseFactory, CourseResourceFactory
+from homeschool.reports.tests.factories import BundleFactory
 from homeschool.schools.tests.factories import SchoolBreakFactory, SchoolYearFactory
 from homeschool.students.tests.factories import (
     CourseworkFactory,
@@ -101,6 +102,28 @@ class TestBundleView(TestCase):
 
         assert self.get_context("school_year") == school_year
 
+    def test_get_with_bundle(self):
+        """A bundle record is in the context."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+        bundle = BundleFactory(school_year=school_year)
+
+        with self.login(user):
+            self.get_check_200("reports:bundle", school_year.pk)
+
+        assert self.get_context("bundle") == bundle
+
+    def test_post(self):
+        """POST create a new bundle."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+
+        with self.login(user):
+            response = self.post("reports:bundle", school_year.pk)
+
+        self.response_302(response)
+        assert school_year.bundle_set.count() == 1
+
     def test_no_other_school_years(self):
         """A user cannot access another user's bundle."""
         user = self.make_user()
@@ -108,36 +131,6 @@ class TestBundleView(TestCase):
 
         with self.login(user):
             response = self.get("reports:bundle", school_year.pk)
-
-        self.response_404(response)
-
-
-class TestCreateBundleView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("reports:bundle_create", school_year.pk)
-
-    def test_get(self):
-        user = self.make_user()
-        school_year = SchoolYearFactory(school__admin=user)
-        EnrollmentFactory(grade_level__school_year=school_year)
-
-        with self.login(user):
-            response = self.get_check_200("reports:bundle_create", school_year.pk)
-
-        assert response["Content-Type"] == "application/zip"
-        assert (
-            f"School Desk bundle {school_year.start_date:%Y}"
-            in response["Content-Disposition"]
-        )
-
-    def test_no_other_school_years(self):
-        """A user cannot access another user's bundle."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-
-        with self.login(user):
-            response = self.get("reports:bundle_create", school_year.pk)
 
         self.response_404(response)
 
