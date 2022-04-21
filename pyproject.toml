@@ -21,6 +21,7 @@ module = [
     "allauth.account.signals",
     "dj_database_url",
     "django.*",
+    "django_extensions.*",
     "djstripe.*",
     "environ",
     "factory",
@@ -40,7 +41,10 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 addopts = "--nomigrations --disable-socket"
 DJANGO_SETTINGS_MODULE = "project.testing_settings"
-# filterwarnings =
+filterwarnings = [
+    # django-extensions==3.1.5 jobs lookup uses the imp module.
+    "ignore:.*the imp module is deprecated in favour of importlib:DeprecationWarning",
+]
 # This warning is coming from dj-stripe 2.5.1 (Example)
 #    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning
 #    ignore:.*The providing_args argument is deprecated\..*:PendingDeprecationWarning

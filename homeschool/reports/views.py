@@ -1,12 +1,11 @@
-import io
-import zipfile
 from dataclasses import asdict
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
@@ -20,6 +19,7 @@ from .contexts import (
     ProgressReportContext,
     ResourceReportContext,
 )
+from .models import Bundle
 
 
 @staff_member_required
@@ -47,68 +47,23 @@ class ReportsIndexView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class BundleView(LoginRequiredMixin, TemplateView):
-    template_name = "reports/bundle.html"
-
-    def get_context_data(self, **kwargs):
-        user = self.request.user
-        context = super().get_context_data(**kwargs)
-        context["school_year"] = get_object_or_404(
-            SchoolYear, pk=self.kwargs["pk"], school__admin=user
-        )
-        return context
-
-
 @login_required
-def create_bundle(request, pk):
-    """Create a bundle of year end PDF reports."""
+def get_bundle(request, pk):
+    """Let a user get the bundle or request the creation of a bundle."""
     user = request.user
     school_year = get_object_or_404(SchoolYear, pk=pk, school__admin=user)
 
-    enrollments = Enrollment.objects.filter(
-        grade_level__school_year=school_year
-    ).select_related("student", "grade_level", "grade_level__school_year")
+    if request.method == "POST":
+        bundle, _ = Bundle.objects.get_or_create(school_year=school_year)
 
-    zip_file_data = io.BytesIO()
-    with zipfile.ZipFile(zip_file_data, "w") as zip_file:
-        for enrollment in enrollments:
-            attendance_context = AttendanceReportContext.from_enrollment(
-                enrollment, user.get_local_today()
-            )
-            zip_file.writestr(
-                f"{school_year} - {enrollment.student} Attendance Report.pdf",
-                pdfs.make_attendance_report(attendance_context),
-            )
+        if bundle and request.POST.get("recreate"):
+            bundle.recreate()
 
-            coursework_context = CourseworkReportContext.from_enrollment(enrollment)
-            zip_file.writestr(
-                f"{school_year} - {enrollment.student} Courses Report.pdf",
-                pdfs.make_coursework_report(coursework_context),
-            )
+        return HttpResponseRedirect(reverse("reports:bundle", args=[school_year.id]))
 
-            progress_context = ProgressReportContext.from_enrollment(enrollment)
-            zip_file.writestr(
-                f"{school_year} - {enrollment.student} Progress Report.pdf",
-                pdfs.make_progress_report(progress_context),
-            )
-
-            resource_context = ResourceReportContext.from_enrollment(enrollment)
-            zip_file.writestr(
-                f"{school_year} - {enrollment.student} Resource Report.pdf",
-                pdfs.make_resource_report(resource_context),
-            )
-
-    filename = f"School Desk bundle {school_year}.zip"
-    # The "dash" character is an emdash from the SchoolYear.__str__ method.
-    # Replace with a regular dash to avoid header character encoding weirdness.
-    filename = filename.replace("–", "-")
-    return HttpResponse(
-        zip_file_data.getbuffer(),
-        headers={
-            "Content-Type": "application/zip",
-            "Content-Disposition": f'attachment; filename="{filename}"',
-        },
-    )
+    bundle = Bundle.objects.by_school_year(school_year)
+    context = {"bundle": bundle, "school_year": school_year}
+    return render(request, "reports/bundle.html", context)
 
 
 @staff_member_required
