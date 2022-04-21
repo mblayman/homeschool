@@ -48,3 +48,8 @@ class Bundle(models.Model):
         self.report = ContentFile(report_data, name=name)
         self.status = self.Status.COMPLETE
         self.save()
+
+    def recreate(self) -> None:
+        """Recreate the bundle by queueing it back up."""
+        self.status = self.Status.PENDING
+        self.save()

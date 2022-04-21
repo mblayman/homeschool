@@ -54,7 +54,11 @@ def get_bundle(request, pk):
     school_year = get_object_or_404(SchoolYear, pk=pk, school__admin=user)
 
     if request.method == "POST":
-        bundle = Bundle.objects.get_or_create(school_year=school_year)
+        bundle, _ = Bundle.objects.get_or_create(school_year=school_year)
+
+        if bundle and request.POST.get("recreate"):
+            bundle.recreate()
+
         return HttpResponseRedirect(reverse("reports:bundle", args=[school_year.id]))
 
     bundle = Bundle.objects.by_school_year(school_year)

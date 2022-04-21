@@ -40,7 +40,25 @@
               Your bundle is ready.
             </p>
 
-            {# TODO: Regenerate #}
+            <div class="flex flex-row">
+              <a href="{{ bundle.report.url }}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+                Get Bundle
+              </a>
+
+              <form method="POST" action"{% url 'reports:bundle' school_year.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="recreate" value="true">
+                <button
+                  class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring"
+                  type="submit">
+                  Recreate Bundle
+                </button>
+              </form>
+            </div>
+
+            <p class="mt-8 font-light">
+              You may recreate your bundle if your school year has changed.
+            </p>
           {% endif %}
         {% else %}
           <p class="mb-8 font-light">

@@ -4,6 +4,7 @@ import time_machine
 from django.utils import timezone
 
 from homeschool.courses.tests.factories import CourseFactory, CourseResourceFactory
+from homeschool.reports.models import Bundle
 from homeschool.reports.tests.factories import BundleFactory
 from homeschool.schools.tests.factories import SchoolBreakFactory, SchoolYearFactory
 from homeschool.students.tests.factories import (
@@ -123,6 +124,20 @@ class TestBundleView(TestCase):
 
         self.response_302(response)
         assert school_year.bundle_set.count() == 1
+
+    def test_post_recreate(self):
+        """POST recreates a bundle."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school__admin=user)
+        bundle = BundleFactory(school_year=school_year, status=Bundle.Status.COMPLETE)
+        data = {"recreate": "true"}
+
+        with self.login(user):
+            response = self.post("reports:bundle", school_year.pk, data=data)
+
+        self.response_302(response)
+        bundle.refresh_from_db()
+        assert bundle.status == Bundle.Status.PENDING
 
     def test_no_other_school_years(self):
         """A user cannot access another user's bundle."""
