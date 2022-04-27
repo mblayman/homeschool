@@ -77,7 +77,7 @@ that their homeschool complies
 with local laws.
 
 School Desk provides these common reports.
-No report building is necessary.
+No report configuring is necessary.
 The reports are created automatically
 and designed to be printable directly
 from your browser
@@ -122,6 +122,26 @@ The Resource Report shows all of those resources
 for a single school year,
 grouped by course,
 on a single page.
+
+Year-End Bundle
+~~~~~~~~~~~~~~~
+
+Wouldn't it be nice if all the reports you need
+for your school year
+were together a single bundle
+for your record keeping?
+School Desk provides exactly that.
+
+With School Desk,
+using a single click,
+you can create the reports bundle
+which will contain all your records
+for each of your students
+as a set of PDF files.
+This is a perfect set
+to provide to your local government
+to show exactly what you taught your students
+over the year.
 
 Quick Task Creation
 -------------------
