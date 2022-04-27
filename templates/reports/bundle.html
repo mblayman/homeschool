@@ -1,11 +1,11 @@
 {% extends "app_base.html" %}
 {% load static %}
 
-{% block head_title %}Create a Year End Bundle{% endblock %}
+{% block head_title %}Create a Year-End Bundle{% endblock %}
 
 {% block main %}
   <h1 class="font-extralight text-2xl text-blue-900 mb-8">
-    Create a Year End Bundle for the {{ school_year }} School Year
+    Create a Year-End Bundle for the {{ school_year }} School Year
   </h1>
   <div class="flex flex-row justify-between">
     <div class="w-2/5">
@@ -17,22 +17,23 @@
       <div class="m-8 ml-12">
         <p class="mb-4 font-light">
           When your school year is finished,
-          you can generate a zip file bundle
+          you can generate a zip bundle
           of all the year’s activities
           as PDF files
           for your record keeping.
-          The bundle includes:
+          The bundle includes
         </p>
         <ul class="list-disc list-inside font-light mb-4">
           <li class="mb-2">Progress report for each student</li>
           <li class="mb-2">Attendance report for each student</li>
-          <li class="mb-2">All course resources</li>
+          <li class="mb-2">List of all course resources</li>
           <li class="mb-2">List of all completed tasks</li>
         </ul>
         {% if bundle %}
           {% if bundle.status == bundle.Status.PENDING %}
             <p class="mb-8 font-light">
-              We’re building your bundle.
+              We’re building your bundle,
+              and it should be ready within the hour.
               Please check later.
             </p>
           {% else %}
