@@ -78,7 +78,7 @@ class CourseTaskBulkDeleteForm(forms.Form):
         ).values_list("id", flat=True)
         users_deletable_tasks = CourseTask.objects.filter(
             course__grade_levels__in=grade_levels, id__in=task_ids
-        )
+        ).distinct()
         if len(task_ids) != users_deletable_tasks.count():
             raise forms.ValidationError(
                 "Sorry, you do not have permission to delete the selected tasks."
