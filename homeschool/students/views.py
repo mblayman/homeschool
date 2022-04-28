@@ -21,13 +21,22 @@ from .models import Coursework, Enrollment, Grade, Student
 def students_index(request):
     user = request.user
     school_year = SchoolYear.get_current_year_for(user)
-    roster = [
-        {
+    roster = []
+    for student in Student.objects.for_school(user.school):
+        enrollments = (
+            student.enrollments.all()
+            .select_related("grade_level", "grade_level__school_year")
+            .order_by("-grade_level__school_year__start_date")
+        )
+        student_info = {
             "student": student,
-            "enrollment": Enrollment.objects.for_year(student, school_year),
+            "enrollments": list(enrollments),
+            "is_enrolled_this_year": any(
+                enrollment.grade_level.school_year == school_year
+                for enrollment in enrollments
+            ),
         }
-        for student in Student.objects.for_school(user.school)
-    ]
+        roster.append(student_info)
     context = {
         "nav_link": "students",
         "school_year": school_year,

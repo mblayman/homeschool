@@ -359,16 +359,6 @@ class EnrollmentQuerySet(models.QuerySet):
             "student"
         )
 
-    def for_year(
-        self, student: Student, school_year: SchoolYear | None
-    ) -> Enrollment | None:
-        """Get the enrollment for a student in a school year, if it exists."""
-        return (
-            self.filter(student=student, grade_level__school_year=school_year)
-            .select_related("student", "grade_level")
-            .first()
-        )
-
 
 class Enrollment(models.Model):
     """The association between a student and grade level"""
@@ -376,7 +366,9 @@ class Enrollment(models.Model):
     id = HashidAutoField(
         primary_key=True, salt=f"enrollment{settings.HASHID_FIELD_SALT}"
     )
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="enrollments"
+    )
     grade_level = models.ForeignKey(
         "schools.GradeLevel", on_delete=models.CASCADE, related_name="enrollments"
     )

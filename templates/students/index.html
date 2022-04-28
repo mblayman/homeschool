@@ -20,28 +20,15 @@
     {% for student_info in roster %}
       <div class="max-w-xl mb-8">
         <h2 class="font-extralight text-xl text-blue-900 mb-3 pb-1 border-b border-yellow-400">{{ student_info.student.full_name }}</h2>
-        {% if student_info.enrollment %}
-          <div class="flex items-center">
-            <div class="grow">
-              <p class="font-light">{{ student_info.student.first_name }} is enrolled in {{ student_info.enrollment.grade_level }} in the {{ school_year }} school year.</p>
-            </div>
-            <div class="text-gray-500 hover:text-gray-600">
-              <a href="{% url 'students:enrollment_delete' student_info.enrollment.pk %}" class="block px-4">
-                <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <title>Remove {{ student_info.student.first_name }} From Grade</title>
-                  <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm1.41-1.41A8 8 0 1 0 15.66 4.34 8 8 0 0 0 4.34 15.66zm9.9-8.49L11.41 10l2.83 2.83-1.41 1.41L10 11.41l-2.83 2.83-1.41-1.41L8.59 10 5.76 7.17l1.41-1.41L10 8.59l2.83-2.83 1.41 1.41z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-        {% elif school_year %}
+
+        {% if not student_info.is_enrolled_this_year %}
           {% if has_grade_levels %}
             <div class="my-4">
               <a href="{% url "students:student_enrollment_create" student_info.student.id school_year.id %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
                 Enroll
               </a>
             </div>
-          {% else %}
+          {% elif school_year %}
             <p class="font-light">
               To enroll {{ student_info.student.first_name }},
               please add a grade level to the current school year.
@@ -51,18 +38,41 @@
                 Create Grade Level
               </a>
             </div>
+          {% else %}
+            <p class="font-light">
+              To enroll {{ student_info.student.first_name }},
+              please add a school year and grade level first.
+            </p>
+            <div class="my-4">
+              <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
+                Create School Year
+              </a>
+            </div>
           {% endif %}
-        {% else %}
-          <p class="font-light">
-            To enroll {{ student_info.student.first_name }},
-            please add a school year and grade level first.
-          </p>
-          <div class="my-4">
-            <a href="{% url "schools:school_year_create" %}" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring print:hidden">
-              Create School Year
-            </a>
-          </div>
         {% endif %}
+
+        <div class="flex flex-col max-w-4xl">
+          {% for enrollment in student_info.enrollments %}
+            <div class="flex flex-row items-center justify-center">
+              <div class="w-2/6 text-sm font-light py-1">
+                <a href="{% url 'schools:school_year_detail' enrollment.grade_level.school_year.id %}"
+                   class="hover:underline">{{ enrollment.grade_level.school_year }}</a>
+              </div>
+              <div class="w-2/6 text-sm font-light py-1">{{ enrollment.grade_level }}</div>
+              <div class="w-2/6 text-sm font-light py-1">
+                <div class="text-gray-500 hover:text-gray-600">
+                  <a href="{% url 'students:enrollment_delete' enrollment.pk %}" class="block">
+                    <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <title>Remove {{ student_info.student.first_name }} From Grade</title>
+                      <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm1.41-1.41A8 8 0 1 0 15.66 4.34 8 8 0 0 0 4.34 15.66zm9.9-8.49L11.41 10l2.83 2.83-1.41 1.41L10 11.41l-2.83 2.83-1.41-1.41L8.59 10 5.76 7.17l1.41-1.41L10 8.59l2.83-2.83 1.41 1.41z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
       </div>
     {% endfor %}
   {% else %}

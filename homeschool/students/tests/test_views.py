@@ -63,7 +63,13 @@ class TestStudentsIndexView(TestCase):
             self.get_check_200("students:index")
 
         roster = self.get_context("roster")
-        assert roster == [{"student": student, "enrollment": enrollment}]
+        assert roster == [
+            {
+                "student": student,
+                "enrollments": [enrollment],
+                "is_enrolled_this_year": True,
+            }
+        ]
 
     def test_unenrolled_student(self):
         """A student is unenrolled in the current school year."""
@@ -75,7 +81,9 @@ class TestStudentsIndexView(TestCase):
             self.get_check_200("students:index")
 
         roster = self.get_context("roster")
-        assert roster == [{"student": student, "enrollment": None}]
+        assert roster == [
+            {"student": student, "enrollments": [], "is_enrolled_this_year": False}
+        ]
 
 
 class TestStudentsCreateView(TestCase):
