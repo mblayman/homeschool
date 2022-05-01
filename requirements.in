@@ -32,5 +32,5 @@ types-pytz==2021.3.7
 types-requests==2.27.25
 types-six==1.16.12
 types-toml==0.10.6
-weasyprint==54.2
+weasyprint==54.3
 whitenoise[brotli]==6.0.0
