@@ -38,4 +38,4 @@ that you taught your students.
 All of that is pulled together for you
 into a convenient zip file.
 
-Enjoy!
+You can find this new feature of your Reports page. Enjoy!
