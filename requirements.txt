@@ -12,7 +12,7 @@ babel==2.9.1
     # via sphinx
 beautifulsoup4==4.11.1
     # via -r requirements.in
-bleach==4.1.0
+bleach==5.0.0
     # via -r requirements.in
 boto3==1.22.4
     # via -r requirements.in
@@ -111,9 +111,7 @@ markupsafe==1.1.1
 oauthlib==3.1.0
     # via requests-oauthlib
 packaging==20.4
-    # via
-    #   bleach
-    #   sphinx
+    # via sphinx
 pillow==9.0.1
     # via weasyprint
 psycopg2==2.9.3
