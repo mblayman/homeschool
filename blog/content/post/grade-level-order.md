@@ -12,8 +12,6 @@ of the grade levels
 in your school year.
 Well, now you can!
 
-<!--more-->
-
 This is a very brief feature update.
 
 If you create your school year's grade levels

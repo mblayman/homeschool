@@ -81,7 +81,7 @@ def make_resource_report(context: ResourceReportContext) -> bytes:
 
 
 def _make_report(template_name: str, context: dict) -> bytes:
-    """Make a resource report for the given student.
+    """Make a report.
 
     Return raw PDF data.
     """
