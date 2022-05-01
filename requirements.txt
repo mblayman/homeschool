@@ -60,7 +60,7 @@ django-allauth==0.50.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.5
     # via -r requirements.in
-django-debug-toolbar==3.2.4
+django-debug-toolbar==3.3.0
     # via -r requirements.in
 django-environ==0.8.1
     # via -r requirements.in
