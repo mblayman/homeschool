@@ -3,14 +3,14 @@ django-test-plus==2.2.0
 factory-boy
 flake8==4.0.1
 isort==5.5.4
-mypy==0.942
+mypy==0.950
 pip-tools
 pre-commit
 pygraphviz==1.9
-pytest==7.1.1
+pytest==7.1.2
 pytest-cov==3.0.0
 pytest-django==4.5.2
 pytest-socket==0.5.1
 pytest-xdist==2.5.0
-pyupgrade==2.31.1
+pyupgrade==2.32.0
 responses==0.10.15
