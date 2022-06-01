@@ -58,7 +58,7 @@ django==4.0.5
     #   jsonfield
 django-allauth==0.50.0
     # via -r requirements.in
-django-anymail[sendgrid]==8.5
+django-anymail[sendgrid]==8.6
     # via -r requirements.in
 django-debug-toolbar==3.4.0
     # via -r requirements.in
