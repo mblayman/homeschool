@@ -210,7 +210,7 @@ types-requests==2.27.29
     # via -r requirements.in
 types-six==1.16.15
     # via -r requirements.in
-types-toml==0.10.6
+types-toml==0.10.7
     # via -r requirements.in
 types-urllib3==1.26.14
     # via types-requests
