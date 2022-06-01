@@ -33,4 +33,4 @@ types-requests==2.27.29
 types-six==1.16.15
 types-toml==0.10.7
 weasyprint==55.0
-whitenoise[brotli]==6.0.0
+whitenoise[brotli]==6.1.0
