@@ -226,7 +226,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-whitenoise[brotli]==6.0.0
+whitenoise[brotli]==6.1.0
     # via -r requirements.in
 zipp==3.8.0
     # via importlib-metadata
