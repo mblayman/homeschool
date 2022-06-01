@@ -14,9 +14,9 @@ beautifulsoup4==4.11.1
     # via -r requirements.in
 bleach==5.0.0
     # via -r requirements.in
-boto3==1.22.4
+boto3==1.24.0
     # via -r requirements.in
-botocore==1.25.13
+botocore==1.27.0
     # via
     #   boto3
     #   s3transfer
@@ -98,6 +98,8 @@ idna==3.3
     # via requests
 imagesize==1.3.0
     # via sphinx
+importlib-metadata==4.11.4
+    # via sphinx
 jinja2==3.1.2
     # via sphinx
 jmespath==1.0.0
@@ -152,7 +154,7 @@ requests-oauthlib==1.3.1
     # via django-allauth
 rollbar==0.16.2
     # via -r requirements.in
-s3transfer==0.5.2
+s3transfer==0.6.0
     # via boto3
 six==1.16.0
     # via
@@ -216,7 +218,7 @@ urllib3==1.26.9
     # via
     #   botocore
     #   requests
-weasyprint==54.3
+weasyprint==55.0
     # via -r requirements.in
 webencodings==0.5.1
     # via
@@ -226,6 +228,8 @@ webencodings==0.5.1
     #   tinycss2
 whitenoise[brotli]==6.0.0
     # via -r requirements.in
+zipp==3.8.0
+    # via importlib-metadata
 zopfli==0.2.1
     # via fonttools
 
