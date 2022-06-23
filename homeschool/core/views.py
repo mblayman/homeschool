@@ -66,7 +66,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["show_whats_new"] = self.show_whats_new
         return context
 
-    def _get_day(self, today):
+    def _get_day(self, today: datetime.date) -> datetime.date:
         """Find the appropriate day to use for week calculation."""
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")

@@ -18,3 +18,6 @@ class Week:
         """
         yield self.first_day
         yield self.last_day
+
+    def __eq__(self, other):
+        return self.first_day == other.first_day and self.last_day == other.last_day

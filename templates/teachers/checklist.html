@@ -1,0 +1,10 @@
+{% extends "app_base.html" %}
+
+{% block head_title %}Teacher Checklist for {{ week.first_day|date:"l, M j" }} &ndash; {{ week.last_day|date:"l, M j" }}{% endblock %}
+
+{% block main %}
+  <h1 class="grow font-extralight text-2xl text-blue-900 mb-8">
+    Teacher Checklist for {{ week.first_day|date:"l, M j" }} &ndash; {{ week.last_day|date:"l, M j" }}
+  </h1>
+
+{% endblock %}
