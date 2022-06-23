@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import datetime
-from typing import Optional
 
 from dateutil.parser import parse
 from django.conf import settings
@@ -145,29 +146,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
         return context
 
-    def get_schedules(self, school_year, today, week):
+    def get_schedules(
+        self, school_year: SchoolYear | None, today: datetime.date, week: Week
+    ) -> list:
         """Get the schedules for each student."""
         if school_year is None:
             return []
 
-        schedules = []
-        for student in Student.get_students_for(school_year):
-            schedule = student.get_week_schedule(school_year, today, week)
-            schedule["week_dates"] = self.build_week_dates(school_year, week, student)
-            schedules.append(schedule)
-
-        return schedules
-
-    def build_week_dates(self, school_year, week, student):
-        """Build the week dates for the context."""
-        week_dates = []
-        for week_date in school_year.get_week_dates_for(week):
-            school_break = school_year.get_break(week_date, student=student)
-            week_date_data = {"date": week_date, "school_break": school_break}
-            if school_break:
-                week_date_data["date_type"] = school_break.get_date_type(week_date)
-            week_dates.append(week_date_data)
-        return week_dates
+        return school_year.get_schedules(today, week)
 
     def get_next_school_year(self, context, today, week):
         """Get the next year.
@@ -281,7 +267,7 @@ class DailyView(LoginRequiredMixin, TemplateView):
         return context
 
     def is_break_for_everyone(
-        self, day: datetime.date, school_year: Optional[SchoolYear]
+        self, day: datetime.date, school_year: SchoolYear | None
     ) -> bool:
         """Check if this is a break day for all students."""
         if school_year is None:
@@ -573,7 +559,7 @@ class StartCourseView(LoginRequiredMixin, CreateView):
         return kwargs
 
     @cached_property
-    def grade_level(self) -> Optional[GradeLevel]:
+    def grade_level(self) -> GradeLevel | None:
         return GradeLevel.objects.filter(
             school_year__school=self.request.user.school
         ).first()

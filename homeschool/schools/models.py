@@ -10,6 +10,7 @@ from hashid_field import HashidAutoField
 from ordered_model.models import OrderedModel
 
 from homeschool.core.models import DaysOfWeekModel
+from homeschool.core.schedules import Week
 from homeschool.students.models import Student
 from homeschool.users.models import User
 
@@ -142,6 +143,27 @@ class SchoolYear(DaysOfWeekModel):
             next_course_day = course.get_next_day_from(next_course_day)
 
         return next_course_day
+
+    def get_schedules(self, today: datetime.date, week: Week) -> list:
+        """Get the week schedules for each student enrolled in the school year."""
+        schedules = []
+        for student in Student.get_students_for(self):
+            schedule = student.get_week_schedule(self, today, week)
+            schedule["week_dates"] = self._build_week_dates(week, student)
+            schedules.append(schedule)
+
+        return schedules
+
+    def _build_week_dates(self, week, student):
+        """Build the week dates for the context."""
+        week_dates = []
+        for week_date in self.get_week_dates_for(week):
+            school_break = self.get_break(week_date, student=student)
+            week_date_data = {"date": week_date, "school_break": school_break}
+            if school_break:
+                week_date_data["date_type"] = school_break.get_date_type(week_date)
+            week_dates.append(week_date_data)
+        return week_dates
 
     def __str__(self):
         if self.start_date.year == self.end_date.year:
