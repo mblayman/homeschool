@@ -100,13 +100,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         week = Week(day)
 
         school = self.request.user.school
-        school_year = (
-            SchoolYear.objects.filter(
-                school=school, start_date__lte=day, end_date__gte=day
-            )
-            .prefetch_related("grade_levels")
-            .first()
-        )
+        school_year = SchoolYear.get_year_for(self.request.user, day)
 
         if school_year:
             context["school_year"] = school_year

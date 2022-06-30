@@ -7,4 +7,25 @@
     Teacher Checklist for {{ week.first_day|date:"l, M j" }} &ndash; {{ week.last_day|date:"l, M j" }}
   </h1>
 
+  {% for schedule in schedules %}
+    <h2 class="font-extralight text-xl text-blue-900 mb-4">{{ schedule.student.first_name }}</h2>
+
+    {% for course_detail in schedule.courses %}
+      <h3 class="text-sm uppercase tracking-wide font-extralight py-2 pr-4">{{ course_detail.course }}</h3>
+
+      <div class="flex flex-col mb-4 max-w-2xl">
+        {% for day in course_detail.days %}
+          {% if day.task %}
+            <div class="flex flex-row py-2 text-sm font-light overflow-x-auto">
+              <div class="w-1/6">{{ day.week_date|date:"M j" }}</div>
+              <div class="w-5/6">{{ day.task.description|urlize|linebreaksbr }}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    {% endfor %}
+
+  {% endfor %}
+
 {% endblock %}

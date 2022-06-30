@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import datetime
-from typing import Optional
 
 from django.conf import settings
 from django.db import models
@@ -50,7 +51,7 @@ class SchoolYear(DaysOfWeekModel):
         self._school_breaks_by_student = {}
 
     @classmethod
-    def get_current_year_for(cls, user: User) -> Optional["SchoolYear"]:
+    def get_current_year_for(cls, user: User) -> SchoolYear | None:
         """Get a current school year for the user.
 
         Pick the current school if it's available.
@@ -58,9 +59,7 @@ class SchoolYear(DaysOfWeekModel):
         appropriately for the new school year.
         """
         today = user.get_local_today()
-        school_year = SchoolYear.objects.filter(
-            school__admin=user, start_date__lte=today, end_date__gte=today
-        ).first()
+        school_year = cls.get_year_for(user, today)
 
         # Look for a future school year if there is no current one.
         # This is for new users who may be building their school year
@@ -72,19 +71,28 @@ class SchoolYear(DaysOfWeekModel):
 
         return school_year
 
+    @classmethod
+    def get_year_for(cls, user: User, day: datetime.date) -> SchoolYear | None:
+        """Get a school year for a user that covers the provided date."""
+        return (
+            SchoolYear.objects.filter(
+                school__admin=user, start_date__lte=day, end_date__gte=day
+            )
+            .prefetch_related("grade_levels")
+            .first()
+        )
+
     def contains(self, day: datetime.date) -> bool:
         """Check if the day is in the school year."""
         return self.start_date <= day <= self.end_date
 
-    def is_break(
-        self, break_date: datetime.date, *, student: Optional[Student]
-    ) -> bool:
+    def is_break(self, break_date: datetime.date, *, student: Student | None) -> bool:
         """Check if the break date is a school break."""
         return self.get_break(break_date, student=student) is not None
 
     def get_break(
-        self, break_date: datetime.date, *, student: Optional[Student]
-    ) -> Optional["SchoolBreak"]:
+        self, break_date: datetime.date, *, student: Student | None
+    ) -> SchoolBreak | None:
         """Get a school break if the date is contained in the break.
 
         When student is None, get *all* the breaks.
@@ -96,8 +104,8 @@ class SchoolYear(DaysOfWeekModel):
         return self._school_breaks_by_student[student].get(break_date)
 
     def _get_breaks_for_student(
-        self, student: Optional[Student]
-    ) -> dict[datetime.date, "SchoolBreak"]:
+        self, student: Student | None
+    ) -> dict[datetime.date, SchoolBreak]:
         """Get the school breaks grouped by the dates."""
         if student is None:
             breaks = self.breaks.all()
