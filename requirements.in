@@ -8,7 +8,7 @@ django-anymail[sendgrid]==8.6
 django-debug-toolbar==3.5.0
 django-environ==0.9.0
 django-extensions==3.1.5
-django-hashid-field==3.3.4
+django-hashid-field==3.3.5
 django-hijack==3.2.1
 django-htmx==1.12.0
 django-ordered-model==3.6
