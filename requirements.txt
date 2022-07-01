@@ -12,7 +12,7 @@ babel==2.10.1
     # via sphinx
 beautifulsoup4==4.11.1
     # via -r requirements.in
-bleach==5.0.0
+bleach==5.0.1
     # via -r requirements.in
 boto3==1.24.21
     # via -r requirements.in
