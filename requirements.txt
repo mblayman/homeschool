@@ -56,11 +56,11 @@ django==4.0.5
     #   django-storages
     #   django-tz-detect
     #   jsonfield
-django-allauth==0.50.0
+django-allauth==0.51.0
     # via -r requirements.in
 django-anymail[sendgrid]==8.6
     # via -r requirements.in
-django-debug-toolbar==3.4.0
+django-debug-toolbar==3.5.0
     # via -r requirements.in
 django-environ==0.8.1
     # via -r requirements.in
