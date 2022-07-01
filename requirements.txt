@@ -70,7 +70,7 @@ django-hashid-field==3.3.4
     # via -r requirements.in
 django-hijack==3.2.1
     # via -r requirements.in
-django-htmx==1.11.0
+django-htmx==1.12.0
     # via -r requirements.in
 django-ordered-model==3.6
     # via -r requirements.in
@@ -194,7 +194,7 @@ sqlparse==0.4.2
     #   django-debug-toolbar
 stripe==3.2.0
     # via dj-stripe
-time-machine==2.7.0
+time-machine==2.7.1
     # via -r requirements.in
 tinycss2==1.1.1
     # via
