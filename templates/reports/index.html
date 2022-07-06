@@ -1,14 +1,12 @@
 {% extends "app_base.html" %}
-{% load static waffle_tags %}
+{% load static %}
 
 {% block head_title %}Reports{% endblock %}
 
 {% block main %}
   <h1 class="font-extralight text-2xl text-blue-900 mb-8">Reports</h1>
   {% if enrollments %}
-    {% flag report_bundle_flag %}
-      {% include "reports/_school_year_reports.html" %}
-    {% endflag %}
+    {% include "reports/_school_year_reports.html" %}
     {% include "reports/_enrollment_reports.html" %}
   {% else %}
     <div class="flex flex-row justify-between">
