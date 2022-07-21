@@ -10,10 +10,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import pluralize
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, RedirectView, TemplateView
 
 from homeschool.accounts.models import Account
 from homeschool.core.schedules import Week
@@ -658,3 +659,10 @@ def social_image(request):
 def handle_500(request):
     """Handle 500 errors and display them."""
     return render(request, "500.html", {}, status=500)
+
+
+class FaviconView(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        return static("favicon/favicon.ico")

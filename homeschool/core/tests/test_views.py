@@ -1451,3 +1451,11 @@ class TestHandle500(TestCase):
         response = self.get("office:handle_500")
 
         assert response.status_code == 500
+
+
+class TestFavicon(TestCase):
+    def test_get(self):
+        response = self.get("favicon")
+
+        assert response.status_code == 301
+        assert response["Location"] == "/static/favicon/favicon.ico"
