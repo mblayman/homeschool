@@ -7,6 +7,8 @@ from django.shortcuts import render
 from homeschool.core.schedules import Week
 from homeschool.schools.models import SchoolYear
 
+from .models import Checklist
+
 
 @login_required
 def checklist(request: HttpRequest, year: int, month: int, day: int) -> HttpResponse:
@@ -20,6 +22,7 @@ def checklist(request: HttpRequest, year: int, month: int, day: int) -> HttpResp
     schedules = []
     if school_year:
         schedules = school_year.get_schedules(today, week)
+        Checklist.filter_schedules(school_year, schedules)
 
     context = {"schedules": schedules, "week": week}
     return render(request, "teachers/checklist.html", context)

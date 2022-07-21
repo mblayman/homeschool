@@ -17,6 +17,7 @@ graph:
 		reports \
 		schools \
 		students \
+		teachers \
 		users \
 		-o models.png
 
