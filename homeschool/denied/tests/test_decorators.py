@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import RequestFactory
 
@@ -30,6 +31,23 @@ class TestAllowDecorator(TestCase):
 
         request = self.rf.get("/")
         request.user = self.make_user()
+        middleware = DeniedMiddleware(allowed_view)
+
+        ret = middleware.process_view(request, allowed_view, [], {})
+
+        # The contract of the middleware is that None permits the middleware
+        # chain to continue.
+        assert ret is None
+
+    def test_allow_unauthenticated(self):
+        """An allowed view does not need authentication."""
+
+        @allow
+        def allowed_view(request):
+            return HttpResponse()
+
+        request = self.rf.get("/")
+        request.user = AnonymousUser()
         middleware = DeniedMiddleware(allowed_view)
 
         ret = middleware.process_view(request, allowed_view, [], {})

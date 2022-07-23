@@ -4,8 +4,6 @@ from typing import Callable
 from .authorizers import any_authorized
 
 
-# TODO: How do I exempt unauthenticated views from this check?
-# Maybe in `allow`, I can add __denied_authentication_required__
 def allow(view_func: Callable) -> Callable:
     """Allow a view without any authorization checking."""
 
@@ -14,6 +12,7 @@ def allow(view_func: Callable) -> Callable:
         return view_func(*args, **kwargs)
 
     wrapper.__denied_authorizer__ = any_authorized  # type: ignore
+    wrapper.__denied_authentication_required__ = False  # type: ignore
     return wrapper
 
 
