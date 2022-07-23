@@ -13,7 +13,8 @@ from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.decorators import method_decorator
+
+# from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.views.generic import CreateView, RedirectView, TemplateView
 
@@ -28,18 +29,14 @@ from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 
-@method_decorator(allow, "dispatch")
-class IndexView(TemplateView):
-    template_name = "core/index.html"
+@allow
+def index(request):
+    return render(request, "core/index.html", {})
 
 
-class HelpView(TemplateView):
-    template_name = "core/help.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["support_email"] = settings.SUPPORT_EMAIL
-        return context
+@allow
+def help(request):
+    return render(request, "core/help.html", {"support_email": settings.SUPPORT_EMAIL})
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
