@@ -33,10 +33,10 @@ class DeniedMiddleware:
         ):
             return None
 
-        if (
-            getattr(view_func, "__denied_authentication_required__", True)
-            and not request.user.is_authenticated
-        ):
+        if getattr(view_func, "__denied_exempt__", False):
+            return None
+
+        if not request.user.is_authenticated:
             return redirect_to_login(request.build_absolute_uri())
 
         if not hasattr(view_func, "__denied_authorizer__"):

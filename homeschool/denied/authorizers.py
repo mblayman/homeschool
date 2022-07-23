@@ -8,4 +8,4 @@ def any_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
 
 def staff_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
     """An authorizer for staff users"""
-    return request.user.is_authenticated and request.user.is_staff
+    return request.user.is_staff

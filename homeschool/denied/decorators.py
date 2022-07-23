@@ -1,8 +1,6 @@
 from functools import wraps
 from typing import Callable
 
-from .authorizers import any_authorized
-
 
 def allow(view_func: Callable) -> Callable:
     """Allow a view without any authorization checking."""
@@ -11,8 +9,7 @@ def allow(view_func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         return view_func(*args, **kwargs)
 
-    wrapper.__denied_authorizer__ = any_authorized  # type: ignore
-    wrapper.__denied_authentication_required__ = False  # type: ignore
+    wrapper.__denied_exempt__ = True  # type: ignore
     return wrapper
 
 

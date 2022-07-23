@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory
 
 from homeschool.denied.authorizers import any_authorized, staff_authorized
@@ -18,13 +17,6 @@ class TestAnyAuthorized(TestCase):
 
 class TestStaffAuthorized(TestCase):
     rf = RequestFactory()
-
-    def test_unauthenticated(self):
-        """Unauthenticated access is not permitted."""
-        request = self.rf.get("/")
-        request.user = AnonymousUser()
-
-        assert not staff_authorized(request)
 
     def test_non_staff(self):
         """Non-staff access is not permitted."""

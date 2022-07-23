@@ -47,8 +47,7 @@ class TestDeniedMiddleware(TestCase):
         def authorized_view(request):
             return HttpResponse()  # pragma: no cover
 
-        authorized_view.__denied_authorizer__ = true_authorizer  # type: ignore
-        authorized_view.__denied_authentication_required__ = False  # type: ignore
+        authorized_view.__denied_exempt__ = True  # type: ignore
         request = self.rf.get("/")
         request.user = AnonymousUser()
         middleware = DeniedMiddleware(authorized_view)
