@@ -24,4 +24,9 @@ class DeniedMiddleware:
         view_kwargs: dict,
     ):
         """Process the view by checking against an authorizer."""
-        return HttpResponseForbidden()
+        if not hasattr(view_func, "__denied_authorizer__"):
+            return HttpResponseForbidden()
+
+        # __denied_authorizer__ is set by the various decorators.
+        if not view_func.__denied_authorizer__(request, **view_kwargs):  # type: ignore
+            return HttpResponseForbidden()

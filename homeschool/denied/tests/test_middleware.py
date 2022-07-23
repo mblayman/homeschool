@@ -1,7 +1,16 @@
+from django.http import HttpResponse
 from django.test import RequestFactory
 
 from homeschool.denied.middleware import DeniedMiddleware
 from homeschool.test import TestCase, get_response
+
+
+def false_authorizer(request, **view_kwargs):
+    return False
+
+
+def true_authorizer(request, **view_kwargs):
+    return True
 
 
 class TestDeniedMiddleware(TestCase):
@@ -22,5 +31,35 @@ class TestDeniedMiddleware(TestCase):
         middleware = DeniedMiddleware(get_response)
 
         response = middleware.process_view(request, get_response, [], {})
+
+        assert response.status_code == 403
+
+    def test_authorized(self):
+        """An authorizer permits access."""
+
+        def authorized_view(request):
+            return HttpResponse()
+
+        authorized_view.__denied_authorizer__ = true_authorizer  # type: ignore
+        request = self.rf.get("/")
+        middleware = DeniedMiddleware(authorized_view)
+
+        ret = middleware.process_view(request, authorized_view, [], {})
+
+        # The contract of the middleware is that None permits the middleware
+        # chain to continue
+        assert ret is None
+
+    def test_not_authorized(self):
+        """An authorizer rejects an unauthorized attempt."""
+
+        def denied_view(request):
+            return HttpResponse()
+
+        denied_view.__denied_authorizer__ = false_authorizer  # type: ignore
+        request = self.rf.get("/")
+        middleware = DeniedMiddleware(denied_view)
+
+        response = middleware.process_view(request, denied_view, [], {})
 
         assert response.status_code == 403
