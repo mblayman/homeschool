@@ -13,3 +13,17 @@ def allow(view_func: Callable) -> Callable:
 
     wrapper.__denied_authorizer__ = any_authorized  # type: ignore
     return wrapper
+
+
+def authorize(authorizer: Callable) -> Callable:
+    """Add an authorizer to a view."""
+
+    def decorator(view_func: Callable) -> Callable:
+        @wraps(view_func)
+        def wrapper(*args, **kwargs):
+            return view_func(*args, **kwargs)
+
+        wrapper.__denied_authorizer__ = authorizer  # type: ignore
+        return wrapper
+
+    return decorator
