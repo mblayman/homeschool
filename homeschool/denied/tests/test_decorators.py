@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import RequestFactory
+from waffle.testutils import override_flag
 
 from homeschool.denied.decorators import allow, authorize
 from homeschool.denied.middleware import DeniedMiddleware
@@ -22,12 +23,13 @@ def data_authorizer(request, **view_kwargs):
 class TestAllowDecorator(TestCase):
     rf = RequestFactory()
 
+    @override_flag("denied-flag", active=True)
     def test_allow(self):
         """An allowed view permits access."""
 
         @allow
         def allowed_view(request):
-            return HttpResponse()
+            return HttpResponse()  # pragma: no cover
 
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -39,12 +41,13 @@ class TestAllowDecorator(TestCase):
         # chain to continue.
         assert ret is None
 
+    @override_flag("denied-flag", active=True)
     def test_allow_unauthenticated(self):
         """An allowed view does not need authentication."""
 
         @allow
         def allowed_view(request):
-            return HttpResponse()
+            return HttpResponse()  # pragma: no cover
 
         request = self.rf.get("/")
         request.user = AnonymousUser()
@@ -60,12 +63,13 @@ class TestAllowDecorator(TestCase):
 class TestAuthorizeDecorator(TestCase):
     rf = RequestFactory()
 
+    @override_flag("denied-flag", active=True)
     def test_unauthorized(self):
         """An unauthorized request is forbidden."""
 
         @authorize(false_authorizer)
         def allowed_view(request):
-            return HttpResponse()
+            return HttpResponse()  # pragma: no cover
 
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -75,12 +79,13 @@ class TestAuthorizeDecorator(TestCase):
 
         assert response.status_code == 403
 
+    @override_flag("denied-flag", active=True)
     def test_authorized(self):
         """An authorized request is permitted."""
 
         @authorize(true_authorizer)
         def allowed_view(request):
-            return HttpResponse()
+            return HttpResponse()  # pragma: no cover
 
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -92,12 +97,13 @@ class TestAuthorizeDecorator(TestCase):
         # chain to continue.
         assert ret is None
 
+    @override_flag("denied-flag", active=True)
     def test_authorized_against_data(self):
         """A request is authorized against data."""
 
         @authorize(data_authorizer)
         def allowed_view(request):
-            return HttpResponse()
+            return HttpResponse()  # pragma: no cover
 
         request = self.rf.get("/")
         request.user = self.make_user()
