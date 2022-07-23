@@ -47,7 +47,7 @@ class TestDeniedMiddleware(TestCase):
         ret = middleware.process_view(request, authorized_view, [], {})
 
         # The contract of the middleware is that None permits the middleware
-        # chain to continue
+        # chain to continue.
         assert ret is None
 
     def test_not_authorized(self):

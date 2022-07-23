@@ -13,6 +13,7 @@ from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.views.generic import CreateView, RedirectView, TemplateView
 
@@ -20,12 +21,14 @@ from homeschool.accounts.models import Account
 from homeschool.core.schedules import Week
 from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
+from homeschool.denied.decorators import allow
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 
+@method_decorator(allow, "dispatch")
 class IndexView(TemplateView):
     template_name = "core/index.html"
 
