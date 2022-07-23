@@ -26,7 +26,11 @@ class DeniedMiddleware:
         view_kwargs: dict,
     ):
         """Process the view by checking against an authorizer."""
-        if not waffle.flag_is_active(request, "denied-flag"):
+        # If there's no authorizer, don't fail when the flag is off.
+        if not (
+            hasattr(view_func, "__denied_authorizer__")
+            or waffle.flag_is_active(request, "denied-flag")
+        ):
             return None
 
         if (
