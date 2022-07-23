@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import RequestFactory
 
@@ -25,9 +26,39 @@ class TestDeniedMiddleware(TestCase):
 
         assert response.status_code == 200
 
+    def test_authentication_required(self):
+        """Authentication is required by default."""
+        request = self.rf.get("/")
+        request.user = AnonymousUser()
+        middleware = DeniedMiddleware(get_response)
+
+        response = middleware.process_view(request, get_response, [], {})
+
+        assert response.status_code == 302
+        assert "login" in response["Location"]
+
+    def test_authentication_exempt(self):
+        """A view is exempt from authentication checking."""
+
+        def authorized_view(request):
+            return HttpResponse()
+
+        authorized_view.__denied_authorizer__ = true_authorizer  # type: ignore
+        authorized_view.__denied_authentication_required__ = False  # type: ignore
+        request = self.rf.get("/")
+        request.user = AnonymousUser()
+        middleware = DeniedMiddleware(authorized_view)
+
+        ret = middleware.process_view(request, authorized_view, [], {})
+
+        # The contract of the middleware is that None permits the middleware
+        # chain to continue.
+        assert ret is None
+
     def test_default_forbidden(self):
         """A view is denied by default."""
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(get_response)
 
         response = middleware.process_view(request, get_response, [], {})
@@ -42,6 +73,7 @@ class TestDeniedMiddleware(TestCase):
 
         authorized_view.__denied_authorizer__ = true_authorizer  # type: ignore
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(authorized_view)
 
         ret = middleware.process_view(request, authorized_view, [], {})
@@ -58,6 +90,7 @@ class TestDeniedMiddleware(TestCase):
 
         denied_view.__denied_authorizer__ = false_authorizer  # type: ignore
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(denied_view)
 
         response = middleware.process_view(request, denied_view, [], {})

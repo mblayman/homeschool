@@ -29,6 +29,7 @@ class TestAllowDecorator(TestCase):
             return HttpResponse()
 
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(allowed_view)
 
         ret = middleware.process_view(request, allowed_view, [], {})
@@ -49,6 +50,7 @@ class TestAuthorizeDecorator(TestCase):
             return HttpResponse()
 
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(allowed_view)
 
         response = middleware.process_view(request, allowed_view, [], {})
@@ -63,6 +65,7 @@ class TestAuthorizeDecorator(TestCase):
             return HttpResponse()
 
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(allowed_view)
 
         ret = middleware.process_view(request, allowed_view, [], {})
@@ -79,6 +82,7 @@ class TestAuthorizeDecorator(TestCase):
             return HttpResponse()
 
         request = self.rf.get("/")
+        request.user = self.make_user()
         middleware = DeniedMiddleware(allowed_view)
 
         ret = middleware.process_view(request, allowed_view, [], {"id": 42})

@@ -1,5 +1,6 @@
 from typing import Callable
 
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 
 
@@ -24,6 +25,12 @@ class DeniedMiddleware:
         view_kwargs: dict,
     ):
         """Process the view by checking against an authorizer."""
+        if (
+            getattr(view_func, "__denied_authentication_required__", True)
+            and not request.user.is_authenticated
+        ):
+            return redirect_to_login(request.build_absolute_uri())
+
         if not hasattr(view_func, "__denied_authorizer__"):
             return HttpResponseForbidden()
 
