@@ -91,6 +91,7 @@ MIDDLEWARE = [
     "waffle.middleware.WaffleMiddleware",
     "tz_detect.middleware.TimezoneMiddleware",
     "homeschool.middleware.SqueakyCleanMiddleware",
+    "homeschool.denied.middleware.DeniedMiddleware",
     "homeschool.accounts.middleware.AccountGateMiddleware",
     "rollbar.contrib.django.middleware.RollbarNotifierMiddleware",
 ]
