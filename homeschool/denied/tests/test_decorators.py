@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import RequestFactory
+from django.urls import include
 from waffle.testutils import override_flag
 
 from homeschool.denied.decorators import allow, authorize
@@ -58,6 +59,21 @@ class TestAllowDecorator(TestCase):
         # The contract of the middleware is that None permits the middleware
         # chain to continue.
         assert ret is None
+
+    @override_flag("denied-flag", active=True)
+    def test_allow_include(self):
+        """All included views are exempt.
+
+        This test has the side effect of modifying the test views,
+        but they are only used for this test.
+        """
+        from homeschool.denied.tests import nested_urls, urls
+
+        urlconf_module, _, _ = allow(include("homeschool.denied.tests.urls"))
+
+        assert urlconf_module == urls
+        assert urls.a_root_view.__denied_exempt__  # type: ignore
+        assert nested_urls.a_nested_view.__denied_exempt__  # type: ignore
 
 
 class TestAuthorizeDecorator(TestCase):
