@@ -24,7 +24,7 @@ urlpatterns = [
     path("accounts/", allow(include("allauth.urls"))),
     path("hijack/", include("hijack.urls")),
     path("stripe/", include("djstripe.urls", namespace="djstripe")),
-    path("tz_detect/", include("tz_detect.urls")),
+    path("tz_detect/", allow(include("tz_detect.urls"))),
     path("favicon.ico", favicon, name="favicon"),
 ]
 

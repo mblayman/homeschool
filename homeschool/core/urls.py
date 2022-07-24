@@ -1,35 +1,19 @@
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
-from django.views.generic import TemplateView
 
 from homeschool.core import views
 from homeschool.core.sitemaps import sitemaps
+from homeschool.denied.decorators import allow
 
 app_name = "core"
 urlpatterns = [
     path("", views.index, name="index"),
-    path(
-        "robots.txt",
-        TemplateView.as_view(
-            template_name="core/robots.txt", content_type="text/plain"
-        ),
-        name="robots",
-    ),
-    path(
-        "sitemapindex.xml",
-        TemplateView.as_view(
-            template_name="core/sitemapindex.xml", content_type="text/xml"
-        ),
-        name="sitemapindex",
-    ),
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
-    path("about/", TemplateView.as_view(template_name="core/about.html"), name="about"),
-    path("terms/", TemplateView.as_view(template_name="core/terms.html"), name="terms"),
-    path(
-        "privacy/",
-        TemplateView.as_view(template_name="core/privacy.html"),
-        name="privacy",
-    ),
+    path("robots.txt", views.robots, name="robots"),
+    path("sitemapindex.xml", views.sitemapindex, name="sitemapindex"),
+    path("sitemap.xml", allow(sitemap), {"sitemaps": sitemaps}, name="sitemap"),
+    path("about/", views.about, name="about"),
+    path("terms/", views.terms, name="terms"),
+    path("privacy/", views.privacy, name="privacy"),
     path("help/", views.help, name="help"),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path(
