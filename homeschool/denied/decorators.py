@@ -1,33 +1,32 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from functools import wraps
 from typing import Callable, overload
 
-from django.urls.resolvers import URLPattern
+from django.urls.resolvers import URLPattern, URLResolver
 
 
 @overload
 def allow(view_func: Callable) -> Callable:
-    ...
+    ...  # pragma: no cover
+
+
+@overload
+def allow(view_func: list) -> list:
+    ...  # pragma: no cover
 
 
 @overload
 def allow(view_func: tuple) -> tuple:
-    ...
+    ...  # pragma: no cover
 
 
-def allow(view_func: Callable | tuple) -> Callable | tuple:
+def allow(view_func: Callable | list | tuple) -> Callable | list | tuple:
     """Allow a view without any authorization checking."""
 
-    # When used around `include`, view_func will not be a callable.
-    # Recursively allow any view function in the included routes.
-    if isinstance(view_func, tuple):
-        urlconf_module, _, _ = view_func
-        for url in urlconf_module.urlpatterns:
-            if isinstance(url, URLPattern):
-                url.callback.__denied_exempt__ = True
-            else:
-                allow((url.urlconf_module, None, None))
+    if isinstance(view_func, (list, tuple)):
+        _allow_many(view_func)
         return view_func
 
     @wraps(view_func)
@@ -37,6 +36,39 @@ def allow(view_func: Callable | tuple) -> Callable | tuple:
 
     wrapper.__denied_exempt__ = True  # type: ignore
     return wrapper
+
+
+def _allow_many(view_func: list | tuple) -> None:
+    """Allow many views.
+
+    When used around `include`, view_func will not be a callable.
+    Also, handle when a list of URLs is provided directly (e.g., `admin.site.urls`).
+    Recursively allow any view function in the included routes.
+    """
+    urlpatterns: Iterable = []
+    if isinstance(view_func, list):
+        urlpatterns = view_func
+    elif len(view_func) == 3:
+        # Sniff out whether this is like the return of `include` or just a 3-tuple.
+        if hasattr(view_func[0], "urlpatterns"):
+            urlpatterns = view_func[0].urlpatterns
+        else:
+            urlpatterns = view_func[0]
+    else:
+        urlpatterns = view_func
+
+    for url in urlpatterns:
+        if isinstance(url, URLPattern):
+            if hasattr(url.callback, "__self__"):
+                # Attributes cannot be added to bound methods,
+                # so add to the underlying function instead.
+                url.callback.__func__.__denied_exempt__ = True
+            else:
+                url.callback.__denied_exempt__ = True
+        elif isinstance(url, URLResolver):
+            allow((url.urlconf_module, None, None))
+        else:
+            allow(url)
 
 
 def authorize(authorizer: Callable) -> Callable:

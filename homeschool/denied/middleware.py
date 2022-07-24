@@ -1,8 +1,15 @@
 from typing import Callable
 
 import waffle
+from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.urls import reverse_lazy
+
+LOGIN_URLS = {
+    settings.LOGIN_URL,
+    reverse_lazy("admin:login"),
+}
 
 
 class DeniedMiddleware:
@@ -33,11 +40,16 @@ class DeniedMiddleware:
         ):
             return None
 
-        if getattr(view_func, "__denied_exempt__", False):
+        if (
+            getattr(view_func, "__denied_exempt__", False)
+            # Or check on a bound method
+            or getattr(getattr(view_func, "__func__", None), "__denied_exempt__", False)
+        ):
             return None
 
-        if not request.user.is_authenticated:
-            return redirect_to_login(request.build_absolute_uri())
+        # TODO: test login exempt
+        if not request.user.is_authenticated and request.path not in LOGIN_URLS:
+            return redirect_to_login(request.get_full_path())
 
         if not hasattr(view_func, "__denied_authorizer__"):
             return HttpResponseForbidden()

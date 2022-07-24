@@ -3,7 +3,7 @@ from django.urls import include, path
 
 
 def a_root_view(request):
-    return HttpResponse()
+    return HttpResponse()  # pragma: no cover
 
 
 urlpatterns = [

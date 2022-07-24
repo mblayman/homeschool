@@ -3,7 +3,7 @@ from django.urls import path
 
 
 def a_nested_view(request):
-    return HttpResponse()
+    return HttpResponse()  # pragma: no cover
 
 
 urlpatterns = [
