@@ -26,9 +26,6 @@ class TestCustomerDetail(TestCase):
 
 
 class TestSubscriptionsView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("subscriptions:index")
-
     def test_get(self):
         user = self.make_user()
         # The filter needs to consider livemode when getting prices.
@@ -49,9 +46,6 @@ class TestSubscriptionsView(TestCase):
 
 
 class TestCreateCheckoutSession(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("subscriptions:create_checkout_session")
-
     @mock.patch("homeschool.accounts.views.stripe_gateway", autospec=True)
     def test_ok(self, mock_stripe_gateway):
         """The view gets a session from the gateway."""
@@ -92,9 +86,6 @@ class TestCreateCheckoutSession(TestCase):
 
 
 class TestSuccessView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("subscriptions:success")
-
     def test_get(self):
         user = self.make_user()
 
@@ -103,9 +94,6 @@ class TestSuccessView(TestCase):
 
 
 class TestStripeCancelView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("subscriptions:stripe_cancel")
-
     def test_get(self):
         user = self.make_user()
 
@@ -117,9 +105,6 @@ class TestStripeCancelView(TestCase):
 
 @mock.patch("homeschool.accounts.views.stripe_gateway", autospec=True)
 class TestCreateBillingPortalSession(TestCase):
-    def test_unauthenticated_access(self, mock_stripe_gateway):
-        self.assertLoginRequired("subscriptions:create_billing_portal_session")
-
     def test_ok(self, mock_stripe_gateway):
         """The view gets a session URL from the gateway."""
         mock_stripe_gateway.create_billing_portal_session.return_value = "/portal"

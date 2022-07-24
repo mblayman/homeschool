@@ -2,7 +2,6 @@ import json
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -44,8 +43,8 @@ def subscriptions_index(request):
     return render(request, "accounts/subscriptions_index.html", context)
 
 
-@login_required
 @require_POST
+@authorize(any_authorized)
 def create_checkout_session(request):
     """Create a checkout session for Stripe."""
     data = json.loads(request.body)
@@ -63,21 +62,21 @@ def create_checkout_session(request):
     return JsonResponse({"session_id": session_id})
 
 
-@login_required
+@authorize(any_authorized)
 def success(request):
     """The landing page after the user signs up for School Desk"""
     return render(request, "accounts/subscriptions_success.html", {})
 
 
-@login_required
+@authorize(any_authorized)
 def stripe_cancel(request):
     """The return page when a user cancels the request to create a subscription"""
     context = {"support_email": settings.SUPPORT_EMAIL}
     return render(request, "accounts/subscriptions_stripe_cancel.html", context)
 
 
-@login_required
 @require_POST
+@authorize(any_authorized)
 def create_billing_portal_session(request):
     """Create a billing portal session for a customer."""
     portal_url = stripe_gateway.create_billing_portal_session(request.account)
