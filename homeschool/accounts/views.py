@@ -2,18 +2,20 @@ import json
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from homeschool.denied.authorizers import any_authorized, staff_authorized
+from homeschool.denied.decorators import authorize
+
 from .models import Account
 from .stripe_gateway import stripe_gateway
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def customers_dashboard(request):
     """Display info about current customers."""
     context = {
@@ -24,14 +26,14 @@ def customers_dashboard(request):
     return render(request, "accounts/customers_dashboard.html", context)
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def customer_detail(request, id):
     """Display info about a customer."""
     context = {"account": Account.objects.select_related("user").get(id=id)}
     return render(request, "accounts/customer_detail.html", context)
 
 
-@login_required
+@authorize(any_authorized)
 def subscriptions_index(request):
     """Show the subscription plan options."""
     context = {
