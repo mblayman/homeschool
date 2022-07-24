@@ -21,9 +21,6 @@ from homeschool.test import TestCase
 
 
 class TestCourseCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("courses:create")
-
     def test_get(self):
         user = self.make_user()
         SchoolYearFactory(school__admin=user)
@@ -217,10 +214,6 @@ class TestCourseCreateView(TestCase):
 
 
 class TestCourseDetailView(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:detail", pk=course.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -398,10 +391,6 @@ class TestCourseDetailView(TestCase):
 
 
 class TestCourseEditView(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:edit", pk=course.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -433,20 +422,6 @@ class TestCourseEditView(TestCase):
 
 
 class TestBulkDeleteCourseTasks(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:task_delete_bulk", pk=course.id)
-
-    def test_only_users_course(self):
-        """The user can only modify their own course tasks."""
-        user = self.make_user()
-        course = CourseFactory()
-
-        with self.login(user):
-            response = self.get("courses:task_delete_bulk", pk=course.id)
-
-        self.response_404(response)
-
     def test_ok(self):
         """The view renders ok."""
         user = self.make_user()
@@ -527,20 +502,6 @@ class TestBulkDeleteCourseTasks(TestCase):
 
 
 class TestCourseDeleteView(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:delete", pk=course.id)
-
-    def test_other_course(self):
-        """A user may not access another user's course."""
-        user = self.make_user()
-        course = CourseFactory()
-
-        with self.login(user):
-            response = self.get("courses:delete", pk=course.id)
-
-        assert response.status_code == 404
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -574,9 +535,6 @@ class TestCourseDeleteView(TestCase):
 
 
 class TestCourseCopySelectView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("courses:copy")
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -604,10 +562,6 @@ class TestCourseCopySelectView(TestCase):
 
 
 class TestCourseTaskCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:task_create", pk=course.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -869,16 +823,6 @@ class TestBulkCreateCourseTasks(TestCase):
         assert list(self.get_context("grade_levels")) == [grade_level]
         assert self.get_context("extra_forms") == "3"
 
-    def test_other_course(self):
-        """A user may not bulk create for another user's course."""
-        user = self.make_user()
-        course = CourseFactory()
-
-        with self.login(user):
-            response = self.get("courses:task_create_bulk", pk=course.id)
-
-        assert response.status_code == 404
-
     def test_post(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -973,24 +917,6 @@ class TestBulkCreateCourseTasks(TestCase):
 
 
 class TestGetCourseTaskBulkHx(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired(
-            "courses:task_create_bulk_hx", pk=course.id, last_form_number=42
-        )
-
-    def test_other_course(self):
-        """A user may not get bulk create forms for another user's course."""
-        user = self.make_user()
-        course = CourseFactory()
-
-        with self.login(user):
-            response = self.get(
-                "courses:task_create_bulk_hx", pk=course.id, last_form_number=2
-            )
-
-        assert response.status_code == 404
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1014,10 +940,6 @@ class TestGetCourseTaskBulkHx(TestCase):
 
 
 class TestCourseTaskUpdateView(TestCase):
-    def test_unauthenticated_access(self):
-        task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_edit", pk=task.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1026,15 +948,6 @@ class TestCourseTaskUpdateView(TestCase):
 
         with self.login(user):
             self.get_check_200("courses:task_edit", pk=task.id)
-
-    def test_get_other_user(self):
-        user = self.make_user()
-        task = CourseTaskFactory()
-
-        with self.login(user):
-            response = self.get("courses:task_edit", pk=task.id)
-
-        self.response_404(response)
 
     def test_post(self):
         user = self.make_user()
@@ -1197,16 +1110,6 @@ class TestCourseTaskDeleteView(TestCase):
         self.response_302(response)
         assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
 
-    def test_post_other_user(self):
-        user = self.make_user()
-        course = CourseFactory()
-        task = CourseTaskFactory(course=course)
-
-        with self.login(user):
-            response = self.get("courses:task_delete", course_id=course.id, pk=task.id)
-
-        self.response_404(response)
-
     def test_redirect_next(self):
         """The delete view redirects to next parameter if present."""
         next_url = "/another/location/"
@@ -1242,24 +1145,8 @@ class TestCourseTaskHxDeleteView(TestCase):
         self.response_200(response)
         assert "task_details" in response.context
 
-    def test_delete_other_user(self):
-        """Another user cannot delete a user's task."""
-        user = self.make_user()
-        course = CourseFactory()
-        task = CourseTaskFactory(course=course)
-
-        with self.login(user):
-            response = self.delete("courses:task_hx_delete", pk=task.id)
-
-        assert CourseTask.objects.count() == 1
-        self.response_404(response)
-
 
 class TestCourseTaskDown(TestCase):
-    def test_unauthenticated_access(self):
-        task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_down", pk=task.id)
-
     def test_post(self):
         """A task is moved down."""
         user = self.make_user()
@@ -1280,10 +1167,6 @@ class TestCourseTaskDown(TestCase):
 
 
 class TestCourseTaskUp(TestCase):
-    def test_unauthenticated_access(self):
-        task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_up", pk=task.id)
-
     def test_post(self):
         """A task is moved up."""
         user = self.make_user()
@@ -1304,10 +1187,6 @@ class TestCourseTaskUp(TestCase):
 
 
 class TestCourseResourceCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:resource_create", pk=course.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1341,10 +1220,6 @@ class TestCourseResourceCreateView(TestCase):
 
 
 class TestCourseResourceUpdateView(TestCase):
-    def test_unauthenticated_access(self):
-        resource = CourseResourceFactory()
-        self.assertLoginRequired("courses:resource_edit", pk=resource.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1355,16 +1230,6 @@ class TestCourseResourceUpdateView(TestCase):
 
         assert not self.get_context("create")
         assert self.get_context("course") == resource.course
-
-    def test_get_other_user(self):
-        """A user may not edit another user's resource."""
-        user = self.make_user()
-        resource = CourseResourceFactory()
-
-        with self.login(user):
-            response = self.get("courses:resource_edit", pk=resource.id)
-
-        self.response_404(response)
 
     def test_post(self):
         user = self.make_user()
@@ -1390,10 +1255,6 @@ class TestCourseResourceUpdateView(TestCase):
 
 
 class TestCourseResourceDeleteView(TestCase):
-    def test_unauthenticated_access(self):
-        resource = CourseResourceFactory()
-        self.assertLoginRequired("courses:resource_delete", pk=resource.id)
-
     def test_post(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1406,14 +1267,3 @@ class TestCourseResourceDeleteView(TestCase):
         assert CourseResource.objects.count() == 0
         self.response_302(response)
         assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
-
-    def test_post_other_user(self):
-        """A user may not delete another user's resource."""
-        user = self.make_user()
-        course = CourseFactory()
-        resource = CourseResourceFactory(course=course)
-
-        with self.login(user):
-            response = self.post("courses:resource_delete", pk=resource.id)
-
-        self.response_404(response)
