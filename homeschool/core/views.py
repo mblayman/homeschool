@@ -5,9 +5,8 @@ import datetime
 from dateutil.parser import parse
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
@@ -16,13 +15,14 @@ from django.utils import timezone
 
 # from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.generic import CreateView, RedirectView, TemplateView
+from django.views.generic import CreateView, TemplateView
 
 from homeschool.accounts.models import Account
 from homeschool.core.schedules import Week
 from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
-from homeschool.denied.decorators import allow
+from homeschool.denied.authorizers import staff_authorized
+from homeschool.denied.decorators import allow, authorize
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
@@ -589,13 +589,13 @@ class StartCourseTaskView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def office_dashboard(request):
     """For back office stuff"""
     return render(request, "core/office/dashboard.html", {})
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def office_onboarding(request):
     """Show how new users are doing in the onboarding process."""
     now = timezone.now()
@@ -644,25 +644,24 @@ def office_onboarding(request):
     return render(request, "core/office/onboarding.html", context)
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def boom(request):
     """This is for checking error handling (like Rollbar)."""
     raise Exception("Is this thing on?")
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def social_image(request):
     """Render a view to create any social images."""
     return render(request, "core/office/social_image.html", {})
 
 
+@allow
 def handle_500(request):
     """Handle 500 errors and display them."""
     return render(request, "500.html", {}, status=500)
 
 
-class FaviconView(RedirectView):
-    permanent = True
-
-    def get_redirect_url(self, *args, **kwargs):
-        return static("favicon/favicon.ico")
+@allow
+def favicon(request):
+    return HttpResponsePermanentRedirect(static("favicon/favicon.ico"))

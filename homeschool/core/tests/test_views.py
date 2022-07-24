@@ -1359,15 +1359,6 @@ class TestStartCourseTaskView(TestCase):
 
 
 class TestOfficeDashboard(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:dashboard")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -1377,15 +1368,6 @@ class TestOfficeDashboard(TestCase):
 
 
 class TestOfficeOnboarding(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:onboarding")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -1409,15 +1391,6 @@ class TestOfficeOnboarding(TestCase):
 
 
 class TestBoom(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot trigger the error page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:boom")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can trigger the error page."""
         user = UserFactory(is_staff=True)
@@ -1429,15 +1402,6 @@ class TestBoom(TestCase):
 
 
 class TestSocialImage(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:social_image")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)

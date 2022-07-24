@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import include, path, register_converter
 
 from homeschool.core.converters import HashidConverter
-from homeschool.core.views import FaviconView, handle_500
+from homeschool.core.views import favicon, handle_500
 from homeschool.denied.decorators import allow
 
 register_converter(HashidConverter, "hashid")
@@ -25,7 +25,7 @@ urlpatterns = [
     path("hijack/", include("hijack.urls")),
     path("stripe/", include("djstripe.urls", namespace="djstripe")),
     path("tz_detect/", include("tz_detect.urls")),
-    path("favicon.ico", FaviconView.as_view(), name="favicon"),
+    path("favicon.ico", favicon, name="favicon"),
 ]
 
 handler500 = handle_500
