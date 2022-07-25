@@ -1,11 +1,13 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.urls import reverse
+
+from homeschool.denied.authorizers import any_authorized
+from homeschool.denied.decorators import authorize
 
 from .models import Notification
 
 
-@login_required
+@authorize(any_authorized)
 def send_whats_new(request):
     """Redirect the user to the notification announcement's URL.
 
