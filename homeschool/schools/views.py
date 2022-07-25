@@ -1,47 +1,50 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
     ListView,
-    TemplateView,
     UpdateView,
-    View,
 )
 
+from homeschool.denied.authorizers import any_authorized
+from homeschool.denied.decorators import authorize
 from homeschool.students.models import Enrollment
 
+from .authorizers import (
+    grade_level_authorized,
+    school_break_authorized,
+    school_year_authorized,
+)
 from .forecaster import Forecaster
 from .forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
 from .models import GradeLevel, SchoolBreak, SchoolYear
 from .year_calendar import YearCalendar
 
 
-class CurrentSchoolYearView(LoginRequiredMixin, View):
+@authorize(any_authorized)
+def current_school_year(request):
     """Show the most relevant current school year.
 
     That may be an in-progress school year or a future school year
     if the user is in a planning phase.
     """
+    school_year = SchoolYear.get_current_year_for(request.user)
 
-    def get(self, request, *args, **kwargs):
-        user = self.request.user
-        school_year = SchoolYear.get_current_year_for(user)
+    # When there is no school year, send them to the list page
+    # so the user can see where to create a new school year.
+    if not school_year:
+        return HttpResponseRedirect(reverse("schools:school_year_list"))
 
-        # When there is no school year, send them to the list page
-        # so the user can see where to create a new school year.
-        if not school_year:
-            return HttpResponseRedirect(reverse("schools:school_year_list"))
-
-        return SchoolYearDetailView.as_view()(request, pk=school_year.id)
+    return SchoolYearDetailView.as_view()(request, pk=school_year.id)
 
 
-class SchoolYearCreateView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class SchoolYearCreateView(CreateView):
     template_name = "schools/schoolyear_form.html"
     form_class = SchoolYearForm
     initial = {
@@ -66,12 +69,9 @@ class SchoolYearCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class SchoolYearDetailView(LoginRequiredMixin, DetailView):
-    def get_queryset(self):
-        user = self.request.user
-        return SchoolYear.objects.filter(school__admin=user).prefetch_related(
-            "breaks", "grade_levels"
-        )
+@method_decorator(authorize(school_year_authorized), "dispatch")
+class SchoolYearDetailView(DetailView):
+    queryset = SchoolYear.objects.all().prefetch_related("breaks", "grade_levels")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -96,13 +96,11 @@ class SchoolYearDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class SchoolYearEditView(LoginRequiredMixin, UpdateView):
+@method_decorator(authorize(school_year_authorized), "dispatch")
+class SchoolYearEditView(UpdateView):
     form_class = SchoolYearForm
     template_name = "schools/schoolyear_form.html"
-
-    def get_queryset(self):
-        user = self.request.user
-        return SchoolYear.objects.filter(school=user.school)
+    queryset = SchoolYear.objects.all()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -126,9 +124,7 @@ class SchoolYearEditView(LoginRequiredMixin, UpdateView):
 
 def move_grade_level(user, grade_level_id, direction, next_url):
     """Move the grade level ordering in the specified direction."""
-    grade_level = get_object_or_404(
-        GradeLevel, pk=grade_level_id, school_year__school__admin=user
-    )
+    grade_level = GradeLevel.objects.get(pk=grade_level_id)
     getattr(grade_level, direction)()
 
     if next_url is None:
@@ -138,55 +134,49 @@ def move_grade_level(user, grade_level_id, direction, next_url):
     return HttpResponseRedirect(next_url)
 
 
-@login_required
 @require_POST
+@authorize(grade_level_authorized)
 def move_grade_level_down(request, pk):
     """Move a grade level down in the ordering."""
     return move_grade_level(request.user, pk, "down", request.GET.get("next"))
 
 
-@login_required
 @require_POST
+@authorize(grade_level_authorized)
 def move_grade_level_up(request, pk):
     """Move a grade level up in the ordering."""
     return move_grade_level(request.user, pk, "up", request.GET.get("next"))
 
 
-class SchoolYearForecastView(LoginRequiredMixin, TemplateView):
-    template_name = "schools/schoolyear_forecast.html"
+@authorize(school_year_authorized)
+def school_year_forecast(request, pk):
+    school_year = SchoolYear.objects.get(pk=pk)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        school_year = get_object_or_404(
-            SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
-        )
-        context["schoolyear"] = school_year
+    enrollments = Enrollment.objects.filter(
+        grade_level__school_year=school_year
+    ).select_related("grade_level", "student")
+    students = []
+    for enrollment in enrollments:
+        student_info = {"student": enrollment.student, "courses": []}
 
-        enrollments = Enrollment.objects.filter(
-            grade_level__school_year=school_year
-        ).select_related("grade_level", "student")
-        students = []
-        for enrollment in enrollments:
-            student_info = {"student": enrollment.student, "courses": []}
+        for course in enrollment.grade_level.get_ordered_courses():
+            forecaster = Forecaster()
+            course_info = {
+                "course": course,
+                "last_forecast_date": forecaster.get_last_forecast_date(
+                    enrollment.student, course
+                ),
+            }
+            student_info["courses"].append(course_info)
 
-            for course in enrollment.grade_level.get_ordered_courses():
-                forecaster = Forecaster()
-                course_info = {
-                    "course": course,
-                    "last_forecast_date": forecaster.get_last_forecast_date(
-                        enrollment.student, course
-                    ),
-                }
-                student_info["courses"].append(course_info)
+        students.append(student_info)
 
-            students.append(student_info)
-
-        context["students"] = students
-        return context
+    context = {"schoolyear": school_year, "students": students}
+    return render(request, "schools/schoolyear_forecast.html", context)
 
 
-class SchoolYearListView(LoginRequiredMixin, ListView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class SchoolYearListView(ListView):
     def get_queryset(self):
         user = self.request.user
         return SchoolYear.objects.filter(school__admin=user).order_by("-start_date")
@@ -197,17 +187,15 @@ class SchoolYearListView(LoginRequiredMixin, ListView):
         return context
 
 
-class GradeLevelCreateView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(school_year_authorized), "dispatch")
+class GradeLevelCreateView(CreateView):
     form_class = GradeLevelForm
     template_name = "schools/gradelevel_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["create"] = True
-        user = self.request.user
-        context["school_year"] = get_object_or_404(
-            SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
-        )
+        context["school_year"] = SchoolYear.objects.get(pk=self.kwargs["pk"])
         return context
 
     def get_success_url(self):
@@ -219,12 +207,9 @@ class GradeLevelCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class GradeLevelDetailView(LoginRequiredMixin, DetailView):
-    def get_queryset(self):
-        user = self.request.user
-        return GradeLevel.objects.filter(
-            school_year__school__admin=user
-        ).select_related("school_year")
+@method_decorator(authorize(grade_level_authorized), "dispatch")
+class GradeLevelDetailView(DetailView):
+    queryset = GradeLevel.objects.all().select_related("school_year")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -235,15 +220,11 @@ class GradeLevelDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator(authorize(grade_level_authorized), "dispatch")
+class GradeLevelUpdateView(UpdateView):
     form_class = GradeLevelForm
     template_name = "schools/gradelevel_form.html"
-
-    def get_queryset(self):
-        user = self.request.user
-        return GradeLevel.objects.filter(
-            school_year__school=user.school
-        ).select_related("school_year")
+    queryset = GradeLevel.objects.all().select_related("school_year")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -261,9 +242,7 @@ class GradeLevelUpdateView(LoginRequiredMixin, UpdateView):
 
 def move_course(user, grade_level_id, course_id, direction, next_url):
     """Move the course ordering in the specified direction."""
-    grade_level = get_object_or_404(
-        GradeLevel, pk=grade_level_id, school_year__school__admin=user
-    )
+    grade_level = GradeLevel.objects.get(pk=grade_level_id)
     course = grade_level.courses.get(id=course_id)
     getattr(grade_level, direction)(course)
 
@@ -272,8 +251,8 @@ def move_course(user, grade_level_id, course_id, direction, next_url):
     return HttpResponseRedirect(next_url)
 
 
-@login_required
 @require_POST
+@authorize(grade_level_authorized)
 def move_course_down(request, pk, course_id):
     """Move a course down in the ordering."""
     return move_course(
@@ -281,8 +260,8 @@ def move_course_down(request, pk, course_id):
     )
 
 
-@login_required
 @require_POST
+@authorize(grade_level_authorized)
 def move_course_up(request, pk, course_id):
     """Move a course up in the ordering."""
     return move_course(
@@ -290,17 +269,15 @@ def move_course_up(request, pk, course_id):
     )
 
 
-class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(school_year_authorized), "dispatch")
+class SchoolBreakCreateView(CreateView):
     form_class = SchoolBreakForm
     template_name = "schools/schoolbreak_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["create"] = True
-        user = self.request.user
-        school_year = get_object_or_404(
-            SchoolYear.objects.filter(school__admin=user), pk=self.kwargs["pk"]
-        )
+        school_year = SchoolYear.objects.get(pk=self.kwargs["pk"])
         context["school_year"] = school_year
         context["students"] = Enrollment.get_students_for_school_year(school_year)
         return context
@@ -314,15 +291,11 @@ class SchoolBreakCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator(authorize(school_break_authorized), "dispatch")
+class SchoolBreakUpdateView(UpdateView):
     form_class = SchoolBreakForm
     template_name = "schools/schoolbreak_form.html"
-
-    def get_queryset(self):
-        user = self.request.user
-        return SchoolBreak.objects.filter(
-            school_year__school=user.school
-        ).select_related("school_year")
+    queryset = SchoolBreak.objects.all().select_related("school_year")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -347,12 +320,9 @@ class SchoolBreakUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class SchoolBreakDeleteView(LoginRequiredMixin, DeleteView):
-    def get_queryset(self):
-        user = self.request.user
-        return SchoolBreak.objects.filter(
-            school_year__school=user.school
-        ).select_related("school_year")
+@method_decorator(authorize(school_break_authorized), "dispatch")
+class SchoolBreakDeleteView(DeleteView):
+    queryset = SchoolBreak.objects.all().select_related("school_year")
 
     def get_success_url(self):
         return reverse("schools:school_year_detail", args=[self.object.school_year.id])
