@@ -1,23 +1,27 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.views.generic import CreateView, DeleteView, FormView, TemplateView
 
 from homeschool.core.view_helpers import flash_info
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
+from homeschool.denied.authorizers import any_authorized
+from homeschool.denied.decorators import authorize
+from homeschool.schools.authorizers import school_year_authorized
 from homeschool.schools.models import GradeLevel, SchoolYear
 
+from .authorizers import enrollment_authorized, student_authorized
 from .forms import CourseworkForm, EnrollmentForm, GradeForm
-from .mixins import StudentMixin
 from .models import Coursework, Enrollment, Grade, Student
 
 
-@login_required
+@authorize(any_authorized)
 def students_index(request):
     user = request.user
     school_year = SchoolYear.get_current_year_for(user)
@@ -46,6 +50,7 @@ def students_index(request):
     return render(request, "students/index.html", context)
 
 
+@method_decorator(authorize(any_authorized), "dispatch")
 class StudentCreateView(LoginRequiredMixin, CreateView):
     template_name = "students/student_form.html"
     model = Student
@@ -68,9 +73,14 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView):
+@method_decorator(authorize(student_authorized), "dispatch")
+class CourseworkFormView(CourseTaskMixin, FormView):
     template_name = "students/coursework_form.html"
     form_class = CourseworkForm
+
+    @cached_property
+    def student(self):
+        return Student.objects.get(pk=self.kwargs["pk"])
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -99,9 +109,14 @@ class CourseworkFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, Form
         return super().form_valid(form)
 
 
-class GradeFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView):
+@method_decorator(authorize(student_authorized), "dispatch")
+class GradeFormView(CourseTaskMixin, FormView):
     template_name = "students/grade_form.html"
     form_class = GradeForm
+
+    @cached_property
+    def student(self):
+        return Student.objects.get(pk=self.kwargs["pk"])
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -133,7 +148,8 @@ class GradeFormView(LoginRequiredMixin, StudentMixin, CourseTaskMixin, FormView)
         return super().form_valid(form)
 
 
-class GradeView(LoginRequiredMixin, TemplateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class GradeView(TemplateView):
     """Grade any graded work for a set a students."""
 
     template_name = "students/grade.html"
@@ -256,15 +272,13 @@ class GradeView(LoginRequiredMixin, TemplateView):
         return scores
 
 
-@login_required
-def enrollment_create(request, school_year_id):
-    school_year = get_object_or_404(
-        SchoolYear, pk=school_year_id, school__admin=request.user
-    )
+@authorize(school_year_authorized)
+def enrollment_create(request, pk):
+    school_year = SchoolYear.objects.get(pk=pk)
     grade_levels = GradeLevel.objects.filter(school_year=school_year)
     if not grade_levels:
         message = "You need to create a grade level for a student to enroll in."
-        url = reverse("schools:grade_level_create", args=[school_year_id])
+        url = reverse("schools:grade_level_create", args=[pk])
         return flash_info(request, message, url)
 
     students = Student.objects.for_school(request.user.school)
@@ -274,7 +288,7 @@ def enrollment_create(request, school_year_id):
 
     enrollments = Enrollment.objects.all_in_year(school_year)
     if len(students) == len(enrollments):
-        url = reverse("schools:school_year_detail", args=[school_year_id])
+        url = reverse("schools:school_year_detail", args=[pk])
         return flash_info(request, "All students are enrolled in the school year.", url)
 
     enrolled_students = {enrollment.student for enrollment in enrollments}
@@ -284,7 +298,7 @@ def enrollment_create(request, school_year_id):
         form = EnrollmentForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            url = reverse("schools:school_year_detail", args=[school_year_id])
+            url = reverse("schools:school_year_detail", args=[pk])
             return HttpResponseRedirect(url)
     else:
         form = EnrollmentForm(user=request.user)
@@ -298,12 +312,12 @@ def enrollment_create(request, school_year_id):
     return render(request, "students/enrollment_form.html", context)
 
 
-@login_required
+@authorize(student_authorized)
 def student_enrollment_create(request, pk, school_year_id):
     """Enroll a student with a simplified form that only presents grade levels."""
     user = request.user
     school_year = get_object_or_404(SchoolYear, pk=school_year_id, school__admin=user)
-    student = get_object_or_404(Student, pk=pk, school__admin=user)
+    student = Student.objects.get(pk=pk)
 
     if request.method == "POST":
         form = EnrollmentForm(request.POST, user=user)
@@ -323,12 +337,9 @@ def student_enrollment_create(request, pk, school_year_id):
     return render(request, "students/student_enrollment_form.html", context)
 
 
-class EnrollmentDeleteView(LoginRequiredMixin, DeleteView):
-    def get_queryset(self):
-        user = self.request.user
-        return Enrollment.objects.filter(student__school=user.school).select_related(
-            "student", "grade_level"
-        )
+@method_decorator(authorize(enrollment_authorized), "dispatch")
+class EnrollmentDeleteView(DeleteView):
+    queryset = Enrollment.objects.all().select_related("student", "grade_level")
 
     def get_success_url(self):
         return reverse("students:index")

@@ -801,10 +801,6 @@ class TestCourseTaskCreateView(TestCase):
 
 
 class TestBulkCreateCourseTasks(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        self.assertLoginRequired("courses:task_create_bulk", pk=course.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1092,11 +1088,6 @@ class TestCourseTaskUpdateView(TestCase):
 
 
 class TestCourseTaskDeleteView(TestCase):
-    def test_unauthenticated_access(self):
-        course = CourseFactory()
-        task = CourseTaskFactory(course=course)
-        self.assertLoginRequired("courses:task_delete", course_id=course.id, pk=task.id)
-
     def test_post(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1128,10 +1119,6 @@ class TestCourseTaskDeleteView(TestCase):
 
 
 class TestCourseTaskHxDeleteView(TestCase):
-    def test_unauthenticated_access(self):
-        task = CourseTaskFactory()
-        self.assertLoginRequired("courses:task_hx_delete", pk=task.id)
-
     def test_delete(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
