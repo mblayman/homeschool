@@ -46,16 +46,11 @@ def _allow_many(view_func: list | tuple) -> None:
     Recursively allow any view function in the included routes.
     """
     urlpatterns: Iterable = []
-    if isinstance(view_func, list):
-        urlpatterns = view_func
-    elif len(view_func) == 3:
-        # Sniff out whether this is like the return of `include` or just a 3-tuple.
-        if hasattr(view_func[0], "urlpatterns"):
-            urlpatterns = view_func[0].urlpatterns
-        else:
-            urlpatterns = view_func[0]
+    # Sniff out whether this is like the return of `include` or just a 3-tuple.
+    if view_func and hasattr(view_func[0], "urlpatterns"):
+        urlpatterns = view_func[0].urlpatterns
     else:
-        urlpatterns = view_func
+        urlpatterns = view_func[0]
 
     for url in urlpatterns:
         if isinstance(url, URLPattern):
@@ -67,8 +62,6 @@ def _allow_many(view_func: list | tuple) -> None:
                 url.callback.__denied_exempt__ = True
         elif isinstance(url, URLResolver):
             allow((url.urlconf_module, None, None))
-        else:
-            allow(url)
 
 
 def authorize(authorizer: Callable) -> Callable:
