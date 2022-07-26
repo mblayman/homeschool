@@ -39,7 +39,6 @@ class DeniedMiddleware:
         ):
             return None
 
-        # TODO: test login exempt
         if not request.user.is_authenticated and request.path not in LOGIN_URLS:
             return redirect_to_login(request.get_full_path())
 
