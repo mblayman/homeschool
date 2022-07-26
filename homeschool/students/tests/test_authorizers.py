@@ -4,7 +4,7 @@ from homeschool.test import TestCase
 
 
 class TestEnrollmentAuthorized(TestCase):
-    def test_permitted_course(self):
+    def test_permitted_enrollment(self):
         """An enrollment is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -14,7 +14,7 @@ class TestEnrollmentAuthorized(TestCase):
 
         assert enrollment_authorized(request, pk=enrollment.pk)
 
-    def test_denied_course(self):
+    def test_denied_enrollment(self):
         """Another enrollment is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -24,7 +24,7 @@ class TestEnrollmentAuthorized(TestCase):
 
 
 class TestStudentAuthorized(TestCase):
-    def test_permitted_course(self):
+    def test_permitted_student(self):
         """A student is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -32,7 +32,7 @@ class TestStudentAuthorized(TestCase):
 
         assert student_authorized(request, pk=student.pk)
 
-    def test_denied_course(self):
+    def test_denied_student(self):
         """Another student is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()

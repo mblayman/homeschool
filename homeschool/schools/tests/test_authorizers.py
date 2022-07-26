@@ -12,7 +12,7 @@ from homeschool.test import TestCase
 
 
 class TestGradeLevelAuthorized(TestCase):
-    def test_permitted_course(self):
+    def test_permitted_grade_level(self):
         """A grade level is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -20,7 +20,7 @@ class TestGradeLevelAuthorized(TestCase):
 
         assert grade_level_authorized(request, pk=grade_level.pk)
 
-    def test_denied_course(self):
+    def test_denied_grade_level(self):
         """Another grade level is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -30,7 +30,7 @@ class TestGradeLevelAuthorized(TestCase):
 
 
 class TestSchoolBreakAuthorized(TestCase):
-    def test_permitted_course(self):
+    def test_permitted_school_break(self):
         """A school break is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -38,7 +38,7 @@ class TestSchoolBreakAuthorized(TestCase):
 
         assert school_break_authorized(request, pk=school_break.pk)
 
-    def test_denied_course(self):
+    def test_denied_school_break(self):
         """Another school break is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -48,7 +48,7 @@ class TestSchoolBreakAuthorized(TestCase):
 
 
 class TestSchoolYearAuthorized(TestCase):
-    def test_permitted_course(self):
+    def test_permitted_school_year(self):
         """A school year is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
@@ -56,7 +56,7 @@ class TestSchoolYearAuthorized(TestCase):
 
         assert school_year_authorized(request, pk=school_year.pk)
 
-    def test_denied_course(self):
+    def test_denied_school_year(self):
         """Another school year is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
