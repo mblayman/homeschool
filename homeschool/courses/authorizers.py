@@ -17,7 +17,7 @@ def task_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
     grade_levels = GradeLevel.objects.filter(school_year__school__admin=request.user)
     return CourseTask.objects.filter(
         course__grade_levels__in=grade_levels, pk=view_kwargs.get("pk")
-    )
+    ).exists()
 
 
 def resource_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
@@ -25,4 +25,4 @@ def resource_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
     grade_levels = GradeLevel.objects.filter(school_year__school__admin=request.user)
     return CourseResource.objects.filter(
         course__grade_levels__in=grade_levels, pk=view_kwargs.get("pk")
-    )
+    ).exists()
