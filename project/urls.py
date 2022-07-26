@@ -22,8 +22,8 @@ urlpatterns = [
     path("subscriptions/", include("homeschool.accounts.subscriptions_urls")),
     path("teachers/", include("homeschool.teachers.urls")),
     path("accounts/", allow(include("allauth.urls"))),
-    path("hijack/", include("hijack.urls")),
-    path("stripe/", include("djstripe.urls", namespace="djstripe")),
+    path("hijack/", allow(include("hijack.urls"))),
+    path("stripe/", allow(include("djstripe.urls", namespace="djstripe"))),
     path("tz_detect/", allow(include("tz_detect.urls"))),
     path("favicon.ico", favicon, name="favicon"),
 ]
@@ -32,4 +32,6 @@ handler500 = handle_500
 
 # Enable the debug toolbar only in DEBUG mode.
 if settings.DEBUG and settings.DEBUG_TOOLBAR:
-    urlpatterns = [path("__debug__/", include("debug_toolbar.urls"))] + urlpatterns
+    urlpatterns = [
+        path("__debug__/", allow(include("debug_toolbar.urls")))
+    ] + urlpatterns
