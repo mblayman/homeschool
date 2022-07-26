@@ -63,14 +63,14 @@ class TestAbout(TestCase):
         self.get_check_200("core:about")
 
 
-class TestPrivacy(TestCase):
-    def test_ok(self):
-        self.get_check_200("core:privacy")
-
-
 class TestTerms(TestCase):
     def test_ok(self):
         self.get_check_200("core:terms")
+
+
+class TestPrivacy(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:privacy")
 
 
 class TestHelp(TestCase):
@@ -110,9 +110,6 @@ class TestDashboard(TestCase):
             self.get_check_200("core:dashboard")
 
         assert self.get_context("nav_link") == "dashboard"
-
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:dashboard")
 
     @mock.patch("homeschool.users.models.timezone")
     def test_has_days(self, timezone):
@@ -657,9 +654,6 @@ class TestDashboard(TestCase):
 
 
 class TestDaily(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:daily")
-
     def test_ok(self):
         user = self.make_user()
         today = timezone.localdate()
@@ -1076,9 +1070,6 @@ class TestDaily(TestCase):
 
 
 class TestStartView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:start")
-
     def test_ok(self):
         user = self.make_user()
 
@@ -1102,9 +1093,6 @@ class TestStartView(TestCase):
 
 
 class TestStartSchoolYearView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:start-school-year")
-
     def test_ok(self):
         user = self.make_user()
 
@@ -1179,9 +1167,6 @@ class TestStartSchoolYearView(TestCase):
 
 
 class TestStartGradeLevelView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:start-grade-level")
-
     def test_ok(self):
         user = self.make_user()
 
@@ -1245,9 +1230,6 @@ class TestStartGradeLevelView(TestCase):
 
 
 class TestStartCourseView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:start-course")
-
     def test_ok(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1299,9 +1281,6 @@ class TestStartCourseView(TestCase):
 
 
 class TestStartCourseTaskView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("core:start-course-task")
-
     def test_ok(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -1359,15 +1338,6 @@ class TestStartCourseTaskView(TestCase):
 
 
 class TestOfficeDashboard(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:dashboard")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -1377,15 +1347,6 @@ class TestOfficeDashboard(TestCase):
 
 
 class TestOfficeOnboarding(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:onboarding")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -1409,15 +1370,6 @@ class TestOfficeOnboarding(TestCase):
 
 
 class TestBoom(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot trigger the error page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:boom")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can trigger the error page."""
         user = UserFactory(is_staff=True)
@@ -1429,15 +1381,6 @@ class TestBoom(TestCase):
 
 
 class TestSocialImage(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:social_image")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)

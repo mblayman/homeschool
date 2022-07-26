@@ -4,9 +4,6 @@ from homeschool.test import TestCase
 
 
 class TestSendToWhatsNew(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("notifications:whats_new")
-
     def test_get(self):
         user = self.make_user()
         notification = NotificationFactory(user=user)

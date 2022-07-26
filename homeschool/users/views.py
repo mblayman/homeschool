@@ -1,14 +1,15 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
+from homeschool.denied.authorizers import any_authorized
+from homeschool.denied.decorators import authorize
 from homeschool.referrals.forms import ReferralForm
 
 from .forms import ProfileForm
 
 
-@login_required
+@authorize(any_authorized)
 def settings_dashboard(request):
     """A dashboard of all the user's settings."""
     if request.method == "POST":

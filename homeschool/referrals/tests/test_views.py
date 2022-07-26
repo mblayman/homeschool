@@ -5,9 +5,6 @@ from homeschool.test import TestCase
 
 
 class TestReferralCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("referrals:create")
-
     def test_post(self):
         user = self.make_user()
         data = {"email": "someone@somewhere.com"}

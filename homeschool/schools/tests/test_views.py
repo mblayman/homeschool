@@ -13,9 +13,6 @@ from homeschool.test import TestCase
 
 
 class TestCurrentSchoolYearView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("schools:current_school_year")
-
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
@@ -67,65 +64,7 @@ class TestCurrentSchoolYearView(TestCase):
         self.response_302(response)
 
 
-class TestSchoolYearDetailView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("schools:school_year_detail", pk=school_year.id)
-
-    def test_get(self):
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-
-        with self.login(user):
-            self.get_check_200("schools:school_year_detail", pk=school_year.id)
-
-        assert self.get_context("nav_link") == "school_year"
-        assert self.get_context("is_in_school_year")
-
-    def test_only_school_year_for_user(self):
-        """A user may only view their own school years."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-
-        with self.login(user):
-            response = self.get("schools:school_year_detail", pk=school_year.id)
-
-        self.response_404(response)
-
-    def test_show_all_months(self):
-        """When the option is provided, the page shows all calendar months."""
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-
-        with self.login(user):
-            self.get_check_200(
-                "schools:school_year_detail",
-                pk=school_year.id,
-                data={"show_all_months": "1"},
-            )
-
-        assert len(self.get_context("calendar")["months"]) == 13
-
-    def test_grade_level_info(self):
-        """The context has the grade level structure expected by the template."""
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-        grade_level = GradeLevelFactory(school_year=school_year)
-        course = CourseFactory(grade_levels=[grade_level])
-        EnrollmentFactory(grade_level=grade_level)
-
-        with self.login(user):
-            self.get_check_200("schools:school_year_detail", pk=school_year.id)
-
-        assert self.get_context("grade_levels") == [
-            {"grade_level": grade_level, "courses": [course], "has_students": True}
-        ]
-
-
 class TestSchoolYearCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("schools:school_year_create")
-
     def test_get(self):
         user = self.make_user()
 
@@ -162,27 +101,54 @@ class TestSchoolYearCreateView(TestCase):
         )
 
 
-class TestSchoolYearEditView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("schools:school_year_edit", pk=school_year.id)
+class TestSchoolYearDetailView(TestCase):
+    def test_get(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
 
+        with self.login(user):
+            self.get_check_200("schools:school_year_detail", pk=school_year.id)
+
+        assert self.get_context("nav_link") == "school_year"
+        assert self.get_context("is_in_school_year")
+
+    def test_show_all_months(self):
+        """When the option is provided, the page shows all calendar months."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200(
+                "schools:school_year_detail",
+                pk=school_year.id,
+                data={"show_all_months": "1"},
+            )
+
+        assert len(self.get_context("calendar")["months"]) == 13
+
+    def test_grade_level_info(self):
+        """The context has the grade level structure expected by the template."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_levels=[grade_level])
+        EnrollmentFactory(grade_level=grade_level)
+
+        with self.login(user):
+            self.get_check_200("schools:school_year_detail", pk=school_year.id)
+
+        assert self.get_context("grade_levels") == [
+            {"grade_level": grade_level, "courses": [course], "has_students": True}
+        ]
+
+
+class TestSchoolYearEditView(TestCase):
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
 
         with self.login(user):
             self.get_check_200("schools:school_year_edit", pk=school_year.id)
-
-    def test_only_school_year_for_user(self):
-        """A user may only edit their own school years."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-
-        with self.login(user):
-            response = self.get("schools:school_year_edit", pk=school_year.id)
-
-        self.response_404(response)
 
     def test_post(self):
         """A user can update the school year."""
@@ -212,10 +178,6 @@ class TestSchoolYearEditView(TestCase):
 
 
 class TestGradeLevelDown(TestCase):
-    def test_unauthenticated_access(self):
-        grade_level = GradeLevelFactory()
-        self.assertLoginRequired("schools:grade_level_down", pk=grade_level.id)
-
     def test_post(self):
         """A grade level is moved down."""
         user = self.make_user()
@@ -234,17 +196,6 @@ class TestGradeLevelDown(TestCase):
             first_grade_level,
         ]
 
-    def test_other_school_year(self):
-        """A user may not edit the order of another school year's grade levels."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-        first_grade_level = GradeLevelFactory(school_year=school_year)
-
-        with self.login(user):
-            response = self.post("schools:grade_level_down", pk=first_grade_level.id)
-
-        self.response_404(response)
-
     def test_next_url(self):
         """The view redirects to the next URL when present."""
         user = self.make_user()
@@ -262,10 +213,6 @@ class TestGradeLevelDown(TestCase):
 
 
 class TestGradeLevelUp(TestCase):
-    def test_unauthenticated_access(self):
-        grade_level = GradeLevelFactory()
-        self.assertLoginRequired("schools:grade_level_up", pk=grade_level.id)
-
     def test_post(self):
         """A grade level is moved up."""
         user = self.make_user()
@@ -284,17 +231,6 @@ class TestGradeLevelUp(TestCase):
             first_grade_level,
         ]
 
-    def test_other_school_year(self):
-        """A user may not edit the order of another school year's grade levels."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-        first_grade_level = GradeLevelFactory(school_year=school_year)
-
-        with self.login(user):
-            response = self.post("schools:grade_level_up", pk=first_grade_level.id)
-
-        self.response_404(response)
-
     def test_next_url(self):
         """The view redirects to the next URL when present."""
         user = self.make_user()
@@ -312,10 +248,6 @@ class TestGradeLevelUp(TestCase):
 
 
 class TestSchoolYearForecastView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("schools:school_year_forecast", pk=school_year.id)
-
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
@@ -338,21 +270,8 @@ class TestSchoolYearForecastView(TestCase):
             }
         ]
 
-    def test_not_found_for_other_school(self):
-        """A user cannot view the forecast of another user's school year."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-
-        with self.login(user):
-            response = self.get("schools:school_year_forecast", pk=school_year.id)
-
-        self.response_404(response)
-
 
 class TestSchoolYearListView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("schools:school_year_list")
-
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
@@ -374,41 +293,7 @@ class TestSchoolYearListView(TestCase):
         assert school_year not in self.get_context("schoolyear_list")
 
 
-class TestGradeLevelDetailView(TestCase):
-    def test_unauthenticated_access(self):
-        grade_level = GradeLevelFactory()
-        self.assertLoginRequired("schools:grade_level_detail", pk=grade_level.id)
-
-    def test_get(self):
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        enrollment = EnrollmentFactory(
-            student__school=user.school, grade_level=grade_level
-        )
-
-        with self.login(user):
-            self.get_check_200("schools:grade_level_detail", pk=grade_level.id)
-
-        assert self.get_context("school_year") == grade_level.school_year
-        assert list(self.get_context("enrollments")) == [enrollment]
-        assert not self.get_context("show_enroll_cta")
-
-    def test_only_users_grade_levels(self):
-        """A user can only view their own grade levels."""
-        user = self.make_user()
-        grade_level = GradeLevelFactory()
-
-        with self.login(user):
-            response = self.get("schools:grade_level_detail", pk=grade_level.id)
-
-        self.response_404(response)
-
-
 class TestGradeLevelCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("schools:grade_level_create", pk=school_year.id)
-
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
@@ -437,22 +322,24 @@ class TestGradeLevelCreateView(TestCase):
             "schools:school_year_detail", pk=school_year.id
         )
 
-    def test_not_found_for_other_school(self):
-        """A user cannot add a grade level to another user's school year."""
+
+class TestGradeLevelDetailView(TestCase):
+    def test_get(self):
         user = self.make_user()
-        school_year = SchoolYearFactory()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level=grade_level
+        )
 
         with self.login(user):
-            response = self.get("schools:grade_level_create", pk=school_year.id)
+            self.get_check_200("schools:grade_level_detail", pk=grade_level.id)
 
-        self.response_404(response)
+        assert self.get_context("school_year") == grade_level.school_year
+        assert list(self.get_context("enrollments")) == [enrollment]
+        assert not self.get_context("show_enroll_cta")
 
 
 class TestGradeLevelUpdateView(TestCase):
-    def test_unauthenticated_access(self):
-        grade_level = GradeLevelFactory()
-        self.assertLoginRequired("schools:grade_level_edit", pk=grade_level.id)
-
     def test_get(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -480,25 +367,8 @@ class TestGradeLevelUpdateView(TestCase):
             "schools:school_year_detail", pk=grade_level.school_year.id
         )
 
-    def test_only_users_grade_levels(self):
-        """A user can only edit their own grade levels."""
-        user = self.make_user()
-        grade_level = GradeLevelFactory()
-
-        with self.login(user):
-            response = self.get("schools:grade_level_edit", pk=grade_level.id)
-
-        self.response_404(response)
-
 
 class TestCourseDown(TestCase):
-    def test_unauthenticated_access(self):
-        grade_level = GradeLevelFactory()
-        course = CourseFactory(grade_levels=[grade_level])
-        self.assertLoginRequired(
-            "schools:course_down", pk=grade_level.id, course_id=course.id
-        )
-
     def test_post(self):
         """A course is moved down."""
         user = self.make_user()
@@ -535,13 +405,6 @@ class TestCourseDown(TestCase):
 
 
 class TestCourseUp(TestCase):
-    def test_unauthenticated_access(self):
-        grade_level = GradeLevelFactory()
-        course = CourseFactory(grade_levels=[grade_level])
-        self.assertLoginRequired(
-            "schools:course_up", pk=grade_level.id, course_id=course.id
-        )
-
     def test_post(self):
         """A course is moved up."""
         user = self.make_user()
@@ -578,10 +441,6 @@ class TestCourseUp(TestCase):
 
 
 class TestSchoolBreakCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("schools:school_break_create", pk=school_year.id)
-
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school=user.school)
@@ -618,16 +477,6 @@ class TestSchoolBreakCreateView(TestCase):
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", pk=school_year.id
         )
-
-    def test_not_found_for_other_school(self):
-        """A user cannot add a school break to another user's school year."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-
-        with self.login(user):
-            response = self.get("schools:school_break_create", pk=school_year.id)
-
-        self.response_404(response)
 
     def test_no_school(self):
         """A missing school is an error."""
@@ -674,10 +523,6 @@ class TestSchoolBreakCreateView(TestCase):
 
 
 class TestSchoolBreakUpdateView(TestCase):
-    def test_unauthenticated_access(self):
-        school_break = SchoolBreakFactory()
-        self.assertLoginRequired("schools:school_break_edit", pk=school_break.id)
-
     def test_get(self):
         user = self.make_user()
         school_break = SchoolBreakFactory(school_year__school=user.school)
@@ -725,22 +570,8 @@ class TestSchoolBreakUpdateView(TestCase):
             "schools:school_year_detail", pk=school_break.school_year.id
         )
 
-    def test_only_users_breaks(self):
-        """A user can only edit their own school breaks."""
-        user = self.make_user()
-        school_break = SchoolBreakFactory()
-
-        with self.login(user):
-            response = self.get("schools:school_break_edit", pk=school_break.id)
-
-        self.response_404(response)
-
 
 class TestSchoolBreakDeleteView(TestCase):
-    def test_unauthenticated_access(self):
-        school_break = SchoolBreakFactory()
-        self.assertLoginRequired("schools:school_break_delete", pk=school_break.id)
-
     def test_post(self):
         user = self.make_user()
         school_break = SchoolBreakFactory(school_year__school=user.school)
@@ -753,13 +584,3 @@ class TestSchoolBreakDeleteView(TestCase):
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", pk=school_break.school_year.id
         )
-
-    def test_post_other_user(self):
-        """A user may not delete another user's break."""
-        user = self.make_user()
-        school_break = SchoolBreakFactory()
-
-        with self.login(user):
-            response = self.post("schools:school_break_delete", pk=school_break.id)
-
-        self.response_404(response)

@@ -1,13 +1,12 @@
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.forms import modelformset_factory
-from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import (
@@ -19,12 +18,15 @@ from django.views.generic import (
 )
 from django_htmx.http import HttpResponseClientRedirect
 
+from homeschool.denied.authorizers import any_authorized
+from homeschool.denied.decorators import authorize
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.forecaster import Forecaster
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade
 
+from .authorizers import course_authorized, resource_authorized, task_authorized
 from .forms import (
     CourseForm,
     CourseResourceForm,
@@ -32,36 +34,6 @@ from .forms import (
     CourseTaskForm,
 )
 from .models import Course, CourseResource, CourseTask
-
-
-class CourseMixin:
-    """Get a course from the pk URL arg."""
-
-    if TYPE_CHECKING:  # pragma: no cover
-        kwargs: dict = {}
-        request = HttpRequest()
-
-    @cached_property
-    def course(self):
-        course_id = self.kwargs["pk"]
-        grade_levels = GradeLevel.objects.filter(
-            school_year__school__admin=self.request.user
-        )
-        return get_object_or_404(
-            Course.objects.filter(grade_levels__in=grade_levels).distinct(),
-            id=course_id,
-        )
-
-
-def get_course(user, pk):
-    """Get the course if the user has access.
-
-    This is equivalent to the mixin and exists for use with the function-based view.
-    """
-    grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-    return get_object_or_404(
-        Course.objects.filter(grade_levels__in=grade_levels).distinct(), pk=pk
-    )
 
 
 def get_course_task_queryset(user):
@@ -74,7 +46,7 @@ def get_course_task_queryset(user):
     )
 
 
-class CourseCreateView(LoginRequiredMixin, CreateView):
+class CourseCreateView(CreateView):
     template_name = "courses/course_form.html"
     form_class = CourseForm
     initial = {
@@ -85,6 +57,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         "friday": True,
     }
 
+    @method_decorator(authorize(any_authorized))
     def dispatch(self, *args, **kwargs):
         try:
             return super().dispatch(*args, **kwargs)
@@ -171,22 +144,11 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
         return None
 
 
-class CourseQuerySetMixin:
-    if TYPE_CHECKING:  # pragma: no cover
-        request = HttpRequest()
-
-    def get_course_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return Course.objects.filter(grade_levels__in=grade_levels).distinct()
-
-
-class CourseDetailView(LoginRequiredMixin, CourseQuerySetMixin, DetailView):
-    def get_queryset(self):
-        course_qs = self.get_course_queryset()
-        return course_qs.prefetch_related(
-            "resources", "course_tasks__grade_level", "course_tasks__graded_work"
-        )
+@method_decorator(authorize(course_authorized), "dispatch")
+class CourseDetailView(DetailView):
+    queryset = Course.objects.all().prefetch_related(
+        "resources", "course_tasks__grade_level", "course_tasks__graded_work"
+    )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -311,12 +273,11 @@ def _get_forecasts(students, course):
     return forecasts
 
 
-class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):
+@method_decorator(authorize(course_authorized), "dispatch")
+class CourseEditView(UpdateView):
     form_class = CourseForm
     template_name = "courses/course_form.html"
-
-    def get_queryset(self):
-        return self.get_course_queryset()
+    queryset = Course.objects.all()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -340,9 +301,9 @@ class CourseEditView(LoginRequiredMixin, CourseQuerySetMixin, UpdateView):
         return reverse("courses:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class CourseDeleteView(LoginRequiredMixin, CourseQuerySetMixin, DeleteView):
-    def get_queryset(self):
-        return self.get_course_queryset()
+@method_decorator(authorize(course_authorized), "dispatch")
+class CourseDeleteView(DeleteView):
+    queryset = Course.objects.all()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -365,7 +326,8 @@ class CourseDeleteView(LoginRequiredMixin, CourseQuerySetMixin, DeleteView):
         )
 
 
-class CourseCopySelectView(LoginRequiredMixin, TemplateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class CourseCopySelectView(TemplateView):
     """Display all courses so that the user can select one to copy."""
 
     template_name = "courses/copy.html"
@@ -402,9 +364,14 @@ class CourseCopySelectView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
+@method_decorator(authorize(course_authorized), "dispatch")
+class CourseTaskCreateView(CreateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
+
+    @cached_property
+    def course(self):
+        return Course.objects.get(pk=self.kwargs["pk"])
 
     @cached_property
     def previous_task(self):
@@ -494,14 +461,14 @@ class CourseTaskCreateView(LoginRequiredMixin, CourseMixin, CreateView):
             previous_task = form.instance
 
 
-@login_required
+@authorize(course_authorized)
 def bulk_create_course_tasks(request, pk):
     """Bulk create course tasks.
 
     This is using a function-based view because the CBV beat me into submission.
     For some reason, the function view worked where the CBV did not.
     """
-    course = get_course(request.user, pk)
+    course = Course.objects.get(pk=pk)
     previous_task = CourseTask.get_by_id(
         request.user, request.GET.get("previous_task", "")
     )
@@ -546,13 +513,13 @@ def bulk_create_course_tasks(request, pk):
     return render(request, "courses/coursetask_form_bulk.html", context)
 
 
-@login_required
+@authorize(course_authorized)
 def get_course_task_bulk_hx(request, pk, last_form_number):
     """Get the next set of empty forms to display for bulk edit.
 
     This returns an HTML fragment of forms for htmx.
     """
-    course = get_course(request.user, pk)
+    course = Course.objects.get(pk=pk)
     total_existing_forms = last_form_number + 1
 
     # Formsets won't create the latest forms so this must re-create *all* forms
@@ -579,12 +546,11 @@ def get_course_task_bulk_hx(request, pk, last_form_number):
     return render(request, "courses/coursetask_form_bulk_partial.html", context)
 
 
-class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator(authorize(task_authorized), "dispatch")
+class CourseTaskUpdateView(UpdateView):
     form_class = CourseTaskForm
     template_name = "courses/coursetask_form.html"
-
-    def get_queryset(self):
-        return get_course_task_queryset(self.request.user).select_related("course")
+    queryset = CourseTask.objects.all().select_related("course")
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -608,10 +574,10 @@ class CourseTaskUpdateView(LoginRequiredMixin, UpdateView):
         return {"is_graded": hasattr(self.object, "graded_work")}
 
 
-@login_required
+@authorize(course_authorized)
 def bulk_delete_course_tasks(request, pk):
     """Bulk delete course tasks."""
-    course = get_course(request.user, pk)
+    course = Course.objects.get(pk=pk)
     tasks = get_course_task_queryset(request.user).filter(course=course)
 
     if request.method == "POST":
@@ -647,9 +613,9 @@ def bulk_delete_course_tasks(request, pk):
     return render(request, "courses/coursetask_bulk_delete.html", context)
 
 
-class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
-    def get_queryset(self):
-        return get_course_task_queryset(self.request.user)
+@method_decorator(authorize(task_authorized), "dispatch")
+class CourseTaskDeleteView(DeleteView):
+    queryset = CourseTask.objects.all().select_related("course")
 
     def get_success_url(self):
         next_url = self.request.GET.get("next")
@@ -658,13 +624,11 @@ class CourseTaskDeleteView(LoginRequiredMixin, DeleteView):
         return reverse("courses:detail", kwargs={"pk": self.kwargs["course_id"]})
 
 
-@login_required
+@authorize(task_authorized)
 @require_http_methods(["DELETE"])
 def course_task_hx_delete(request, pk):
     """Delete a course task via htmx."""
-    task = get_object_or_404(
-        get_course_task_queryset(request.user).select_related("course"), pk=pk
-    )
+    task = CourseTask.objects.select_related("course").get(pk=pk)
     course = task.course
     course_tasks = (
         task.course.course_tasks.all()
@@ -694,40 +658,37 @@ def course_task_hx_delete(request, pk):
     return render(request, "courses/course_tasks.html", context)
 
 
-@login_required
 @require_POST
+@authorize(task_authorized)
 def move_task_down(request, pk):
     """Move a task down in the ordering."""
-    task = get_object_or_404(
-        get_course_task_queryset(request.user).select_related("course"), pk=pk
-    )
+    task = CourseTask.objects.get(pk=pk)
     task.down()
-    url = reverse("courses:detail", args=[task.course.id])
+    url = reverse("courses:detail", args=[task.course_id])
     url += f"#task-{task.id}"
     return HttpResponseRedirect(url)
 
 
-@login_required
 @require_POST
+@authorize(task_authorized)
 def move_task_up(request, pk):
     """Move a task up in the ordering."""
-    task = get_object_or_404(
-        get_course_task_queryset(request.user).select_related("course"), pk=pk
-    )
+    task = CourseTask.objects.get(pk=pk)
     task.up()
-    url = reverse("courses:detail", args=[task.course.id])
+    url = reverse("courses:detail", args=[task.course_id])
     url += f"#task-{task.id}"
     return HttpResponseRedirect(url)
 
 
-class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
+@method_decorator(authorize(course_authorized), "dispatch")
+class CourseResourceCreateView(CreateView):
     form_class = CourseResourceForm
     template_name = "courses/courseresource_form.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["create"] = True
-        context["course"] = self.course
+        context["course"] = Course.objects.get(pk=self.kwargs["pk"])
         return context
 
     def get_success_url(self):
@@ -739,18 +700,11 @@ class CourseResourceCreateView(LoginRequiredMixin, CourseMixin, CreateView):
         return kwargs
 
 
-class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
+@method_decorator(authorize(resource_authorized), "dispatch")
+class CourseResourceUpdateView(UpdateView):
     form_class = CourseResourceForm
     template_name = "courses/courseresource_form.html"
-
-    def get_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return (
-            CourseResource.objects.filter(course__grade_levels__in=grade_levels)
-            .select_related("course")
-            .distinct()
-        )
+    queryset = CourseResource.objects.all().select_related("course")
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -767,15 +721,9 @@ class CourseResourceUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class CourseResourceDeleteView(LoginRequiredMixin, DeleteView):
-    def get_queryset(self):
-        user = self.request.user
-        grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
-        return (
-            CourseResource.objects.filter(course__grade_levels__in=grade_levels)
-            .select_related("course")
-            .distinct()
-        )
+@method_decorator(authorize(resource_authorized), "dispatch")
+class CourseResourceDeleteView(DeleteView):
+    queryset = CourseResource.objects.all().select_related("course")
 
     def get_success_url(self):
         return reverse("courses:detail", kwargs={"pk": self.object.course.id})

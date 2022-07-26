@@ -17,15 +17,6 @@ from homeschool.users.tests.factories import UserFactory
 
 
 class TestPDFsDashboard(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("office:pdfs:dashboard")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -37,9 +28,6 @@ class TestPDFsDashboard(TestCase):
 
 
 class TestReportsIndex(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("reports:index")
-
     def test_get(self):
         user = self.make_user()
 
@@ -90,10 +78,6 @@ class TestReportsIndex(TestCase):
 
 
 class TestBundleView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-        self.assertLoginRequired("reports:bundle", school_year.pk)
-
     def test_get(self):
         user = self.make_user()
         school_year = SchoolYearFactory(school__admin=user)
@@ -139,27 +123,108 @@ class TestBundleView(TestCase):
         bundle.refresh_from_db()
         assert bundle.status == Bundle.Status.PENDING
 
-    def test_no_other_school_years(self):
-        """A user cannot access another user's bundle."""
-        user = self.make_user()
-        school_year = SchoolYearFactory()
+
+class TestOfficeAttendanceReport(TestCase):
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
 
         with self.login(user):
-            response = self.get("reports:bundle", school_year.pk)
+            response = self.post(
+                "office:pdfs:attendance", data={"enrollment_id": enrollment.id}
+            )
 
-        self.response_404(response)
+        assert response.status_code == 200
+
+
+class TestAttendanceReportView(TestCase):
+    def test_get(self):
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", pk=enrollment.id)
+
+        assert self.get_context("grade_level") == enrollment.grade_level
+        assert self.get_context("school_year") == enrollment.grade_level.school_year
+        assert self.get_context("student") == enrollment.student
+
+    @time_machine.travel("2021-04-01")  # A Thursday
+    def test_school_dates(self):
+        """The dates on the report have the expected states."""
+        user = self.make_user()
+        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
+        school_year = enrollment.grade_level.school_year
+        SchoolBreakFactory(
+            school_year=school_year,
+            start_date=school_year.start_date,
+            end_date=school_year.start_date,
+        )
+        CourseworkFactory(
+            student=enrollment.student,
+            course_task__course__grade_levels=[enrollment.grade_level],
+            completed_date=school_year.start_date + datetime.timedelta(days=1),
+        )
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", pk=enrollment.id)
+
+        school_dates = self.get_context("school_dates")
+        assert school_dates[0]["is_break"]
+        assert school_dates[1]["attended"]
+        assert not school_dates[4]["is_school_day"]  # First Saturday
+        assert self.get_context("total_days_attended") == 1
+
+    def test_school_year_end_date(self):
+        """An old school year will go to the end date."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today - datetime.timedelta(days=100),
+            end_date=today - datetime.timedelta(days=50),
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", pk=enrollment.id)
+
+        school_dates = self.get_context("school_dates")
+        assert school_dates[-1]["date"] == school_year.end_date
+
+    def test_future_school_year(self):
+        """A future school year has no school dates."""
+        today = timezone.localdate()
+        user = self.make_user()
+        school_year = SchoolYearFactory(
+            school=user.school,
+            start_date=today + datetime.timedelta(days=50),
+            end_date=today + datetime.timedelta(days=100),
+        )
+        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
+
+        with self.login(user):
+            self.get_check_200("reports:attendance", pk=enrollment.id)
+
+        assert not self.get_context("school_dates")
+
+
+class TestOfficeCourseworkReport(TestCase):
+    def test_staff(self):
+        """A staff user can access the page."""
+        user = UserFactory(is_staff=True)
+        enrollment = EnrollmentFactory()
+
+        with self.login(user):
+            response = self.post(
+                "office:pdfs:coursework", data={"enrollment_id": enrollment.id}
+            )
+
+        assert response.status_code == 200
 
 
 class TestOfficeProgressReport(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.post("office:pdfs:progress")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -174,10 +239,6 @@ class TestOfficeProgressReport(TestCase):
 
 
 class TestProgressReportView(TestCase):
-    def test_unauthenticated_access(self):
-        enrollment = EnrollmentFactory()
-        self.assertLoginRequired("reports:progress", pk=enrollment.id)
-
     def test_get(self):
         user = self.make_user()
         enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
@@ -188,16 +249,6 @@ class TestProgressReportView(TestCase):
         assert self.get_context("grade_level") == enrollment.grade_level
         assert self.get_context("school_year") == enrollment.grade_level.school_year
         assert self.get_context("student") == enrollment.student
-
-    def test_not_found_for_other_school(self):
-        """A user cannot access a progress report that is not from their school."""
-        user = self.make_user()
-        enrollment = EnrollmentFactory()
-
-        with self.login(user):
-            response = self.get("reports:progress", pk=enrollment.id)
-
-        self.response_404(response)
 
     def test_only_students_courses(self):
         """Only courses from the student are included."""
@@ -292,15 +343,6 @@ class TestProgressReportView(TestCase):
 
 
 class TestOfficeResourceReport(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.post("office:pdfs:resource")
-
-        self.response_302(response)
-
     def test_staff(self):
         """A staff user can access the page."""
         user = UserFactory(is_staff=True)
@@ -315,10 +357,6 @@ class TestOfficeResourceReport(TestCase):
 
 
 class TestResourceReportView(TestCase):
-    def test_unauthenticated_access(self):
-        enrollment = EnrollmentFactory()
-        self.assertLoginRequired("reports:resource", pk=enrollment.id)
-
     def test_get(self):
         user = self.make_user()
         enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
@@ -332,145 +370,3 @@ class TestResourceReportView(TestCase):
         assert self.get_context("school_year") == enrollment.grade_level.school_year
         assert self.get_context("student") == enrollment.student
         assert list(self.get_context("resources")) == [resource]
-
-    def test_not_found_for_other_school(self):
-        """A user cannot access a progress report that is not from their school."""
-        user = self.make_user()
-        enrollment = EnrollmentFactory()
-
-        with self.login(user):
-            response = self.get("reports:resource", pk=enrollment.id)
-
-        self.response_404(response)
-
-
-class TestOfficeAttendanceReport(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.post("office:pdfs:attendance")
-
-        self.response_302(response)
-
-    def test_staff(self):
-        """A staff user can access the page."""
-        user = UserFactory(is_staff=True)
-        enrollment = EnrollmentFactory()
-
-        with self.login(user):
-            response = self.post(
-                "office:pdfs:attendance", data={"enrollment_id": enrollment.id}
-            )
-
-        assert response.status_code == 200
-
-
-class TestAttendanceReportView(TestCase):
-    def test_unauthenticated_access(self):
-        enrollment = EnrollmentFactory()
-        self.assertLoginRequired("reports:attendance", pk=enrollment.id)
-
-    def test_get(self):
-        user = self.make_user()
-        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
-
-        with self.login(user):
-            self.get_check_200("reports:attendance", pk=enrollment.id)
-
-        assert self.get_context("grade_level") == enrollment.grade_level
-        assert self.get_context("school_year") == enrollment.grade_level.school_year
-        assert self.get_context("student") == enrollment.student
-
-    @time_machine.travel("2021-04-01")  # A Thursday
-    def test_school_dates(self):
-        """The dates on the report have the expected states."""
-        user = self.make_user()
-        enrollment = EnrollmentFactory(grade_level__school_year__school=user.school)
-        school_year = enrollment.grade_level.school_year
-        SchoolBreakFactory(
-            school_year=school_year,
-            start_date=school_year.start_date,
-            end_date=school_year.start_date,
-        )
-        CourseworkFactory(
-            student=enrollment.student,
-            course_task__course__grade_levels=[enrollment.grade_level],
-            completed_date=school_year.start_date + datetime.timedelta(days=1),
-        )
-
-        with self.login(user):
-            self.get_check_200("reports:attendance", pk=enrollment.id)
-
-        school_dates = self.get_context("school_dates")
-        assert school_dates[0]["is_break"]
-        assert school_dates[1]["attended"]
-        assert not school_dates[4]["is_school_day"]  # First Saturday
-        assert self.get_context("total_days_attended") == 1
-
-    def test_school_year_end_date(self):
-        """An old school year will go to the end date."""
-        today = timezone.localdate()
-        user = self.make_user()
-        school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=today - datetime.timedelta(days=100),
-            end_date=today - datetime.timedelta(days=50),
-        )
-        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
-
-        with self.login(user):
-            self.get_check_200("reports:attendance", pk=enrollment.id)
-
-        school_dates = self.get_context("school_dates")
-        assert school_dates[-1]["date"] == school_year.end_date
-
-    def test_future_school_year(self):
-        """A future school year has no school dates."""
-        today = timezone.localdate()
-        user = self.make_user()
-        school_year = SchoolYearFactory(
-            school=user.school,
-            start_date=today + datetime.timedelta(days=50),
-            end_date=today + datetime.timedelta(days=100),
-        )
-        enrollment = EnrollmentFactory(grade_level__school_year=school_year)
-
-        with self.login(user):
-            self.get_check_200("reports:attendance", pk=enrollment.id)
-
-        assert not self.get_context("school_dates")
-
-    def test_not_found_for_other_school(self):
-        """A user cannot access an attendance report that is not from their school."""
-        user = self.make_user()
-        enrollment = EnrollmentFactory()
-
-        with self.login(user):
-            response = self.get("reports:attendance", pk=enrollment.id)
-
-        self.response_404(response)
-
-
-class TestOfficeCourseworkReport(TestCase):
-    def test_non_staff(self):
-        """A non-staff user cannot access the page."""
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.post("office:pdfs:coursework")
-
-        self.response_302(response)
-
-    def test_staff(self):
-        """A staff user can access the page."""
-        user = UserFactory(is_staff=True)
-        enrollment = EnrollmentFactory()
-
-        with self.login(user):
-            response = self.post(
-                "office:pdfs:coursework", data={"enrollment_id": enrollment.id}
-            )
-
-        assert response.status_code == 200

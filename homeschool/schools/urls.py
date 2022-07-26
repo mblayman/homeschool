@@ -4,11 +4,7 @@ from . import views
 
 app_name = "schools"
 urlpatterns = [
-    path(
-        "school-year/",
-        views.CurrentSchoolYearView.as_view(),
-        name="current_school_year",
-    ),
+    path("school-year/", views.current_school_year, name="current_school_year"),
     path(
         "school-years/add/",
         views.SchoolYearCreateView.as_view(),
@@ -34,7 +30,7 @@ urlpatterns = [
     ),
     path(
         "school-years/<hashid:pk>/forecast/",
-        views.SchoolYearForecastView.as_view(),
+        views.school_year_forecast,
         name="school_year_forecast",
     ),
     path("school-years/", views.SchoolYearListView.as_view(), name="school_year_list"),

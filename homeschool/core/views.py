@@ -5,41 +5,65 @@ import datetime
 from dateutil.parser import parse
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.generic import CreateView, RedirectView, TemplateView
+from django.views.generic import CreateView, TemplateView
 
 from homeschool.accounts.models import Account
 from homeschool.core.schedules import Week
 from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
+from homeschool.denied.authorizers import any_authorized, staff_authorized
+from homeschool.denied.decorators import allow, authorize
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
 
-class IndexView(TemplateView):
-    template_name = "core/index.html"
+@allow
+def index(request):
+    return render(request, "core/index.html", {})
 
 
-class HelpView(TemplateView):
-    template_name = "core/help.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["support_email"] = settings.SUPPORT_EMAIL
-        return context
+@allow
+def robots(request):
+    return render(request, "core/robots.txt", {}, content_type="text/plain")
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
+@allow
+def sitemapindex(request):
+    return render(request, "core/sitemapindex.xml", {}, content_type="text/xml")
+
+
+@allow
+def about(request):
+    return render(request, "core/about.html", {})
+
+
+@allow
+def terms(request):
+    return render(request, "core/terms.html", {})
+
+
+@allow
+def privacy(request):
+    return render(request, "core/privacy.html", {})
+
+
+@allow
+def help(request):
+    return render(request, "core/help.html", {"support_email": settings.SUPPORT_EMAIL})
+
+
+@method_decorator(authorize(any_authorized), "dispatch")
+class DashboardView(TemplateView):
     template_name = "core/app.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -190,7 +214,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
 
 
-class DailyView(LoginRequiredMixin, TemplateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class DailyView(TemplateView):
     template_name = "core/daily.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -444,9 +469,10 @@ class DailyView(LoginRequiredMixin, TemplateView):
             messages.add_message(self.request, messages.SUCCESS, message)
 
 
-class StartView(LoginRequiredMixin, TemplateView):
+class StartView(TemplateView):
     template_name = "core/start.html"
 
+    @method_decorator(authorize(any_authorized))
     def dispatch(self, *args, **kwargs):
         # Remove alert messages contributed by django-allauth during sign up
         # that distract from the onboarding start page.
@@ -469,7 +495,8 @@ class StartView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class StartSchoolYearView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class StartSchoolYearView(CreateView):
     template_name = "core/start_school_year.html"
     form_class = SchoolYearForm
 
@@ -505,7 +532,8 @@ class StartSchoolYearView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class StartGradeLevelView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class StartGradeLevelView(CreateView):
     template_name = "core/start_grade_level.html"
     form_class = GradeLevelForm
 
@@ -528,7 +556,8 @@ class StartGradeLevelView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class StartCourseView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class StartCourseView(CreateView):
     template_name = "core/start_course.html"
     form_class = CourseForm
 
@@ -560,7 +589,8 @@ class StartCourseView(LoginRequiredMixin, CreateView):
         ).first()
 
 
-class StartCourseTaskView(LoginRequiredMixin, CreateView):
+@method_decorator(authorize(any_authorized), "dispatch")
+class StartCourseTaskView(CreateView):
     template_name = "core/start_course_task.html"
     form_class = CourseTaskForm
 
@@ -589,13 +619,13 @@ class StartCourseTaskView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def office_dashboard(request):
     """For back office stuff"""
     return render(request, "core/office/dashboard.html", {})
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def office_onboarding(request):
     """Show how new users are doing in the onboarding process."""
     now = timezone.now()
@@ -644,25 +674,24 @@ def office_onboarding(request):
     return render(request, "core/office/onboarding.html", context)
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def boom(request):
     """This is for checking error handling (like Rollbar)."""
     raise Exception("Is this thing on?")
 
 
-@staff_member_required
+@authorize(staff_authorized)
 def social_image(request):
     """Render a view to create any social images."""
     return render(request, "core/office/social_image.html", {})
 
 
+@allow
 def handle_500(request):
     """Handle 500 errors and display them."""
     return render(request, "500.html", {}, status=500)
 
 
-class FaviconView(RedirectView):
-    permanent = True
-
-    def get_redirect_url(self, *args, **kwargs):
-        return static("favicon/favicon.ico")
+@allow
+def favicon(request):
+    return HttpResponsePermanentRedirect(static("favicon/favicon.ico"))

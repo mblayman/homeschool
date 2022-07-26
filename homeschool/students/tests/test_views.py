@@ -17,9 +17,6 @@ from homeschool.test import TestCase
 
 
 class TestStudentsIndexView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("students:index")
-
     def test_get(self):
         user = self.make_user()
 
@@ -87,9 +84,6 @@ class TestStudentsIndexView(TestCase):
 
 
 class TestStudentsCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("students:create")
-
     def test_get(self):
         user = self.make_user()
 
@@ -113,13 +107,6 @@ class TestStudentsCreateView(TestCase):
 
 
 class TestCourseworkFormView(TestCase):
-    def test_unauthenticated_access(self):
-        student = StudentFactory()
-        course_task = CourseTaskFactory()
-        self.assertLoginRequired(
-            "students:coursework", pk=student.id, course_task_id=course_task.id
-        )
-
     def test_get(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
@@ -158,21 +145,6 @@ class TestCourseworkFormView(TestCase):
             Coursework.objects.filter(student=student, course_task=course_task).count()
             == 1
         )
-
-    def test_other_user_student(self):
-        """A student belonging to another user is a 404."""
-        user = self.make_user()
-        student = StudentFactory()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-        course_task = CourseTaskFactory(course=course)
-
-        with self.login(user):
-            response = self.get(
-                "students:coursework", pk=student.id, course_task_id=course_task.id
-            )
-
-        self.response_404(response)
 
     def test_other_user_task(self):
         """A task belonging to another user is a 404."""
@@ -231,13 +203,6 @@ class TestCourseworkFormView(TestCase):
 
 
 class TestGradeFormView(TestCase):
-    def test_unauthenticated_access(self):
-        student = StudentFactory()
-        course_task = CourseTaskFactory()
-        self.assertLoginRequired(
-            "students:grade_task", pk=student.id, course_task_id=course_task.id
-        )
-
     def test_get(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
@@ -316,9 +281,6 @@ class TestGradeFormView(TestCase):
 
 
 class TestGradeView(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("students:grade")
-
     def test_get(self):
         user = self.make_user()
 
@@ -442,13 +404,6 @@ class TestGradeView(TestCase):
 
 
 class TestEnrollmentCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        school_year = SchoolYearFactory()
-
-        self.assertLoginRequired(
-            "students:enrollment_create", school_year_id=school_year.id
-        )
-
     def test_get(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
@@ -458,9 +413,7 @@ class TestEnrollmentCreateView(TestCase):
         EnrollmentFactory(student=enrolled_student, grade_level=grade_level)
 
         with self.login(user):
-            self.get_check_200(
-                "students:enrollment_create", school_year_id=school_year.id
-            )
+            self.get_check_200("students:enrollment_create", pk=school_year.id)
 
         assert list(self.get_context("grade_levels")) == [grade_level]
         assert list(self.get_context("students")) == [student]
@@ -474,7 +427,7 @@ class TestEnrollmentCreateView(TestCase):
         with self.login(user):
             response = self.post(
                 "students:enrollment_create",
-                school_year_id=grade_level.school_year.id,
+                pk=grade_level.school_year.id,
                 data=data,
             )
 
@@ -492,9 +445,7 @@ class TestEnrollmentCreateView(TestCase):
         GradeLevelFactory(school_year=school_year)
 
         with self.login(user):
-            response = self.get(
-                "students:enrollment_create", school_year_id=school_year.id
-            )
+            response = self.get("students:enrollment_create", pk=school_year.id)
 
         assert response.get("Location") == self.reverse("students:index")
         message = list(get_messages(response.wsgi_request))[0]
@@ -508,9 +459,7 @@ class TestEnrollmentCreateView(TestCase):
         EnrollmentFactory(student__school=user.school, grade_level=grade_level)
 
         with self.login(user):
-            response = self.get(
-                "students:enrollment_create", school_year_id=school_year.id
-            )
+            response = self.get("students:enrollment_create", pk=school_year.id)
 
         assert response.get("Location") == self.reverse(
             "schools:school_year_detail", pk=school_year.id
@@ -524,9 +473,7 @@ class TestEnrollmentCreateView(TestCase):
         school_year = SchoolYearFactory(school=user.school)
 
         with self.login(user):
-            response = self.get(
-                "students:enrollment_create", school_year_id=school_year.id
-            )
+            response = self.get("students:enrollment_create", pk=school_year.id)
 
         assert response.get("Location") == self.reverse(
             "schools:grade_level_create", pk=school_year.id
@@ -537,30 +484,8 @@ class TestEnrollmentCreateView(TestCase):
             == "You need to create a grade level for a student to enroll in."
         )
 
-    def test_user_access_their_school_years(self):
-        """The user can only access their school years."""
-        user = self.make_user()
-        grade_level = GradeLevelFactory()
-
-        with self.login(user):
-            response = self.get(
-                "students:enrollment_create", school_year_id=grade_level.school_year.id
-            )
-
-        self.response_404(response)
-
 
 class TestStudentEnrollmentCreateView(TestCase):
-    def test_unauthenticated_access(self):
-        student = StudentFactory()
-        school_year = SchoolYearFactory()
-
-        self.assertLoginRequired(
-            "students:student_enrollment_create",
-            pk=student.id,
-            school_year_id=school_year.id,
-        )
-
     def test_get(self):
         user = self.make_user()
         student = StudentFactory(school=user.school)
@@ -645,21 +570,6 @@ class TestStudentEnrollmentCreateView(TestCase):
 
         assert self.get_context("student") == student
 
-    def test_not_other_students(self):
-        """Another student is not viewable."""
-        user = self.make_user()
-        student = StudentFactory()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-
-        with self.login(user):
-            response = self.get(
-                "students:student_enrollment_create",
-                pk=student.id,
-                school_year_id=grade_level.school_year.id,
-            )
-
-        self.response_404(response)
-
     def test_has_school_year(self):
         """The school year is in the context."""
         user = self.make_user()
@@ -708,10 +618,6 @@ class TestStudentEnrollmentCreateView(TestCase):
 
 
 class TestEnrollmentDeleteView(TestCase):
-    def test_unauthenticated_access(self):
-        enrollment = EnrollmentFactory()
-        self.assertLoginRequired("students:enrollment_delete", pk=enrollment.id)
-
     def test_get(self):
         user = self.make_user()
         enrollment = EnrollmentFactory(student__school=user.school)
@@ -729,13 +635,3 @@ class TestEnrollmentDeleteView(TestCase):
         assert Enrollment.objects.count() == 0
         self.response_302(response)
         assert response.get("Location") == self.reverse("students:index")
-
-    def test_post_other_user(self):
-        """A user may not delete another user's enrollment."""
-        user = self.make_user()
-        enrollment = EnrollmentFactory()
-
-        with self.login(user):
-            response = self.post("students:enrollment_delete", pk=enrollment.id)
-
-        self.response_404(response)

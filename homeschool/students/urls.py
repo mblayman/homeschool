@@ -17,11 +17,7 @@ urlpatterns = [
         name="grade_task",
     ),
     path("grade/", views.GradeView.as_view(), name="grade"),
-    path(
-        "enroll/<hashid:school_year_id>/",
-        views.enrollment_create,
-        name="enrollment_create",
-    ),
+    path("enroll/<hashid:pk>/", views.enrollment_create, name="enrollment_create"),
     path(
         "<hashid:pk>/enroll/<hashid:school_year_id>/",
         views.student_enrollment_create,
