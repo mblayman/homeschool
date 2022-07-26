@@ -1,6 +1,5 @@
 from typing import Callable
 
-import waffle
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
@@ -33,13 +32,6 @@ class DeniedMiddleware:
         view_kwargs: dict,
     ):
         """Process the view by checking against an authorizer."""
-        # If there's no authorizer, don't fail when the flag is off.
-        if not (
-            hasattr(view_func, "__denied_authorizer__")
-            or waffle.flag_is_active(request, "denied-flag")
-        ):
-            return None
-
         if (
             getattr(view_func, "__denied_exempt__", False)
             # Or check on a bound method

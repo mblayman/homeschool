@@ -2,9 +2,6 @@ from homeschool.test import TestCase
 
 
 class TestSettingsDashboard(TestCase):
-    def test_unauthenticated_access(self):
-        self.assertLoginRequired("settings:dashboard")
-
     def test_ok(self):
         user = self.make_user()
 

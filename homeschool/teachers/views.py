@@ -1,16 +1,17 @@
 import datetime
 
-from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from homeschool.core.schedules import Week
+from homeschool.denied.authorizers import any_authorized
+from homeschool.denied.decorators import authorize
 from homeschool.schools.models import SchoolYear
 
 from .models import Checklist
 
 
-@login_required
+@authorize(any_authorized)
 def checklist(request: HttpRequest, year: int, month: int, day: int) -> HttpResponse:
     """Display a checklist of all the student tasks for a week."""
     today = request.user.get_local_today()
