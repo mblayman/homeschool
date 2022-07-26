@@ -1,7 +1,6 @@
 from typing import Optional
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
@@ -723,7 +722,7 @@ class CourseResourceUpdateView(UpdateView):
 
 
 @method_decorator(authorize(resource_authorized), "dispatch")
-class CourseResourceDeleteView(LoginRequiredMixin, DeleteView):
+class CourseResourceDeleteView(DeleteView):
     queryset = CourseResource.objects.all().select_related("course")
 
     def get_success_url(self):

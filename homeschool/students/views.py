@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.defaultfilters import pluralize
@@ -51,7 +50,7 @@ def students_index(request):
 
 
 @method_decorator(authorize(any_authorized), "dispatch")
-class StudentCreateView(LoginRequiredMixin, CreateView):
+class StudentCreateView(CreateView):
     template_name = "students/student_form.html"
     model = Student
     fields = ("school", "first_name", "last_name")
