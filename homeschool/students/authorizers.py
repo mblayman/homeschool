@@ -9,12 +9,12 @@ def enrollment_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
     return Enrollment.objects.filter(
         Q(grade_level__school_year__school__admin=request.user)
         | Q(student__school__admin=request.user),
-        pk=view_kwargs.get("pk"),
+        pk=view_kwargs["pk"],
     ).exists()
 
 
 def student_authorized(request: HttpRequest, **view_kwargs: dict) -> bool:
     """Check if the user is authorized for a student."""
     return Student.objects.filter(
-        school__admin=request.user, pk=view_kwargs.get("pk")
+        school__admin=request.user, pk=view_kwargs["pk"]
     ).exists()
