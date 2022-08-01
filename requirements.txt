@@ -101,6 +101,8 @@ idna==3.3
     # via requests
 imagesize==1.4.1
     # via sphinx
+importlib-metadata==4.12.0
+    # via sphinx
 jinja2==3.1.2
     # via sphinx
 jmespath==1.0.1
@@ -209,7 +211,7 @@ types-pytz==2022.1.1
     # via -r requirements.in
 types-requests==2.28.0
     # via -r requirements.in
-types-six==1.16.16
+types-six==1.16.18
     # via -r requirements.in
 types-toml==0.10.7
     # via -r requirements.in
@@ -229,6 +231,8 @@ webencodings==0.5.1
     #   tinycss2
 whitenoise[brotli]==6.2.0
     # via -r requirements.in
+zipp==3.8.1
+    # via importlib-metadata
 zopfli==0.2.1
     # via fonttools
 
