@@ -1,11 +1,11 @@
 import datetime
 
+from denied.authorizers import any_authorized
+from denied.decorators import authorize
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from homeschool.core.schedules import Week
-from homeschool.denied.authorizers import any_authorized
-from homeschool.denied.decorators import authorize
 from homeschool.schools.models import SchoolYear
 
 from .models import Checklist

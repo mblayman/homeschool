@@ -1,9 +1,9 @@
+from denied.decorators import allow
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
 from homeschool.core import views
 from homeschool.core.sitemaps import sitemaps
-from homeschool.denied.decorators import allow
 
 app_name = "core"
 urlpatterns = [

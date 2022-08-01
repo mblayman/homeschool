@@ -1,9 +1,9 @@
+from denied.authorizers import any_authorized
+from denied.decorators import authorize
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from homeschool.denied.authorizers import any_authorized
-from homeschool.denied.decorators import authorize
 from homeschool.referrals.forms import ReferralForm
 
 from .forms import ProfileForm

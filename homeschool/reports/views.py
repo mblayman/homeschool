@@ -1,12 +1,12 @@
 from dataclasses import asdict
 
+from denied.authorizers import any_authorized, staff_authorized
+from denied.decorators import authorize
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from homeschool.denied.authorizers import any_authorized, staff_authorized
-from homeschool.denied.decorators import authorize
 from homeschool.schools.authorizers import school_year_authorized
 from homeschool.schools.models import SchoolYear
 from homeschool.students.authorizers import enrollment_authorized

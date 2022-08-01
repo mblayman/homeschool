@@ -1,8 +1,7 @@
+from denied.authorizers import any_authorized
+from denied.decorators import authorize
 from django.shortcuts import redirect
 from django.urls import reverse
-
-from homeschool.denied.authorizers import any_authorized
-from homeschool.denied.decorators import authorize
 
 from .models import Notification
 

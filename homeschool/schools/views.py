@@ -1,3 +1,5 @@
+from denied.authorizers import any_authorized
+from denied.decorators import authorize
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -11,8 +13,6 @@ from django.views.generic import (
     UpdateView,
 )
 
-from homeschool.denied.authorizers import any_authorized
-from homeschool.denied.decorators import authorize
 from homeschool.students.models import Enrollment
 
 from .authorizers import (

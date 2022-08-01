@@ -1,5 +1,7 @@
 from typing import Optional
 
+from denied.authorizers import any_authorized
+from denied.decorators import authorize
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.forms import modelformset_factory
@@ -18,8 +20,6 @@ from django.views.generic import (
 )
 from django_htmx.http import HttpResponseClientRedirect
 
-from homeschool.denied.authorizers import any_authorized
-from homeschool.denied.decorators import authorize
 from homeschool.schools import constants as schools_constants
 from homeschool.schools.exceptions import NoSchoolYearError
 from homeschool.schools.forecaster import Forecaster

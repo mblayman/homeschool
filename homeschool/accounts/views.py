@@ -1,14 +1,13 @@
 import json
 
+from denied.authorizers import any_authorized, staff_authorized
+from denied.decorators import authorize
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-
-from homeschool.denied.authorizers import any_authorized, staff_authorized
-from homeschool.denied.decorators import authorize
 
 from .models import Account
 from .stripe_gateway import stripe_gateway

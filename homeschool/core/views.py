@@ -3,6 +3,8 @@ from __future__ import annotations
 import datetime
 
 from dateutil.parser import parse
+from denied.authorizers import any_authorized, staff_authorized
+from denied.decorators import allow, authorize
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
@@ -19,8 +21,6 @@ from homeschool.accounts.models import Account
 from homeschool.core.schedules import Week
 from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
-from homeschool.denied.authorizers import any_authorized, staff_authorized
-from homeschool.denied.decorators import allow, authorize
 from homeschool.notifications.models import Notification
 from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear

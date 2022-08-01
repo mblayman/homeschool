@@ -1,3 +1,5 @@
+from denied.authorizers import any_authorized
+from denied.decorators import authorize
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -10,8 +12,6 @@ from django.views.generic import CreateView, DeleteView, FormView, TemplateView
 from homeschool.core.view_helpers import flash_info
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
-from homeschool.denied.authorizers import any_authorized
-from homeschool.denied.decorators import authorize
 from homeschool.schools.authorizers import school_year_authorized
 from homeschool.schools.models import GradeLevel, SchoolYear
 
