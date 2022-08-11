@@ -42,7 +42,7 @@ dj-database-url==1.0.0
     # via -r requirements.in
 dj-stripe==2.6.2
     # via -r requirements.in
-django==4.0.6
+django==4.0.7
     # via
     #   -r requirements.in
     #   dj-database-url
