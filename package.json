@@ -4,7 +4,7 @@
     "watch": "tailwindcss build -i frontend/site.css -c frontend/tailwind.config.js -o static/site.css --watch"
   },
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.2",

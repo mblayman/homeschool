@@ -42,8 +42,8 @@ ignore_missing_imports = true
 addopts = "--nomigrations --disable-socket"
 DJANGO_SETTINGS_MODULE = "project.testing_settings"
 filterwarnings = [
-    # django-extensions==3.1.5 jobs lookup uses the imp module.
-    "ignore:.*the imp module is deprecated in favour of importlib:DeprecationWarning",
+    # django-extensions==3.2.0
+    "ignore:.*'django_extensions' defines.*:DeprecationWarning",
 ]
 # This warning is coming from dj-stripe 2.5.1 (Example)
 #    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning

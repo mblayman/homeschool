@@ -4,6 +4,8 @@ An app for homeschool planning
 
 ## Setup
 
+### Python
+
 Create a virtual environment.
 
 ```bash
@@ -24,10 +26,40 @@ On homebrew on a Mac,
 you can install that tool
 with `brew install graphviz`.
 
+Note: install `psycopg2-binary` to avoid compiling it.
+This will require PostgreSQL
+which can be installed with `brew install postgresql`.
+
 ```bash
 $ pip install -r requirements-dev.txt
 $ pip install -r requirements.txt
 ```
+
+I had some trouble getting pygraphviz to compile
+and needed to include some library paths.
+Here's what I needed locally.
+
+```bash
+CFLAGS="-I/opt/homebrew/Cellar/graphviz/5.0.0/include" \
+LDFLAGS="-L/opt/homebrew/Cellar/graphviz/5.0.0/lib" \
+pip install -r requirements-dev.txt -r requirements.txt
+```
+
+### JavaScript
+
+Node.js is required.
+
+```bash
+brew install nodejs
+```
+
+Install JS packages to get Tailwind CSS.
+
+```bash
+npm i
+```
+
+### Deployment
 
 Install [Heroku CLI tools](https://devcenter.heroku.com/articles/heroku-cli).
 
