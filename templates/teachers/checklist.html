@@ -5,6 +5,12 @@
 {% block main %}
   <h1 class="grow font-extralight text-2xl text-blue-900 mb-8">
     Teacher Checklist for {{ week.first_day|date:"l, M j" }} &ndash; {{ week.last_day|date:"l, M j" }}
+    <a href="{% url "teachers:edit_checklist" week.first_day.year week.first_day.month week.first_day.day %}" class="text-gray-400 hover:text-gray-700 print:hidden">
+      <svg class="h-5 w-5 ml-2 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <title>Edit Checklist</title>
+        <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/>
+      </svg>
+    </a>
   </h1>
 
   {% for schedule in schedules %}

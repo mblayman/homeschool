@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from django.conf import settings
@@ -7,7 +9,7 @@ from hashid_field import HashidAutoField
 from ordered_model.models import OrderedModel, OrderedModelQuerySet
 
 from homeschool.core.models import DaysOfWeekModel
-from homeschool.schools.models import GradeLevel
+from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.users.models import User
 
 from .exceptions import NoSchoolYearError
@@ -29,6 +31,11 @@ class Course(DaysOfWeekModel):
     is_active = models.BooleanField(
         default=True, help_text="Is this course active in the schedule?"
     )
+
+    @classmethod
+    def from_school_year(cls, school_year: SchoolYear) -> models.QuerySet[Course]:
+        grade_levels = GradeLevel.objects.filter(school_year=school_year)
+        return cls.objects.filter(grade_levels__in=grade_levels).distinct()
 
     @property
     def is_running(self):

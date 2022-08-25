@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import models
 
 from homeschool.schools.models import SchoolYear
@@ -25,3 +27,20 @@ class Checklist(models.Model):
                 course = course_info["course"]
                 if course.id in excluded_courses_set:
                     courses.remove(course_info)
+
+    @classmethod
+    def for_school_year(cls, school_year: SchoolYear) -> Checklist | None:
+        """Get the checklist for the school year if it exists."""
+        return cls.objects.filter(school_year=school_year).first()
+
+    @classmethod
+    def update(cls, school_year: SchoolYear, excluded_courses: list[str]) -> None:
+        """Create or update a checklist for the school year."""
+        cls.objects.update_or_create(
+            school_year=school_year,
+            defaults={
+                "excluded_courses": [
+                    str(course_id) for course_id in sorted(excluded_courses)
+                ]
+            },
+        )
