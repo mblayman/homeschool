@@ -113,7 +113,7 @@ class DaysOfWeekModel(models.Model):
         If the model isn't running any week days, fall back to the first day.
         """
         week_date = week.last_day
-        for day in reversed(self.WEEK):
+        for _day in reversed(self.WEEK):
             if self.runs_on(week_date):
                 return week_date
             week_date -= datetime.timedelta(days=1)
