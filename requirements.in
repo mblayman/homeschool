@@ -14,7 +14,7 @@ django-hijack==3.2.1
 django-htmx==1.12.1
 django-ordered-model==3.6
 django-simple-history==3.1.1
-django-storages==1.12.3
+django-storages==1.13.1
 django-tz-detect==0.4.0
 django-waffle==2.6.0
 dj-stripe==2.6.2
