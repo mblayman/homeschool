@@ -84,7 +84,7 @@ django-storages==1.13.1
     # via -r requirements.in
 django-tz-detect==0.4.0
     # via -r requirements.in
-django-waffle==2.6.0
+django-waffle==3.0.0
     # via -r requirements.in
 docutils==0.17.1
     # via
