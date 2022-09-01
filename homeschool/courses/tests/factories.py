@@ -8,7 +8,7 @@ class CourseFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Course {n}")
 
     @factory.post_generation
-    def grade_levels(course, create, extracted, **kwargs):
+    def grade_levels(course, create, extracted, **kwargs):  # noqa: B902
         if not create:
             return
 
