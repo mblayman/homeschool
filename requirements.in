@@ -11,10 +11,10 @@ django-environ==0.9.0
 django-extensions==3.2.0
 django-hashid-field==3.3.5
 django-hijack==3.2.1
-django-htmx==1.12.1
+django-htmx==1.12.2
 django-ordered-model==3.6
 django-simple-history==3.1.1
-django-storages==1.12.3
+django-storages==1.13.1
 django-tz-detect==0.4.0
 django-waffle==2.6.0
 dj-stripe==2.6.2
@@ -30,7 +30,7 @@ time-machine
 types-bleach==5.0.3
 types-python-dateutil==2.8.19
 types-pytz==2022.1.2
-types-requests==2.28.6
+types-requests==2.28.9
 types-six==1.16.18
 types-toml==0.10.8
 weasyprint==56.1
