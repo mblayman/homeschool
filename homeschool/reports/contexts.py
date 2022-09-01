@@ -188,7 +188,7 @@ class ProgressReportContext:
         return courses
 
     @classmethod
-    def _compute_course_average(self, course_info):
+    def _compute_course_average(cls, course_info):
         """Compute the average for the course based on collected grades."""
         grades = course_info["grades"]
         average = sum(grade.score for grade in grades) / len(grades)

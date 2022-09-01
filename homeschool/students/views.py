@@ -127,7 +127,7 @@ class GradeFormView(CourseTaskMixin, FormView):
         try:
             graded_work = self.course_task.graded_work
         except GradedWork.DoesNotExist:
-            raise Http404
+            raise Http404  # noqa: B904
         kwargs["instance"] = Grade.objects.filter(
             student=self.student, graded_work=graded_work
         ).first()
