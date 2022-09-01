@@ -136,7 +136,7 @@ class CourseTask(OrderedModel):
     order_with_respect_to = "course"
 
     @classmethod
-    def get_by_id(cls, user: User, id_str: str) -> Optional["CourseTask"]:
+    def get_by_id(cls, user: User, id_str: str) -> Optional[CourseTask]:
         """Get a task for a user by an id."""
         grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
         return CourseTask.objects.filter(
