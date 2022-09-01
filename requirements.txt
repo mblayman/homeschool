@@ -42,7 +42,7 @@ dj-database-url==1.0.0
     # via -r requirements.in
 dj-stripe==2.6.2
     # via -r requirements.in
-django==4.0.7
+django==4.1
     # via
     #   -r requirements.in
     #   dj-database-url
@@ -101,8 +101,6 @@ html5lib==1.1
 idna==3.3
     # via requests
 imagesize==1.4.1
-    # via sphinx
-importlib-metadata==4.12.0
     # via sphinx
 jinja2==3.1.2
     # via sphinx
@@ -232,8 +230,6 @@ webencodings==0.5.1
     #   tinycss2
 whitenoise[brotli]==6.2.0
     # via -r requirements.in
-zipp==3.8.1
-    # via importlib-metadata
 zopfli==0.2.1
     # via fonttools
 
