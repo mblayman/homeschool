@@ -17,8 +17,6 @@ that each of your students did
 in a school year
 and a lot more!
 
-<!--more-->
-
 In the bundle,
 you'll get PDF reports
 of all the reports

@@ -174,3 +174,10 @@ when building your tasks.
   School Desk's task creation tools also make this trivial
   to add
   to a course.
+
+Teacher Tools
+-------------
+
+School Desk includes a teacher checklist feature
+that lets teacher's record notes about their students' activities
+for the week.
