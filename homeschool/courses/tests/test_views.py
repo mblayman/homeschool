@@ -945,6 +945,8 @@ class TestCourseTaskUpdateView(TestCase):
         with self.login(user):
             self.get_check_200("courses:task_edit", pk=task.id)
 
+        assert self.get_context("course") == course
+
     def test_post(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
@@ -965,17 +967,6 @@ class TestCourseTaskUpdateView(TestCase):
         assert task.description == data["description"]
         assert task.duration == data["duration"]
         self.response_302(response)
-
-    def test_has_course(self):
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-        task = CourseTaskFactory(course=course)
-
-        with self.login(user):
-            self.get("courses:task_edit", pk=task.id)
-
-        self.assertContext("course", task.course)
 
     def test_has_grade_levels(self):
         """The grade levels for selection match the grades that have the course."""
@@ -1085,6 +1076,22 @@ class TestCourseTaskUpdateView(TestCase):
 
         task.refresh_from_db()
         assert not hasattr(task, "graded_work")
+
+    def test_get_delete_url(self):
+        """The delete URL has the task fragment of the *previous* task."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        previous_task = CourseTaskFactory(course=course)
+        task = CourseTaskFactory(course=course)
+        next_url = f"/another/location/%23task-{task.id}"
+        url = self.reverse("courses:task_edit", pk=task.id)
+        url += f"?next={next_url}"
+
+        with self.login(user):
+            self.get(url)
+
+        assert f"task-{previous_task.id}" in self.get_context("delete_url")
 
 
 class TestCourseTaskDeleteView(TestCase):

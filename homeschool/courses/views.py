@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, resolve_url
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
@@ -557,6 +557,7 @@ class CourseTaskUpdateView(UpdateView):
         context["course"] = self.object.course
         context["grade_levels"] = self.object.course.grade_levels.all()
         context["previous_task"] = self.object.previous()
+        context["delete_url"] = self._get_delete_url()
         return context
 
     def get_success_url(self):
@@ -572,6 +573,29 @@ class CourseTaskUpdateView(UpdateView):
 
     def get_initial(self):
         return {"is_graded": hasattr(self.object, "graded_work")}
+
+    def _get_delete_url(self):
+        """Get the delete URL.
+
+        Adjust the task fragment to point to the previous task.
+        """
+        delete_url = resolve_url(
+            "courses:task_delete", course_id=self.object.course_id, pk=self.object.pk
+        )
+        if "next" in self.request.GET:
+            next_url = self.request.GET["next"]
+
+            # Some part of the URL may have the current task *outside*
+            # of the URL fragment. Thus, we use our knowledge of the fragment name,
+            # and include that prefix to ensure a single replacement.
+            previous_task = self.object.previous()
+            if previous_task:
+                next_url = next_url.replace(
+                    f"task-{self.object.id}", f"task-{previous_task.id}"
+                )
+
+            delete_url += f"?next={next_url}"
+        return delete_url
 
 
 @authorize(course_authorized)
