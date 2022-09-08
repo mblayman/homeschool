@@ -206,6 +206,10 @@ class SchoolYearForm(DaysOfWeekModelForm):
 
     def check_breaks(self, start_date, end_date):
         """Check that the school year continues to contain any breaks."""
+        # This is a new instance so checking for break doesn't make sense.
+        if self.instance.id is None:
+            return
+
         if SchoolBreak.objects.filter(
             school_year=self.instance, start_date__lt=start_date
         ).exists():

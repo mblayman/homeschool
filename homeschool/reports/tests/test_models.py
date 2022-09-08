@@ -21,4 +21,5 @@ class TestBundle(TestCase):
 
         bundle.refresh_from_db()
         assert bundle.status == Bundle.Status.COMPLETE
-        assert bundle.report.read() == report_data
+        with bundle.report.open() as f:
+            assert f.read() == report_data

@@ -42,6 +42,8 @@ ignore_missing_imports = true
 addopts = "--nomigrations --disable-socket"
 DJANGO_SETTINGS_MODULE = "project.testing_settings"
 filterwarnings = [
+    # Enable warnings as errors.
+    "error",
     # django-extensions==3.2.0
     "ignore:.*'django_extensions' defines.*:DeprecationWarning",
 ]
