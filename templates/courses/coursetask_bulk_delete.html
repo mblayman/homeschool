@@ -21,7 +21,10 @@
 
     <div class="flex flex-row max-w-lg print:hidden">
       <div class="w-10/12 text-sm uppercase tracking-wide font-extralight p-2 pl-0">Description</div>
-      <div class="w-2/12 text-sm text-center uppercase tracking-wide font-extralight py-2">Delete?</div>
+      <div class="w-2/12 text-sm text-center uppercase tracking-wide font-extralight py-2">
+        <input type="checkbox" onclick="checkTasks(this)">
+        Delete?
+      </div>
     </div>
 
     {% for task_detail in task_details %}
@@ -30,7 +33,8 @@
         <div class="w-10/12 p-2 pl-0 text-sm font-light overflow-x-auto">{{ task_detail.task.description|urlize|linebreaksbr }}</div>
 
         <div class="w-2/12 text-sm text-center py-2">
-          <input name="task-{{ task_detail.task.id }}" type="checkbox" value="{{ task_detail.task.id }}">
+          <input name="task-{{ task_detail.task.id }}" type="checkbox" value="{{ task_detail.task.id }}"
+            class="task-input">
         </div>
 
       </div>
@@ -52,4 +56,15 @@
       </button>
     </div>
   </form>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function checkTasks(checkBox) {
+      let tasks = document.getElementsByClassName("task-input");
+      for (let task of tasks) {
+        task.checked = checkBox.checked;
+      }
+    }
+  </script>
 {% endblock %}
