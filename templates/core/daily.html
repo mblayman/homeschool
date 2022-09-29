@@ -34,6 +34,16 @@
 
     {% include "print_link.html" %}
 
+    <p class="mb-8 print:hidden">
+      {% if schedules %}
+        <a href="#" onclick="saveAll()"
+          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+          Save All
+        </a>
+      {% endif %}
+
+    </p>
+
     {% for schedule in schedules %}
       {% if schedule.is_break %}
         <div>
@@ -46,7 +56,7 @@
         <div class="print:break-after-page">
           <h2 class="font-extralight text-xl text-blue-900 mt-8 mb-4">{{ schedule.student.first_name }}</h2>
 
-          <form method="POST" action="?next={{ request.path|urlencode }}">
+          <form method="POST" action="?next={{ request.path|urlencode }}" class="student-form">
             {% csrf_token %}
             <input type="hidden" name="completed_date" value="{{ day|date:"Y-m-d" }}">
             <div class="flex flex-row max-w-3xl print:hidden">
@@ -180,6 +190,31 @@
       let tasks = document.getElementsByClassName(`task-${studentId}`);
       for (let task of tasks) {
         task.checked = checkBox.checked;
+      }
+    }
+
+    function saveAll() {
+      let forms = document.getElementsByClassName('student-form');
+      if (forms.length > 0 ) {
+        let combined = {};
+        for (let i = 0; i < forms.length; i++) {
+          let form = forms[i];
+          let formData = new FormData(form);
+          for (const [key, value] of formData) {
+            combined[key] = value;
+          }
+        }
+
+        let combinedForms = new FormData();
+        for (const [key, value] of Object.entries(combined)) {
+          combinedForms.append(key, value);
+        }
+
+        let url = forms[0].action;
+        fetch(url, {method: "POST", body: combinedForms})
+          .then((response) => {
+            window.location.href = response.url;
+          })
       }
     }
   </script>
