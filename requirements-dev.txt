@@ -8,7 +8,7 @@ mypy==0.971
 pip-tools
 pre-commit
 pygraphviz==1.10
-pytest==7.1.2
+pytest==7.1.3
 pytest-cov==3.0.0
 pytest-django==4.5.2
 pytest-socket==0.5.1
