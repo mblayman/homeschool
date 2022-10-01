@@ -68,7 +68,7 @@ django-denied==1.0
     # via -r requirements.in
 django-environ==0.9.0
     # via -r requirements.in
-django-extensions==3.2.0
+django-extensions==3.2.1
     # via -r requirements.in
 django-hashid-field==3.3.5
     # via -r requirements.in
@@ -169,7 +169,7 @@ snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.3.2.post1
     # via beautifulsoup4
-sphinx==5.1.1
+sphinx==5.2.3
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
@@ -196,7 +196,7 @@ sqlparse==0.4.2
     #   django-debug-toolbar
 stripe==3.5.0
     # via dj-stripe
-time-machine==2.8.1
+time-machine==2.8.2
     # via -r requirements.in
 tinycss2==1.1.1
     # via
