@@ -2,7 +2,7 @@ coverage[toml]
 django-test-plus==2.2.0
 factory-boy
 flake8==5.0.4
-flake8-bugbear==22.8.23
+flake8-bugbear==22.9.23
 isort==5.5.4
 mypy==0.971
 pip-tools
