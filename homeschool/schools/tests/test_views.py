@@ -261,6 +261,7 @@ class TestSchoolYearForecastView(TestCase):
             self.get_check_200("schools:school_year_forecast", pk=school_year.id)
 
         assert self.get_context("schoolyear") == school_year
+        assert not self.get_context("show_empty")
         assert self.get_context("students") == [
             {
                 "student": enrollment.student,
@@ -269,6 +270,17 @@ class TestSchoolYearForecastView(TestCase):
                 ],
             }
         ]
+
+    def test_empty(self):
+        """The empty appears when there are no courses."""
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        EnrollmentFactory(grade_level__school_year=school_year)
+
+        with self.login(user):
+            self.get_check_200("schools:school_year_forecast", pk=school_year.id)
+
+        assert self.get_context("show_empty")
 
 
 class TestSchoolYearListView(TestCase):

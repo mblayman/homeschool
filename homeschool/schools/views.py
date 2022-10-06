@@ -171,7 +171,11 @@ def school_year_forecast(request, pk):
 
         students.append(student_info)
 
-    context = {"schoolyear": school_year, "students": students}
+    context = {
+        "schoolyear": school_year,
+        "show_empty": not any(student_info["courses"] for student_info in students),
+        "students": students,
+    }
     return render(request, "schools/schoolyear_forecast.html", context)
 
 
