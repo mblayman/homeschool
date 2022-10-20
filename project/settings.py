@@ -2,6 +2,8 @@ from pathlib import Path
 
 import dj_database_url
 import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,6 +25,7 @@ env = environ.Env(
     SECURE_HSTS_PRELOAD=(bool, True),
     SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
     SECURE_SSL_REDIRECT=(bool, True),
+    SENTRY_ENABLED=(bool, True),
     SESSION_COOKIE_SECURE=(bool, True),
     SLACK_WEBHOOK=(str, ""),
     STRIPE_LIVE_MODE=(bool, True),
@@ -285,6 +288,17 @@ ROLLBAR = {
     "root": BASE_DIR,
     "capture_email": True,
 }
+
+# Sentry
+if env("SENTRY_ENABLED"):
+    sentry_sdk.init(
+        dsn="https://7d6332a64c8c4139b7dbbbd96e4e3591@o4504013039992832.ingest.sentry.io/4504013130498048",
+        integrations=[
+            DjangoIntegration(),
+        ],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )
 
 # WhiteNoise
 WHITENOISE_INDEX_FILE = True
