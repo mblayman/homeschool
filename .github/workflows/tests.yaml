@@ -16,8 +16,6 @@ jobs:
       DJSTRIPE_WEBHOOK_VALIDATION: ''
       HASHID_FIELD_SALT: 'a secret to everybody'
       IS_SECURE: 'off'
-      ROLLBAR_ENABLED: 'off'
-      ROLLBAR_ACCESS_TOKEN: 'a secret to everybody'
       SECRET_KEY: 'a secret to everybody'
       SECURE_SSL_REDIRECT: 'off'
       SENDGRID_API_KEY: 'a secret to everybody'

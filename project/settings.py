@@ -20,8 +20,6 @@ env = environ.Env(
     EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
     EMAIL_TESTING=(bool, False),
     IS_SECURE=(bool, True),
-    ROLLBAR_ENABLED=(bool, True),
-    ROLLBAR_ENVIRONMENT=(str, "production"),
     SECURE_HSTS_PRELOAD=(bool, True),
     SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
     SECURE_SSL_REDIRECT=(bool, True),
@@ -96,7 +94,6 @@ MIDDLEWARE = [
     "homeschool.middleware.SqueakyCleanMiddleware",
     "denied.middleware.DeniedMiddleware",
     "homeschool.accounts.middleware.AccountGateMiddleware",
-    "rollbar.contrib.django.middleware.RollbarNotifierMiddleware",
 ]
 
 # Enable the debug toolbar only in DEBUG mode.
@@ -278,16 +275,6 @@ DJSTRIPE_WEBHOOK_VALIDATION = (
 # the check should be ignored to appease CI.
 if DJSTRIPE_WEBHOOK_VALIDATION is None:
     SILENCED_SYSTEM_CHECKS.append("djstripe.W004")
-
-# rollbar
-ROLLBAR = {
-    "enabled": env("ROLLBAR_ENABLED"),
-    "access_token": env("ROLLBAR_ACCESS_TOKEN"),
-    "environment": env("ROLLBAR_ENVIRONMENT"),
-    "branch": "main",
-    "root": BASE_DIR,
-    "capture_email": True,
-}
 
 # Sentry
 if env("SENTRY_ENABLED"):

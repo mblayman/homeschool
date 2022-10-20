@@ -676,7 +676,7 @@ def office_onboarding(request):
 
 @authorize(staff_authorized)
 def boom(request):
-    """This is for checking error handling (like Rollbar)."""
+    """This is for checking error handling (like Sentry)."""
     raise Exception("Is this thing on?")
 
 

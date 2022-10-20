@@ -1,6 +1,6 @@
 import json
-from unittest import mock
 
+import pytest
 import requests
 import responses
 from django.conf import settings
@@ -24,17 +24,15 @@ class TestSlackGateway(TestCase):
 
     @responses.activate
     @override_settings(SLACK_WEBHOOK="https://testserver")
-    @mock.patch("homeschool.core.slack_gateway.rollbar")
-    def test_send_message_timeout(self, mock_rollbar):
+    def test_send_message_timeout(self):
         """The gateway records a request failure."""
         responses.add(
             responses.POST, settings.SLACK_WEBHOOK, body=requests.exceptions.Timeout()
         )
         gateway = SlackGateway()
 
-        gateway.send_message("fails")
-
-        assert mock_rollbar.report_exc_info.called
+        with pytest.raises(requests.RequestException):
+            gateway.send_message("fails")
 
 
 def test_print(capsys):

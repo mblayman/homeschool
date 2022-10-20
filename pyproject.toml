@@ -28,7 +28,6 @@ module = [
     "hashid_field.*",
     "ordered_model.*",
     "responses",
-    "rollbar",
     "simple_history.*",
     "stripe",
     "test_plus.test",
