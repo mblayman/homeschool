@@ -93,6 +93,11 @@ def _make_report(template_name: str, context: dict) -> bytes:
     # Use a safe, albeit boring, font of Arial.
     css_content += "\nhtml { font-family: Arial; }"
 
+    # Add page numbers.
+    css_content += (
+        '\n@page { @bottom-center { content: counter(page) " / " counter(pages); } }'
+    )
+
     rendered = render_to_string(template_name, context)
     html = HTML(string=rendered)
     io = BytesIO()

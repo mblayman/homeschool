@@ -16,6 +16,7 @@ env = environ.Env(
     DATABASE_SSL_REQUIRE=(bool, True),
     DEBUG=(bool, False),
     DEBUG_TOOLBAR=(bool, False),
+    DEFAULT_FILE_STORAGE=(str, "storages.backends.s3boto3.S3Boto3Storage"),
     DJSTRIPE_WEBHOOK_VALIDATION=(str, "verify_signature"),
     EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
     EMAIL_TESTING=(bool, False),
@@ -161,8 +162,9 @@ DEFAULT_FROM_EMAIL = f"noreply@{domain}"
 SERVER_EMAIL = f"noreply@{domain}"
 
 # Files
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DEFAULT_FILE_STORAGE = env("DEFAULT_FILE_STORAGE")
 MEDIA_ROOT = str(BASE_DIR / "media/")
+MEDIA_URL = "/media/"
 
 # Forms
 # This setting lets Django form widget templates be used or overridden.
@@ -281,7 +283,7 @@ if DJSTRIPE_WEBHOOK_VALIDATION is None:
 def traces_sampler(sampling_context):
     """Select a sample rate off of the requested path.
 
-    The root enpdoint seemed to get hammered by some bot and ate a huge percent
+    The root endpoint seemed to get hammered by some bot and ate a huge percent
     of transactions in a week. I don't care about that page right now,
     so ignore it.
     """
