@@ -118,7 +118,7 @@ oauthlib==3.2.1
     # via requests-oauthlib
 packaging==21.3
     # via sphinx
-pillow==9.2.0
+pillow==9.3.0
     # via weasyprint
 psycopg2==2.9.3
     # via -r requirements.in
