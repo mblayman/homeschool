@@ -34,7 +34,7 @@ cffi==1.15.1
     #   weasyprint
 charset-normalizer==2.1.0
     # via requests
-cryptography==37.0.4
+cryptography==38.0.3
     # via pyjwt
 cssselect2==0.6.0
     # via weasyprint
@@ -118,7 +118,7 @@ oauthlib==3.2.1
     # via requests-oauthlib
 packaging==21.3
     # via sphinx
-pillow==9.2.0
+pillow==9.3.0
     # via weasyprint
 psycopg2==2.9.3
     # via -r requirements.in
