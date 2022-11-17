@@ -105,7 +105,7 @@ if DEBUG and DEBUG_TOOLBAR:
 
 ROOT_URLCONF = "project.urls"
 
-TEMPLATES = [
+TEMPLATES: list = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
@@ -120,6 +120,17 @@ TEMPLATES = [
         },
     }
 ]
+
+# As of Django 4.1, the cached loader is used in development mode.
+# runserver works around this in some manner, but Gunicorn does not.
+# Override the loaders to get non-cached behavior.
+if DEBUG:
+    # app_dirs isn't allowed to be True when the loaders key is present.
+    TEMPLATES[0]["APP_DIRS"] = False
+    TEMPLATES[0]["OPTIONS"]["loaders"] = [
+        "django.template.loaders.filesystem.Loader",
+        "django.template.loaders.app_directories.Loader",
+    ]
 
 WSGI_APPLICATION = "project.wsgi.application"
 
