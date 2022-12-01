@@ -42,7 +42,7 @@ defusedxml==0.7.1
     # via python3-openid
 dj-database-url==1.0.0
     # via -r requirements.in
-dj-stripe==2.6.2
+dj-stripe==2.7.3
     # via -r requirements.in
 django==4.1.2
     # via
