@@ -14,12 +14,23 @@ from .models import Checklist
 
 @authorize(any_authorized)
 def checklist(request: HttpRequest, year: int, month: int, day: int) -> HttpResponse:
-    """Display a checklist of all the student tasks for a week."""
+    """Display a checklist of all the student tasks for a week.
+
+    This view assumes that the date provided is a Sunday at the beginning of the week.
+    """
     today = request.user.get_local_today()
     week_day = datetime.date(year, month, day)
     week = Week(week_day)
 
     school_year = SchoolYear.get_year_for(request.user, week_day)
+
+    # Check for the first week boundary condition to look for a school year
+    # that may have started mid-week.
+    if school_year is None:
+        # Look ahead to the Saturday.
+        school_year = SchoolYear.get_year_for(
+            request.user, week_day + datetime.timedelta(days=6)
+        )
 
     schedules = []
     if school_year:

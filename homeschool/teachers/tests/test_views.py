@@ -1,7 +1,8 @@
 import datetime
 
 from homeschool.core.schedules import Week
-from homeschool.schools.tests.factories import SchoolYearFactory
+from homeschool.schools.tests.factories import GradeLevelFactory, SchoolYearFactory
+from homeschool.students.tests.factories import EnrollmentFactory
 from homeschool.teachers.tests.factories import ChecklistFactory
 from homeschool.test import TestCase
 
@@ -18,6 +19,24 @@ class TestChecklist(TestCase):
             self.get_check_200("teachers:checklist", 2022, 6, 15)
 
         self.assertInContext("schedules")
+        assert self.get_context("week") == week
+
+    def test_school_start_midweek(self):
+        """A school year that starts midweek will still show a checklist."""
+        user = self.make_user()
+        week = Week(datetime.date(2022, 11, 27))
+        school_year = SchoolYearFactory(
+            school__admin=user,
+            start_date=week.first_day + datetime.timedelta(days=1),
+            end_date=week.last_day,
+        )
+        grade_level = GradeLevelFactory(school_year=school_year)
+        EnrollmentFactory(grade_level=grade_level, student__school=user.school)
+
+        with self.login(user):
+            self.get_check_200("teachers:checklist", 2022, 11, 27)
+
+        assert self.get_context("schedules")
         assert self.get_context("week") == week
 
 
