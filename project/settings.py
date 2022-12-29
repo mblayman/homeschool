@@ -2,8 +2,6 @@ from pathlib import Path
 
 import dj_database_url
 import environ
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +44,8 @@ domain = "theschooldesk.app"
 # Application definition
 
 INSTALLED_APPS = [
+    # Load Sentry early to initialize it.
+    "homeschool.sentry",
     "project.apps.AdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -289,31 +289,8 @@ DJSTRIPE_WEBHOOK_VALIDATION = (
 if DJSTRIPE_WEBHOOK_VALIDATION is None:
     SILENCED_SYSTEM_CHECKS.append("djstripe.W004")
 
-
 # Sentry
-def traces_sampler(sampling_context):
-    """Select a sample rate off of the requested path.
-
-    The root endpoint seemed to get hammered by some bot and ate a huge percent
-    of transactions in a week. I don't care about that page right now,
-    so ignore it.
-    """
-    path = sampling_context.get("wsgi_environ", {}).get("PATH_INFO", "")
-    if path == "/":
-        return 0
-
-    return 1.0
-
-
-if env("SENTRY_ENABLED"):
-    sentry_sdk.init(
-        dsn="https://7d6332a64c8c4139b7dbbbd96e4e3591@o4504013039992832.ingest.sentry.io/4504013130498048",
-        integrations=[
-            DjangoIntegration(),
-        ],
-        traces_sampler=traces_sampler,
-        send_default_pii=True,
-    )
+SENTRY_ENABLED = env("SENTRY_ENABLED")
 
 # WhiteNoise
 WHITENOISE_INDEX_FILE = True
