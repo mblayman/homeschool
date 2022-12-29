@@ -11,7 +11,7 @@ from django.utils.functional import cached_property
 from homeschool.core.slack_gateway import slack_gateway
 
 
-class User(AbstractUser):
+class User(AbstractUser):  # type: ignore  # Issue 762
     """A custom user for extension"""
 
     @cached_property

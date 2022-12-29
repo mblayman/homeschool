@@ -206,7 +206,7 @@ class TestCourseCreateView(TestCase):
 
         assert Course.objects.count() == 2
         copied_course = Course.objects.last()
-        assert copied_course.id != course_to_copy.id
+        assert copied_course.id != course_to_copy.id  # type: ignore  # Issue 762
         assert CourseTask.objects.filter(course=copied_course).count() == 2
         new_graded_task = CourseTask.objects.filter(course=copied_course).last()
         assert hasattr(new_graded_task, "graded_work")
@@ -1239,7 +1239,7 @@ class TestCourseResourceUpdateView(TestCase):
             response = self.post("courses:resource_edit", pk=resource.id, data=data)
 
         assert CourseResource.objects.count() == 1
-        resource = CourseResource.objects.get(course=resource.course)
+        resource = CourseResource.objects.get(course=resource.course)  # type: ignore  # Issue 762 # noqa
         assert resource.title == data["title"]
         assert resource.details == data["details"]
         self.response_302(response)

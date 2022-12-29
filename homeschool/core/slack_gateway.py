@@ -9,7 +9,7 @@ class SlackGateway:
 
     def send_message(self, message: str) -> None:
         """Send a message."""
-        if settings.SLACK_WEBHOOK:
+        if settings.SLACK_WEBHOOK:  # type: ignore  # Issue 762
             self._send(message)
         else:
             print(f"Slack message: {message}")
@@ -17,7 +17,7 @@ class SlackGateway:
     def _send(self, message):
         """Submit the message data to the webhook."""
         requests.post(
-            settings.SLACK_WEBHOOK, json={"text": message}, timeout=self.timeout
+            settings.SLACK_WEBHOOK, json={"text": message}, timeout=self.timeout  # type: ignore  # Issue 762 # noqa
         )
 
 

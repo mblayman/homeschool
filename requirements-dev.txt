@@ -1,10 +1,11 @@
 coverage[toml]
+django-stubs[compatible-mypy]==1.13.1
 django-test-plus==2.2.1
 factory-boy
 flake8==5.0.4
 flake8-bugbear==22.9.23
 isort==5.5.4
-mypy==0.991
+mypy==0.982
 pip-tools
 pre-commit
 pygraphviz==1.10

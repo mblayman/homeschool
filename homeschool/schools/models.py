@@ -36,11 +36,11 @@ def create_school(sender, instance, created, **kwargs):
         School.objects.create(admin=instance)
 
 
-class SchoolYear(DaysOfWeekModel):
+class SchoolYear(DaysOfWeekModel):  # type: ignore  # Issue 762
     """A school year to bound start and end dates of the academic year"""
 
     id = HashidAutoField(
-        primary_key=True, salt=f"schoolyear{settings.HASHID_FIELD_SALT}"
+        primary_key=True, salt=f"schoolyear{settings.HASHID_FIELD_SALT}"  # type: ignore  # Issue 762 # noqa
     )
     school = models.ForeignKey("schools.School", on_delete=models.CASCADE)
     start_date = models.DateField()
@@ -183,7 +183,7 @@ class GradeLevel(OrderedModel):
     """A student is in a grade level in a given school year"""
 
     id = HashidAutoField(
-        primary_key=True, salt=f"gradelevel{settings.HASHID_FIELD_SALT}"
+        primary_key=True, salt=f"gradelevel{settings.HASHID_FIELD_SALT}"  # type: ignore  # Issue 762 # noqa
     )
     name = models.CharField(max_length=128)
     school_year = models.ForeignKey(
@@ -244,7 +244,7 @@ class SchoolBreak(models.Model):
     """A break day in the schedule."""
 
     id = HashidAutoField(
-        primary_key=True, salt=f"schoolbreak{settings.HASHID_FIELD_SALT}"
+        primary_key=True, salt=f"schoolbreak{settings.HASHID_FIELD_SALT}"  # type: ignore  # Issue 762 # noqa
     )
     start_date = models.DateField(db_index=True)
     end_date = models.DateField(db_index=True)

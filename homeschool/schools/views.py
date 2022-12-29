@@ -61,7 +61,7 @@ class SchoolYearCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("schools:school_year_detail", args=[self.object.id])
+        return reverse("schools:school_year_detail", args=[self.object.id])  # type: ignore  # Issue 762 # noqa
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -77,7 +77,7 @@ class SchoolYearDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["nav_link"] = "school_year"
 
-        today = self.request.user.get_local_today()
+        today = self.request.user.get_local_today()  # type: ignore  # Issue 762
         context["calendar"] = YearCalendar(self.object, today).build(
             show_all=bool(self.request.GET.get("show_all_months"))
         )
@@ -183,7 +183,7 @@ def school_year_forecast(request, pk):
 class SchoolYearListView(ListView):
     def get_queryset(self):
         user = self.request.user
-        return SchoolYear.objects.filter(school__admin=user).order_by("-start_date")
+        return SchoolYear.objects.filter(school__admin=user).order_by("-start_date")  # type: ignore  # Issue 762 # noqa
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

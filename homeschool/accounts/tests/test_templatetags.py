@@ -17,7 +17,7 @@ class TestTrialBanner(TestCase):
         """Non-TRIALING accounts do not see the banner."""
         account = AccountFactory(status=Account.AccountStatus.ACTIVE)
         request = self.rf.get("/")
-        request.account = account
+        request.account = account  # type: ignore  # Issue 762
         context = {"request": request}
 
         context = accounts_tags.trial_banner(context)
@@ -31,7 +31,7 @@ class TestTrialBanner(TestCase):
             status=Account.AccountStatus.TRIALING, user__date_joined=old_trial_start
         )
         request = self.rf.get("/")
-        request.account = account
+        request.account = account  # type: ignore  # Issue 762
         context = {"request": request}
 
         context = accounts_tags.trial_banner(context)

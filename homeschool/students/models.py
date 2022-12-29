@@ -23,7 +23,7 @@ class StudentQuerySet(models.QuerySet):
 class Student(models.Model):
     """The learner"""
 
-    id = HashidAutoField(primary_key=True, salt=f"student{settings.HASHID_FIELD_SALT}")
+    id = HashidAutoField(primary_key=True, salt=f"student{settings.HASHID_FIELD_SALT}")  # type: ignore  # Issue 762 # noqa
     school = models.ForeignKey(
         "schools.School", on_delete=models.CASCADE, related_name="students"
     )
@@ -364,7 +364,7 @@ class Enrollment(models.Model):
     """The association between a student and grade level"""
 
     id = HashidAutoField(
-        primary_key=True, salt=f"enrollment{settings.HASHID_FIELD_SALT}"
+        primary_key=True, salt=f"enrollment{settings.HASHID_FIELD_SALT}"  # type: ignore  # Issue 762 # noqa
     )
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name="enrollments"

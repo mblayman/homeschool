@@ -86,7 +86,7 @@ class CourseCreateView(CreateView):
         return response
 
     def get_success_url(self):
-        return reverse("courses:detail", args=[self.object.id])
+        return reverse("courses:detail", args=[self.object.id])  # type: ignore  # Issue 762
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -94,12 +94,12 @@ class CourseCreateView(CreateView):
 
         school_year = None
         if school_year_id:
-            school_year = SchoolYear.objects.filter(
+            school_year = SchoolYear.objects.filter(  # type: ignore  # Issue 762
                 school__admin=self.request.user, id=school_year_id
             ).first()
 
         if not school_year:
-            school_year = SchoolYear.get_current_year_for(self.request.user)
+            school_year = SchoolYear.get_current_year_for(self.request.user)  # type: ignore  # Issue 762 # noqa
 
         if not school_year:
             raise NoSchoolYearError()
@@ -200,13 +200,13 @@ def get_course_tasks_context(course, course_tasks, enrollments, show_completed_t
     for work in Coursework.objects.filter(
         student__in=students, course_task__course=course
     ):
-        coursework[work.student_id][work.course_task_id] = work
+        coursework[work.student_id][work.course_task_id] = work  # type: ignore  # Issue 762
 
     grades: dict = {student.id: {} for student in students}
     for grade in Grade.objects.filter(
         student__in=students, graded_work__course_task__course=course
     ).select_related("graded_work__course_task"):
-        grades[grade.student_id][grade.graded_work.course_task_id] = grade
+        grades[grade.student_id][grade.graded_work.course_task_id] = grade  # type: ignore  # Issue 762 # noqa
 
     grade_levels_by_student = {
         enrollment.student: enrollment.grade_level_id for enrollment in enrollments
@@ -376,7 +376,7 @@ class CourseTaskCreateView(CreateView):
     @cached_property
     def previous_task(self):
         return CourseTask.get_by_id(
-            self.request.user, self.request.GET.get("previous_task", "")
+            self.request.user, self.request.GET.get("previous_task", "")  # type: ignore  # Issue 762 # noqa
         )
 
     def get_context_data(self, *args, **kwargs):
@@ -401,7 +401,7 @@ class CourseTaskCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         if self.previous_task:
-            self.object.below(self.previous_task)
+            self.object.below(self.previous_task)  # type: ignore  # Issue 762
         replicate = self.request.POST.get("replicate")
         if replicate:
             self.create_copies()
@@ -426,7 +426,7 @@ class CourseTaskCreateView(CreateView):
             # Bad POST data. Stop.
             return
 
-        original_description = self.object.description
+        original_description = self.object.description  # type: ignore  # Issue 762
 
         autonumber = self.request.POST.get("autonumber")
         if autonumber:
@@ -436,8 +436,8 @@ class CourseTaskCreateView(CreateView):
                 # Bad POST data. Stop.
                 return
 
-            self.object.description = f"{original_description} {starting_at}"
-            self.object.save()
+            self.object.description = f"{original_description} {starting_at}"  # type: ignore  # Issue 762 # noqa
+            self.object.save()  # type: ignore  # Issue 762
         else:
             starting_at = 1
 
@@ -540,7 +540,7 @@ def get_course_task_bulk_hx(request, pk, last_form_number):
     context = {
         "course": course,
         "grade_levels": course.grade_levels.all(),
-        "forms": formset[-form_count:],
+        "forms": formset[-form_count:],  # type: ignore  # Issue 762
         "last_form_number": last_form_number,
     }
     return render(request, "courses/coursetask_form_bulk_partial.html", context)

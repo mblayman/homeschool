@@ -27,7 +27,7 @@ class AccountGateMiddleware:
 
             gate_url = reverse("subscriptions:index")
             if (
-                request.account.status in Account.ACTIVE_STATUSES
+                request.account.status in Account.ACTIVE_STATUSES  # type: ignore  # Issue 762
                 or request.path_info == gate_url
                 or self.is_allowed(request.path_info)
             ):
