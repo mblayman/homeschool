@@ -86,7 +86,8 @@ def _make_report(template_name: str, context: dict) -> bytes:
     Return raw PDF data.
     """
     site_css_path = finders.find("site.css")
-    with open(site_css_path) as f:  # type: ignore  # Issue 762
+    # site.css should always be there and never return None. Ignore type check.
+    with open(site_css_path) as f:  # type: ignore
         css_content = f.read()
     # Weasyprint doesn't render the Tailwind font properly.
     # The default font failed to render numbers.

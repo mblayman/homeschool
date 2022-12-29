@@ -61,7 +61,9 @@ class SchoolYearCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("schools:school_year_detail", args=[self.object.id])  # type: ignore  # Issue 762 # noqa
+        # A create view will definitely have an object
+        # by the time the success url is needed. Ignore type check.
+        return reverse("schools:school_year_detail", args=[self.object.id])  # type: ignore
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

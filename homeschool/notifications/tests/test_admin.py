@@ -96,7 +96,7 @@ class TestAnnouncementAdmin(TestCase):
 
         assert Notification.objects.filter(announcement=announcement).count() == 1
         notification = Notification.objects.filter(announcement=announcement).first()
-        assert notification.user == user  # type: ignore  # Issue 762
+        assert notification and notification.user == user
 
     @responses.activate
     def test_announcement_announced(self):
