@@ -1,3 +1,5 @@
+from django.contrib.auth.models import AnonymousUser
+
 from homeschool.students.authorizers import enrollment_authorized, student_authorized
 from homeschool.students.tests.factories import EnrollmentFactory, StudentFactory
 from homeschool.test import TestCase
@@ -8,7 +10,7 @@ class TestEnrollmentAuthorized(TestCase):
         """An enrollment is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        enrollment = EnrollmentFactory(
+        enrollment = EnrollmentFactory.create(
             grade_level__school_year__school__admin=request.user
         )
 
@@ -18,7 +20,7 @@ class TestEnrollmentAuthorized(TestCase):
         """Another enrollment is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        enrollment = EnrollmentFactory()
+        enrollment = EnrollmentFactory.create()
 
         assert not enrollment_authorized(request, pk=enrollment.pk)
 
@@ -28,7 +30,7 @@ class TestStudentAuthorized(TestCase):
         """A student is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        student = StudentFactory(school__admin=request.user)
+        student = StudentFactory.create(school__admin=request.user)
 
         assert student_authorized(request, pk=student.pk)
 
@@ -36,6 +38,14 @@ class TestStudentAuthorized(TestCase):
         """Another student is not accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        student = StudentFactory()
+        student = StudentFactory.create()
+
+        assert not student_authorized(request, pk=student.pk)
+
+    def test_anonymous_user(self):
+        """A student is not accessible to an anonymous user."""
+        request = self.rf.get("/")
+        request.user = AnonymousUser()
+        student = StudentFactory.create()
 
         assert not student_authorized(request, pk=student.pk)

@@ -213,7 +213,7 @@ class ResourceReportContext:
             .order_by("course")
         )
         return cls(
-            resources,  # type: ignore  # Issue 762
+            list(resources),
             enrollment.student,
             enrollment.grade_level,
             enrollment.grade_level.school_year,

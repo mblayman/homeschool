@@ -1081,7 +1081,8 @@ class TestStartView(TestCase):
     def test_no_message_on_visit(self):
         """Clear out messages from django-allauth on sign up."""
         user = self.make_user()
-        self.client.cookies["messages"] = CookieStorage(request=None)._encode(  # type: ignore  # Issue 762 # noqa
+        # _encode is not a public API. Ignore the type check.
+        self.client.cookies["messages"] = CookieStorage(request=None)._encode(  # type: ignore
             [Message(messages.INFO, "Find me")]
         )
 
