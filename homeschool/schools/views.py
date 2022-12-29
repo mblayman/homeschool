@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from denied.authorizers import any_authorized
 from denied.decorators import authorize
 from django.http import HttpResponseRedirect
@@ -13,6 +15,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from homeschool.custom_typing import AuthenticatedHttpRequest
 from homeschool.students.models import Enrollment
 
 from .authorizers import (
@@ -73,13 +76,16 @@ class SchoolYearCreateView(CreateView):
 
 @method_decorator(authorize(school_year_authorized), "dispatch")
 class SchoolYearDetailView(DetailView):
+    if TYPE_CHECKING:  # pragma: no cover
+        request = AuthenticatedHttpRequest()
+
     queryset = SchoolYear.objects.all().prefetch_related("breaks", "grade_levels")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["nav_link"] = "school_year"
 
-        today = self.request.user.get_local_today()  # type: ignore  # Issue 762
+        today = self.request.user.get_local_today()
         context["calendar"] = YearCalendar(self.object, today).build(
             show_all=bool(self.request.GET.get("show_all_months"))
         )
