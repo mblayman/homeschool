@@ -22,6 +22,9 @@ class BundleQuerySet(models.QuerySet):
         return self.filter(school_year=school_year).first()
 
 
+BundleManager = models.Manager.from_queryset(BundleQuerySet)
+
+
 class Bundle(models.Model):
     """A bundle of PDF reports that show the end-of-year results of a school year"""
 
@@ -36,7 +39,7 @@ class Bundle(models.Model):
     report = models.FileField(upload_to=report_path)
     status = models.IntegerField(choices=Status.choices, default=Status.PENDING)
 
-    objects = BundleQuerySet.as_manager()
+    objects = BundleManager()
 
     def store(self, report_data: bytes) -> None:
         """Store the report data into the bundle."""

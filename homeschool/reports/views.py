@@ -58,8 +58,10 @@ def get_bundle(request, pk):
 
         return HttpResponseRedirect(reverse("reports:bundle", args=[school_year.id]))
 
-    bundle = Bundle.objects.by_school_year(school_year)  # type: ignore  # Issue 762
-    context = {"bundle": bundle, "school_year": school_year}
+    context = {
+        "bundle": Bundle.objects.by_school_year(school_year),
+        "school_year": school_year,
+    }
     return render(request, "reports/bundle.html", context)
 
 
