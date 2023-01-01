@@ -31,7 +31,7 @@ types-bleach==5.0.3.1
 types-python-dateutil==2.8.19.2
 types-pytz==2022.6.0.0
 types-requests==2.28.11
-types-six==1.16.21
+types-six==1.16.21.4
 types-toml==0.10.8
 weasyprint==56.1
 whitenoise[brotli]==6.2.0
