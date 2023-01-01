@@ -7,7 +7,7 @@ updates:
     # Dependabot is only submitting 5 pull requests each month,
     # even if I merge PRs that same day.
     # Raise the limit in case there are more than 5 things to upgrade.
-    open-pull-request-limit: 20
+    open-pull-requests-limit: 20
     ignore:
       - dependency-name: "flake8"
         versions: "<5"
