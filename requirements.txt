@@ -164,7 +164,6 @@ six==1.16.0
     #   bleach
     #   html5lib
     #   python-dateutil
-    #   sphinx-sitemap
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.3.2.post1
@@ -176,7 +175,7 @@ sphinx==5.2.3
     #   sphinx-sitemap
 sphinx-rtd-theme==1.1.1
     # via -r requirements.in
-sphinx-sitemap==2.2.0
+sphinx-sitemap==2.4.0
     # via -r requirements.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
