@@ -2,7 +2,7 @@ coverage[toml]
 django-stubs[compatible-mypy]==1.13.1
 django-test-plus==2.2.1
 factory-boy
-flake8==5.0.4
+flake8==6.0.0
 flake8-bugbear==22.12.6
 isort==5.5.4
 mypy==0.982
