@@ -1,4 +1,4 @@
-beautifulsoup4==4.11.1
+beautifulsoup4==4.11.2
 bleach==5.0.1
 boto3==1.24.42
 dj-database-url==1.2.0
