@@ -175,7 +175,7 @@ sphinx==5.3.0
     #   sphinx-sitemap
 sphinx-rtd-theme==1.1.1
     # via -r requirements.in
-sphinx-sitemap==2.4.0
+sphinx-sitemap==2.5.0
     # via -r requirements.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
