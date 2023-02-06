@@ -11,7 +11,6 @@ def set_order_to_id(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("schools", "0004_schoolbreak_students"),
     ]
