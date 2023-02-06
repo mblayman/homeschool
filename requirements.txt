@@ -114,7 +114,7 @@ jsonfield==3.1.0
     # via dj-stripe
 markupsafe==2.1.1
     # via jinja2
-oauthlib==3.2.1
+oauthlib==3.2.2
     # via requests-oauthlib
 packaging==21.3
     # via sphinx
