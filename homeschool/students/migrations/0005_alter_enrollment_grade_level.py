@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("schools", "0003_remove_uuids"), ("students", "0004_remove_uuids")]
 
     operations = [

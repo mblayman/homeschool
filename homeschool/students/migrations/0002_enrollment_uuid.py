@@ -13,7 +13,6 @@ def populate_uuid(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("students", "0001_initial")]
 
     operations = [
