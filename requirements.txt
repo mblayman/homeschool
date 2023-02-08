@@ -34,7 +34,7 @@ cffi==1.15.1
     #   weasyprint
 charset-normalizer==2.1.0
     # via requests
-cryptography==38.0.3
+cryptography==39.0.1
     # via pyjwt
 cssselect2==0.6.0
     # via weasyprint
