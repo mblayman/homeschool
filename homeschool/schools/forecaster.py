@@ -1,5 +1,4 @@
 import datetime
-from typing import Optional
 
 from django.utils import timezone
 
@@ -12,7 +11,7 @@ class Forecaster:
 
     def get_last_forecast_date(
         self, student: Student, course: Course
-    ) -> Optional[datetime.date]:
+    ) -> datetime.date | None:
         """Get the last forecast date of course for the student."""
         task_items = self.get_task_items(student, course)
         if not task_items:
@@ -23,7 +22,7 @@ class Forecaster:
             return task_item["planned_date"]
         return task_item["coursework"].completed_date
 
-    def get_items_by_task(self, student: Optional[Student], course: Course) -> dict:
+    def get_items_by_task(self, student: Student | None, course: Course) -> dict:
         """Get information about the tasks keyed by the task."""
         return {
             item["course_task"]: item for item in self.get_task_items(student, course)

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from denied.authorizers import any_authorized
 from denied.decorators import authorize
 from django.contrib import messages
@@ -128,7 +126,7 @@ class CourseCreateView(CreateView):
         }
 
     @cached_property
-    def course_to_copy(self) -> Optional[Course]:
+    def course_to_copy(self) -> Course | None:
         """Get the course to copy if the query arg is present."""
         if "copy_from" not in self.request.GET:
             return None
