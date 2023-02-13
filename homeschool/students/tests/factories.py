@@ -1,10 +1,14 @@
 import factory
 from django.utils import timezone
 
+from homeschool.test import Factory
 
-class StudentFactory(factory.django.DjangoModelFactory):
+from ..models import Student
+
+
+class StudentFactory(Factory[Student]):
     class Meta:
-        model = "students.Student"
+        model = Student
 
     school = factory.SubFactory("homeschool.schools.tests.factories.SchoolFactory")
     first_name = factory.Faker("first_name")

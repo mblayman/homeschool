@@ -109,10 +109,10 @@ class TestStudentsCreateView(TestCase):
 class TestCourseworkFormView(TestCase):
     def test_get(self):
         user = self.make_user()
-        student = StudentFactory(school=user.school)
+        student = StudentFactory.create(school=user.school)
         grade_level = GradeLevelFactory(school_year__school=user.school)
         course = CourseFactory(grade_levels=[grade_level])
-        course_task = CourseTaskFactory(course=course)
+        course_task = CourseTaskFactory.create(course=course)
 
         with self.login(user):
             self.get_check_200(
@@ -288,9 +288,13 @@ class TestGradeView(TestCase):
             self.get_check_200("students:grade")
 
     def test_fetch_students(self):
+        """Fetch the students that are in the school year."""
         user = self.make_user()
-        student_1 = StudentFactory(school=user.school)
-        student_2 = StudentFactory(school=user.school)
+        enrollment = EnrollmentFactory(
+            student__school=user.school, grade_level__school_year__school=user.school
+        )
+        # An unenrolled student is not included.
+        StudentFactory(school=user.school)
 
         with self.login(user):
             self.get("students:grade")
@@ -298,8 +302,7 @@ class TestGradeView(TestCase):
         self.assertContext(
             "work_to_grade",
             [
-                {"student": student_1, "graded_work": []},
-                {"student": student_2, "graded_work": []},
+                {"student": enrollment.student, "graded_work": []},
             ],
         )
         assert not self.get_context("has_work_to_grade")

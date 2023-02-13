@@ -1,5 +1,9 @@
 import factory
 
+from homeschool.test import Factory
+
+from ..models import CourseTask
+
 
 class CourseFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -16,9 +20,9 @@ class CourseFactory(factory.django.DjangoModelFactory):
             course.grade_levels.set(extracted)
 
 
-class CourseTaskFactory(factory.django.DjangoModelFactory):
+class CourseTaskFactory(Factory[CourseTask]):
     class Meta:
-        model = "courses.CourseTask"
+        model = CourseTask
 
     course = factory.SubFactory(CourseFactory)
     description = factory.Faker("sentence")

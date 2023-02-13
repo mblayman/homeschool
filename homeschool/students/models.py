@@ -41,7 +41,7 @@ class Student(models.Model):
         self._enrollment_by_course_cache = {}
 
     @classmethod
-    def get_students_for(cls, school_year):
+    def get_students_for(cls, school_year: SchoolYear) -> list[Student]:
         """Get all the enrolled students for the school year."""
         enrollments = (
             Enrollment.objects.filter(grade_level__school_year=school_year)

@@ -166,30 +166,27 @@ class GradeView(TemplateView):
 
     def get_students_graded_work(self):
         """Get all the graded work for each student."""
-        students = self.request.user.school.students.all()  # type: ignore  # Issue 762
-
-        graded_work_by_student = []
-        for student in students:
-            graded_work_for_student = {
-                "student": student,
-                "graded_work": self.get_graded_work(student),
-            }
-            graded_work_by_student.append(graded_work_for_student)
-        return graded_work_by_student
-
-    def get_graded_work(self, student):
+        graded_work_by_student: list[dict] = []
         today = self.request.user.get_local_today()  # type: ignore  # Issue 762
         school_year = SchoolYear.objects.filter(
             school=self.request.user.school, start_date__lte=today, end_date__gte=today  # type: ignore  # Issue 762 # noqa
         ).first()
-        if not school_year:
-            return []
 
-        enrollment = get_object_or_404(
-            Enrollment.objects.select_related("grade_level"),
-            student=student,
-            grade_level__school_year=school_year,
-        )
+        if school_year is None:
+            return graded_work_by_student
+
+        for enrollment in Enrollment.objects.all_in_year(school_year).select_related(
+            "grade_level"
+        ):
+            graded_work_for_student = {
+                "student": enrollment.student,
+                "graded_work": self.get_graded_work(enrollment),
+            }
+            graded_work_by_student.append(graded_work_for_student)
+        return graded_work_by_student
+
+    def get_graded_work(self, enrollment: Enrollment) -> list:
+        student = enrollment.student
         courses = enrollment.grade_level.get_ordered_courses()
 
         completed_task_ids = Coursework.objects.filter(
