@@ -2,7 +2,7 @@ beautifulsoup4==4.11.2
 bleach==6.0.0
 boto3==1.26.61
 dj-database-url==1.2.0
-Django==4.1.6
+Django==4.1.7
 django-allauth==0.52.0
 django-anymail[sendgrid]==9.0
 django-debug-toolbar==3.8.1
