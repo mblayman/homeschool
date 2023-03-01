@@ -173,7 +173,7 @@ sphinx==5.3.0
     #   -r requirements.in
     #   sphinx-rtd-theme
     #   sphinx-sitemap
-sphinx-rtd-theme==1.1.1
+sphinx-rtd-theme==1.2.0
     # via -r requirements.in
 sphinx-sitemap==2.5.0
     # via -r requirements.in
@@ -183,6 +183,8 @@ sphinxcontrib-devhelp==1.0.2
     # via sphinx
 sphinxcontrib-htmlhelp==2.0.0
     # via sphinx
+sphinxcontrib-jquery==2.0.0
+    # via sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
 sphinxcontrib-qthelp==1.0.3
