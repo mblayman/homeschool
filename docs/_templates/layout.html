@@ -1,8 +1,9 @@
 {% extends "!layout.html" %}
 
 {% block sidebartitle %}
+  {%- set _logo_url = logo_url|default(pathto('_static/' + (logo or ""), 1)) %}
   <a href="/" class="icon icon-home"> {{ project }}
-    <img src="{{ pathto('_static/' + logo, 1) }}" class="logo" alt="{{ _('Logo') }}"/>
+    <img src="{{ _logo_url }}" class="logo" alt="{{ _('Logo') }}"/>
   </a>
 
   {% include "searchbox.html" %}
