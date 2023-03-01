@@ -3,7 +3,7 @@ django-stubs[compatible-mypy]==1.14.0
 django-test-plus==2.2.1
 factory-boy
 flake8==6.0.0
-flake8-bugbear==23.1.20
+flake8-bugbear==23.2.13
 isort==5.5.4
 mypy==0.991
 pip-tools
