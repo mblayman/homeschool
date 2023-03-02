@@ -1390,6 +1390,14 @@ class TestSocialImage(TestCase):
             self.get_check_200("office:social_image")
 
 
+class TestHandle404(TestCase):
+    def test_get(self):
+        response = self.get("office:handle_404")
+
+        assert response.status_code == 404
+        assert "Not Found" in response.content.decode()
+
+
 class TestHandle500(TestCase):
     def test_get(self):
         response = self.get("office:handle_500")

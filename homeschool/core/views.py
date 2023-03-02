@@ -687,6 +687,12 @@ def social_image(request):
 
 
 @allow
+def handle_404(request, exception=None):
+    """Handle 404 errors and display them."""
+    return render(request, "404.html", {}, status=404)
+
+
+@allow
 def handle_500(request):
     """Handle 500 errors and display them."""
     return render(request, "500.html", {}, status=500)
