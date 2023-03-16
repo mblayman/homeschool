@@ -189,9 +189,12 @@ def school_year_forecast(request, pk):
 
 @method_decorator(authorize(any_authorized), "dispatch")
 class SchoolYearListView(ListView):
+    if TYPE_CHECKING:  # pragma: no cover
+        request = AuthenticatedHttpRequest()
+
     def get_queryset(self):
         user = self.request.user
-        return SchoolYear.objects.filter(school__admin=user).order_by("-start_date")  # type: ignore  # Issue 762 # noqa
+        return SchoolYear.objects.filter(school__admin=user).order_by("-start_date")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

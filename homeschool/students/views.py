@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from denied.authorizers import any_authorized
 from denied.decorators import authorize
 from django.contrib import messages
@@ -12,6 +14,7 @@ from django.views.generic import CreateView, DeleteView, FormView, TemplateView
 from homeschool.core.view_helpers import flash_info
 from homeschool.courses.mixins import CourseTaskMixin
 from homeschool.courses.models import Course, GradedWork
+from homeschool.custom_typing import AuthenticatedHttpRequest
 from homeschool.schools.authorizers import school_year_authorized
 from homeschool.schools.models import GradeLevel, SchoolYear
 
@@ -51,6 +54,9 @@ def students_index(request):
 
 @method_decorator(authorize(any_authorized), "dispatch")
 class StudentCreateView(CreateView):
+    if TYPE_CHECKING:  # pragma: no cover
+        request = AuthenticatedHttpRequest()
+
     template_name = "students/student_form.html"
     model = Student
     fields = ("school", "first_name", "last_name")
@@ -67,7 +73,7 @@ class StudentCreateView(CreateView):
         kwargs = super().get_form_kwargs()
         if "data" in kwargs:
             data = kwargs["data"].copy()
-            data["school"] = self.request.user.school  # type: ignore  # Issue 762
+            data["school"] = self.request.user.school
             kwargs["data"] = data
         return kwargs
 

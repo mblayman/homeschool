@@ -11,12 +11,13 @@ from django.utils.functional import cached_property
 from homeschool.core.slack_gateway import slack_gateway
 
 
-class User(AbstractUser):  # type: ignore  # Issue 762
+# Check https://github.com/typeddjango/django-stubs/issues/1354 for details
+class User(AbstractUser):  # type: ignore  # blocked upstream - see above
     """A custom user for extension"""
 
     @cached_property
     def school(self):
-        return self.school_set.latest("id")
+        return self.school_set.latest("id")  # pyright: ignore
 
     def get_local_today(self) -> datetime.date:
         """Get the current date from the user's timezone point of view.
@@ -41,13 +42,13 @@ class Profile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
+def create_profile(sender, instance, created, **kwargs):  # pyright: ignore
     """A new user gets an associated profile."""
     if created:
         Profile.objects.create(user=instance)
 
 
 @receiver(user_signed_up, sender=User)
-def notify_signup(sender, request, user, **kwargs):
+def notify_signup(sender, request, user, **kwargs):  # pyright: ignore
     """Notify that a new signup occurred."""
     slack_gateway.send_message(f"New sign up: {user.username}")
