@@ -18,18 +18,18 @@ def checklist(request: HttpRequest, year: int, month: int, day: int) -> HttpResp
 
     This view assumes that the date provided is a Sunday at the beginning of the week.
     """
-    today = request.user.get_local_today()  # type: ignore  # Issue 762
+    today = request.user.get_local_today()
     week_day = datetime.date(year, month, day)
     week = Week(week_day)
 
-    school_year = SchoolYear.get_year_for(request.user, week_day)  # type: ignore  # Issue 762
+    school_year = SchoolYear.get_year_for(request.user, week_day)
 
     # Check for the first week boundary condition to look for a school year
     # that may have started mid-week.
     if school_year is None:
         # Look ahead to the Saturday.
         school_year = SchoolYear.get_year_for(
-            request.user, week_day + datetime.timedelta(days=6)  # type: ignore  # Issue 762
+            request.user, week_day + datetime.timedelta(days=6)
         )
 
     schedules = []
@@ -46,11 +46,11 @@ def edit_checklist(
     request: HttpRequest, year: int, month: int, day: int
 ) -> HttpResponse:
     """Edit the checklist to allow users to mark courses to exclude."""
-    today = request.user.get_local_today()  # type: ignore  # Issue 762
+    today = request.user.get_local_today()
     week_day = datetime.date(year, month, day)
     week = Week(week_day)
 
-    school_year = SchoolYear.get_year_for(request.user, week_day)  # type: ignore  # Issue 762
+    school_year = SchoolYear.get_year_for(request.user, week_day)
     if school_year is None:
         return HttpResponseNotFound()
 

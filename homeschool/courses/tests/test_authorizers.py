@@ -17,7 +17,7 @@ class TestCourseAuthorized(TestCase):
         """A course is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=request.user.school)  # type: ignore  # Issue 762 # noqa
+        grade_level = GradeLevelFactory(school_year__school=request.user.school)
         course = CourseFactory(grade_levels=[grade_level])
 
         assert course_authorized(request, pk=course.pk)
@@ -36,7 +36,7 @@ class TestCourseTaskAuthorized(TestCase):
         """A course task is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=request.user.school)  # type: ignore  # Issue 762 # noqa
+        grade_level = GradeLevelFactory(school_year__school=request.user.school)
         course = CourseFactory(grade_levels=[grade_level])
         course_task = CourseTaskFactory(course=course)
 
@@ -56,7 +56,7 @@ class TestCourseResourceAuthorized(TestCase):
         """A course resource is accessible to a user."""
         request = self.rf.get("/")
         request.user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=request.user.school)  # type: ignore  # Issue 762 # noqa
+        grade_level = GradeLevelFactory(school_year__school=request.user.school)
         course = CourseFactory(grade_levels=[grade_level])
         resource = CourseResourceFactory(course=course)
 

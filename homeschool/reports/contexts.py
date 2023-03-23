@@ -148,7 +148,7 @@ class ProgressReportContext:
         """
         tasks = [grade.graded_work.course_task for grade in grades]
         coursework_by_task_id = {
-            coursework.course_task_id: coursework  # type: ignore  # Issue 762
+            coursework.course_task_id: coursework
             for coursework in Coursework.objects.filter(
                 student=student, course_task__in=tasks
             )

@@ -79,7 +79,7 @@ class StudentCreateView(CreateView):
 
 
 @method_decorator(authorize(student_authorized), "dispatch")
-class CourseworkFormView(CourseTaskMixin, FormView):  # type: ignore  # Issue 762
+class CourseworkFormView(CourseTaskMixin, FormView):
     template_name = "students/coursework_form.html"
     form_class = CourseworkForm
 
@@ -115,7 +115,7 @@ class CourseworkFormView(CourseTaskMixin, FormView):  # type: ignore  # Issue 76
 
 
 @method_decorator(authorize(student_authorized), "dispatch")
-class GradeFormView(CourseTaskMixin, FormView):  # type: ignore  # Issue 762
+class GradeFormView(CourseTaskMixin, FormView):
     template_name = "students/grade_form.html"
     form_class = GradeForm
 
@@ -173,9 +173,9 @@ class GradeView(TemplateView):
     def get_students_graded_work(self):
         """Get all the graded work for each student."""
         graded_work_by_student: list[dict] = []
-        today = self.request.user.get_local_today()  # type: ignore  # Issue 762
+        today = self.request.user.get_local_today()
         school_year = SchoolYear.objects.filter(
-            school=self.request.user.school, start_date__lte=today, end_date__gte=today  # type: ignore  # Issue 762 # noqa
+            school=self.request.user.school, start_date__lte=today, end_date__gte=today
         ).first()
 
         if school_year is None:
@@ -223,9 +223,9 @@ class GradeView(TemplateView):
         """Parse the scores and persist new grades."""
         scores = self.get_scores()
 
-        school = self.request.user.school  # type: ignore  # Issue 762
+        school = self.request.user.school
         grades = []
-        students = self.request.user.school.students.filter(id__in=scores.keys())  # type: ignore  # Issue 762 # noqa
+        students = self.request.user.school.students.filter(id__in=scores.keys())
         for student in students:
             grade_levels = GradeLevel.objects.filter(school_year__school=school)
             courses = Course.objects.filter(grade_levels__in=grade_levels)
@@ -269,7 +269,7 @@ class GradeView(TemplateView):
             graded_work_id = int(work_parts[2])
             if student_id not in scores:
                 scores[student_id] = {}
-            scores[student_id][graded_work_id] = score  # type: ignore  # Issue 762
+            scores[student_id][graded_work_id] = score
 
         return scores
 
@@ -294,7 +294,7 @@ def enrollment_create(request, pk):
         return flash_info(request, "All students are enrolled in the school year.", url)
 
     enrolled_students = {enrollment.student for enrollment in enrollments}
-    students = [student for student in students if student not in enrolled_students]  # type: ignore  # Issue 762 # noqa
+    students = [student for student in students if student not in enrolled_students]
 
     if request.method == "POST":
         form = EnrollmentForm(request.POST, user=request.user)

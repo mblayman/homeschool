@@ -19,7 +19,7 @@ class TestAccountGateMiddleware(TestCase):
 
         middleware(request)
 
-        assert request.account == Account.objects.filter(user=request.user).first()  # type: ignore  # Issue 762 # noqa
+        assert request.account == Account.objects.filter(user=request.user).first()
 
     def test_anonymous_user(self):
         """An anonymous user has no account."""
@@ -29,7 +29,7 @@ class TestAccountGateMiddleware(TestCase):
 
         response = middleware(request)
 
-        assert request.account is None  # type: ignore  # Issue 762
+        assert request.account is None
         assert response.status_code == 200
 
     def test_inactive_redirect(self):
@@ -37,7 +37,7 @@ class TestAccountGateMiddleware(TestCase):
         request = self.rf.get("/")
         request.user = self.make_user()
         expired = Account.AccountStatus.TRIAL_EXPIRED
-        Account.objects.filter(user=request.user).update(status=expired)  # type: ignore  # Issue 762 # noqa
+        Account.objects.filter(user=request.user).update(status=expired)
         middleware = AccountGateMiddleware(get_response)
 
         response = middleware(request)
@@ -50,7 +50,7 @@ class TestAccountGateMiddleware(TestCase):
         request = self.rf.get(self.reverse("subscriptions:index"))
         request.user = self.make_user()
         expired = Account.AccountStatus.TRIAL_EXPIRED
-        Account.objects.filter(user=request.user).update(status=expired)  # type: ignore  # Issue 762 # noqa
+        Account.objects.filter(user=request.user).update(status=expired)
         middleware = AccountGateMiddleware(get_response)
 
         response = middleware(request)
@@ -62,7 +62,7 @@ class TestAccountGateMiddleware(TestCase):
         request = self.rf.get(self.reverse("core:help"))
         request.user = self.make_user()
         expired = Account.AccountStatus.TRIAL_EXPIRED
-        Account.objects.filter(user=request.user).update(status=expired)  # type: ignore  # Issue 762 # noqa
+        Account.objects.filter(user=request.user).update(status=expired)
         middleware = AccountGateMiddleware(get_response)
 
         response = middleware(request)

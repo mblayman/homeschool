@@ -15,10 +15,6 @@ src_paths = ["homeschool"]
 
 [tool.mypy]
 check_untyped_defs = true
-plugins = ["mypy_django_plugin.main"]
-
-[tool.django-stubs]
-django_settings_module = "project.settings"
 
 [[tool.mypy.overrides]]
 module = [

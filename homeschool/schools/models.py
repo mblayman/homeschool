@@ -36,7 +36,7 @@ def create_school(sender, instance, created, **kwargs):
         School.objects.create(admin=instance)
 
 
-class SchoolYear(DaysOfWeekModel):  # type: ignore  # Issue 762
+class SchoolYear(DaysOfWeekModel):
     """A school year to bound start and end dates of the academic year"""
 
     id = HashidAutoField(

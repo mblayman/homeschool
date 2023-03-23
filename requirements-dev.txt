@@ -1,5 +1,4 @@
 coverage[toml]
-django-stubs[compatible-mypy]==1.15.0
 django-test-plus==2.2.1
 factory-boy
 flake8==6.0.0

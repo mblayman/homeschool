@@ -2,7 +2,7 @@ from denied.authorizers import any_authorized
 from denied.decorators import authorize
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import reverse  # type: ignore  # Issue 762
+from django.shortcuts import reverse
 from django.views.decorators.http import require_POST
 
 from .forms import ReferralForm

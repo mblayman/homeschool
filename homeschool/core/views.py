@@ -72,21 +72,21 @@ class DashboardView(TemplateView):
 
         user = self.request.user
 
-        today = user.get_local_today()  # type: ignore  # Issue 762
+        today = user.get_local_today()
         day = self._get_day(today)
         self._set_week_dates_context(day, today, context)
 
-        has_school_years = SchoolYear.objects.filter(school=user.school).exists()  # type: ignore  # Issue 762 # noqa
+        has_school_years = SchoolYear.objects.filter(school=user.school).exists()
         context["has_school_years"] = has_school_years
 
-        has_students = Student.objects.filter(school=user.school).exists()  # type: ignore  # Issue 762 # noqa
+        has_students = Student.objects.filter(school=user.school).exists()
         context["has_students"] = has_students
 
         if has_school_years and has_students:
             self.get_week_context_data(context, day, today)
         else:
             context["has_tasks"] = CourseTask.objects.filter(
-                course__grade_levels__school_year__school=user.school  # type: ignore  # Issue 762 # noqa
+                course__grade_levels__school_year__school=user.school
             ).exists()
 
         context["show_whats_new"] = self.show_whats_new
@@ -124,8 +124,8 @@ class DashboardView(TemplateView):
         """Get the context data for a week."""
         week = Week(day)
 
-        school = self.request.user.school  # type: ignore  # Issue 762
-        school_year = SchoolYear.get_year_for(self.request.user, day)  # type: ignore  # Issue 762 # noqa
+        school = self.request.user.school
+        school_year = SchoolYear.get_year_for(self.request.user, day)
 
         if school_year:
             context["school_year"] = school_year
@@ -184,7 +184,7 @@ class DashboardView(TemplateView):
         # In that scenario, try to get the school year by looking ahead.
         next_school_year = (
             SchoolYear.objects.filter(
-                school=self.request.user.school, start_date__range=week  # type: ignore  # Issue 762 # noqa
+                school=self.request.user.school, start_date__range=week
             )
             .prefetch_related("grade_levels", "grade_levels__courses")
             .first()
@@ -207,8 +207,8 @@ class DashboardView(TemplateView):
         """Check if the "What's New?" badge should be displayed."""
         user = self.request.user
         return (
-            user.profile.wants_announcements  # type: ignore  # Issue 762
-            and Notification.objects.filter(  # type: ignore  # Issue 762
+            user.profile.wants_announcements
+            and Notification.objects.filter(
                 user=user, status=Notification.NotificationStatus.UNREAD
             ).exists()
         )
@@ -224,22 +224,22 @@ class DailyView(TemplateView):
 
         user = self.request.user
 
-        has_school_years = SchoolYear.objects.filter(school=user.school).exists()  # type: ignore  # Issue 762 # noqa
+        has_school_years = SchoolYear.objects.filter(school=user.school).exists()
         context["has_school_years"] = has_school_years
 
-        has_students = Student.objects.filter(school=user.school).exists()  # type: ignore  # Issue 762 # noqa
+        has_students = Student.objects.filter(school=user.school).exists()
         context["has_students"] = has_students
 
         if has_school_years and has_students:
             self.get_daily_context(context)
         else:
             context["has_tasks"] = CourseTask.objects.filter(
-                course__grade_levels__school_year__school=user.school  # type: ignore  # Issue 762 # noqa
+                course__grade_levels__school_year__school=user.school
             ).exists()
         return context
 
     def get_daily_context(self, context):
-        today = self.request.user.get_local_today()  # type: ignore  # Issue 762
+        today = self.request.user.get_local_today()
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")
         day = self.kwargs.get("day")
@@ -255,7 +255,7 @@ class DailyView(TemplateView):
         )
         school_year = (
             SchoolYear.objects.filter(
-                school=self.request.user.school, start_date__lte=day, end_date__gte=day  # type: ignore  # Issue 762 # noqa
+                school=self.request.user.school, start_date__lte=day, end_date__gte=day
             )
             .prefetch_related("grade_levels")
             .first()
@@ -503,7 +503,7 @@ class StartSchoolYearView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["school_year"] = SchoolYear.objects.filter(
-            school=self.request.user.school  # type: ignore  # Issue 762
+            school=self.request.user.school
         ).first()
         return context
 
@@ -540,10 +540,10 @@ class StartGradeLevelView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["grade_level"] = GradeLevel.objects.filter(
-            school_year__school=self.request.user.school  # type: ignore  # Issue 762
+            school_year__school=self.request.user.school
         ).first()
         context["school_year"] = SchoolYear.objects.filter(
-            school=self.request.user.school  # type: ignore  # Issue 762
+            school=self.request.user.school
         ).first()
         return context
 
@@ -585,7 +585,7 @@ class StartCourseView(CreateView):
     @cached_property
     def grade_level(self) -> GradeLevel | None:
         return GradeLevel.objects.filter(
-            school_year__school=self.request.user.school  # type: ignore  # Issue 762
+            school_year__school=self.request.user.school
         ).first()
 
 
@@ -598,7 +598,7 @@ class StartCourseTaskView(CreateView):
         context = super().get_context_data(**kwargs)
         course = (
             Course.objects.filter(
-                grade_levels__school_year__school=self.request.user.school  # type: ignore  # Issue 762 # noqa
+                grade_levels__school_year__school=self.request.user.school
             )
             .distinct()
             .first()
@@ -610,7 +610,7 @@ class StartCourseTaskView(CreateView):
 
     def get_success_url(self):
         return (
-            reverse("schools:current_school_year") + f"?welcome={self.object.course.id}"  # type: ignore  # Issue 762 # noqa
+            reverse("schools:current_school_year") + f"?welcome={self.object.course.id}"
         )
 
     def get_form_kwargs(self):
@@ -642,7 +642,7 @@ def office_onboarding(request):
         courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
         stats = {
             "user": user,
-            "email_address": user.emailaddress_set.first(),  # type: ignore  # Issue 762
+            "email_address": user.emailaddress_set.first(),
             "school_years": SchoolYear.objects.filter(school__admin=user).count(),
             "grade_levels": len(grade_levels),
             "courses": len(courses),

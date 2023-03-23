@@ -24,7 +24,7 @@ class CourseForm(DaysOfWeekModelForm):
         # Saving this to an attribute isn't really needed,
         # but it's useful for verification.
         self.school_year = school_year
-        self.fields["grade_levels"].queryset = GradeLevel.objects.filter(  # type: ignore  # Issue 762 # noqa
+        self.fields["grade_levels"].queryset = GradeLevel.objects.filter(
             school_year=school_year
         )
 

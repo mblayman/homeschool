@@ -13,7 +13,7 @@ from homeschool.users.models import User
 from .exceptions import NoSchoolYearError
 
 
-class Course(DaysOfWeekModel):  # type: ignore  # Issue 762
+class Course(DaysOfWeekModel):
     """A course is a container for tasks in a certain subject area."""
 
     id = HashidAutoField(primary_key=True, salt=f"course{settings.HASHID_FIELD_SALT}")
