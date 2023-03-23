@@ -130,6 +130,14 @@ class CourseTask(OrderedModel):
         blank=True,
         help_text="A grade level when a task is specific to a grade",
     )
+    resource = models.ForeignKey(
+        "courses.CourseResource",
+        on_delete=models.SET_NULL,
+        related_name="tasks",
+        null=True,
+        blank=True,
+        help_text="An associated course resource",
+    )
 
     order_with_respect_to = "course"
 

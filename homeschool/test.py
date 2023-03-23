@@ -32,3 +32,7 @@ class Factory(Generic[T], factory.django.DjangoModelFactory):
     @classmethod
     def create(cls, **kwargs) -> T:
         return super().create(**kwargs)
+
+    @classmethod
+    def build(cls, **kwargs) -> T:
+        return super().build(**kwargs)

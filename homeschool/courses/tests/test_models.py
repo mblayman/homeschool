@@ -75,7 +75,7 @@ class TestCourse(TestCase):
 
 class TestCourseTask(TestCase):
     def test_factory(self):
-        task = CourseTaskFactory()
+        task = CourseTaskFactory.create()
         other_task = CourseTaskFactory.build()
 
         assert task is not None
@@ -83,6 +83,7 @@ class TestCourseTask(TestCase):
         assert not hasattr(task, "graded_work")
         assert other_task.id is None
         assert task.grade_level is None
+        assert task.resource is None
 
     def test_str(self):
         task = CourseTaskFactory()
@@ -109,13 +110,13 @@ class TestCourseTask(TestCase):
 
     def test_has_graded_work(self):
         graded_work = GradedWorkFactory()
-        task = CourseTaskFactory(graded_work=graded_work)
+        task = CourseTaskFactory.create(graded_work=graded_work)
 
         assert task.graded_work == graded_work
 
     def test_has_grade_level(self):
         grade_level = GradeLevelFactory()
-        task = CourseTaskFactory(grade_level=grade_level)
+        task = CourseTaskFactory.create(grade_level=grade_level)
 
         assert task.grade_level == grade_level
 
