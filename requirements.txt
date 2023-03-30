@@ -14,9 +14,9 @@ beautifulsoup4==4.12.0
     # via -r requirements.in
 bleach==6.0.0
     # via -r requirements.in
-boto3==1.26.81
+boto3==1.26.102
     # via -r requirements.in
-botocore==1.29.81
+botocore==1.29.102
     # via
     #   boto3
     #   s3transfer
