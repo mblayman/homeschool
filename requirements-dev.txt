@@ -12,6 +12,6 @@ pytest==7.2.1
 pytest-cov==4.0.0
 pytest-django==4.5.2
 pytest-socket==0.6.0
-pytest-xdist==3.2.0
+pytest-xdist==3.2.1
 pyupgrade==3.3.1
 responses==0.10.15
