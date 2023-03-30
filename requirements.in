@@ -13,7 +13,7 @@ django-hashid-field==3.3.7
 django-hijack==3.2.6
 django-htmx==1.14.0
 django-ordered-model==3.6
-django-simple-history==3.2.0
+django-simple-history==3.3.0
 django-storages==1.13.2
 django-tz-detect==0.4.0
 django-waffle==3.0.0
