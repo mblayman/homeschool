@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 from hashid_field import HashidAutoField
-from ordered_model.models import OrderedModel, OrderedModelQuerySet
+from ordered_model.models import OrderedModel, OrderedModelManager
 
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.schools.models import GradeLevel, SchoolYear
@@ -100,7 +100,7 @@ class GradeLevelCoursesThroughModel(OrderedModel):
     course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
     order_with_respect_to = "grade_level"
 
-    objects = models.Manager.from_queryset(OrderedModelQuerySet)()
+    objects = OrderedModelManager()
 
     class Meta:
         ordering = ("grade_level", "order")
