@@ -8,7 +8,7 @@
 
       <div class="{% if task_detail.task.grade_level and not task_detail.student_details %}w-4/12{% else %}w-5/12{% endif %} p-2 pl-0 text-sm font-light overflow-x-auto border-t border-yellow-400">
         <a href="{% url "courses:task_edit" pk=task_detail.task.id %}?next={% url "courses:detail" task_detail.task.course.id %}%23task-{{ task_detail.task.id }}" class="hover:text-gray-600">
-          {{ task_detail.task.description|linebreaksbr }}
+          {{ task_detail.task|linebreaksbr }}
         </a>
       </div>
 

@@ -145,7 +145,10 @@ class CourseCreateView(CreateView):
 @method_decorator(authorize(course_authorized), "dispatch")
 class CourseDetailView(DetailView):
     queryset = Course.objects.all().prefetch_related(
-        "resources", "course_tasks__grade_level", "course_tasks__graded_work"
+        "resources",
+        "course_tasks__grade_level",
+        "course_tasks__graded_work",
+        "course_tasks__resource",
     )
 
     def get_context_data(self, *args, **kwargs):
@@ -654,7 +657,7 @@ def course_task_hx_delete(request, pk):
     course = task.course
     course_tasks = (
         task.course.course_tasks.all()
-        .select_related("grade_level")
+        .select_related("grade_level", "resource")
         .prefetch_related("graded_work")
     )
     context = {"course": course, "course_tasks": course_tasks}

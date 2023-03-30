@@ -90,6 +90,13 @@ class TestCourseTask(TestCase):
 
         assert str(task) == task.description
 
+    def test_str_with_resource(self):
+        """A resource title is included in the str representation."""
+        resource = CourseResourceFactory()
+        task = CourseTaskFactory(resource=resource)
+
+        assert str(task) == f"{resource.title}: {task.description}"
+
     def test_has_course(self):
         course = CourseFactory()
         task = CourseTaskFactory(course=course)

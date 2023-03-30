@@ -160,6 +160,8 @@ class CourseTask(OrderedModel):
         return hasattr(self, "graded_work")
 
     def __str__(self):
+        if self.resource_id is not None:
+            return f"{self.resource}: {self.description}"
         return self.description
 
 
