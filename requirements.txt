@@ -10,7 +10,7 @@ asgiref==3.5.2
     # via django
 babel==2.10.3
     # via sphinx
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.0
     # via -r requirements.in
 bleach==6.0.0
     # via -r requirements.in
