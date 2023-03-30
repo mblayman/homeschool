@@ -40,7 +40,7 @@ cssselect2==0.6.0
     # via weasyprint
 defusedxml==0.7.1
     # via python3-openid
-dj-database-url==1.2.0
+dj-database-url==1.3.0
     # via -r requirements.in
 dj-stripe==2.7.3
     # via -r requirements.in
@@ -217,6 +217,8 @@ types-toml==0.10.8.6
     # via -r requirements.in
 types-urllib3==1.26.19
     # via types-requests
+typing-extensions==4.5.0
+    # via dj-database-url
 urllib3==1.26.11
     # via
     #   botocore
