@@ -74,7 +74,7 @@ django-extensions==3.2.1
     # via -r requirements.in
 django-hashid-field==3.3.7
     # via -r requirements.in
-django-hijack==3.2.6
+django-hijack==3.3.0
     # via -r requirements.in
 django-htmx==1.14.0
     # via -r requirements.in
