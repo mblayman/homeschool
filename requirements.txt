@@ -78,7 +78,7 @@ django-hijack==3.3.0
     # via -r requirements.in
 django-htmx==1.14.0
     # via -r requirements.in
-django-ordered-model==3.6
+django-ordered-model==3.7.4
     # via -r requirements.in
 django-simple-history==3.3.0
     # via -r requirements.in
