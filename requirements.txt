@@ -60,7 +60,7 @@ django==4.1.7
     #   django-storages
     #   django-tz-detect
     #   jsonfield
-django-allauth==0.52.0
+django-allauth==0.54.0
     # via -r requirements.in
 django-anymail[sendgrid]==9.1
     # via -r requirements.in
