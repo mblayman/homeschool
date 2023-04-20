@@ -24,7 +24,7 @@
           {% if day.task %}
             <div class="flex flex-row py-2 text-sm font-light overflow-x-auto">
               <div class="w-1/6">{{ day.week_date|date:"M j" }}</div>
-              <div class="w-5/6">{{ day.task.description|urlize|linebreaksbr }}</div>
+              <div class="w-5/6">{{ day.task|urlize|linebreaksbr }}</div>
             </div>
           {% endif %}
         {% endfor %}
