@@ -330,7 +330,7 @@ class Student(models.Model):
         if enrollment:
             return course.course_tasks.filter(
                 Q(grade_level__isnull=True) | Q(grade_level=enrollment.grade_level)
-            )
+            ).select_related("resource")
         else:
             return course.course_tasks.none()
 
