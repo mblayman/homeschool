@@ -640,7 +640,7 @@ def bulk_delete_course_tasks(request, pk):
 
 @method_decorator(authorize(task_authorized), "dispatch")
 class CourseTaskDeleteView(DeleteView):
-    queryset = CourseTask.objects.all().select_related("course")
+    queryset = CourseTask.objects.all().select_related("course", "resource")
 
     def get_success_url(self):
         next_url = self.request.GET.get("next")
