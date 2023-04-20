@@ -20,7 +20,7 @@
         </div>
         {% for grade in course_info.grades %}
           <div class="flex flex-row">
-            <div class="w-4/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ grade.graded_work.course_task.description }}</div>
+            <div class="w-4/6 text-sm font-light pr-8 py-1 border-t border-yellow-400 border-dotted">{{ grade.graded_work.course_task }}</div>
             <div class="w-1/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ grade.score }}</div>
             <div class="w-1/6 text-sm font-light py-1 border-t border-yellow-400 border-dotted">{{ grade.coursework.completed_date|date:"Y-m-d"|default:"No completed date" }}</div>
           </div>

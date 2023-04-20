@@ -39,7 +39,7 @@ def get_course_task_queryset(user):
     grade_levels = GradeLevel.objects.filter(school_year__school__admin=user)
     return (
         CourseTask.objects.filter(course__grade_levels__in=grade_levels)
-        .select_related("course")
+        .select_related("course", "resource")
         .distinct()
     )
 
