@@ -201,7 +201,7 @@ class GradeView(TemplateView):
 
         graded_work = GradedWork.objects.filter(
             course_task__in=completed_task_ids
-        ).select_related("course_task", "course_task__course")
+        ).select_related("course_task", "course_task__course", "course_task__resource")
         # Sort the graded work based on the order of the ordered courses.
         sorted_work = sorted(
             graded_work, key=lambda work: courses.index(work.course_task.course)
