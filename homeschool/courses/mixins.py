@@ -22,6 +22,8 @@ class CourseTaskMixin:
             school_year__school__admin=self.request.user
         )
         return get_object_or_404(
-            CourseTask.objects.filter(course__grade_levels__in=grade_levels).distinct(),
+            CourseTask.objects.filter(course__grade_levels__in=grade_levels)
+            .select_related("resource")
+            .distinct(),
             pk=self.kwargs["course_task_id"],
         )
