@@ -353,7 +353,7 @@ class DailyView(TemplateView):
                     course_schedule["task"] = (
                         student.get_tasks_for(course)
                         .exclude(id__in=completed_task_ids)
-                        .select_related("graded_work")[task_index]
+                        .select_related("graded_work", "resource")[task_index]
                     )
                 except IndexError:
                     course_schedule["no_scheduled_task"] = True
