@@ -173,7 +173,14 @@ DEFAULT_FROM_EMAIL = f"noreply@{domain}"
 SERVER_EMAIL = f"noreply@{domain}"
 
 # Files
-DEFAULT_FILE_STORAGE = env("DEFAULT_FILE_STORAGE")
+STORAGES = {
+    "default": {
+        "BACKEND": env("DEFAULT_FILE_STORAGE"),
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 MEDIA_ROOT = str(BASE_DIR / "media/")
 MEDIA_URL = "/media/"
 
@@ -226,7 +233,6 @@ SITE_ID = 1
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # 3rd party packages
 

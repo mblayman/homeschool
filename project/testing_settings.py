@@ -6,7 +6,17 @@ from .settings import *  # noqa
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
 
 # Use regular files instead of S3 for tests.
-DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        # Whitenoise does not play well with tz_detect
+        # because tests don't run collectstatic.
+        # Override back to the default storage for testing.
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Make sure that tests are never sending real emails.
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
@@ -35,10 +45,6 @@ class SimplePasswordHasher(BasePasswordHasher):
 
 
 PASSWORD_HASHERS = ("project.testing_settings.SimplePasswordHasher",)
-
-# Whitenoise does not play well with tz_detect because tests don't run collectstatic.
-# Override back to the default storage for testing.
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 # This eliminates the warning about a missing staticfiles directory.
 WHITENOISE_AUTOREFRESH = True

@@ -47,6 +47,9 @@ filterwarnings = [
     "error",
     # django-extensions==3.2.0
     "ignore:.*'django_extensions' defines.*:DeprecationWarning",
+    # djstripe==2.7.3
+    "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
+    "ignore:.*pkg_resources.declare_namespace.*:DeprecationWarning",
 ]
 # This warning is coming from dj-stripe 2.5.1 (Example)
 #    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning
