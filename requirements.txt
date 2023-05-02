@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
     # via sphinx
-asgiref==3.5.2
+asgiref==3.6.0
     # via django
 babel==2.10.3
     # via sphinx
@@ -44,7 +44,7 @@ dj-database-url==2.0.0
     # via -r requirements.in
 dj-stripe==2.7.3
     # via -r requirements.in
-django==4.1.7
+django==4.2
     # via
     #   -r requirements.in
     #   dj-database-url
