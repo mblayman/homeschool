@@ -35,7 +35,9 @@ cffi==1.15.1
 charset-normalizer==2.1.0
     # via requests
 cryptography==39.0.1
-    # via pyjwt
+    # via
+    #   django-anymail
+    #   pyjwt
 cssselect2==0.6.0
     # via weasyprint
 defusedxml==0.7.1
@@ -62,7 +64,7 @@ django==4.2.1
     #   jsonfield
 django-allauth==0.54.0
     # via -r requirements.in
-django-anymail[sendgrid]==9.1
+django-anymail[sendgrid]==10.0
     # via -r requirements.in
 django-debug-toolbar==4.1.0
     # via -r requirements.in
@@ -222,6 +224,7 @@ typing-extensions==4.5.0
 urllib3==1.26.11
     # via
     #   botocore
+    #   django-anymail
     #   requests
     #   sentry-sdk
 weasyprint==58.1
