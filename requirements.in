@@ -10,7 +10,7 @@ django-denied==1.2
 django-environ==0.10.0
 django-extensions==3.2.1
 django-hashid-field==3.3.7
-django-hijack==3.3.0
+django-hijack==3.4.1
 django-htmx==1.14.0
 django-ordered-model==3.7.4
 django-simple-history==3.3.0
