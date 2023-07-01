@@ -7,7 +7,7 @@ isort==5.5.4
 mypy==1.4.1
 pip-tools
 pre-commit
-pygraphviz==1.10
+pygraphviz==1.11
 pytest==7.4.0
 pytest-cov==4.1.0
 pytest-django==4.5.2
