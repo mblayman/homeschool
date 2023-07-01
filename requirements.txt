@@ -72,7 +72,7 @@ django-denied==1.2
     # via -r requirements.in
 django-environ==0.10.0
     # via -r requirements.in
-django-extensions==3.2.1
+django-extensions==3.2.3
     # via -r requirements.in
 django-hashid-field==3.3.7
     # via -r requirements.in
