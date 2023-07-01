@@ -20,7 +20,7 @@ class SchoolYearFactory(factory.django.DjangoModelFactory):
         lambda: timezone.localdate() - datetime.timedelta(days=30)
     )
     end_date = factory.LazyFunction(
-        lambda: timezone.localdate() + datetime.timedelta(days=335)
+        lambda: timezone.localdate() + datetime.timedelta(days=340)
     )
 
 
