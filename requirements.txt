@@ -44,7 +44,7 @@ defusedxml==0.7.1
     # via python3-openid
 dj-database-url==2.0.0
     # via -r requirements.in
-dj-stripe==2.7.3
+dj-stripe==2.8.1
     # via -r requirements.in
 django==4.2.3
     # via
@@ -61,7 +61,6 @@ django==4.2.3
     #   django-htmx
     #   django-storages
     #   django-tz-detect
-    #   jsonfield
 django-allauth==0.54.0
     # via -r requirements.in
 django-anymail[sendgrid]==10.0
@@ -112,8 +111,6 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-jsonfield==3.1.0
-    # via dj-stripe
 markupsafe==2.1.1
     # via jinja2
 oauthlib==3.2.2
