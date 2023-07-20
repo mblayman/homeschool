@@ -125,7 +125,7 @@ pycparser==2.21
     # via cffi
 pydyf==0.6.0
     # via weasyprint
-pygments==2.14.0
+pygments==2.15.0
     # via sphinx
 pyjwt[crypto]==2.4.0
     # via django-allauth
