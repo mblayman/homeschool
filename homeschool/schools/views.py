@@ -162,12 +162,19 @@ def school_year_forecast(request, pk):
 
     enrollments = Enrollment.objects.filter(
         grade_level__school_year=school_year
-    ).select_related("grade_level", "student")
+    ).select_related(
+        "grade_level",
+        "grade_level__school_year",
+        "student",
+    )
     students = []
     for enrollment in enrollments:
         student_info = {"student": enrollment.student, "courses": []}
 
         for course in enrollment.grade_level.get_ordered_courses():
+            # Ugly performance optimization to save some queries.
+            enrollment.student._enrollment_by_course_cache[course] = enrollment
+
             forecaster = Forecaster()
             course_info = {
                 "course": course,
