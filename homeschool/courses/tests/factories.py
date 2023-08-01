@@ -8,6 +8,7 @@ from ..models import CourseTask
 class CourseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = "courses.Course"
+        skip_postgeneration_save = True
 
     name = factory.Sequence(lambda n: f"Course {n}")
 
