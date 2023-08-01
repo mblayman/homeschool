@@ -214,7 +214,7 @@ types-pytz==2023.3.0.0
     # via -r requirements.in
 types-requests==2.31.0.2
     # via -r requirements.in
-types-six==1.16.21.8
+types-six==1.16.21.9
     # via -r requirements.in
 types-toml==0.10.8.7
     # via -r requirements.in
