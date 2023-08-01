@@ -213,7 +213,7 @@ types-requests==2.31.0.1
     # via -r requirements.in
 types-six==1.16.21.8
     # via -r requirements.in
-types-toml==0.10.8.6
+types-toml==0.10.8.7
     # via -r requirements.in
 types-urllib3==1.26.19
     # via types-requests
