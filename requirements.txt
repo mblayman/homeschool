@@ -176,7 +176,7 @@ sphinx==6.2.1
     #   sphinx-rtd-theme
     #   sphinx-sitemap
     #   sphinxcontrib-jquery
-sphinx-rtd-theme==1.2.2
+sphinx-rtd-theme==1.3.0
     # via -r requirements.in
 sphinx-sitemap==2.5.0
     # via -r requirements.in
