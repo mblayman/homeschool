@@ -66,7 +66,7 @@ django-allauth==0.54.0
     # via -r requirements.in
 django-anymail[sendgrid]==10.1
     # via -r requirements.in
-django-debug-toolbar==4.1.0
+django-debug-toolbar==4.2.0
     # via -r requirements.in
 django-denied==1.2
     # via -r requirements.in
