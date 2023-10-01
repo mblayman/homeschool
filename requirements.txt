@@ -200,7 +200,7 @@ sqlparse==0.4.4
     #   django-debug-toolbar
 stripe==3.5.0
     # via dj-stripe
-time-machine==2.12.0
+time-machine==2.13.0
     # via -r requirements.in
 tinycss2==1.1.1
     # via
