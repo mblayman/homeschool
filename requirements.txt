@@ -82,7 +82,7 @@ django-htmx==1.16.0
     # via -r requirements.in
 django-ordered-model==3.7.4
     # via -r requirements.in
-django-simple-history==3.3.0
+django-simple-history==3.4.0
     # via -r requirements.in
 django-storages==1.14.1
     # via -r requirements.in
