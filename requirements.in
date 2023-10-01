@@ -17,7 +17,7 @@ django-simple-history==3.3.0
 django-storages==1.14.1
 django-tz-detect==0.4.0
 django-waffle==4.0.0
-dj-stripe==2.8.1
+dj-stripe==2.8.2
 gunicorn==21.2.0
 psycopg2==2.9.8
 python-dateutil==2.8.2
