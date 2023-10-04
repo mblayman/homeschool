@@ -120,7 +120,7 @@ packaging==21.3
     # via
     #   gunicorn
     #   sphinx
-pillow==9.3.0
+pillow==10.0.1
     # via weasyprint
 psycopg2==2.9.8
     # via -r requirements.in
