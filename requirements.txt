@@ -126,7 +126,7 @@ packaging==21.3
     #   sphinx
 pillow==10.0.1
     # via weasyprint
-psycopg2==2.9.8
+psycopg2==2.9.9
     # via -r requirements.in
 pycparser==2.21
     # via cffi
