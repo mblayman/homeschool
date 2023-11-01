@@ -64,7 +64,7 @@ django==4.2.6
     #   django-waffle
 django-allauth==0.57.0
     # via -r requirements.in
-django-anymail[sendgrid]==10.1
+django-anymail[sendgrid]==10.2
     # via
     #   -r requirements.in
     #   django-anymail
