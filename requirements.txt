@@ -7,7 +7,9 @@
 alabaster==0.7.12
     # via sphinx
 asgiref==3.6.0
-    # via django
+    # via
+    #   django
+    #   django-htmx
 babel==2.10.3
     # via sphinx
 beautifulsoup4==4.12.2
@@ -80,7 +82,7 @@ django-hashid-field==3.3.7
     # via -r requirements.in
 django-hijack==3.4.2
     # via -r requirements.in
-django-htmx==1.17.0
+django-htmx==1.17.2
     # via -r requirements.in
 django-ordered-model==3.7.4
     # via -r requirements.in
