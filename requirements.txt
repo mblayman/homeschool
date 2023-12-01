@@ -64,7 +64,7 @@ django==4.2.7
     #   django-storages
     #   django-tz-detect
     #   django-waffle
-django-allauth==0.58.1
+django-allauth==0.58.2
     # via -r requirements.in
 django-anymail[sendgrid]==10.2
     # via
