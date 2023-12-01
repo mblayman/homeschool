@@ -4,7 +4,7 @@ factory-boy==3.3.0
 flake8==6.1.0
 flake8-bugbear==23.11.28
 isort==5.5.4
-mypy==1.6.1
+mypy==1.7.1
 pip-tools
 pre-commit
 pygraphviz==1.11
