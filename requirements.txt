@@ -219,22 +219,21 @@ types-python-dateutil==2.8.19.14
     # via -r requirements.in
 types-pytz==2023.3.1.1
     # via -r requirements.in
-types-requests==2.31.0.6
+types-requests==2.31.0.10
     # via -r requirements.in
 types-six==1.16.21.9
     # via -r requirements.in
 types-toml==0.10.8.7
     # via -r requirements.in
-types-urllib3==1.26.19
-    # via types-requests
 typing-extensions==4.5.0
     # via dj-database-url
-urllib3==1.26.18
+urllib3==2.0.7
     # via
     #   botocore
     #   django-anymail
     #   requests
     #   sentry-sdk
+    #   types-requests
 weasyprint==60.1
     # via -r requirements.in
 webencodings==0.5.1
