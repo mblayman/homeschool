@@ -69,7 +69,9 @@ class YearCalendar:
             "is_today": current_date == self.today,
             "show_as_past": self.is_current_school_year and current_date < self.today,
             "school_break": school_break,
-            "date_type": school_break.get_date_type(current_date)
-            if school_break
-            else SchoolBreak.DateType.NOT_A_BREAK,
+            "date_type": (
+                school_break.get_date_type(current_date)
+                if school_break
+                else SchoolBreak.DateType.NOT_A_BREAK
+            ),
         }
