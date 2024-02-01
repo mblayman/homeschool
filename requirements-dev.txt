@@ -10,7 +10,7 @@ pre-commit
 pygraphviz==1.11
 pytest==7.4.4
 pytest-cov==4.1.0
-pytest-django==4.7.0
+pytest-django==4.8.0
 pytest-socket==0.7.0
 pytest-xdist==3.5.0
 pyupgrade==3.15.0
