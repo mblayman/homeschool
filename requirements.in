@@ -3,7 +3,7 @@ bleach==6.1.0
 boto3==1.34.32
 dj-database-url==2.1.0
 Django==4.2.7
-django-allauth==0.59.0
+django-allauth==0.60.1
 django-anymail[sendgrid]==10.2
 django-debug-toolbar==4.2.0
 django-denied==1.2
