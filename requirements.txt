@@ -78,7 +78,7 @@ django-environ==0.11.2
     # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in
-django-hashid-field==3.3.7
+django-hashid-field==3.4.0
     # via -r requirements.in
 django-hijack==3.4.5
     # via -r requirements.in
