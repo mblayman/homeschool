@@ -36,7 +36,7 @@ cffi==1.15.1
     #   weasyprint
 charset-normalizer==2.1.0
     # via requests
-cryptography==42.0.2
+cryptography==42.0.4
     # via
     #   django-anymail
     #   pyjwt
