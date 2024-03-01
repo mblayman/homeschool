@@ -10,6 +10,7 @@ asgiref==3.6.0
     # via
     #   django
     #   django-htmx
+    #   django-simple-history
 babel==2.10.3
     # via sphinx
 beautifulsoup4==4.12.3
@@ -86,7 +87,7 @@ django-htmx==1.17.2
     # via -r requirements.in
 django-ordered-model==3.7.4
     # via -r requirements.in
-django-simple-history==3.4.0
+django-simple-history==3.5.0
     # via -r requirements.in
 django-storages==1.14.2
     # via -r requirements.in
