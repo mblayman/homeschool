@@ -70,7 +70,7 @@ django-anymail[sendgrid]==10.2
     # via
     #   -r requirements.in
     #   django-anymail
-django-debug-toolbar==4.2.0
+django-debug-toolbar==4.3.0
     # via -r requirements.in
 django-denied==1.2
     # via -r requirements.in
