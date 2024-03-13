@@ -34,19 +34,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
+          python-version: '3.12'
           architecture: 'x64'
           cache: 'pip'
           cache-dependency-path: 'requirements*.txt'
 
       - name: Install packages
         run: |
-          # Postgres dev headers for pg_config
-          # libpq-dev
           # Graphviz support
           # python3-dev graphviz libgraphviz-dev
           sudo apt install \
-          libpq-dev \
           python3-dev graphviz libgraphviz-dev
 
       - name: Install packages

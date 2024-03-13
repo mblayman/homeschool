@@ -26,9 +26,7 @@ On homebrew on a Mac,
 you can install that tool
 with `brew install graphviz`.
 
-Note: install `psycopg2-binary` to avoid compiling it.
-This will require PostgreSQL
-which can be installed with `brew install postgresql`.
+PostgreSQL can be installed with `brew install postgresql`.
 
 ```bash
 $ pip install -r requirements-dev.txt
