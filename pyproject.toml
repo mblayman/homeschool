@@ -50,8 +50,6 @@ filterwarnings = [
     # djstripe==2.7.3
     "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
     "ignore:.*pkg_resources.declare_namespace.*:DeprecationWarning",
-    # django-tz-detect==0.4.0
-    "ignore:.*datetime.datetime.utcfromtimestamp.*:DeprecationWarning",
 ]
 # This warning is coming from dj-stripe 2.5.1 (Example)
 #    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning
