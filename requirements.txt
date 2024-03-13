@@ -96,7 +96,7 @@ docutils==0.18.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
-fonttools[woff]==4.34.4
+fonttools[woff]==4.49.0
     # via weasyprint
 gunicorn==21.2.0
     # via -r requirements.in
