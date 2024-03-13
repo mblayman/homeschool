@@ -221,7 +221,11 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
 SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
 
-SILENCED_SYSTEM_CHECKS: list[str] = []
+SILENCED_SYSTEM_CHECKS: list[str] = [
+    # STRIPE_TEST_SECRET_KEY and STRIPE_LIVE_SECRET_KEY settings exist
+    # and djstripe wants them not to exist.
+    "djstripe.I002",
+]
 
 # Sessions
 # Allow users to be logged in for a month.

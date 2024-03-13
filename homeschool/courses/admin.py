@@ -7,7 +7,7 @@ from homeschool.courses.models import Course, CourseResource, CourseTask, Graded
 class CourseTaskInline(admin.TabularInline):
     model = CourseTask
     fields = ["description", "order"]
-    readonly_fields = ["order"]
+    readonly_fields = ["description", "order"]
 
 
 @admin.register(Course)
