@@ -1390,6 +1390,14 @@ class TestSocialImage(TestCase):
             self.get_check_200("office:social_image")
 
 
+class TestHandle403(TestCase):
+    def test_get(self):
+        response = self.get("office:handle_403")
+
+        assert response.status_code == 403
+        assert "Forbidden" in response.content.decode()
+
+
 class TestHandle404(TestCase):
     def test_get(self):
         response = self.get("office:handle_404")

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import include, path, register_converter
 
 from homeschool.core.converters import HashidConverter
-from homeschool.core.views import favicon, handle_404, handle_500
+from homeschool.core.views import favicon, handle_403, handle_404, handle_500
 
 register_converter(HashidConverter, "hashid")
 
@@ -28,6 +28,7 @@ urlpatterns = [
     path("favicon.ico", favicon, name="favicon"),
 ]
 
+handler403 = handle_403
 handler404 = handle_404
 handler500 = handle_500
 

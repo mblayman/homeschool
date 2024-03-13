@@ -2,6 +2,7 @@ from django.urls import include, path
 
 from .views import (
     boom,
+    handle_403,
     handle_404,
     handle_500,
     office_dashboard,
@@ -17,6 +18,7 @@ urlpatterns = [
     path("boom/", boom, name="boom"),
     path("pdfs/", include("homeschool.reports.office_urls")),
     path("social-image/", social_image, name="social_image"),
+    path("403/", handle_403, name="handle_403"),
     path("404/", handle_404, name="handle_404"),
     path("500/", handle_500, name="handle_500"),
 ]
