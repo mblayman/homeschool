@@ -1,6 +1,3 @@
-[tool.bandit]
-skips = ["B101"]
-
 [tool.coverage.report]
 fail_under = 100
 omit = [
@@ -11,7 +8,7 @@ skip_covered = true
 
 [tool.isort]
 profile = "black"
-src_paths = ["homeschool"]
+src_paths = ["journal"]
 
 [tool.mypy]
 check_untyped_defs = true
@@ -54,4 +51,27 @@ filterwarnings = [
 #    ignore:.*The providing_args argument is deprecated\..*:PendingDeprecationWarning
 testpaths = [
     "homeschool",
+]
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    "W",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bandit
+    "S",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+ignore = [
+    # bandit: Use of `assert` detected
+    "S101",
 ]

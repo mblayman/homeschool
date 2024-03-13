@@ -97,10 +97,7 @@ class DashboardView(TemplateView):
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")
         day = self.kwargs.get("day")
-        if year and month and day:
-            day = datetime.date(year, month, day)
-        else:
-            day = today
+        day = datetime.date(year, month, day) if year and month and day else today
         return day
 
     def _set_week_dates_context(self, day, today, context):
@@ -243,10 +240,7 @@ class DailyView(TemplateView):
         year = self.kwargs.get("year")
         month = self.kwargs.get("month")
         day = self.kwargs.get("day")
-        if year and month and day:
-            day = datetime.date(year, month, day)
-        else:
-            day = today
+        day = datetime.date(year, month, day) if year and month and day else today
         context["day"] = day
 
         first_day = Week(day).first_day
@@ -436,8 +430,9 @@ class DailyView(TemplateView):
             Coursework.objects.bulk_create(new_coursework)
 
             pluralized = pluralize(len(newly_complete_task_ids))
-            message = "Completed {} task{} for {}.".format(
-                len(newly_complete_task_ids), pluralized, student.full_name
+            message = (
+                f"Completed {len(newly_complete_task_ids)} task{pluralized} "
+                f"for {student.full_name}."
             )
             messages.add_message(self.request, messages.SUCCESS, message)
 
@@ -463,8 +458,8 @@ class DailyView(TemplateView):
         coursework_deleted = delete_info[0]
         if coursework_deleted > 0:
             pluralized = pluralize(coursework_deleted)
-            message = "Undid {} task{} for {}.".format(
-                coursework_deleted, pluralized, student.full_name
+            message = (
+                f"Undid {coursework_deleted} task{pluralized} for {student.full_name}."
             )
             messages.add_message(self.request, messages.SUCCESS, message)
 

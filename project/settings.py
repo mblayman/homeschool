@@ -168,7 +168,7 @@ EMAIL_BACKEND = env("EMAIL_BACKEND")
 # Enable this to test with MailHog for local email testing.
 if env("EMAIL_TESTING"):
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = "0.0.0.0"  # nosec B104: This is for local testing only. It's ok.
+    EMAIL_HOST = "0.0.0.0"  # noqa: S104 This is for local testing only. It's ok.
     EMAIL_PORT = 1025
 DEFAULT_FROM_EMAIL = f"noreply@{domain}"
 SERVER_EMAIL = f"noreply@{domain}"

@@ -70,7 +70,7 @@ class TestCourse(TestCase):
         course = CourseFactory()
 
         with pytest.raises(NoSchoolYearError):
-            course.school_year
+            _ = course.school_year
 
 
 class TestCourseTask(TestCase):

@@ -251,9 +251,7 @@ class GradeView(TemplateView):
 
         if grades:
             grades_created = len(Grade.objects.bulk_create(grades))
-            message = "Saved {} grade{}.".format(
-                grades_created, pluralize(grades_created)
-            )
+            message = f"Saved {grades_created} grade{pluralize(grades_created)}."
             messages.add_message(self.request, messages.SUCCESS, message)
 
     def get_scores(self):

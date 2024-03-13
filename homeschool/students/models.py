@@ -204,7 +204,8 @@ class Student(models.Model):
             )
             # Users can mark content as complete in whatever order they want,
             # but the display should match the task list.
-            .order_by("course_task").select_related("course_task")
+            .order_by("course_task")
+            .select_related("course_task")
         )
         for coursework in coursework_qs:
             course_id = coursework.course_task.course_id

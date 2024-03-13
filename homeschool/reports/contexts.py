@@ -122,9 +122,8 @@ class ProgressReportContext:
         grades = (
             Grade.objects.filter(qs_filter, student=enrollment.student)
             # Include secondary ordering so tasks are ordered in the course.
-            .order_by(
-                "graded_work__course_task__course", "graded_work__course_task"
-            ).select_related(
+            .order_by("graded_work__course_task__course", "graded_work__course_task")
+            .select_related(
                 "graded_work__course_task",
                 "graded_work__course_task__course",
                 "graded_work__course_task__resource",
