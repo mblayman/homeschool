@@ -10,9 +10,11 @@ def traces_sampler(sampling_context):  # pragma: no cover
     The root endpoint seemed to get hammered by some bot and ate a huge percent
     of transactions in a week. I don't care about that page right now,
     so ignore it.
+
+    Also, ignore `/docs/*` as they are consuming a lot of transactions.
     """
     path = sampling_context.get("wsgi_environ", {}).get("PATH_INFO", "")
-    if path == "/":
+    if path == "/" or path.startswith("/docs"):
         return 0
 
     return 1.0
