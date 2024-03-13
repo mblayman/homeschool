@@ -85,11 +85,3 @@ if School Desk is a good fit for you.
    comparisons/google-classroom.rst
    comparisons/homeschool-manager.rst
    comparisons/homeschool-minder.rst
-   comparisons/homeschool-planet.rst
-   comparisons/homeschool-reporting-online.rst
-   comparisons/homeschool-skedtrack.rst
-   comparisons/homeschool-tracker.rst
-   comparisons/homeschooling-records.rst
-   comparisons/lessontrek.rst
-   comparisons/my-school-year.rst
-   comparisons/scholaric.rst
