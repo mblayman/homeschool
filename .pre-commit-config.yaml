@@ -5,7 +5,7 @@ repos:
   - id: django-upgrade
     args: [--target-version, "4.2"]
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.3.3
+  rev: v0.3.4
   hooks:
     # Run the linter.
     - id: ruff
