@@ -212,7 +212,7 @@ tinycss2==1.1.1
     # via
     #   cssselect2
     #   weasyprint
-types-bleach==6.1.0.20240222
+types-bleach==6.1.0.20240331
     # via -r requirements.in
 types-html5lib==1.1.11.20240228
     # via types-bleach
