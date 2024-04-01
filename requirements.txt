@@ -141,7 +141,7 @@ pyparsing==3.0.9
     # via packaging
 pyphen==0.12.0
     # via weasyprint
-python-dateutil==2.9.0
+python-dateutil==2.9.0.post0
     # via
     #   -r requirements.in
     #   botocore
