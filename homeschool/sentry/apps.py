@@ -14,7 +14,14 @@ def traces_sampler(sampling_context):  # pragma: no cover
     Also, ignore `/docs/*` as they are consuming a lot of transactions.
     """
     path = sampling_context.get("wsgi_environ", {}).get("PATH_INFO", "")
-    if path == "/" or path.startswith("/docs"):
+    if (
+        path == "/"
+        or path.startswith("/docs")
+        or path.startswith("/static")
+        or path.endswith(".php")
+        or path.endswith(".php7")
+        or path.startswith("/wp-")
+    ):
         return 0
 
     return 1.0
