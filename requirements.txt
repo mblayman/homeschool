@@ -184,7 +184,7 @@ sphinx==7.2.6
     #   sphinxcontrib-serializinghtml
 sphinx-rtd-theme==2.0.0
     # via -r requirements.in
-sphinx-sitemap==2.5.1
+sphinx-sitemap==2.6.0
     # via -r requirements.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
