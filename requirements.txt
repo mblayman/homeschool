@@ -216,7 +216,7 @@ types-html5lib==1.1.11.20240228
     # via types-bleach
 types-python-dateutil==2.9.0.20240316
     # via -r requirements.in
-types-pytz==2024.1.0.20240203
+types-pytz==2024.1.0.20240417
     # via -r requirements.in
 types-requests==2.31.0.20240406
     # via -r requirements.in
