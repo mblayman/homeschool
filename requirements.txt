@@ -222,7 +222,7 @@ types-pytz==2024.1.0.20240203
     # via -r requirements.in
 types-requests==2.31.0.20240218
     # via -r requirements.in
-types-six==1.16.21.20240311
+types-six==1.16.21.20240425
     # via -r requirements.in
 types-toml==0.10.8.20240310
     # via -r requirements.in
