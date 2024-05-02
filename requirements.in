@@ -25,7 +25,7 @@ requests==2.31.0
 sentry-sdk==1.40.6
 Sphinx==7.2.6
 sphinx-rtd-theme==2.0.0
-sphinx-sitemap==2.5.1
+sphinx-sitemap==2.6.0
 time-machine
 types-bleach==6.1.0.20240331
 types-python-dateutil==2.9.0.20240316
