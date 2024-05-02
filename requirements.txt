@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-alabaster==0.7.12
+alabaster==0.7.16
     # via sphinx
 asgiref==3.6.0
     # via
@@ -173,7 +173,7 @@ snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.3.2.post1
     # via beautifulsoup4
-sphinx==7.2.6
+sphinx==7.3.7
     # via
     #   -r requirements.in
     #   sphinx-rtd-theme
