@@ -38,9 +38,7 @@ cffi==1.15.1
 charset-normalizer==2.1.0
     # via requests
 cryptography==42.0.4
-    # via
-    #   django-anymail
-    #   pyjwt
+    # via pyjwt
 cssselect2==0.6.0
     # via weasyprint
 defusedxml==0.7.1
@@ -67,7 +65,7 @@ django==4.2.10
     #   django-waffle
 django-allauth==0.61.1
     # via -r requirements.in
-django-anymail[sendgrid]==10.2
+django-anymail[sendgrid]==10.3
     # via -r requirements.in
 django-debug-toolbar==4.3.0
     # via -r requirements.in
