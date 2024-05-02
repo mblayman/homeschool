@@ -121,7 +121,7 @@ psycopg-binary==3.1.18
     # via psycopg
 pycparser==2.21
     # via cffi
-pydyf==0.8.0
+pydyf==0.10.0
     # via weasyprint
 pygments==2.15.0
     # via sphinx
@@ -190,7 +190,7 @@ stripe==3.5.0
     # via dj-stripe
 time-machine==2.14.1
     # via -r requirements.in
-tinycss2==1.1.1
+tinycss2==1.3.0
     # via
     #   cssselect2
     #   weasyprint
@@ -219,7 +219,7 @@ urllib3==2.0.7
     #   requests
     #   sentry-sdk
     #   types-requests
-weasyprint==61.2
+weasyprint==62.0
     # via -r requirements.in
 webencodings==0.5.1
     # via
