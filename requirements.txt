@@ -39,7 +39,7 @@ cssselect2==0.6.0
     # via weasyprint
 dj-database-url==2.1.0
     # via -r requirements.in
-dj-stripe==2.8.3
+dj-stripe==2.8.4
     # via -r requirements.in
 django==4.2.10
     # via
