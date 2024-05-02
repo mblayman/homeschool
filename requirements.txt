@@ -32,17 +32,11 @@ certifi==2023.7.22
     #   requests
     #   sentry-sdk
 cffi==1.15.1
-    # via
-    #   cryptography
-    #   weasyprint
+    # via weasyprint
 charset-normalizer==2.1.0
     # via requests
-cryptography==42.0.4
-    # via pyjwt
 cssselect2==0.6.0
     # via weasyprint
-defusedxml==0.7.1
-    # via python3-openid
 dj-database-url==2.1.0
     # via -r requirements.in
 dj-stripe==2.8.3
@@ -63,7 +57,7 @@ django==4.2.10
     #   django-storages
     #   django-tz-detect
     #   django-waffle
-django-allauth==0.61.1
+django-allauth==0.62.1
     # via -r requirements.in
 django-anymail[sendgrid]==10.3
     # via -r requirements.in
@@ -115,8 +109,6 @@ jmespath==1.0.1
     #   botocore
 markupsafe==2.1.1
     # via jinja2
-oauthlib==3.2.2
-    # via requests-oauthlib
 packaging==21.3
     # via
     #   gunicorn
@@ -133,8 +125,6 @@ pydyf==0.8.0
     # via weasyprint
 pygments==2.15.0
     # via sphinx
-pyjwt[crypto]==2.4.0
-    # via django-allauth
 pyparsing==3.0.9
     # via packaging
 pyphen==0.12.0
@@ -144,8 +134,6 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   botocore
     #   time-machine
-python3-openid==3.2.0
-    # via django-allauth
 pytz==2024.1
     # via
     #   babel
@@ -153,13 +141,9 @@ pytz==2024.1
 requests==2.31.0
     # via
     #   -r requirements.in
-    #   django-allauth
     #   django-anymail
-    #   requests-oauthlib
     #   sphinx
     #   stripe
-requests-oauthlib==1.3.1
-    # via django-allauth
 s3transfer==0.10.0
     # via boto3
 sentry-sdk==1.40.6
