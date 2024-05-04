@@ -32,7 +32,7 @@ class SimplePasswordHasher(BasePasswordHasher):
         return ""
 
     def encode(self, password, salt):
-        return "dumb$$%s" % password
+        return f"dumb$${password}"
 
     def verify(self, password, encoded):
         algorithm, hash = encoded.split("$$", 1)
