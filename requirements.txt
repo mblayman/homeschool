@@ -138,7 +138,7 @@ pytz==2024.1
     # via
     #   babel
     #   django-tz-detect
-requests==2.31.0
+requests==2.32.0
     # via
     #   -r requirements.in
     #   django-anymail
