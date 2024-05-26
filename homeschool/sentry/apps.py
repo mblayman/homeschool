@@ -42,7 +42,7 @@ class SentryConfig(AppConfig):
             return
 
         sentry_sdk.init(
-            dsn="https://7d6332a64c8c4139b7dbbbd96e4e3591@o4504013039992832.ingest.sentry.io/4504013130498048",
+            dsn=settings.SENTRY_DSN,
             integrations=[
                 DjangoIntegration(),
             ],
