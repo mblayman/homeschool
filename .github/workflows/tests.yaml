@@ -20,6 +20,7 @@ jobs:
       SECURE_SSL_REDIRECT: 'off'
       SENDGRID_API_KEY: 'a secret to everybody'
       SENTRY_ENABLED: 'off'
+      SENTRY_DSN: 'dsn_example'
       STRIPE_LIVE_MODE: 'off'
       STRIPE_LIVE_SECRET_KEY: 'sk_live_asecrettoeverybody'
       STRIPE_TEST_SECRET_KEY: 'sk_test_asecrettoeverybody'
