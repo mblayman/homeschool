@@ -79,7 +79,7 @@ django-ordered-model==3.7.4
     # via -r requirements.in
 django-simple-history==3.5.0
     # via -r requirements.in
-django-storages==1.14.2
+django-storages==1.14.3
     # via -r requirements.in
 django-tz-detect==0.5.0
     # via -r requirements.in
