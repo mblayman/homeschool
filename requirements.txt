@@ -37,7 +37,7 @@ charset-normalizer==2.1.0
     # via requests
 cssselect2==0.6.0
     # via weasyprint
-dj-database-url==2.1.0
+dj-database-url==2.2.0
     # via -r requirements.in
 dj-stripe==2.8.4
     # via -r requirements.in
