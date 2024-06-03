@@ -1,11 +1,11 @@
 repos:
 - repo: https://github.com/adamchainz/django-upgrade
-  rev: 1.17.0
+  rev: 1.18.0
   hooks:
   - id: django-upgrade
     args: [--target-version, "4.2"]
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.4.5
+  rev: v0.4.7
   hooks:
     # Run the linter.
     - id: ruff
