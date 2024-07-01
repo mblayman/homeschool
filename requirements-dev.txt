@@ -1,5 +1,5 @@
 coverage[toml]
-django-test-plus==2.2.3
+django-test-plus==2.2.4
 factory-boy==3.3.0
 mypy==1.10.0
 pip-tools
