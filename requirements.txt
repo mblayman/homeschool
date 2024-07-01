@@ -227,7 +227,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-whitenoise[brotli]==6.6.0
+whitenoise[brotli]==6.7.0
     # via -r requirements.in
 zopfli==0.2.1
     # via fonttools
