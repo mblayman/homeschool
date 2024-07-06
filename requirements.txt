@@ -26,7 +26,7 @@ brotli==1.0.9
     # via
     #   fonttools
     #   whitenoise
-certifi==2023.7.22
+certifi==2024.7.4
     # via
     #   requests
     #   sentry-sdk
