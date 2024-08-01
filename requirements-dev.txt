@@ -1,7 +1,7 @@
 coverage[toml]
 django-test-plus==2.2.4
 factory-boy==3.3.0
-mypy==1.10.1
+mypy==1.11.1
 pip-tools
 pre-commit
 pygraphviz==1.13
