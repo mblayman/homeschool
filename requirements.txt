@@ -146,7 +146,7 @@ requests==2.32.3
     #   stripe
 s3transfer==0.10.0
     # via boto3
-sentry-sdk==2.8.0
+sentry-sdk==2.12.0
     # via -r requirements.in
 six==1.16.0
     # via
