@@ -117,7 +117,9 @@ class TestCourseTask(TestCase):
 
     def test_has_graded_work(self):
         graded_work = GradedWorkFactory()
-        task = CourseTaskFactory.create(graded_work=graded_work)
+        task = CourseTaskFactory()
+        task.graded_work = graded_work
+        task.save()
 
         assert task.graded_work == graded_work
 
@@ -171,7 +173,9 @@ class TestCourseTask(TestCase):
     def test_is_graded(self):
         """Check if a task has associated graded work."""
         graded_work = GradedWorkFactory()
-        graded_task = CourseTaskFactory(graded_work=graded_work)
+        graded_task = CourseTaskFactory()
+        graded_task.graded_work = graded_work
+        graded_task.save()
         task = CourseTaskFactory()
 
         assert graded_task.is_graded
