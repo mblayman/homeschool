@@ -1,12 +1,10 @@
 import factory
 from django.utils import timezone
 
-from homeschool.test import Factory
-
-from ..models import Student
+from ..models import Enrollment, Student
 
 
-class StudentFactory(Factory[Student]):
+class StudentFactory(factory.django.DjangoModelFactory[Student]):
     class Meta:
         model = Student
 
@@ -15,7 +13,7 @@ class StudentFactory(Factory[Student]):
     last_name = factory.Faker("last_name")
 
 
-class EnrollmentFactory(factory.django.DjangoModelFactory):
+class EnrollmentFactory(factory.django.DjangoModelFactory[Enrollment]):
     class Meta:
         model = "students.Enrollment"
 

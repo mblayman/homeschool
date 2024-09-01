@@ -1,7 +1,5 @@
 import factory
 
-from homeschool.test import Factory
-
 from ..models import CourseTask
 
 
@@ -21,7 +19,7 @@ class CourseFactory(factory.django.DjangoModelFactory):
             course.grade_levels.set(extracted)
 
 
-class CourseTaskFactory(Factory[CourseTask]):
+class CourseTaskFactory(factory.django.DjangoModelFactory[CourseTask]):
     class Meta:
         model = CourseTask
 
