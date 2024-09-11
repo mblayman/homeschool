@@ -1,11 +1,17 @@
-version: '3.1'
+version: "3.9"
 
 services:
-
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: postgres
+  web:
+    build: .
+    volumes:
+      - .:/app
     ports:
-      - "5432:5432"
+      - 8000:8000
+
+  # db:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_PASSWORD: postgres
+  #   ports:
+  #     - "5432:5432"

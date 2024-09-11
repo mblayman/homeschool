@@ -1,0 +1,8 @@
+db.sqlite3
+node_modules/
+.coverage/
+.git/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
