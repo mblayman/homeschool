@@ -74,7 +74,7 @@ class Course(DaysOfWeekModel):
         # To avoid creating tasks individually, a second pass is needed
         # to add any graded work.
         tasks_to_compare = zip(
-            tasks_to_copy, CourseTask.objects.filter(course=new_course)
+            tasks_to_copy, CourseTask.objects.filter(course=new_course), strict=False
         )
         graded_work = [
             GradedWork(course_task=copied_task)
