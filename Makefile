@@ -7,7 +7,7 @@ build:
 	docker compose build
 
 shell:
-	docker compose run --run web bash
+	docker compose run --rm web bash
 
 deploy:
 	git push heroku main
