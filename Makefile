@@ -3,6 +3,12 @@
 local:
 	uv run honcho start -f Procfile.dev
 
+build:
+	docker compose build
+
+shell:
+	docker compose run --run web bash
+
 deploy:
 	git push heroku main
 
