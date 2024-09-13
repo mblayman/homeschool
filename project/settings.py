@@ -1,45 +1,19 @@
 from pathlib import Path
 
 import dj_database_url
-import environ
 import environs
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env_env = environs.Env()
-env_env.read_env()
+env = environs.Env()
+env.read_env()
 
-env = environ.Env(
-    ALLOWED_HOSTS=(list, []),
-    ANYMAIL_ACCOUNT_DEFAULT_HTTP_PROTOCOL=(str, "https"),
-    AWS_STORAGE_BUCKET_NAME=(str, "school-desk"),
-    CSRF_COOKIE_SECURE=(bool, True),
-    DATABASE_CONN_MAX_AGE=(int, 600),
-    DATABASE_SSL_REQUIRE=(bool, True),
-    DEBUG_TOOLBAR=(bool, False),
-    DEFAULT_FILE_STORAGE=(str, "storages.backends.s3boto3.S3Boto3Storage"),
-    DJSTRIPE_WEBHOOK_VALIDATION=(str, "verify_signature"),
-    EMAIL_BACKEND=(str, "anymail.backends.sendgrid.EmailBackend"),
-    EMAIL_TESTING=(bool, False),
-    IS_SECURE=(bool, True),
-    SECURE_HSTS_PRELOAD=(bool, True),
-    SECURE_HSTS_SECONDS=(int, 60 * 60 * 24 * 365),
-    SECURE_SSL_REDIRECT=(bool, True),
-    SENTRY_ENABLED=(bool, True),
-    SESSION_COOKIE_SECURE=(bool, True),
-    SLACK_WEBHOOK=(str, ""),
-    STRIPE_LIVE_MODE=(bool, True),
-)
-env_file = BASE_DIR / ".env"
-if env_file.exists():
-    environ.Env.read_env(env_file)
+SECRET_KEY = env.str("SECRET_KEY")
 
-SECRET_KEY = env("SECRET_KEY")
+DEBUG = env.bool("DEBUG", False)
+DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR", False)
 
-DEBUG = env_env.bool("DEBUG", False)
-DEBUG_TOOLBAR = env("DEBUG_TOOLBAR")
-
-ALLOWED_HOSTS: list[str] = env("ALLOWED_HOSTS")
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", [])
 
 # App constants
 domain = "theschooldesk.app"
@@ -158,8 +132,8 @@ LOGIN_REDIRECT_URL = "core:dashboard"
 # Database
 DATABASES = {
     "default": dj_database_url.config(
-        conn_max_age=env("DATABASE_CONN_MAX_AGE"),
-        ssl_require=env("DATABASE_SSL_REQUIRE"),
+        conn_max_age=env.int("DATABASE_CONN_MAX_AGE", 600),
+        ssl_require=env.bool("DATABASE_SSL_REQUIRE", True),
     )
 }
 # Starting in Django 3.2, the default field is moving to BigAutoField,
@@ -167,9 +141,9 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Email
-EMAIL_BACKEND = env("EMAIL_BACKEND")
+EMAIL_BACKEND = env.str("EMAIL_BACKEND", "anymail.backends.sendgrid.EmailBackend")
 # Enable this to test with MailHog for local email testing.
-if env("EMAIL_TESTING"):
+if env.bool("EMAIL_TESTING", False):
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "0.0.0.0"  # noqa: S104 This is for local testing only. It's ok.
     EMAIL_PORT = 1025
@@ -179,7 +153,9 @@ SERVER_EMAIL = f"noreply@{domain}"
 # Files
 STORAGES = {
     "default": {
-        "BACKEND": env("DEFAULT_FILE_STORAGE"),
+        "BACKEND": env.str(
+            "DEFAULT_FILE_STORAGE", "storages.backends.s3boto3.S3Boto3Storage"
+        ),
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -215,14 +191,14 @@ LOGGING = {
 # Some of these are configurable settings because local development is done
 # over HTTP. If local development is ever switched to HTTPS, then it would
 # be good to enable the settings all the time.
-CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE")
+CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", True)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_REFERRER_POLICY = "same-origin"
-SECURE_HSTS_PRELOAD = env("SECURE_HSTS_PRELOAD")
-SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS")
+SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", True)
+SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", 60 * 60 * 24 * 365)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
-SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
+SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", True)
+SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
 
 SILENCED_SYSTEM_CHECKS: list[str] = [
     # STRIPE_TEST_SECRET_KEY and STRIPE_LIVE_SECRET_KEY settings exist
@@ -249,7 +225,9 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/start/"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = env("ANYMAIL_ACCOUNT_DEFAULT_HTTP_PROTOCOL")
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = env.str(
+    "ANYMAIL_ACCOUNT_DEFAULT_HTTP_PROTOCOL", "https"
+)
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "School Desk - "
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
@@ -262,40 +240,41 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
 ACCOUNT_USERNAME_REQUIRED = False
 
 # django-anymail
-ANYMAIL = {"SENDGRID_API_KEY": env("SENDGRID_API_KEY")}
+ANYMAIL = {"SENDGRID_API_KEY": env.str("SENDGRID_API_KEY")}
 
 # django-hashid-field
-HASHID_FIELD_SALT = env("HASHID_FIELD_SALT")
+HASHID_FIELD_SALT = env.str("HASHID_FIELD_SALT")
 
 # django-hijack
 HIJACK_LOGOUT_REDIRECT_URL = "/office/users/user/"
 
 # django-storages
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME", "school-desk")
 
 # django-waffle
 WAFFLE_FLAG_MODEL = "core.Flag"
 WAFFLE_CREATE_MISSING_FLAGS = True
 
 # dj-stripe
-STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
-STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
-STRIPE_LIVE_MODE = env("STRIPE_LIVE_MODE")
+STRIPE_LIVE_SECRET_KEY = env.str("STRIPE_LIVE_SECRET_KEY")
+STRIPE_TEST_SECRET_KEY = env.str("STRIPE_TEST_SECRET_KEY")
+STRIPE_LIVE_MODE = env.bool("STRIPE_LIVE_MODE", True)
 STRIPE_PUBLISHABLE_KEY = (
-    env("STRIPE_LIVE_PUBLISHABLE_KEY")
+    env.str("STRIPE_LIVE_PUBLISHABLE_KEY")
     if STRIPE_LIVE_MODE
-    else env("STRIPE_TEST_PUBLISHABLE_KEY")
+    else env.str("STRIPE_TEST_PUBLISHABLE_KEY")
 )
 DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
 DJSTRIPE_SUBSCRIBER_MODEL = "accounts.Account"
 DJSTRIPE_USE_NATIVE_JSONFIELD = True
-DJSTRIPE_WEBHOOK_SECRET = env("DJSTRIPE_WEBHOOK_SECRET")
+DJSTRIPE_WEBHOOK_SECRET = env.str("DJSTRIPE_WEBHOOK_SECRET")
 # dj-stripe won't accept an empty string to disable validation
 # so the logic has to be conditional.
+djstripe_webhook_validation = env.str("DJSTRIPE_WEBHOOK_VALIDATION", "verify_signature")
 DJSTRIPE_WEBHOOK_VALIDATION = (
-    env("DJSTRIPE_WEBHOOK_VALIDATION") if env("DJSTRIPE_WEBHOOK_VALIDATION") else None
+    djstripe_webhook_validation if djstripe_webhook_validation else None
 )
 
 # When the validation is explicitly disabled (i.e., dev mode),
@@ -304,8 +283,8 @@ if DJSTRIPE_WEBHOOK_VALIDATION is None:
     SILENCED_SYSTEM_CHECKS.append("djstripe.W004")
 
 # Sentry
-SENTRY_ENABLED = env("SENTRY_ENABLED")
-SENTRY_DSN = env("SENTRY_DSN")
+SENTRY_ENABLED = env.bool("SENTRY_ENABLED", True)
+SENTRY_DSN = env.str("SENTRY_DSN")
 
 # WhiteNoise
 WHITENOISE_INDEX_FILE = True
@@ -313,7 +292,7 @@ WHITENOISE_INDEX_FILE = True
 # App settings
 
 # Is the app in a secure context or not?
-IS_SECURE = env("IS_SECURE")
+IS_SECURE = env.bool("IS_SECURE", True)
 
 # Add extra output directories that WhiteNoise can serve as static files
 # *outside* of `staticfiles`.
@@ -336,5 +315,5 @@ ACCOUNTS_PRICE_NICKNAMES = (
 )
 
 # core
-SLACK_WEBHOOK = env("SLACK_WEBHOOK")
+SLACK_WEBHOOK = env.str("SLACK_WEBHOOK", "")
 SUPPORT_EMAIL = f"support@{domain}"
