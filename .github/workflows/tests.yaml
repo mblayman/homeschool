@@ -27,28 +27,27 @@ jobs:
       STRIPE_TEST_PUBLISHABLE_KEY: 'pk_test_asecrettoeverybody'
 
     steps:
-      - name: Get the code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.12'
-          architecture: 'x64'
-          cache: 'pip'
-          cache-dependency-path: 'requirements*.txt'
+        run: uv python install
 
-      - name: Install packages
-        run: |
-          # Graphviz support
-          # python3-dev graphviz libgraphviz-dev
-          sudo apt install \
-          python3-dev graphviz libgraphviz-dev
+      # - name: Set up Python
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: '3.12'
+      #     architecture: 'x64'
+      #     cache: 'pip'
+      #     cache-dependency-path: 'requirements*.txt'
 
-      - name: Install packages
-        run: pip install -r requirements.txt -r requirements-dev.txt
+      # - name: Install packages
+      #   run: pip install -r requirements.txt -r requirements-dev.txt
+      #
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - name: Fake build the site.css
         run: touch static/site.css
@@ -60,11 +59,11 @@ jobs:
         run: make coverage
 
       - name: Check deploy configuration
-        run: ./manage.py check --deploy --fail-level WARNING
+        run: uv run manage.py check --deploy --fail-level WARNING
         env:
           DATABASE_URL: 'sqlite://:memory:'
           SECRET_KEY: 'zt(6jlr#oquxm2t%ryh#n+-72p^(3knbf&q$5x16#o%1im-s7!'
           SECURE_SSL_REDIRECT: 'on'
 
       - name: Check documentation build
-        run: make -C docs html
+        run: make docs
