@@ -7,7 +7,7 @@ deploy:
 	git push heroku main
 
 graph:
-	./manage.py graph_models \
+	uv run manage.py graph_models \
 		--rankdir BT \
 		accounts \
 		core \
@@ -27,7 +27,7 @@ graph:
 # -n 2    --dist loadfile, 4 CPUs, 445 tests, 39s
 # no parallelism,                  445 tests, 41s
 coverage:
-	pytest --cov=homeschool --migrations -n 2 --dist loadfile
+	uv run pytest --cov=homeschool --migrations -n 2 --dist loadfile
 
 test: fcov
 
@@ -37,13 +37,13 @@ test: fcov
 # -n 2 --dist loadfile, 4 CPUs, 515 tests, 15s
 fcov:
 	@echo "Running fast coverage check"
-	@pytest --cov=homeschool -n 4 --dist loadfile -q
+	@uv run pytest --cov=homeschool -n 4 --dist loadfile -q
 
 mypy:
-	mypy homeschool project manage.py
+	uv run mypy homeschool project manage.py
 
 docs:
-	make -C docs html
+	uv run make -C docs html
 
 servedocs:
 	cd docs/_build/html && python3 -m http.server

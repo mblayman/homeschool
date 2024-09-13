@@ -37,6 +37,19 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
+    "coverage[toml]>=7.6.1",
+    "django-test-plus>=2.2.4",
+    "factory-boy==3.3.1",
+    "mypy==1.11.2",
+    "pip-tools>=7.4.1",
+    "pre-commit>=3.8.0",
+    "pytest-cov==5.0.0",
+    "pytest-django==4.8.0",
+    "pytest-socket==0.7.0",
+    "pytest-xdist==3.6.1",
+    "pytest==8.3.2",
+    "responses==0.10.15",
+    "ruff==0.6.3",
     "time-machine>=2.15.0",
     "types-bleach==6.1.0.20240331",
     "types-python-dateutil==2.9.0.20240821",
@@ -94,6 +107,9 @@ filterwarnings = [
     "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
     "ignore:.*pkg_resources.declare_namespace.*:DeprecationWarning",
     "ignore:.*The default scheme will be changed.*:PendingDeprecationWarning",
+    # weasyprint==62.3
+    "ignore:.*transform is deprecated.*:DeprecationWarning",
+    "ignore:.*text_matrix is deprecated.*:DeprecationWarning",
 ]
 # This warning is coming from dj-stripe 2.5.1 (Example)
 #    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning
