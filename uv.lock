@@ -640,6 +640,7 @@ dev = [
     { name = "coverage" },
     { name = "django-test-plus" },
     { name = "factory-boy" },
+    { name = "honcho" },
     { name = "mypy" },
     { name = "pip-tools" },
     { name = "pre-commit" },
@@ -698,6 +699,7 @@ dev = [
     { name = "coverage", extras = ["toml"], specifier = ">=7.6.1" },
     { name = "django-test-plus", specifier = ">=2.2.4" },
     { name = "factory-boy", specifier = "==3.3.1" },
+    { name = "honcho", specifier = ">=1.1.0" },
     { name = "mypy", specifier = "==1.11.2" },
     { name = "pip-tools", specifier = ">=7.4.1" },
     { name = "pre-commit", specifier = ">=3.8.0" },
@@ -715,6 +717,18 @@ dev = [
     { name = "types-requests", specifier = "==2.32.0.20240712" },
     { name = "types-six", specifier = "==1.16.21.20240513" },
     { name = "types-toml", specifier = "==0.10.8.20240310" },
+]
+
+[[package]]
+name = "honcho"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0e/7c/c0aa47711b5ada100273cbe190b33cc12297065ce559989699fd6c1ec0cb/honcho-1.1.0.tar.gz", hash = "sha256:c5eca0bded4bef6697a23aec0422fd4f6508ea3581979a3485fc4b89357eb2a9", size = 32699 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b3/fa/e23333eeb1f5b31a053759eb785389cac9c4cdf1f8867dda8cae9c74535f/honcho-1.1.0-py2.py3-none-any.whl", hash = "sha256:a4d6e3a88a7b51b66351ecfc6e9d79d8f4b87351db9ad7e923f5632cc498122f", size = 21336 },
 ]
 
 [[package]]

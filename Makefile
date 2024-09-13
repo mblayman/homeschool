@@ -1,7 +1,7 @@
 .PHONY: docs local
 
 local:
-	heroku local -f Procfile.dev
+	uv run honcho start -f Procfile.dev
 
 deploy:
 	git push heroku main
