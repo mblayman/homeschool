@@ -2,8 +2,12 @@ from pathlib import Path
 
 import dj_database_url
 import environ
+import environs
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env_env = environs.Env()
+env_env.read_env()
 
 env = environ.Env(
     ALLOWED_HOSTS=(list, []),
@@ -12,7 +16,6 @@ env = environ.Env(
     CSRF_COOKIE_SECURE=(bool, True),
     DATABASE_CONN_MAX_AGE=(int, 600),
     DATABASE_SSL_REQUIRE=(bool, True),
-    DEBUG=(bool, False),
     DEBUG_TOOLBAR=(bool, False),
     DEFAULT_FILE_STORAGE=(str, "storages.backends.s3boto3.S3Boto3Storage"),
     DJSTRIPE_WEBHOOK_VALIDATION=(str, "verify_signature"),
@@ -33,7 +36,7 @@ if env_file.exists():
 
 SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = env("DEBUG")
+DEBUG = env_env.bool("DEBUG", False)
 DEBUG_TOOLBAR = env("DEBUG_TOOLBAR")
 
 ALLOWED_HOSTS: list[str] = env("ALLOWED_HOSTS")

@@ -1,2 +1,2 @@
-web: gunicorn project.wsgi --workers 2 --log-file -
+web: gunicorn project.wsgi --workers 2 --log-file - --bind 0.0.0.0:8000
 frontend: npm run watch
