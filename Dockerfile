@@ -1,3 +1,17 @@
+FROM node:18 AS nodejs
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --loglevel verbose
+
+COPY frontend frontend/
+COPY templates templates/
+
+RUN npm run build
+
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -27,6 +41,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 COPY --chown=app:app . /app/
+
+COPY --from=nodejs /app/static/site.css static/
 
 RUN python manage.py collectstatic --noinput
 
