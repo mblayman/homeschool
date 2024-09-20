@@ -12,6 +12,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.4.7 /uv /bin/uv
+COPY --from=klakegg/hugo:0.101.0 /usr/lib/hugo/hugo /bin/hugo
 
 WORKDIR /app
 
@@ -31,6 +32,9 @@ RUN python manage.py collectstatic --noinput
 
 RUN sphinx-build -M html "docs" "docs/_build" -W -b dirhtml \
     && python -m whitenoise.compress docs/_build/html
+
+RUN hugo \
+    && python -m whitenoise.compress blog_out
 
 USER app
 

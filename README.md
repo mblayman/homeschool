@@ -89,6 +89,13 @@ to inspect issues:
 $ heroku pg:pull HEROKU_PG_NAME postgres://postgres:postgres@localhost:5432/mylocaldb --app APP
 ```
 
+Analyzing image contents:
+
+```
+alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
+dive klakegg/hugo:0.101.0
+```
+
 ### uv
 
 Since my macOS version is so old, psycopg doesn't have a binary package.
