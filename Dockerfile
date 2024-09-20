@@ -29,6 +29,9 @@ COPY --chown=app:app . /app/
 
 RUN python manage.py collectstatic --noinput
 
+RUN sphinx-build -M html "docs" "docs/_build" -W -b dirhtml \
+    && python -m whitenoise.compress docs/_build/html
+
 USER app
 
 EXPOSE 8000
