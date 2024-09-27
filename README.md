@@ -110,6 +110,18 @@ Here's an example:
 UV_PROJECT_ENVIRONMENT=/tmp/uv-venv uv add -n --dev 'types-toml==0.10.8.20240310'
 ```
 
+## Cloud Migration
+
+Current strategy for migrating the database
+
+1. Get production database dump
+2. Feed database dump into Postgres container
+3. `uv run manage.py dumpdata -o all-fixtures.json`
+4. Switch to SQLite as the URL.
+5. Set SQLite optimizations (like WAL journal mode) https://docs.djangoproject.com/en/5.1/ref/databases/#setting-pragma-options
+5. Run migrations.
+6. `uv run manage.py loaddata all-fixtures.json`
+
 ## Market Research
 
 This is my analysis of the market
