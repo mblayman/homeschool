@@ -1,6 +1,6 @@
 beautifulsoup4==4.12.3
 bleach==6.1.0
-boto3==1.35.10
+boto3==1.35.30
 dj-database-url==2.2.0
 Django==5.1
 django-allauth==64.2.0
