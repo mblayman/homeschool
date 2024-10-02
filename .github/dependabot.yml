@@ -6,8 +6,9 @@ updates:
       interval: "monthly"
     groups:
       annoying-dependencies:
-        - "types-*"
-        - "boto"
+        patterns:
+          - "types-*"
+          - "boto"
     # Dependabot is only submitting 5 pull requests each month,
     # even if I merge PRs that same day.
     # Raise the limit in case there are more than 5 things to upgrade.
