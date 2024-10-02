@@ -4,20 +4,15 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      annoying-dependencies:
+        - "types-*"
+        - "boto"
     # Dependabot is only submitting 5 pull requests each month,
     # even if I merge PRs that same day.
     # Raise the limit in case there are more than 5 things to upgrade.
     open-pull-requests-limit: 20
     ignore:
-      - dependency-name: "flake8"
-        versions: "<5"
-      # isort updates all the time and dependabot doesn't know about pre-commit
-      # so it's annoying to update.
-      # Since it's a dev tool, I can live with major version updates only.
-      - dependency-name: "isort"
-        versions: "<6"
       # responses has a pinning conflict in 0.12.1 with urllib3.
       # pip doesn't fail on but issues a warning. Stop updating it for now.
       - dependency-name: "responses"
-      - dependency-name: "pyupgrade"
-        versions: "<2.30"
