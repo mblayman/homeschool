@@ -19,7 +19,7 @@ django-waffle==4.1.0
 dj-stripe==2.8.4
 environs==11.0.0
 gunicorn==23.0.0
-psycopg[binary]==3.2.1
+psycopg[binary]==3.2.3
 python-dateutil==2.9.0.post0
 requests==2.32.3
 sentry-sdk==2.13.0
