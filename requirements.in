@@ -28,9 +28,9 @@ sphinx-rtd-theme==2.0.0
 sphinx-sitemap==2.6.0
 time-machine
 types-bleach==6.1.0.20240331
-types-python-dateutil==2.9.0.20240821
-types-pytz==2024.1.0.20240417
-types-requests==2.32.0.20240712
+types-python-dateutil==2.9.0.20240906
+types-pytz==2024.2.0.20240913
+types-requests==2.32.0.20240914
 types-six==1.16.21.20240513
 types-toml==0.10.8.20240310
 weasyprint==62.3
