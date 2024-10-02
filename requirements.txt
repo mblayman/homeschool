@@ -55,7 +55,7 @@ django==5.1
     #   django-waffle
 django-allauth==64.2.0
     # via -r requirements.in
-django-anymail[sendgrid]==11.1
+django-anymail==11.1
     # via -r requirements.in
 django-debug-toolbar==4.4.6
     # via -r requirements.in
@@ -85,7 +85,7 @@ docutils==0.20.1
     #   sphinx-rtd-theme
 environs==11.0.0
     # via -r requirements.in
-fonttools[woff]==4.53.1
+fonttools==4.53.1
     # via weasyprint
 gunicorn==23.0.0
     # via -r requirements.in
@@ -114,7 +114,7 @@ packaging==24.1
     #   sphinx
 pillow==10.4.0
     # via weasyprint
-psycopg[binary]==3.2.1
+psycopg==3.2.1
     # via -r requirements.in
 psycopg-binary==3.2.1
     # via psycopg
@@ -196,7 +196,7 @@ types-html5lib==1.1.11.20240806
     # via types-bleach
 types-python-dateutil==2.9.0.20240821
     # via -r requirements.in
-types-pytz==2024.2.0.20240913
+types-pytz==2024.1.0.20240417
     # via -r requirements.in
 types-requests==2.32.0.20240712
     # via -r requirements.in
@@ -223,7 +223,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-whitenoise[brotli]==6.7.0
+whitenoise==6.7.0
     # via -r requirements.in
 zopfli==0.2.3
     # via fonttools
