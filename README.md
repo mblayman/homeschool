@@ -122,6 +122,25 @@ Current strategy for migrating the database
 5. Run migrations.
 6. `uv run manage.py loaddata all-fixtures.json`
 
+### Server config
+
+1. Add ssh keys.
+2. Turn off passworth auth
+
+```
+/etc/ssh/sshd_config
+PasswordAuthentication no
+systemctl restart ssh
+```
+
+3. Firewall stuff.
+
+```
+ufw allow OpenSSH
+ufw default deny incoming
+ufw enable
+```
+
 ## Market Research
 
 This is my analysis of the market
