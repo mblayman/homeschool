@@ -87,6 +87,7 @@ module = [
     "environ",
     "factory",
     "hashid_field.*",
+    "huey.*",
     "ordered_model.*",
     "responses",
     "simple_history.*",
