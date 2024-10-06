@@ -1,94 +1,45 @@
-# Name of your application. Used to uniquely configure containers.
-service: my-app
+service: homeschool
+image: mblayman/homeschool
 
-# Name of the container image.
-image: my-user/my-app
-
-# Deploy to these servers.
+# FIXME: set IP address
 servers:
   web:
     - 192.168.0.1
-  # job:
-  #   hosts:
-  #     - 192.168.0.1
-  #   cmd: bin/jobs
+  worker:
+    hosts:
+      - 45.55.106.163
+    cmd:
+      python /app/manage.py run_huey
 
-# Enable SSL auto certification via Let's Encrypt (and allow for multiple apps on one server).
-# Set ssl: false if using something like Cloudflare to terminate SSL (but keep host!).
-proxy:
-  ssl: true
-  host: app.example.com
+# proxy:
+#   app_port: 8000
+#   host: www.theschooldesk.app
+#   ssl: true
 
-# Credentials for your image host.
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  # server: registry.digitalocean.com / ghcr.io / ...
-  username: my-user
-
-  # Always use an access token rather than real password (pulled from .kamal/secrets).
+  username: mblayman
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Configure builder setup.
 builder:
   arch: amd64
 
-# Inject ENV variables into containers (secrets come from .kamal/secrets).
-#
-# env:
-#   clear:
-#     DB_HOST: 192.168.0.2
-#   secret:
-#     - RAILS_MASTER_KEY
+env:
+  clear:
+    # FIXME: This should be updated when there is an actual host and not just an IP.
+    # What does the value need to be for this work with the healthcheck?
+    # What host does the healthcheck use in its request?
+    ALLOWED_HOSTS: '*'
+    DB_DIR: /var/db
+    # Make sure we never accidentally set DEBUG to True for production.
+    DEBUG: "False"
+    PYTHONUNBUFFERED: "1"
+  secret:
+    - SECRET_KEY
 
-# Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
-# "bin/kamal logs -r job" will tail logs from the first server in the job section.
-#
-# aliases:
-#   shell: app exec --interactive --reuse "bash"
+aliases:
+  shell: app exec --interactive --reuse "bash"
+  ssh: server exec --interactive "bash"
 
-# Use a different ssh user than root
-#
-# ssh:
-#   user: app
-
-# Use a persistent storage volume.
-#
-# volumes:
-#   - "app_storage:/app/storage"
-
-# Bridge fingerprinted assets, like JS and CSS, between versions to avoid
-# hitting 404 on in-flight requests. Combines all files from new and old
-# version inside the asset_path.
-#
-# asset_path: /app/public/assets
-
-# Configure rolling deploys by setting a wait time between batches of restarts.
-#
-# boot:
-#   limit: 10 # Can also specify as a percentage of total hosts, such as "25%"
-#   wait: 2
-
-# Use accessory services (secrets come from .kamal/secrets).
-#
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     port: 3306
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: redis:7.0
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+volumes:
+ - "/var/db:/var/db"
