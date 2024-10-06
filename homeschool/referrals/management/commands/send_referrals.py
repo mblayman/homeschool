@@ -20,7 +20,7 @@ class Command(BaseCommand):
             text_message = render_to_string(f"{template}.txt", context)
             html_message = render_to_string(f"{template}.html", context)
             sent_count += send_mail(
-                subject="A friend has invited to try School Desk!",
+                subject="A friend has invited you to try School Desk!",
                 message=text_message,
                 from_email=None,
                 recipient_list=[referral.email],
