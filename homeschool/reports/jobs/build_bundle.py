@@ -13,6 +13,7 @@ class Job(HourlyJob):
         processed = 0
 
         for bundle in Bundle.objects.pending().select_related("school_year"):
+            print(f"Processing {bundle.school_year.id}...")
             report_data = pdfs.make_bundle(bundle.school_year)
             bundle.store(report_data)
             processed += 1
