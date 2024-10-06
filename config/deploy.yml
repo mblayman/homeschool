@@ -7,7 +7,7 @@ servers:
     - 192.168.0.1
   worker:
     hosts:
-      - 45.55.106.163
+      - 192.168.0.1
     cmd:
       python /app/manage.py run_huey
 

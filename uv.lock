@@ -628,6 +628,7 @@ dependencies = [
     { name = "django-waffle" },
     { name = "environs" },
     { name = "gunicorn" },
+    { name = "huey" },
     { name = "python-dateutil" },
     { name = "requests" },
     { name = "sentry-sdk" },
@@ -686,6 +687,7 @@ requires-dist = [
     { name = "django-waffle", specifier = "==4.1.0" },
     { name = "environs", specifier = ">=11.0.0" },
     { name = "gunicorn", specifier = "==23.0.0" },
+    { name = "huey", specifier = ">=2.5.2" },
     { name = "python-dateutil", specifier = "==2.9.0.post0" },
     { name = "requests", specifier = "==2.32.3" },
     { name = "sentry-sdk", specifier = "==2.13.0" },
@@ -745,6 +747,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/ac/b6/b55c3f49042f1df3d
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6c/dd/a834df6482147d48e225a49515aabc28974ad5a4ca3215c18a882565b028/html5lib-1.1-py2.py3-none-any.whl", hash = "sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d", size = 112173 },
 ]
+
+[[package]]
+name = "huey"
+version = "2.5.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9c/fe/2e063984cdd512aa71e9c9c2a9200b58a830c532d25ca2c6cbc8e44bf7b7/huey-2.5.2.tar.gz", hash = "sha256:df33db474c05414ed40ee2110e9df692369871734da22d74ffb035a4bd74047f", size = 889357 }
 
 [[package]]
 name = "identify"

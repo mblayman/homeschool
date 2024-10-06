@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "djstripe",
     "hijack",
     "hijack.contrib.admin",
+    "huey.contrib.djhuey",
     "ordered_model",
     "simple_history",
     "tz_detect",
@@ -287,6 +288,13 @@ DJSTRIPE_WEBHOOK_VALIDATION = (
 # the check should be ignored to appease CI.
 if DJSTRIPE_WEBHOOK_VALIDATION is None:
     SILENCED_SYSTEM_CHECKS.append("djstripe.W004")
+
+# Huey
+HUEY = {
+    "huey_class": "huey.SqliteHuey",
+    "filename": env.path("DB_DIR", BASE_DIR) / "huey.sqlite3",
+    "immediate": False,
+}
 
 # Sentry
 SENTRY_ENABLED = env.bool("SENTRY_ENABLED", True)
