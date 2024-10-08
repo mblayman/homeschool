@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Hello from entrypoint"
+echo "${*}"
+echo "Previous had arguments"
+
+exec "${@}"
