@@ -12,8 +12,6 @@ servers:
 
 proxy:
   app_port: 8000
-  healthcheck:
-    interval: 8
 #   host: www.theschooldesk.app
 #   ssl: true
 
@@ -36,9 +34,6 @@ env:
     # Make sure we never accidentally set DEBUG to True for production.
     DEBUG: "False"
     PYTHONUNBUFFERED: "1"
-    # I think that the healthcheck is getting a redirect to HTTPS
-    # instead of returning a 200, which I think is causing a failure.
-    SECURE_SSL_REDIRECT: "False"
   secret:
     - SECRET_KEY
     - AWS_ACCESS_KEY_ID
