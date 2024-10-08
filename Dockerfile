@@ -21,7 +21,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # weasyprint deps: libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        curl \
         libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 \
     && rm -rf /var/lib/apt/lists/*
 

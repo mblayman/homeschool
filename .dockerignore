@@ -7,4 +7,5 @@ node_modules/
 .pytest_cache/
 .ruff_cache/
 .venv/
+venv/
 blog_out/
