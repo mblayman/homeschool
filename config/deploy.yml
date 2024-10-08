@@ -12,6 +12,8 @@ servers:
 
 proxy:
   app_port: 8000
+  healthcheck:
+    interval: 8
 #   host: www.theschooldesk.app
 #   ssl: true
 
