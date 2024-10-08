@@ -30,12 +30,26 @@ env:
     # What does the value need to be for this work with the healthcheck?
     # What host does the healthcheck use in its request?
     ALLOWED_HOSTS: '*'
+    # ALLOWED_HOSTS: '.theschooldesk.app'
     DB_DIR: /var/db
     # Make sure we never accidentally set DEBUG to True for production.
     DEBUG: "False"
     PYTHONUNBUFFERED: "1"
   secret:
     - SECRET_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - DJSTRIPE_WEBHOOK_SECRET
+    - HASHID_FIELD_SALT
+    - ROLLBAR_ACCESS_TOKEN
+    - SECRET_KEY
+    - SENDGRID_API_KEY
+    - SENTRY_DSN
+    - SLACK_WEBHOOK
+    - STRIPE_LIVE_PUBLISHABLE_KEY
+    - STRIPE_LIVE_SECRET_KEY
+    - STRIPE_TEST_PUBLISHABLE_KEY
+    - STRIPE_TEST_SECRET_KEY
 
 aliases:
   shell: app exec --interactive --reuse "bash"
