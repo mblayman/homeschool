@@ -71,4 +71,4 @@ USER app
 
 ENTRYPOINT ["/app/bin/docker-entrypoint"]
 EXPOSE 8000
-CMD ["gunicorn", "project.wsgi", "--workers=2", "--log-file=-", "--bind=0.0.0.0:8000"]
+CMD ["/app/bin/server"]
