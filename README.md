@@ -6,42 +6,7 @@ An app for homeschool planning
 
 ### Python
 
-Create a virtual environment.
-
-```bash
-$ python -m venv venv
-```
-
-Activate the virtual environment.
-
-```bash
-$ source venv/bin/activate
-```
-
-Install developer and application packages.
-
-Note: `pygraphviz` requires `graphviz`
-so you may need to install that first.
-On homebrew on a Mac,
-you can install that tool
-with `brew install graphviz`.
-
-PostgreSQL can be installed with `brew install postgresql`.
-
-```bash
-$ pip install -r requirements-dev.txt
-$ pip install -r requirements.txt
-```
-
-I had some trouble getting pygraphviz to compile
-and needed to include some library paths.
-Here's what I needed locally.
-
-```bash
-CFLAGS="-I/opt/homebrew/Cellar/graphviz/5.0.0/include" \
-LDFLAGS="-L/opt/homebrew/Cellar/graphviz/5.0.0/lib" \
-pip install -r requirements-dev.txt -r requirements.txt
-```
+`uv` is required.
 
 ### JavaScript
 
@@ -64,13 +29,13 @@ Install [Heroku CLI tools](https://devcenter.heroku.com/articles/heroku-cli).
 Bootstrap the local database.
 
 ```bash
-$ ./manage.py migrate
+$ uv run manage.py migrate
 ```
 
 Create a superuser account.
 
 ```bash
-$ ./manage.py createsuperuser
+$ uv run manage.py createsuperuser
 ```
 
 Start the local web server.

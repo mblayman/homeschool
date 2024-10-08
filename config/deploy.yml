@@ -1,13 +1,12 @@
 service: homeschool
 image: mblayman/homeschool
 
-# FIXME: set IP address
 servers:
   web:
-    - 192.168.0.1
+    - 174.138.127.127
   worker:
     hosts:
-      - 192.168.0.1
+      - 174.138.127.127
     cmd:
       python /app/manage.py run_huey
 
