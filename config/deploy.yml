@@ -10,8 +10,8 @@ servers:
     cmd:
       python /app/manage.py run_huey
 
-# proxy:
-#   app_port: 8000
+proxy:
+  app_port: 8000
 #   host: www.theschooldesk.app
 #   ssl: true
 

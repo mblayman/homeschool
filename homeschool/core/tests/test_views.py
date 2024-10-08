@@ -37,6 +37,11 @@ from homeschool.test import TestCase
 from homeschool.users.tests.factories import UserFactory
 
 
+class TestUp(TestCase):
+    def test_ok(self):
+        self.get_check_200("core:up")
+
+
 class TestIndex(TestCase):
     def test_ok(self):
         self.get_check_200("core:index")
