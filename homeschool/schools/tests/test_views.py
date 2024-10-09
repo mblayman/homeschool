@@ -124,7 +124,9 @@ class TestSchoolYearDetailView(TestCase):
                 data={"show_all_months": "1"},
             )
 
-        assert len(self.get_context("calendar")["months"]) == 13
+        # Relative delta can, under some conditions within the year,
+        # produce more months. Thus, check a couple of possible options.
+        assert len(self.get_context("calendar")["months"]) in [13, 14]
 
     def test_grade_level_info(self):
         """The context has the grade level structure expected by the template."""

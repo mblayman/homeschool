@@ -8,6 +8,7 @@ from homeschool.core.sitemaps import sitemaps
 app_name = "core"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("up", views.up, name="up"),
     path("robots.txt", views.robots, name="robots"),
     path("sitemapindex.xml", views.sitemapindex, name="sitemapindex"),
     path("sitemap.xml", allow(sitemap), {"sitemaps": sitemaps}, name="sitemap"),

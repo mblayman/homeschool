@@ -18,6 +18,12 @@ STORAGES = {
     },
 }
 
+HUEY = {
+    "huey_class": "huey.SqliteHuey",
+    "filename": ":memory:",
+    "immediate": True,
+}
+
 # Make sure that tests are never sending real emails.
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 

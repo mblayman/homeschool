@@ -33,6 +33,12 @@ def index(request):
 
 
 @allow
+def up(request):
+    """A healthcheck to show when the app is up and able to respond to requests."""
+    return render(request, "core/up.html", {})
+
+
+@allow
 def robots(request):
     return render(request, "core/robots.txt", {}, content_type="text/plain")
 

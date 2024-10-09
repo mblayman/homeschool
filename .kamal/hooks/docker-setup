@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Split the KAMAL_HOSTS by commas and loop through each IP
+IFS=',' read -ra HOSTS <<< "$KAMAL_HOSTS"
+for HOST in "${HOSTS[@]}"; do
+  echo "Connecting to $HOST"
+
+  ssh root@"$HOST" "
+    if ! getent group app > /dev/null 2>&1; then
+      groupadd --gid 222 --system app
+      echo 'System group app created with GID 222'
+    else
+      echo 'System group app already exists'
+    fi
+
+    if ! id --user app > /dev/null 2>&1; then
+      useradd --uid 222 --gid app --system app
+      echo 'System user app created with UID 222'
+    else
+      echo 'System user app already exists'
+    fi
+
+    mkdir --parents /var/db
+
+    chown --recursive app:app /var/db
+    echo '/var/db ownership changed to app:app'
+  "
+done
