@@ -12,6 +12,10 @@ servers:
 
 proxy:
   app_port: 8000
+  healthcheck:
+    # The db migration might make the app take longer to boot up
+    # so provide more time before failing the health check.
+    timeout: 30
 #   host: www.theschooldesk.app
 #   ssl: true
 
