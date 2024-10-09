@@ -1,7 +1,10 @@
 #!/bin/bash
 
 echo "Hello from entrypoint"
-echo "${*}"
+if [ "${*}" == "/app/bin/server" ]; then
+    echo "Before migrate command"
+    ./manage.py migrate
+fi
 echo "Previous had arguments"
 
 exec "${@}"
