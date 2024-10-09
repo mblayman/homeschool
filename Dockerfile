@@ -32,6 +32,10 @@ WORKDIR /app
 RUN addgroup --gid 222 --system app \
     && adduser --uid 222 --system --group app
 
+# Clean up annoying font errors of `Fontconfig error: No writable cache directories`
+RUN chown -R app:app /usr/local/share/fonts /var/cache/fontconfig \
+    && su app -s /bin/sh -c "fc-cache --really-force"
+
 RUN mkdir -p /app && chown app:app /app
 
 COPY --chown=app:app pyproject.toml uv.lock /app/
