@@ -1,12 +1,8 @@
 #!/bin/bash
 
-echo "Hello from entrypoint"
-echo "${*}"
 if [ "${*}" == "/app/bin/server" ]; then
-    echo "Before migrate command"
     # Don't waste time running the system checks.
     ./manage.py migrate --skip-checks
 fi
-echo "Previous had arguments"
 
 exec "${@}"

@@ -8,7 +8,8 @@ servers:
     hosts:
       - 174.138.127.127
     cmd:
-      python /app/manage.py run_huey
+      # Don't waste time running the system checks.
+      python /app/manage.py run_huey --skip-checks
 
 proxy:
   app_port: 8000
