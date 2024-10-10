@@ -34,8 +34,8 @@ env:
     # FIXME: This should be updated when there is an actual host and not just an IP.
     # What does the value need to be for this work with the healthcheck?
     # What host does the healthcheck use in its request?
-    ALLOWED_HOSTS: '*'
-    # ALLOWED_HOSTS: '.theschooldesk.app'
+    # ALLOWED_HOSTS: '*'
+    ALLOWED_HOSTS: '.theschooldesk.app'
     DB_DIR: /var/db
     # Make sure we never accidentally set DEBUG to True for production.
     DEBUG: "False"
