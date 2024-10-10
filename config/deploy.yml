@@ -31,11 +31,11 @@ builder:
 
 env:
   clear:
-    # FIXME: This should be updated when there is an actual host and not just an IP.
-    # What does the value need to be for this work with the healthcheck?
-    # What host does the healthcheck use in its request?
-    # ALLOWED_HOSTS: '*'
-    ALLOWED_HOSTS: '.theschooldesk.app'
+    # Ideally, kamal-proxy would pass along a Host header that could be validated.
+    # Instead, it relies on the `kamal` Docker network so the Host header
+    # contains the container ID of the proxy. As of 2024-10-09, there is no way
+    # I can find to pass along the header. Therefore, skip the ALLOWED_HOSTS check.
+    ALLOWED_HOSTS: '*'
     DB_DIR: /var/db
     # Make sure we never accidentally set DEBUG to True for production.
     DEBUG: "False"
