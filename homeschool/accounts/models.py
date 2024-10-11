@@ -67,9 +67,9 @@ class Account(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_account(sender, instance, created, **kwargs):
+def create_account(sender, instance, created, raw, **kwargs):
     """A new user gets an associated account."""
-    if created:
+    if created and not raw:
         Account.objects.create(user=instance)
 
 

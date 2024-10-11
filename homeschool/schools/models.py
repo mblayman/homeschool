@@ -30,9 +30,9 @@ class School(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_school(sender, instance, created, **kwargs):
+def create_school(sender, instance, created, raw, **kwargs):
     """A new user gets an associated school."""
-    if created:
+    if created and not raw:
         School.objects.create(admin=instance)
 
 

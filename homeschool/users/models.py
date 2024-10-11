@@ -42,9 +42,9 @@ class Profile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):  # pyright: ignore
+def create_profile(sender, instance, created, raw, **kwargs):  # pyright: ignore
     """A new user gets an associated profile."""
-    if created:
+    if created and not raw:
         Profile.objects.create(user=instance)
 
 
