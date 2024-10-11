@@ -50,8 +50,13 @@ Tricky problems require better debugging tools.
 This command will get db data from Heroku
 to inspect issues:
 
+`mylocaldb` is needed because the pull needs the db not to exist so I can't use
+the default `postgres` db that is already in the postgres image.
+
 ```bash
 $ heroku pg:pull HEROKU_PG_NAME postgres://postgres:postgres@localhost:5432/mylocaldb --app APP
+heroku pg:pull HEROKU_POSTGRESQL_ROSE_URL postgres://postgres:postgres@localhost:5432/mylocaldb
+# Needs createdb on path
 ```
 
 Analyzing image contents:
@@ -105,6 +110,15 @@ ufw allow OpenSSH
 ufw default deny incoming
 ufw enable
 ```
+
+### DB export/import
+
+1. Use `heroku pg:pull` directly into a Postgres container.
+2. From `make shell` while connected to the db, run `.manage.py dumpdata production.json`
+3. Switch to SQLite DATABASE_URL.
+4. Start the app to run the migrations.
+5. Remove all `ContentType` records to avoid integrity errors. `ContenType.objects.all().delete()`.
+
 
 ## Market Research
 
