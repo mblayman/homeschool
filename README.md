@@ -84,13 +84,28 @@ UV_PROJECT_ENVIRONMENT=/tmp/uv-venv uv add -n --dev 'types-toml==0.10.8.20240310
 
 Current strategy for migrating the database
 
-1. Get production database dump
-2. Feed database dump into Postgres container
-3. `uv run manage.py dumpdata -o all-fixtures.json`
-4. Switch to SQLite as the URL.
-5. Set SQLite optimizations (like WAL journal mode) https://docs.djangoproject.com/en/5.1/ref/databases/#setting-pragma-options
-5. Run migrations.
-6. `uv run manage.py loaddata all-fixtures.json`
+1. Turn on maintenance mode via Heroku dashboard.
+2. Confirm app is offline.
+3. Clear Postgres docker container content.
+4. Start Postgres docker container.
+5. Get production database dump via `heroku pg:pull`
+6. From the web container with the DATABASE_URL pointing at Postgres, run: `./manage.py dumpdata -o production.json`
+7. Stop Docker Compose.
+8. Switch to SQLite as the DATABASE_URL.
+9. Start Docker Compose and allow migrations to run.
+10. From Django shell, remove all `ContentType` records to avoid integrity errors. `ContenType.objects.all().delete()`.
+11. From container shell, `./manage.py loaddata production.json`
+12. `kamal app stop` to stop the staging site.
+13. scp production db to /var/db
+14. chown db to app user and replace existing app.
+15. `kamal app boot` to restart.
+16. Verify via customer impersonation that data is valid for my family.
+17. Remove CNAME record for www subdomain.
+18. Add A record for www subdomain.
+19. Wait until dig returns the expected IP address.
+20. Update kamal config to change from `staging` to `www`.
+21. Deploy.
+22. Verify site is live at the www subdomain.
 
 ### Server config
 
@@ -110,15 +125,6 @@ ufw allow OpenSSH
 ufw default deny incoming
 ufw enable
 ```
-
-### DB export/import
-
-1. Use `heroku pg:pull` directly into a Postgres container.
-2. From `make shell` while connected to the db, run `.manage.py dumpdata production.json`
-3. Switch to SQLite DATABASE_URL.
-4. Start the app to run the migrations.
-5. Remove all `ContentType` records to avoid integrity errors. `ContenType.objects.all().delete()`.
-
 
 ## Market Research
 
@@ -149,209 +155,6 @@ Measurement criteria:
 | Homeschool Manager | Subscription | $5.99 / month | 3/13/21 |
 | Homeschool Minder | Subscription | $4.99 / month | 5/3/21 |
 | Homeschool Planet | Subscription | $7.95 / month | 5/20/21 |
-
-### Charlotte Mason Organizer
-
-https://simplycharlottemason.com/store/cm-organizer/
-
-* Pitch: Homeschool organizer for those using the Charlotte Mason method.
-* The service seems centered around picking specific books
-  and adding them to the schedule.
-  Books are considered "resources."
-* Offers Progress, Attendance, and Bibliography reports
-* Share resources with other CM organizer users (paid feature)
-* Fetches book information by ISBN
-* Resources are attached to "subjects."
-* Resources are broken up on the scheduler by "divisions" (e.g., chapters)
-  and called "assignments."
-* Assignments can be partially completed and marked as "worked on."
-* Filters on daily view.
-
-Forum topics:
-
-* https://forums.welltrainedmind.com/topic/147177-simply-charlotte-mason-or-ambleside/ mentioned in passing
-* https://forums.welltrainedmind.com/topic/83407-classically-donethinking-charlotte-mason/ likes adding books to organizer
-* https://forums.welltrainedmind.com/topic/105037-tell-me-about-the-dvd-seminar-from-simply-charlotte-mason/ uses organizer to add in non-school stuff too like chores
-* https://forums.welltrainedmind.com/topic/93216-curricula-questions-about-1st-grade-ds-hf-autism-adhd/ product plug
-* https://forums.welltrainedmind.com/topic/511101-question-for-those-that-like-circe-etc/ "splurging on it". Likes that you can miss a day and not have to manually tweak things.
-
-### Google Classroom
-
-https://classroom.google.com/h
-
-* For Teachers, Students, and Parents/Guardians
-* Class announcements
-* Respond to student posts
-* Integration with Google Drive
-* Google Worksplace for Education for extra privacy controls
-* Define "Rubrics" to tell students how work is graded
-* Students see their grades and can submit assignments
-* Private messages between teachers and students
-* Scheduling abilities of Google Calendar
-* Class questions
-
-Forum topics:
-
-* https://forums.welltrainedmind.com/topic/701747-does-anyone-use-google-classroom/ good for assignments, good for lots of kids, student accounts
-* https://forums.welltrainedmind.com/topic/702154-attaching-audio-files-to-assignments-in-google-classroom/ attaching audio files to assignments
-* https://forums.welltrainedmind.com/topic/698379-public-school-teachers-who-are-losing-it/ use in a public school
-* https://forums.welltrainedmind.com/topic/586061-math-textbooks-not-used-in-school-anymore/ use in a middle school
-* https://forums.welltrainedmind.com/topic/656644-8th-grade-more-independent/ product plug
-
-### Homeschool Manager
-
-https://homeschoolmanager.com/
-
-* Pricing: $5.99 / month OR $49 / year
-* Starts with student setup
-* Video help for onboarding
-* School Year is bound to student (behaves like Grade Level)
-* Drag and drop functionality for task management
-* Quick add task feature
-* Grade stuff, different task types, grade calculator, grade scales
-* Define types of tasks, task weighting for grades
-* Volunteer hours tracking
-* Book list tracking
-* Dashboard to track what's overdue (necessary because tasks are pinned to dates)
-* Report cards and past history
-* Transcripts
-* Attendance and time tracking
-* Family logins to allow others to login in with a restricted account
-* Click tracking with clicky.com
-* JavaScript (Angular?) app so most of the links don't show where a user is about to go.
-* Missing many of the empty states on pages
-
-Onboarding
-
-* Simple form to sign up. No credit card.
-* Create school and student.
-  On first page, sticky footer with "Create my school" CTA.
-  Add multiple students in first step.
-* Land on students page with warnings that each student doesn't have a school year set up.
-* Multi-step wizard to create a school year for a student.
-  * School Year == Grade Level
-  * Subject == Course, grading and scheduling can be done off platform.
-    Quite quick to add multiple subjects for a school year.
-    Subject don't default to running on certain days. Must always pick.
-    Subjects can run on a monthly schedule.
-  * Step 3 is the scheduling for each Subject
-* Received a Welcome Email that includes links to help, link to Facebook group, share link
-* Day +1, start of a drip campaign explaining the service.
-
-UI
-
-Top nav:
-
-* Left side: Dashboard and Students
-* Right side: Help, link to Vimeo video help, account drop down
-
-Dashboard:
-
-* Low information initially
-* Links to student pages of various types
-
-Accounts section:
-
-* Divided into tabs to separate topics.
-* School info, contact info, subscription, holidays, tasks & weighting, grading scales, logins
-
-Student index:
-
-* I can't quickly look at the week view for both of my students at the same time.
-
-Student section:
-
-* Schedule
-  * Task entry doesn't work if school year starts in the future.
-    This is not obvious.
-  * Tasks are draggable to different days.
-    Tasks dragged to "Next week" move to the same day on the following week.
-* Gradebook
-* Book list
-* Documents
-  * This is a section for generating documents.
-    These are reports in formats like PDF and XSLX
-* Admin
-  * School years
-  * Grade scale
-  * Volunteer hours - quick add form
-
-Forum topics: Nothing found.
-
-### Homeschool Minder
-
-https://www.homeschoolminder.com/
-
-* From 2012
-* Pricing $4.99 / month OR $39.99 / year (free trial, length not on homepage)
-* Broken blog
-* Primary features from intro video
-  * Scheduler (Calendar)
-  * Gradebook
-  * Lesson plans
-  * Skill tracking
-  * Student records
-  * Reports
-* Grade scales - users can define the numbers and symbols used
-* Calendar has some pretty deep recurrence features
-* Lesson plans
-  * a way to group and sub-divide activities within a course.
-  * Tied to a course and term (i.e., intended to be time bound)
-* Skills
-  * Skills track activities within a course too, but are not time bound
-  * A group of Skills is a Standard
-* Student Information
-  * Tracks a bunch of personal identification (:grimacing:)
-  * Can add aribtrary custom fields and values
-  * Tracks contact information
-  * Tracks standardized test scores
-  * Tracks "Readings" aka a book list
-  * Tracks community service information
-* Reports
-  * Lots of different report choices
-  * All seem to be generated PDFs
-* Student Logins
-  * Students get a mostly read only view, but can complete tasks.
-* School Years require terms and courses must be added to a term.
-* Students are added to courses via a Registration
-  * It looks like a registration is needed per course (whoa, heavy).
-* The service can track any random events on the calendar.
-* Assignments have customizable categories.
-* Sign up experience
-  * Sign up directly from landing page
-  * Dumps into an intro flow popover
-    * Step 1: Long (7 minute) intro video
-    * Step 2: Asks for a bunch of teacher settings
-    * Step 3: Sets up a year and some terms based on pre-configured dates
-    * Step 4: Create student
-    * Step 5: Create courses
-    * Step 6: Weird old message about getting docs together and a "beta"
-      (what? This isn't 2012 any more)
-    * Land on an empty calendar after filling out details
-  * Received welcome email
-  * Discovered from settings page that the trial is 30 days long
-
-UI
-
-* Main section: Student Planner
-  * Calendar
-    * One student at a time
-    * Add items from the calendar
-    * Highly interactive
-    * Week view expands into hourly view
-  * Skills
-    * A bit confusing to add a standard, then add a skill.
-* Only other tab: "Resources" - unclickable and "coming soon"
-* Secondary tabs
-  * Settings
-  * Help - links out to /docs
-  * Log out
-
-
-Forum topics:
-
-* https://forums.welltrainedmind.com/topic/481657-homeschool-planet-anyone-trying-it/ mentioned in comparison 2013
-* https://forums.welltrainedmind.com/topic/683608-6th-grade-2019-2020/ mentioned in comparison 2019
 
 ### Homeschool Planet
 
