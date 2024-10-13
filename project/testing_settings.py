@@ -8,7 +8,7 @@ DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memor
 # Use regular files instead of S3 for tests.
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "django.core.files.storage.InMemoryStorage",
     },
     "staticfiles": {
         # Whitenoise does not play well with tz_detect
