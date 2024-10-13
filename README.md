@@ -100,7 +100,7 @@ Current strategy for migrating the database
 14. chown db to app user and replace existing app.
 15. `kamal app boot` to restart.
 16. Verify via customer impersonation that data is valid for my family.
-17. Remove CNAME record for www subdomain.
+17. Remove CNAME record for www subdomain. (Value was: `transparent-dinosaur-0xw2wzz66pp8iu7q49k1ayac.herokudns.com`)
 18. Add A record for www subdomain.
 19. Wait until dig returns the expected IP address.
 20. Update kamal config to change from `staging` to `www`.

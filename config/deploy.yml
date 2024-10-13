@@ -13,8 +13,7 @@ servers:
 
 proxy:
   app_port: 8000
-  # FIXME: Change subdomain from staging to www.
-  host: staging.theschooldesk.app
+  host: www.theschooldesk.app
   ssl: true
   healthcheck:
     # The db migration might make the app take longer to boot up
