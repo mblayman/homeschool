@@ -3,13 +3,19 @@ services:
     build: .
     volumes:
       - .:/app
+    # When in a "production" mode
+    # volumes:
+    #   - ./db.sqlite3:/app/db.sqlite3
+    env_file: ".env"
     ports:
       - 8000:8000
+    depends_on:
+      - db
 
-  # db:
-  #   image: postgres
-  #   restart: always
-  #   environment:
-  #     POSTGRES_PASSWORD: postgres
-  #   ports:
-  #     - "5432:5432"
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"

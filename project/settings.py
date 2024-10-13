@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import dj_database_url
+# import dj_database_url
 import environs
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "djstripe",
     "hijack",
     "hijack.contrib.admin",
+    "huey.contrib.djhuey",
     "ordered_model",
     "simple_history",
     "tz_detect",
@@ -131,10 +132,17 @@ LOGIN_REDIRECT_URL = "core:dashboard"
 
 # Database
 DATABASES = {
-    "default": dj_database_url.config(
-        conn_max_age=env.int("DATABASE_CONN_MAX_AGE", 600),
-        ssl_require=env.bool("DATABASE_SSL_REQUIRE", True),
-    )
+    # "default": dj_database_url.config(
+    #     conn_max_age=env.int("DATABASE_CONN_MAX_AGE", 600),
+    #     ssl_require=env.bool("DATABASE_SSL_REQUIRE", True),
+    # )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": env.path("DB_DIR", BASE_DIR) / "db.sqlite3",
+        "OPTIONS": {
+            "init_command": "PRAGMA journal_mode=wal;",
+        },
+    }
 }
 # Starting in Django 3.2, the default field is moving to BigAutoField,
 # but I don't want to mess with a bunch of migrations in 3rd party apps.
@@ -197,13 +205,19 @@ SECURE_REFERRER_POLICY = "same-origin"
 SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", True)
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", 60 * 60 * 24 * 365)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", True)
+# The health check was failing with a 301 to HTTPS.
+# With kamal-proxy in front and the .app domain, this should not be needed.
+SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
 
 SILENCED_SYSTEM_CHECKS: list[str] = [
     # STRIPE_TEST_SECRET_KEY and STRIPE_LIVE_SECRET_KEY settings exist
     # and djstripe wants them not to exist.
     "djstripe.I002",
+    # Disable warning about SECURE_SSL_REDIRECT.
+    # The combo of kamal-proxy using Let's Encrypt and the `.app` domain
+    # only working with HTTPS means that the warning can be ignored safely.
+    "security.W008",
 ]
 
 # Sessions
@@ -281,6 +295,13 @@ DJSTRIPE_WEBHOOK_VALIDATION = (
 # the check should be ignored to appease CI.
 if DJSTRIPE_WEBHOOK_VALIDATION is None:
     SILENCED_SYSTEM_CHECKS.append("djstripe.W004")
+
+# Huey
+HUEY = {
+    "huey_class": "huey.SqliteHuey",
+    "filename": env.path("DB_DIR", BASE_DIR) / "huey.sqlite3",
+    "immediate": False,
+}
 
 # Sentry
 SENTRY_ENABLED = env.bool("SENTRY_ENABLED", True)

@@ -1,0 +1,63 @@
+service: homeschool
+image: mblayman/homeschool
+
+servers:
+  web:
+    - 174.138.127.127
+  worker:
+    hosts:
+      - 174.138.127.127
+    cmd:
+      # Don't waste time running the system checks.
+      python /app/manage.py run_huey --skip-checks
+
+proxy:
+  app_port: 8000
+  host: www.theschooldesk.app
+  ssl: true
+  healthcheck:
+    # The db migration might make the app take longer to boot up
+    # so provide more time before failing the health check.
+    timeout: 60
+
+registry:
+  username: mblayman
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+env:
+  clear:
+    # Ideally, kamal-proxy would pass along a Host header that could be validated.
+    # Instead, it relies on the `kamal` Docker network so the Host header
+    # contains the container ID of the proxy. As of 2024-10-09, there is no way
+    # I can find to pass along the header. Therefore, skip the ALLOWED_HOSTS check.
+    ALLOWED_HOSTS: '*'
+    DB_DIR: /var/db
+    # Make sure we never accidentally set DEBUG to True for production.
+    DEBUG: "False"
+    PYTHONUNBUFFERED: "1"
+  secret:
+    - SECRET_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - DJSTRIPE_WEBHOOK_SECRET
+    - HASHID_FIELD_SALT
+    - ROLLBAR_ACCESS_TOKEN
+    - SECRET_KEY
+    - SENDGRID_API_KEY
+    - SENTRY_DSN
+    - SLACK_WEBHOOK
+    - STRIPE_LIVE_PUBLISHABLE_KEY
+    - STRIPE_LIVE_SECRET_KEY
+    - STRIPE_TEST_PUBLISHABLE_KEY
+    - STRIPE_TEST_SECRET_KEY
+
+aliases:
+  shell: app exec --interactive --reuse "bash"
+  ssh: server exec --interactive "bash"
+
+volumes:
+ - "/var/db:/var/db"

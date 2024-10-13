@@ -30,7 +30,7 @@ category = "categories"
 [params]
 description = "Homeschool Planning Software Simplified"
 share = true
-homepageImage = "/images/organizing.svg"
+homepageImage = "/blog/images/organizing.svg"
 customCSS = ["school-desk.css"]
 
 [params.social]
