@@ -1,16 +1,13 @@
 .PHONY: docs local
 
 local:
-	uv run honcho start -f Procfile.dev
+	uv run honcho start -f Procfile
 
 build:
 	docker compose build
 
 shell:
 	docker compose run --rm web bash
-
-deploy:
-	git push heroku main
 
 graph:
 	uv run manage.py graph_models \
@@ -53,6 +50,3 @@ docs:
 
 servedocs:
 	cd docs/_build/html && python3 -m http.server
-
-pip:
-	pip-compile --output-file requirements.txt requirements.in

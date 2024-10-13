@@ -22,9 +22,7 @@ Install JS packages to get Tailwind CSS.
 npm i
 ```
 
-### Deployment
-
-Install [Heroku CLI tools](https://devcenter.heroku.com/articles/heroku-cli).
+## Development
 
 Bootstrap the local database.
 
@@ -46,19 +44,6 @@ $ make
 
 ## Docker Compose
 
-Tricky problems require better debugging tools.
-This command will get db data from Heroku
-to inspect issues:
-
-`mylocaldb` is needed because the pull needs the db not to exist so I can't use
-the default `postgres` db that is already in the postgres image.
-
-```bash
-$ heroku pg:pull HEROKU_PG_NAME postgres://postgres:postgres@localhost:5432/mylocaldb --app APP
-heroku pg:pull HEROKU_POSTGRESQL_ROSE_URL postgres://postgres:postgres@localhost:5432/mylocaldb
-# Needs createdb on path
-```
-
 Analyzing image contents:
 
 ```
@@ -68,10 +53,8 @@ dive klakegg/hugo:0.101.0
 
 ### uv
 
-Since my macOS version is so old, psycopg doesn't have a binary package.
-This causes uv (and pip!) to break.
-Because of that, I'm forced to use uv through the Docker image,
-but there are some settings needed to get around the fact that image doesn't install
+If for some reason I need to work with uv inside the container,
+there are some settings needed to get around the fact that image doesn't install
 packages in a place writeable by the app user.
 
 Here's an example:
@@ -80,34 +63,7 @@ Here's an example:
 UV_PROJECT_ENVIRONMENT=/tmp/uv-venv uv add -n --dev 'types-toml==0.10.8.20240310'
 ```
 
-## Cloud Migration
-
-Current strategy for migrating the database
-
-1. Turn on maintenance mode via Heroku dashboard.
-2. Confirm app is offline.
-3. Clear Postgres docker container content.
-4. Start Postgres docker container.
-5. Get production database dump via `heroku pg:pull`
-6. From the web container with the DATABASE_URL pointing at Postgres, run: `./manage.py dumpdata -o production.json`
-7. Stop Docker Compose.
-8. Switch to SQLite as the DATABASE_URL.
-9. Start Docker Compose and allow migrations to run.
-10. From Django shell, remove all `ContentType` records to avoid integrity errors. `ContenType.objects.all().delete()`.
-11. From container shell, `./manage.py loaddata production.json`
-12. `kamal app stop` to stop the staging site.
-13. scp production db to /var/db
-14. chown db to app user and replace existing app.
-15. `kamal app boot` to restart.
-16. Verify via customer impersonation that data is valid for my family.
-17. Remove CNAME record for www subdomain. (Value was: `transparent-dinosaur-0xw2wzz66pp8iu7q49k1ayac.herokudns.com`)
-18. Add A record for www subdomain.
-19. Wait until dig returns the expected IP address.
-20. Update kamal config to change from `staging` to `www`.
-21. Deploy.
-22. Verify site is live at the www subdomain.
-
-### Server config
+## Server config
 
 1. Add ssh keys.
 2. Turn off passworth auth
