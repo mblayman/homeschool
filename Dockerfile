@@ -2,7 +2,7 @@ FROM node:18 AS nodejs
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 
 RUN --mount=type=cache,target=/root/.npm \
     npm install --loglevel verbose
@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY frontend frontend/
 COPY templates templates/
 
-RUN npm run build
+RUN npm --prefix frontend run build
 
 FROM python:3.12-slim
 

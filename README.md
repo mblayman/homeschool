@@ -19,7 +19,7 @@ brew install nodejs
 Install JS packages to get Tailwind CSS.
 
 ```bash
-npm i
+npm --prefix frontend i
 ```
 
 ## Development
