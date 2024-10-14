@@ -2,14 +2,14 @@ baseURL = "https://www.theschooldesk.app/blog/"
 languageCode = "en-us"
 theme = "chunky-poster"
 title = "School Desk"
-publishDir = "blog_out"
+publishDir = "out"
 
-archetypeDir = "blog/archetypes"
-contentDir = "blog/content"
-data = "blog/data"
-layoutDir = "blog/layouts"
-staticDir = "blog/static"
-themesDir = "blog/themes"
+archetypeDir = "archetypes"
+contentDir = "content"
+data = "data"
+layoutDir = "layouts"
+staticDir = "static"
+themesDir = "themes"
 
 # Chunky Poster theme stuff
 paginate = 2

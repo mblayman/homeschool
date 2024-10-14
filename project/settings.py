@@ -314,7 +314,7 @@ IS_SECURE = env.bool("IS_SECURE", True)
 # Add extra output directories that WhiteNoise can serve as static files
 # *outside* of `staticfiles`.
 MORE_WHITENOISE = [
-    {"directory": BASE_DIR / "blog_out", "prefix": "blog/"},
+    {"directory": BASE_DIR / "blog" / "out", "prefix": "blog/"},
     {"directory": BASE_DIR / "docs" / "_build" / "html", "prefix": "docs/"},
 ]
 

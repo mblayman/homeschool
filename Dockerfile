@@ -68,8 +68,8 @@ RUN \
 RUN sphinx-build -M html "docs" "docs/_build" -W -b dirhtml \
     && python -m whitenoise.compress docs/_build/html
 
-RUN hugo \
-    && python -m whitenoise.compress blog_out
+RUN hugo --source blog \
+    && python -m whitenoise.compress blog/out
 
 USER app
 

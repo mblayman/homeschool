@@ -117,7 +117,7 @@ staticfiles/
 .DS_Store
 
 # Blog
-blog_out/
+/blog/out/
 resources/
 .hugo_build.lock
 
