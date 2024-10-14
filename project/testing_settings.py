@@ -3,7 +3,16 @@ from django.contrib.auth.hashers import BasePasswordHasher
 from .settings import *  # noqa
 
 # An in-memory database should be good enough for now.
-DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
+        "OPTIONS": {
+            "init_command": "PRAGMA journal_mode=wal;",
+            "transaction_mode": "IMMEDIATE",
+        },
+    }
+}
 
 # Use regular files instead of S3 for tests.
 STORAGES = {

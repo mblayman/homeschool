@@ -136,6 +136,7 @@ DATABASES = {
         "NAME": env.path("DB_DIR", BASE_DIR) / "db.sqlite3",
         "OPTIONS": {
             "init_command": "PRAGMA journal_mode=wal;",
+            "transaction_mode": "IMMEDIATE",
         },
     }
 }
