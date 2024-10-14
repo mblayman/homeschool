@@ -1,6 +1,5 @@
 from pathlib import Path
 
-# import dj_database_url
 import environs
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,10 +131,6 @@ LOGIN_REDIRECT_URL = "core:dashboard"
 
 # Database
 DATABASES = {
-    # "default": dj_database_url.config(
-    #     conn_max_age=env.int("DATABASE_CONN_MAX_AGE", 600),
-    #     ssl_require=env.bool("DATABASE_SSL_REQUIRE", True),
-    # )
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": env.path("DB_DIR", BASE_DIR) / "db.sqlite3",

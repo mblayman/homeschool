@@ -289,19 +289,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dj-database-url"
-version = "2.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1a/48/51f398a47c197f584b3445de886986ddc40de18bdb6e168f325a8d2c7bca/dj_database_url-2.2.0.tar.gz", hash = "sha256:9f9b05058ddf888f1e6f840048b8d705ff9395e3b52a07165daa3d8b9360551b", size = 10874 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/9a/13f173c716d07283661e821f7e1624d0904835151b4f099687455dbef81e/dj_database_url-2.2.0-py3-none-any.whl", hash = "sha256:3e792567b0aa9a4884860af05fe2aa4968071ad351e033b6db632f97ac6db9de", size = 7764 },
-]
-
-[[package]]
 name = "dj-stripe"
 version = "2.8.4"
 source = { registry = "https://pypi.org/simple" }
@@ -610,7 +597,6 @@ dependencies = [
     { name = "beautifulsoup4" },
     { name = "bleach" },
     { name = "boto3" },
-    { name = "dj-database-url" },
     { name = "dj-stripe" },
     { name = "django" },
     { name = "django-allauth" },
@@ -669,7 +655,6 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.12.3" },
     { name = "bleach", specifier = "==6.1.0" },
     { name = "boto3", specifier = "==1.35.10" },
-    { name = "dj-database-url", specifier = "==2.2.0" },
     { name = "dj-stripe", specifier = "==2.8.4" },
     { name = "django", specifier = "==5.1" },
     { name = "django-allauth", specifier = "==64.2.0" },
