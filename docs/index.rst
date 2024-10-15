@@ -66,7 +66,6 @@ to learn more about how School Desk works.
 
    school-years.rst
    courses.rst
-   referrals.rst
 
 How Does School Desk Stack Up?
 ------------------------------
