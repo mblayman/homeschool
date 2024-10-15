@@ -28,18 +28,14 @@
     {% include "students/empty_students.html" %}
   {% elif schedules or next_year_schedules %}
 
-    {% flag teacher_checklist_flag %}
-      <div class="flex">
-        <div class="mr-2">
-          {% include "print_link.html" %}
-        </div>
-        <div class="mx-2">
-          {% include "teachers/checklist_link.html" with year=first_day.year month=first_day.month day=first_day.day %}
-        </div>
+    <div class="flex">
+      <div class="mr-2">
+        {% include "print_link.html" %}
       </div>
-    {% else %}
-      {% include "print_link.html" %}
-    {% endflag %}
+      <div class="mx-2">
+        {% include "teachers/checklist_link.html" with year=first_day.year month=first_day.month day=first_day.day %}
+      </div>
+    </div>
 
     {% include "core/week_schedules.html" with schedules=schedules %}
     {% include "core/week_schedules.html" with schedules=next_year_schedules %}
