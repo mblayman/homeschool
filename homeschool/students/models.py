@@ -232,29 +232,6 @@ class Student(models.Model):
             return 0
 
         this_week = Week(today)
-        latest_coursework = (
-            Coursework.objects.filter(student=self, course_task__course=course)
-            .order_by("-completed_date")
-            .first()
-        )
-        if latest_coursework and (
-            this_week.first_day <= latest_coursework.completed_date
-        ):
-            start_date = latest_coursework.completed_date + datetime.timedelta(days=1)
-        else:
-            # When the student has no coursework yet, the counting should start
-            # from the week start date relative to today.
-            start_date = this_week.first_day
-
-            # Clamp the start to the school year's start.
-            # This is an edge case that appears when looking at future school years.
-            if start_date < school_year.start_date:
-                # This line is not covered, but the problem is tied to #495
-                # Ignore the line in coverage for the moment.
-                start_date = school_year.start_date  # pragma: no cover
-
-        # TODO: Why is start_date not used? See #495
-
         last_school_day_this_week = school_year.last_school_day_for(this_week)
         is_current_week_active = today <= last_school_day_this_week
         if is_current_week_active:
