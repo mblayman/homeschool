@@ -9,7 +9,6 @@ class TestSettingsDashboard(TestCase):
             self.get_check_200("settings:dashboard")
 
         assert self.get_context("nav_link") == "settings"
-        assert self.get_context("referral_form") is not None
 
     def test_wants_announcements_change(self):
         """The wants announcement profile setting can change."""

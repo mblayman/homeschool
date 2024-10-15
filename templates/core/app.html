@@ -1,5 +1,5 @@
 {% extends "app_base.html" %}
-{% load accounts_tags static waffle_tags %}
+{% load accounts_tags static %}
 
 {% block head_title %}{% if first_day %}{% if user.first_name %}{{ user.first_name }}’s School{% else %}Week of {{ first_day|date:"l, M j" }} &ndash; {{ last_day|date:"l, M j" }}{% endif %}{% else %}Your School{% endif %}{% endblock %}
 

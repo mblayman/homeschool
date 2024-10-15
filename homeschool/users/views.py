@@ -4,8 +4,6 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from homeschool.referrals.forms import ReferralForm
-
 from .forms import ProfileForm
 
 
@@ -23,7 +21,5 @@ def settings_dashboard(request):
     else:
         form = ProfileForm(instance=request.user.profile)
     return render(
-        request,
-        "users/settings_dashboard.html",
-        {"form": form, "nav_link": "settings", "referral_form": ReferralForm()},
+        request, "users/settings_dashboard.html", {"form": form, "nav_link": "settings"}
     )

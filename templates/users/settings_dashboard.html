@@ -1,5 +1,4 @@
 {% extends "app_base.html" %}
-{% load waffle_tags %}
 
 {% block head_title %}Settings{% endblock %}
 
@@ -52,33 +51,6 @@
       as you use the service.
     </p>
   {% endif %}
-
-  {% flag referral_flag %}
-  <form method="POST" action="{% url 'referrals:create' %}">
-    {% csrf_token %}
-    <div class="bg-blue-100 w-full max-w-2xl rounded-lg p-8 pb-4 mt-8 mb-4 text-blue-900 font-extralight">
-      <h2 class="text-2xl mb-4 w-full border-b border-blue-500">Refer a Friend</h2>
-      <p class="mb-6">
-        Love using School Desk?
-        Refer a friend.
-        If they sign up and join School Desk,
-        we’ll give you a couple months
-        of service for free!
-        <a href="/docs/referrals/" target="_blank" class="underline">Learn more</a>
-      </p>
-      <div class="flex flex-row w-full">
-        <div class="w-2/3">
-          {% include "forms/field.html" with field=referral_form.email placeholder="e.g., “stephanie@example.com”" no_label=True %}
-        </div>
-        <div class="w-1/3 mx-8">
-          <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
-            Send Referral
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
-  {% endflag %}
 
 {% endblock %}
 
