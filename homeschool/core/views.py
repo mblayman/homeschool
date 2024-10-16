@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 
+import waffle
 from dateutil.parser import parse
 from denied.authorizers import any_authorized, staff_authorized
 from denied.decorators import allow, authorize
@@ -332,32 +333,60 @@ class DailyView(TemplateView):
             ).values_list("course_task_id", flat=True)
         )
 
+        # I'm not sure if I'm keeping this code, so I don't want to write tests yet.
+        if waffle.flag_is_active(self.request, "daily_perf_flag"):  # pragma: no cover
+            tasks = (
+                student.get_all_course_tasks(courses)
+                .exclude(id__in=completed_task_ids)
+                .select_related("graded_work", "resource")
+            )
+            pending_tasks = {}
+            for course in courses:
+                if course.runs_on(day):
+                    pending_tasks[course.id] = None
+                    for task in tasks:
+                        if course.id == task.course_id:
+                            pending_tasks[course.id] = task
+                            break
+        else:
+            pending_tasks = {}
+
         for course in courses:
             course_schedule = {"course": course}
             if course.id in day_coursework:
                 course_schedule["coursework"] = day_coursework[course.id]
             elif course.runs_on(day):
-                task_index = max(
-                    student.get_incomplete_task_count_in_range(
-                        course, today, day, school_year
+                if waffle.flag_is_active(
+                    self.request, "daily_perf_flag"
+                ):  # pragma: no cover
+                    task = pending_tasks[course.id]
+                    if task:
+                        course_schedule["task"] = task
+                    else:
+                        course_schedule["no_scheduled_task"] = True
+                else:
+                    task_index = max(
+                        student.get_incomplete_task_count_in_range(
+                            course, today, day, school_year
+                        )
+                        - 1,
+                        0,
                     )
-                    - 1,
-                    0,
-                )
-                # Doing this query in a loop is definitely an N+1 bug.
-                # If it's possible to do a single query of all tasks
-                # that groups by course then that would be better.
-                # No need to over-optimize until that's a real issue.
-                # I brought this up on the forum. It doesn't look like it's easy to fix.
-                # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
-                try:
-                    course_schedule["task"] = (
-                        student.get_tasks_for(course)
-                        .exclude(id__in=completed_task_ids)
-                        .select_related("graded_work", "resource")[task_index]
-                    )
-                except IndexError:
-                    course_schedule["no_scheduled_task"] = True
+                    # Doing this query in a loop is definitely an N+1 bug.
+                    # If it's possible to do a single query of all tasks
+                    # that groups by course then that would be better.
+                    # No need to over-optimize until that's a real issue.
+                    # I brought this up on the forum.
+                    # It doesn't look like it's easy to fix.
+                    # https://forum.djangoproject.com/t/grouping-by-foreignkey-with-a-limit-per-group/979
+                    try:
+                        course_schedule["task"] = (
+                            student.get_tasks_for(course)
+                            .exclude(id__in=completed_task_ids)
+                            .select_related("graded_work", "resource")[task_index]
+                        )
+                    except IndexError:
+                        course_schedule["no_scheduled_task"] = True
             schedule["courses"].append(course_schedule)
         return schedule
 
