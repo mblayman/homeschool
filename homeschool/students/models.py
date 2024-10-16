@@ -296,36 +296,6 @@ class Student(models.Model):
 
         This includes any general or grade level specific task.
         """
-        enrollment = self._get_enrollment(course)
-        if enrollment:
-            return course.course_tasks.filter(
-                Q(grade_level__isnull=True) | Q(grade_level=enrollment.grade_level)
-            ).select_related("resource")
-        else:
-            return course.course_tasks.none()
-
-    # I'm not sure if I'm keeping this code, so I don't want to write tests yet.
-    def get_all_course_tasks(self, courses):  # pragma: no cover
-        """Get all the course tasks applicable to the student.
-
-        Since a course can contain tasks that *don't* apply to the student,
-        the grade level must be factored into the filter.
-        """
-        from homeschool.courses.models import CourseTask
-
-        if courses:
-            course = courses[0]
-            enrollment = self._get_enrollment(course)
-            if enrollment:
-                return CourseTask.objects.filter(
-                    Q(grade_level__isnull=True) | Q(grade_level=enrollment.grade_level),
-                    course__in=courses,
-                ).select_related("resource")
-
-        return CourseTask.objects.none()
-
-    def _get_enrollment(self, course: Course) -> Enrollment | None:
-        """Get an enrollment from a course."""
         enrollment = self._enrollment_by_course_cache.get(course)
         if not enrollment:
             enrollment = (
@@ -335,7 +305,12 @@ class Student(models.Model):
                 .select_related("grade_level")
                 .first()
             )
-        return enrollment
+        if enrollment:
+            return course.course_tasks.filter(
+                Q(grade_level__isnull=True) | Q(grade_level=enrollment.grade_level)
+            ).select_related("resource")
+        else:
+            return course.course_tasks.none()
 
     def get_incomplete_task_count_in_range(
         self, course, start_date, end_date, school_year
