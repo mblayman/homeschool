@@ -10,7 +10,6 @@ jobs:
       ALLOWED_HOSTS: '*'
       AWS_ACCESS_KEY_ID: 'a secret to everybody'
       AWS_SECRET_ACCESS_KEY: 'a secret to everybody'
-      DATABASE_SSL_REQUIRE: 'off'
       DJSTRIPE_WEBHOOK_SECRET: 'whsec_asecrettoeverybody'
       DJSTRIPE_WEBHOOK_VALIDATION: ''
       HASHID_FIELD_SALT: 'a secret to everybody'

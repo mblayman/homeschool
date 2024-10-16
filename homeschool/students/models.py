@@ -270,7 +270,7 @@ class Student(models.Model):
         return max(coursework_by_dates.keys()) if coursework_by_dates else None
 
     def get_day_coursework(self, day):
-        """Get the coursework completed in the week.
+        """Get the coursework completed on a day.
 
         The data is in a dictionary for fast lookups.
         """

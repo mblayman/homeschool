@@ -319,6 +319,11 @@ class DailyView(TemplateView):
         self, student, today: datetime.date, day: datetime.date, school_year
     ):
         """Get the daily schedule for the student."""
+        is_break = school_year.is_break(day, student=student)
+        schedule = {"student": student, "courses": [], "is_break": is_break}
+        if is_break:
+            return schedule
+
         courses = student.get_active_courses(school_year)
         day_coursework = student.get_day_coursework(day)
         completed_task_ids = list(
@@ -326,10 +331,6 @@ class DailyView(TemplateView):
                 student=student, course_task__course__in=courses
             ).values_list("course_task_id", flat=True)
         )
-        is_break = school_year.is_break(day, student=student)
-        schedule = {"student": student, "courses": [], "is_break": is_break}
-        if is_break:
-            return schedule
 
         for course in courses:
             course_schedule = {"course": course}
