@@ -317,12 +317,12 @@ wheels = [
 
 [[package]]
 name = "django-allauth"
-version = "64.2.0"
+version = "65.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a4/9f/61da55fba0b8070fc94b9df9f654617f781654b82acba67490d078af1fe4/django_allauth-64.2.0.tar.gz", hash = "sha256:71b404b3a7631502005e549800411e77939754e6864f2d24c17741a42e8e50e5", size = 1245385 }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/98/9013e6859a3fb2716c6e6091583e906e8a48262c4ee9a2a4d2a01f7cfefc/django_allauth-65.0.2.tar.gz", hash = "sha256:6b5b3a7a65b1c28078b6eb0dd234310b58a44e8addfd187dc30437b0b2bc41a5", size = 1278378 }
 
 [[package]]
 name = "django-anymail"
@@ -657,7 +657,7 @@ requires-dist = [
     { name = "boto3", specifier = "==1.35.10" },
     { name = "dj-stripe", specifier = "==2.8.4" },
     { name = "django", specifier = "==5.1" },
-    { name = "django-allauth", specifier = "==64.2.0" },
+    { name = "django-allauth", specifier = ">=65.0.1" },
     { name = "django-anymail", extras = ["sendgrid"], specifier = "==11.1" },
     { name = "django-debug-toolbar", specifier = "==4.4.6" },
     { name = "django-denied", specifier = "==1.3" },
