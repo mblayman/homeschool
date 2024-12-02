@@ -3,12 +3,12 @@ default_language_version:
 
 repos:
 - repo: https://github.com/adamchainz/django-upgrade
-  rev: 1.22.1
+  rev: 1.22.2
   hooks:
   - id: django-upgrade
     args: [--target-version, "4.2"]
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.8.0
+  rev: v0.8.1
   hooks:
     # Run the linter.
     - id: ruff
