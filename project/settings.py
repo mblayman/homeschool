@@ -134,7 +134,13 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": env.path("DB_DIR", BASE_DIR) / "db.sqlite3",
         "OPTIONS": {
-            "init_command": "PRAGMA journal_mode=wal;",
+            "init_command": """
+                PRAGMA journal_mode=wal;
+                PRAGMA busy_timeout=5000;
+                PRAGMA synchronous=normal;
+                PRAGMA cache_size=-20000;
+                PRAGMA temp_store=memory;
+            """,
             "transaction_mode": "IMMEDIATE",
         },
     }
