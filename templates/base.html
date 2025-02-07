@@ -68,7 +68,7 @@
     <a href="/blog/" class="mx-1 hover:text-gray-900">Blog</a>
     <a href="{% url "core:help" %}" class="mx-1 hover:text-gray-900">Help</a>
     {% if user.is_authenticated %}
-      <form class="inline" method="POST" action="{% url 'account_logout' %}">
+      <form class="inline" method="POST" action="{% url 'logout' %}">
         {% csrf_token %}
         <button class="mx-1 hover:text-gray-900" type="submit">Log Out</button>
       </form>

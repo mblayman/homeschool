@@ -1,14 +1,11 @@
 import datetime
 
-from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.functional import cached_property
-
-from homeschool.core.slack_gateway import slack_gateway
 
 
 # Check https://github.com/typeddjango/django-stubs/issues/1354 for details
@@ -46,9 +43,3 @@ def create_profile(sender, instance, created, raw, **kwargs):  # pyright: ignore
     """A new user gets an associated profile."""
     if created and not raw:
         Profile.objects.create(user=instance)
-
-
-@receiver(user_signed_up, sender=User)
-def notify_signup(sender, request, user, **kwargs):  # pyright: ignore
-    """Notify that a new signup occurred."""
-    slack_gateway.send_message(f"New sign up: {user.username}")

@@ -1,8 +1,11 @@
 from denied.decorators import allow
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path, register_converter
+from sesame.views import LoginView
 
+from homeschool.accounts.views import check_email, signin
 from homeschool.core.converters import HashidConverter
 from homeschool.core.views import favicon, handle_403, handle_404, handle_500
 
@@ -17,10 +20,13 @@ urlpatterns = [
     path("reports/", include("homeschool.reports.urls")),
     path("schools/", include("homeschool.schools.urls")),
     path("settings/", include("homeschool.users.settings_urls")),
+    path("check-email", check_email, name="check-email"),
+    path("login", allow(LoginView.as_view()), name="sesame-login"),
+    path("logout", allow(LogoutView.as_view()), name="logout"),
+    path("signin", signin, name="signin"),
     path("students/", include("homeschool.students.urls")),
     path("subscriptions/", include("homeschool.accounts.subscriptions_urls")),
     path("teachers/", include("homeschool.teachers.urls")),
-    path("accounts/", allow(include("allauth.urls"))),
     path("hijack/", allow(include("hijack.urls"))),
     path("stripe/", allow(include("djstripe.urls", namespace="djstripe"))),
     path("tz_detect/", allow(include("tz_detect.urls"))),

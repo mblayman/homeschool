@@ -31,9 +31,6 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.sites",
     "django.forms",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "django_extensions",
     "django_htmx",
     "djstripe",
@@ -64,7 +61,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "hijack.middleware.HijackUserMiddleware",
     "waffle.middleware.WaffleMiddleware",
@@ -114,7 +110,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 # Auth
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
+    "sesame.backends.ModelBackend",
 )
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -126,6 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 AUTH_USER_MODEL = "users.User"
+LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "core:dashboard"
 
 # Database
@@ -223,7 +220,7 @@ SILENCED_SYSTEM_CHECKS: list[str] = [
 
 # Sessions
 # Allow users to be logged in for a month.
-SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
+SESSION_COOKIE_AGE = 365 * 24 * 60 * 60
 
 # django.contrib.sites
 SITE_ID = 1
@@ -235,25 +232,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # 3rd party packages
 
-# django-allauth
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/start/"
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = env.str(
-    "ANYMAIL_ACCOUNT_DEFAULT_HTTP_PROTOCOL", "https"
-)
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "School Desk - "
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_LOGOUT_REDIRECT_URL = "core:index"
-ACCOUNT_PRESERVE_USERNAME_CASING = False
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USER_DISPLAY = lambda user: user.email  # noqa
-ACCOUNT_USERNAME_REQUIRED = False
-
 # django-anymail
 ANYMAIL = {"SENDGRID_API_KEY": env.str("SENDGRID_API_KEY")}
 
@@ -262,6 +240,13 @@ HASHID_FIELD_SALT = env.str("HASHID_FIELD_SALT")
 
 # django-hijack
 HIJACK_LOGOUT_REDIRECT_URL = "/office/users/user/"
+
+# django-sesame
+SESAME_TOKEN_NAME = "token"  # noqa S105
+SESAME_MAX_AGE = 60 * 60  # 1 hour
+# If School Desk allows email changes in the future,
+# we may want to change this default.
+# SESAME_INVALIDATE_ON_EMAIL_CHANGE = False
 
 # django-storages
 AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
@@ -325,7 +310,7 @@ MORE_WHITENOISE = [
 
 # accounts
 ACCOUNT_GATE_ALLOW_LIST = [
-    "/accounts/logout/",
+    "/logout",
     "/help/",
     "/subscriptions/create-checkout-session/",
 ]
@@ -337,5 +322,4 @@ ACCOUNTS_PRICE_NICKNAMES = (
 )
 
 # core
-SLACK_WEBHOOK = env.str("SLACK_WEBHOOK", "")
 SUPPORT_EMAIL = f"support@{domain}"

@@ -7,7 +7,6 @@ dependencies = [
     "bleach==6.1.0",
     "boto3==1.35.10",
     "dj-stripe==2.8.4",
-    "django-allauth>=65.0.1",
     "django-anymail[sendgrid]==11.1",
     "django-debug-toolbar==4.4.6",
     "django-denied==1.3",
@@ -32,6 +31,7 @@ dependencies = [
     "sphinx==7.3.7",
     "weasyprint==62.3",
     "whitenoise[brotli]==6.7.0",
+    "django-sesame>=3.2.2",
 ]
 
 [tool.uv]
