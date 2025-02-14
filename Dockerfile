@@ -1,4 +1,4 @@
-FROM node:18 AS nodejs
+FROM node:19 AS nodejs
 
 WORKDIR /app
 
