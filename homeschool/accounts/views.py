@@ -1,16 +1,34 @@
 import json
 
 from denied.authorizers import any_authorized, staff_authorized
-from denied.decorators import authorize
+from denied.decorators import allow, authorize
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from .forms import SiginForm
 from .models import Account
 from .stripe_gateway import stripe_gateway
+
+
+@allow
+def signin(request):
+    form = SiginForm()
+    if request.method == "POST":
+        form = SiginForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("check-email"))
+
+    return render(request, "accounts/signin.html", {"form": form})
+
+
+@allow
+def check_email(request):
+    return render(request, "accounts/check_email.html", {})
 
 
 @authorize(staff_authorized)

@@ -1,10 +1,7 @@
-from unittest import mock
-
 from homeschool.accounts.models import Account
 from homeschool.schools.models import School
 from homeschool.schools.tests.factories import SchoolFactory
 from homeschool.test import TestCase
-from homeschool.users.models import notify_signup
 
 
 class TestUser(TestCase):
@@ -45,15 +42,3 @@ class TestProfile(TestCase):
         user = self.make_user()
 
         assert str(user.profile) == f"Profile for {user.username}"
-
-
-class TestNotifySignup(TestCase):
-    @mock.patch("homeschool.users.models.slack_gateway", autospec=True)
-    def test_signup_sends_message(self, mock_slack_gateway):
-        """A signup sends a message to Slack."""
-        user = self.make_user()
-
-        notify_signup(user, request=None, user=user)
-
-        args = mock_slack_gateway.send_message.call_args.args
-        assert user.username in args[0]

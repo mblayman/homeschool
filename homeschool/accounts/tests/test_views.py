@@ -2,10 +2,32 @@ from unittest import mock
 
 from django.conf import settings
 from django.contrib.messages import get_messages
+from django.urls import reverse
 
 from homeschool.accounts.tests.factories import AccountFactory, PriceFactory
 from homeschool.test import TestCase
 from homeschool.users.tests.factories import UserFactory
+
+
+class TestSignIn:
+    def test_unauthenticated(self, db, client):
+        response = client.get(reverse("signin"))
+
+        assert response.status_code == 200
+
+    def test_signin(self, db, client):
+        """A happy post redirect to the check email page."""
+        data = {"email": "test@testing.com"}
+        response = client.post(reverse("signin"), data=data)
+
+        assert response.status_code == 302
+
+
+class TestCheckEmail:
+    def test_unauthenticated(self, db, client):
+        response = client.get(reverse("check-email"))
+
+        assert response.status_code == 200
 
 
 class TestCustomersDashboard(TestCase):

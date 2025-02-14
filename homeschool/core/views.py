@@ -644,7 +644,7 @@ def office_onboarding(request):
         courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
         stats = {
             "user": user,
-            "email_address": user.emailaddress_set.first(),
+            "email_address": user.email,
             "school_years": SchoolYear.objects.filter(school__admin=user).count(),
             "grade_levels": len(grade_levels),
             "courses": len(courses),
