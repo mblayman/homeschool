@@ -58,6 +58,7 @@
     {% block main %}{% endblock %}
   </main>
 
+  {% block footer %}
   <footer class="container mx-auto {% block footer_css_border %}border-t border-gray-400{% endblock %} p-4 text-center text-sm text-gray-600 print:hidden">
     <span class="mx-1">
       <a href="{% url "core:index" %}" class="hover:text-gray-900">&copy; {% now "Y" %} School Desk</a>
@@ -71,6 +72,8 @@
       Lovingly built in <a class="hover:underline" rel="noopener" href="https://www.cityoffrederickmd.gov/" target="_blank">Frederick, Maryland</a>
     </div>
   </footer>
+  {% endblock %}
+
   <script src="{% static "js/htmx-1.8.0.min.js" %}"></script>
   {% django_htmx_script %}
   <script>
