@@ -471,6 +471,15 @@ class DailyView(TemplateView):
             messages.add_message(self.request, messages.SUCCESS, message)
 
 
+@authorize(any_authorized)
+def onboarding_start(request):
+    """Display the onboarding form that all new users must fill out."""
+    context = {
+        "support_email": settings.SUPPORT_EMAIL,
+    }
+    return render(request, "core/onboarding_start.html", context)
+
+
 class StartView(TemplateView):
     template_name = "core/start.html"
 
