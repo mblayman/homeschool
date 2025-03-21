@@ -14,7 +14,7 @@
         <img class="h-64 mx-auto" src="{% static "welcome.svg" %}" alt="Mother and child preparing for school">
       </div>
 
-      <div class="max-w-xl mx-auto">
+      <div class="max-w-xl mx-auto text-blue-900 font-light">
         <p class="mb-4">Thanks for signing up for School Desk!</p>
         <p class="mb-4">
           I know from my own life that managing a child’s school schedule is a lot of work.
@@ -25,14 +25,18 @@
           I’m glad I can share it, and I hope the app can bring some sanity to you as well.
         </p>
         <p class="mb-4">
-          The next few pages will walk you through getting started
-          with School Desk.
+          To get you started,
+          please tell us about one of your students.
+          This information will help you understand School Desk’s user interface.
+          <span class="mb-4 font-medium">
+            Don’t worry, you can change details and
+            tell us about the rest of your students later!
+          </span>
         </p>
         <p class="mb-4">
-          As you get started,
-          feel free to reach out with questions or feedback.
           Support is available at
-          <a class="underline" href="mailto:{{ support_email }}">{{ support_email }}</a>.
+          <a class="underline" href="mailto:{{ support_email }}">{{ support_email }}</a>
+          for questions or feedback.
         </p>
         <p>Warm regards,<br>Matt Layman, Founder of School Desk</p>
       </div>
@@ -40,9 +44,45 @@
     </div>
     <div class="w-1/2 ml-8 text-blue-900 font-light">
 
-      <a href="{% url "core:start-school-year" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">
-        Start Planning
-      </a>
+      <div class="max-w-xl">
+        <fieldset class="border border-gray-300 p-4 rounded-lg mb-2">
+          <legend class="font-extralight px-2">Who is your Student?</legend>
+
+          {% include "forms/field.html" with field=form.student_first_name autofocus=True %}
+          {% include "forms/field.html" with field=form.student_last_name no_bottom_margin=True %}
+        </fieldset>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg mb-2">
+          <legend class="font-extralight px-2">When will your School Year run?</legend>
+
+          {% include "forms/field.html" with field=form.school_year_start_date placeholder=placeholder_start_date %}
+          {% include "forms/field.html" with field=form.school_year_end_date placeholder=placeholder_end_date no_bottom_margin=True %}
+        </fieldset>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg mb-2">
+          <legend class="font-extralight px-2">What Grade Level will your Student be in?</legend>
+
+          {% include "forms/field.html" with field=form.grade_level_name placeholder="e.g., “Kindergarten” or “6th Grade”" no_bottom_margin=True %}
+        </fieldset>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg mb-2">
+          <legend class="font-extralight px-2">What is a Course in the Grade Level?</legend>
+
+          {% include "forms/field.html" with field=form.course_name placeholder="e.g., “Math” or “Chemistry”" no_bottom_margin=True %}
+        </fieldset>
+
+        <fieldset class="border border-gray-300 p-4 rounded-lg mb-2">
+          <legend class="font-extralight px-2">What is the first Task for that Course?</legend>
+
+          {% include "forms/field.html" with field=form.course_task_description placeholder="e.g., “Read chapter 1”" no_bottom_margin=True %}
+        </fieldset>
+
+        <div class="py-4">
+          <a href="{% url "core:start-school-year" %}" class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+          Start Planning
+        </a>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}

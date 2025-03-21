@@ -1,4 +1,4 @@
-<div class="md:flex md:items-center {% if not field.errors %}mb-6{% endif %}">
+<div class="md:flex md:items-center {% if not no_bottom_margin %}{% if not field.errors %}mb-6{% endif %}{% endif %}">
   {% if no_label %}
     <div class="w-full">
   {% else %}
