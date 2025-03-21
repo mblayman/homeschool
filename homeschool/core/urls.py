@@ -28,5 +28,6 @@ urlpatterns = [
         views.DailyView.as_view(),
         name="daily_for_date",
     ),
+    path("start2/", views.onboarding_start),
     path("start/", include("homeschool.core.start_urls")),
 ]

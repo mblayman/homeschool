@@ -26,6 +26,8 @@ from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
+from .forms import OnboardingForm
+
 
 @allow
 def index(request):
@@ -469,6 +471,24 @@ class DailyView(TemplateView):
                 f"Undid {coursework_deleted} task{pluralized} for {student.full_name}."
             )
             messages.add_message(self.request, messages.SUCCESS, message)
+
+
+@authorize(any_authorized)
+def onboarding_start(request):
+    """Display the onboarding form that all new users must fill out."""
+    # Pick some placeholder dates that fit a standard US school year.
+    year = timezone.now().year
+    placeholder_start_date = datetime.date(year, 9, 1).strftime("%-m/%-d/%Y")
+    placeholder_end_date = datetime.date(year + 1, 6, 1).strftime("%-m/%-d/%Y")
+
+    form = OnboardingForm()
+    context = {
+        "form": form,
+        "placeholder_start_date": placeholder_start_date,
+        "placeholder_end_date": placeholder_end_date,
+        "support_email": settings.SUPPORT_EMAIL,
+    }
+    return render(request, "core/onboarding_start.html", context)
 
 
 class StartView(TemplateView):

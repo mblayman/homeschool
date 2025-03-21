@@ -49,3 +49,13 @@ class DaysOfWeekModelForm(forms.ModelForm):
             if self.cleaned_data.get(day_field):
                 days_of_week += model_day
         return days_of_week
+
+
+class OnboardingForm(forms.Form):
+    student_first_name = forms.CharField(label="First Name", max_length=64)
+    student_last_name = forms.CharField(label="Last Name", max_length=64)
+    school_year_start_date = forms.DateField(label="Start Date")
+    school_year_end_date = forms.DateField(label="End Date")
+    grade_level_name = forms.CharField(label="Grade Level", max_length=128)
+    course_name = forms.CharField(max_length=256)
+    course_task_description = forms.CharField(label="Description")
