@@ -29,7 +29,7 @@ dependencies = [
     "sphinx-rtd-theme==2.0.0",
     "sphinx-sitemap==2.6.0",
     "sphinx==7.3.7",
-    "weasyprint==62.3",
+    "weasyprint==65.0",
     "whitenoise[brotli]==6.7.0",
     "django-sesame>=3.2.2",
 ]
@@ -110,7 +110,7 @@ filterwarnings = [
     "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
     "ignore:.*pkg_resources.declare_namespace.*:DeprecationWarning",
     "ignore:.*The default scheme will be changed.*:PendingDeprecationWarning",
-    # weasyprint==62.3
+    # weasyprint==65.0
     "ignore:.*transform is deprecated.*:DeprecationWarning",
     "ignore:.*text_matrix is deprecated.*:DeprecationWarning",
 ]
