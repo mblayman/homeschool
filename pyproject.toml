@@ -6,7 +6,7 @@ dependencies = [
     "beautifulsoup4==4.12.3",
     "bleach==6.1.0",
     "boto3==1.35.10",
-    "dj-stripe==2.8.4",
+    "dj-stripe==2.9.1",
     "django-anymail[sendgrid]==11.1",
     "django-debug-toolbar==4.4.6",
     "django-denied==1.3",
