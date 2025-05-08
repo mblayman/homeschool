@@ -19,7 +19,7 @@ dependencies = [
     "django-storages==1.14.4",
     "django-tz-detect==0.5.0",
     "django-waffle==4.1.0",
-    "django==5.1",
+    "django==5.1.9",
     "environs>=11.0.0",
     "gunicorn==23.0.0",
     "huey>=2.5.2",
