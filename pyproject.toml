@@ -24,7 +24,7 @@ dependencies = [
     "gunicorn==23.0.0",
     "huey>=2.5.2",
     "python-dateutil==2.9.0.post0",
-    "requests==2.32.3",
+    "requests==2.32.4",
     "sentry-sdk==2.13.0",
     "sphinx-rtd-theme==2.0.0",
     "sphinx-sitemap==2.6.0",
