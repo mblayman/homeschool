@@ -38,6 +38,9 @@ env:
     DB_DIR: /var/db
     # Make sure we never accidentally set DEBUG to True for production.
     DEBUG: "False"
+    # This is to fix a deprecation warning in Django 5.x
+    # to prepare for a change in Django 6 to assume https by default.
+    FORMS_URLFIELD_ASSUME_HTTPS: "True"
     PYTHONUNBUFFERED: "1"
   secret:
     - SECRET_KEY

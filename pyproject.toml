@@ -19,7 +19,7 @@ dependencies = [
     "django-storages==1.14.4",
     "django-tz-detect==0.5.0",
     "django-waffle==4.1.0",
-    "django==5.1",
+    "django==5.2.3",
     "environs>=11.0.0",
     "gunicorn==23.0.0",
     "huey>=2.5.2",
@@ -106,6 +106,8 @@ DJANGO_SETTINGS_MODULE = "project.testing_settings"
 filterwarnings = [
     # Enable warnings as errors.
     "error",
+    # django==5.2.3 (manifesting from djstripe)
+    "ignore:.*FORMS_URLFIELD_ASSUME_HTTPS.*:DeprecationWarning",
     # djstripe==2.7.3
     "ignore:.*pkg_resources is deprecated as an API.*:DeprecationWarning",
     "ignore:.*pkg_resources.declare_namespace.*:DeprecationWarning",
@@ -120,6 +122,9 @@ filterwarnings = [
 testpaths = [
     "homeschool",
 ]
+
+[tool.pytest_env]
+FORMS_URLFIELD_ASSUME_HTTPS = "True"
 
 [tool.ruff.lint]
 select = [
