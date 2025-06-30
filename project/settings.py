@@ -148,14 +148,14 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Email
-EMAIL_BACKEND = env.str("EMAIL_BACKEND", "anymail.backends.sendgrid.EmailBackend")
+EMAIL_BACKEND = env.str("EMAIL_BACKEND", "anymail.backends.amazon_ses.EmailBackend")
 # Enable this to test with MailHog for local email testing.
 if env.bool("EMAIL_TESTING", False):
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "0.0.0.0"  # noqa: S104 This is for local testing only. It's ok.
     EMAIL_PORT = 1025
-DEFAULT_FROM_EMAIL = f"noreply@{domain}"
-SERVER_EMAIL = f"noreply@{domain}"
+DEFAULT_FROM_EMAIL = f"noreply@email.{domain}"
+SERVER_EMAIL = f"noreply@email.{domain}"
 
 # Files
 STORAGES = {
@@ -234,7 +234,12 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # 3rd party packages
 
 # django-anymail
-ANYMAIL = {"SENDGRID_API_KEY": env.str("SENDGRID_API_KEY")}
+ANYMAIL = {
+    "AMAZON_SES_CLIENT_PARAMS": {
+        "region_name": "us-east-1",
+    },
+    "SENDGRID_API_KEY": env.str("SENDGRID_API_KEY"),
+}
 
 # django-hashid-field
 HASHID_FIELD_SALT = env.str("HASHID_FIELD_SALT")
