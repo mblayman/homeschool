@@ -26,7 +26,7 @@ dependencies = [
     "python-dateutil==2.9.0.post0",
     "requests==2.32.4",
     "sentry-sdk==2.32.0",
-    "sphinx-rtd-theme==2.0.0",
+    "sphinx-rtd-theme==3.0.2",
     "sphinx-sitemap==2.7.2",
     "sphinx==7.3.7",
     "weasyprint==65.1",
