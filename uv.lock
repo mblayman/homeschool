@@ -702,7 +702,7 @@ requires-dist = [
     { name = "huey", specifier = ">=2.5.2" },
     { name = "python-dateutil", specifier = "==2.9.0.post0" },
     { name = "requests", specifier = "==2.32.4" },
-    { name = "sentry-sdk", specifier = "==2.13.0" },
+    { name = "sentry-sdk", specifier = "==2.32.0" },
     { name = "sphinx", specifier = "==7.3.7" },
     { name = "sphinx-rtd-theme", specifier = "==2.0.0" },
     { name = "sphinx-sitemap", specifier = "==2.7.2" },
@@ -1221,15 +1221,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.13.0"
+version = "2.32.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bb/41/97f673384dae5ed81cc2a568cc5c28e76deee85f8ba50def862e86150a5a/sentry_sdk-2.13.0.tar.gz", hash = "sha256:8d4a576f7a98eb2fdb40e13106e41f330e5c79d72a68be1316e7852cf4995260", size = 279937, upload-time = "2024-08-13T14:33:34.177Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/10/59/eb90c45cb836cf8bec973bba10230ddad1c55e2b2e9ffa9d7d7368948358/sentry_sdk-2.32.0.tar.gz", hash = "sha256:9016c75d9316b0f6921ac14c8cd4fb938f26002430ac5be9945ab280f78bec6b", size = 334932, upload-time = "2025-06-27T08:10:02.89Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ad/7e/e9ca09f24a6c334286631a2d32c267cdc5edad5ac03fd9d20a01a82f1c35/sentry_sdk-2.13.0-py2.py3-none-any.whl", hash = "sha256:6beede8fc2ab4043da7f69d95534e320944690680dd9a963178a49de71d726c6", size = 309078, upload-time = "2024-08-13T14:33:32.262Z" },
+    { url = "https://files.pythonhosted.org/packages/01/a1/fc4856bd02d2097324fb7ce05b3021fb850f864b83ca765f6e37e92ff8ca/sentry_sdk-2.32.0-py2.py3-none-any.whl", hash = "sha256:6cf51521b099562d7ce3606da928c473643abe99b00ce4cb5626ea735f4ec345", size = 356122, upload-time = "2025-06-27T08:10:01.424Z" },
 ]
 
 [[package]]
