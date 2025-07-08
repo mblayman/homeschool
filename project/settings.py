@@ -238,7 +238,6 @@ ANYMAIL = {
     "AMAZON_SES_CLIENT_PARAMS": {
         "region_name": "us-east-1",
     },
-    "SENDGRID_API_KEY": env.str("SENDGRID_API_KEY"),
 }
 
 # django-hashid-field

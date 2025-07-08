@@ -56,7 +56,6 @@ RUN \
     DJSTRIPE_WEBHOOK_VALIDATION='' \
     HASHID_FIELD_SALT=a-secret-to-everybody \
     SECRET_KEY=a-secret-to-everybody \
-    SENDGRID_API_KEY=a-secret-to-everybody \
     SENTRY_ENABLED=off \
     SENTRY_DSN=dsn_example \
     STRIPE_LIVE_MODE=off \
