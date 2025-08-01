@@ -29,7 +29,7 @@ dependencies = [
     "sphinx-rtd-theme==3.0.2",
     "sphinx-sitemap==2.7.2",
     "sphinx==7.3.7",
-    "weasyprint==65.1",
+    "weasyprint==66.0",
     "whitenoise[brotli]==6.9.0",
     "django-sesame>=3.2.2",
 ]
