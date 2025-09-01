@@ -27,7 +27,7 @@ dependencies = [
     "requests==2.32.4",
     "sentry-sdk==2.34.1",
     "sphinx-rtd-theme==3.0.2",
-    "sphinx-sitemap==2.7.2",
+    "sphinx-sitemap==2.8.0",
     "sphinx==7.3.7",
     "weasyprint==66.0",
     "whitenoise[brotli]==6.9.0",
