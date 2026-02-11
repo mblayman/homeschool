@@ -67,7 +67,7 @@ for their students,
 School Desk's user interface provides quick access
 to all the different courses and subjects
 that educators teach.
-This holisitic approach brings the focus down
+This holistic approach brings the focus down
 to the smaller number of students
 that homeschool families have.
 Google Classroom scales better

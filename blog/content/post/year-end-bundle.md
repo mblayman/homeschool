@@ -31,9 +31,9 @@ This includes
 
 My hope is the bundle makes finishing out your year a joy.
 No more wasted time collecting all the evidence you need
-to show your local goverment
+to show your local government
 that you taught your students.
 All of that is pulled together for you
 into a convenient zip file.
 
-You can find this new feature of your Reports page. Enjoy!
+You can find this new feature on your Reports page. Enjoy!

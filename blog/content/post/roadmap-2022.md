@@ -66,7 +66,7 @@ of activity.
 One of my goals this year is to **build a simple
 and intuitive workflow
 for handling field trips.**
-My hope is that the fields trips will allow you
+My hope is that the field trips will allow you
 to better represent more
 of the realities
 that happen in a school year.
@@ -105,7 +105,7 @@ and point people to School Desk on occasion,
 being a professional software developer doesn't put me
 on much common ground
 with other homeschool educators.
-Your recommendation to others really help the site grow
+Your recommendation to others really helps the site grow
 into something more sustainable.
 
 Finally,
