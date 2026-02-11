@@ -66,7 +66,7 @@ UV_PROJECT_ENVIRONMENT=/tmp/uv-venv uv add -n --dev 'types-toml==0.10.8.20240310
 ## Server config
 
 1. Add ssh keys.
-2. Turn off passworth auth
+2. Turn off password auth
 
 ```
 /etc/ssh/sshd_config
@@ -333,7 +333,7 @@ Hannah Homeschooler:
   in a timeframe that fits the constraints
   that she specified to School Desk.
 * School Desk makes it painless to stay on top of homeschool
-  so that she focus her attention on other parts of her life.
+  so that she can focus her attention on other parts of her life.
 
 ### Product Position
 

@@ -56,4 +56,4 @@ I'm still working every week to make School Desk a better tool
 for my family and yours.
 If you've got other ideas
 or feedback,
-don't hestitate to reach out!
+don't hesitate to reach out!
