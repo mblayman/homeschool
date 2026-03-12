@@ -1,7 +1,7 @@
 [project]
 name = "homeschool"
 version = "0.1.0"
-requires-python = "==3.12"
+requires-python = ">=3.12, <3.13"
 dependencies = [
     "beautifulsoup4==4.13.4",
     "bleach==6.2.0",
