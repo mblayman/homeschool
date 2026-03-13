@@ -30,7 +30,7 @@ dependencies = [
     "sphinx-sitemap==2.7.2",
     "sphinx==8.2.3",
     "weasyprint==68.1",
-    "whitenoise[brotli]==6.9.0",
+    "whitenoise[brotli]==6.12.0",
     "django-sesame>=3.2.2",
 ]
 
