@@ -654,7 +654,7 @@ requires-dist = [
     { name = "sentry-sdk", specifier = "==2.54.0" },
     { name = "sphinx", specifier = "==8.2.3" },
     { name = "sphinx-rtd-theme", specifier = "==3.1.0" },
-    { name = "sphinx-sitemap", specifier = "==2.7.2" },
+    { name = "sphinx-sitemap", specifier = "==2.9.0" },
     { name = "weasyprint", specifier = "==68.1" },
     { name = "whitenoise", extras = ["brotli"], specifier = "==6.12.0" },
 ]
@@ -1252,14 +1252,14 @@ wheels = [
 
 [[package]]
 name = "sphinx-sitemap"
-version = "2.7.2"
+version = "2.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "sphinx-last-updated-by-git" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/10/a7/60e6cce670fcc21d95215bf2e3f3f6455b7bce0ecc8423ce8ffbd044587e/sphinx_sitemap-2.7.2.tar.gz", hash = "sha256:819e028e27579b47efa0e2f863b87136b711c45f13e84730610e80316f6883da", size = 6387, upload-time = "2025-06-27T00:32:31.332Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/61/17/56fe0f65e3567f829b2b4153a622be1d4b222b781e0d90d7db5a7738f30f/sphinx_sitemap-2.9.0.tar.gz", hash = "sha256:70f97bcdf444e3d68e118355cf82a1f54c4d3c03d651cd17fe87398b26e25e21", size = 6978, upload-time = "2025-10-06T00:24:00.036Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/66/2f/ae76e120797b42a7e96ed3cccc93bd7b1feb583008f6686fc85d90c774da/sphinx_sitemap-2.7.2-py3-none-any.whl", hash = "sha256:1a6a8dcecb0ffb85fd37678f785cfcc40adfe3eebafb05e678971e5260b117e4", size = 6018, upload-time = "2025-06-27T00:32:30.161Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/94/3c57e8b1985e755c48972e2ecd59526d4bf0b52a1fe805bc52a8e98cb92d/sphinx_sitemap-2.9.0-py3-none-any.whl", hash = "sha256:f1f1d3a9ad012ba17a7ef0b560d303bff2d0db26647567d6e810bcc754466664", size = 6218, upload-time = "2025-10-06T00:23:58.778Z" },
 ]
 
 [[package]]
