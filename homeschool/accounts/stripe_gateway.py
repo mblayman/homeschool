@@ -64,7 +64,14 @@ class StripeGateway:
         """
         site = Site.objects.get_current()
         return_url = reverse("settings:dashboard")
-        customer = Customer.objects.get(email=account.email)
+        try:
+            customer = Customer.objects.get(email=account.email)
+        except Customer.DoesNotExist:
+            # Account emails are normalized to lowercase, but Stripe customer
+            # email casing can vary based on what was originally entered.
+            # Fall back to a case-insensitive get while still requiring a
+            # single unambiguous customer match.
+            customer = Customer.objects.get(email__iexact=account.email)
         session = stripe.billing_portal.Session.create(
             customer=customer.id, return_url=f"https://{site}{return_url}"
         )

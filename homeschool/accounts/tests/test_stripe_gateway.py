@@ -56,3 +56,22 @@ class TestStripeGateway(TestCase):
         kwargs = mock_stripe.billing_portal.Session.create.call_args.kwargs
         assert kwargs["customer"] == customer.id
         assert self.reverse("settings:dashboard") in kwargs["return_url"]
+
+    def test_creates_billing_portal_session_with_case_insensitive_email(
+        self, mock_stripe
+    ):
+        """The gateway falls back to case-insensitive customer email lookup."""
+        account = AccountFactory(user__email="test@example.com")
+        customer = CustomerFactory(
+            email=f"{account.email[0].upper()}{account.email[1:]}"
+        )
+        mock_session = mock.Mock()
+        mock_session.url = "/portal"
+        mock_stripe.billing_portal.Session.create.return_value = mock_session
+        gateway = StripeGateway()
+
+        url = gateway.create_billing_portal_session(account)
+
+        assert url == "/portal"
+        kwargs = mock_stripe.billing_portal.Session.create.call_args.kwargs
+        assert kwargs["customer"] == customer.id
