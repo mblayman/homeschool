@@ -1,4 +1,5 @@
 {
+  "name": "homeschool",
   "scripts": {
     "build": "tailwindcss build --minify -i site.css -c tailwind.config.js -o ../static/site.css",
     "watch": "tailwindcss build -i site.css -c tailwind.config.js -o ../static/site.css --watch"

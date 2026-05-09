@@ -1,7 +1,14 @@
-.PHONY: docs local
+.PHONY: bootstrap docs local
 
 local:
 	uv run honcho start -f Procfile
+
+bootstrap:
+	npm --prefix frontend i
+	uv run manage.py migrate
+	uv run manage.py shell -c "from django.contrib.auth import get_user_model; import sys; sys.exit(0 if get_user_model().objects.filter(username='matt').exists() else 1)" || DJANGO_SUPERUSER_PASSWORD=correcthorse uv run manage.py createsuperuser --noinput --username matt --email matt@example.com
+	uv run manage.py shell -c "from django.contrib.auth import get_user_model; user = get_user_model().objects.get(username='matt'); user.email = 'matt@example.com'; user.is_staff = True; user.is_superuser = True; user.set_password('correcthorse'); user.save(update_fields=['email', 'is_staff', 'is_superuser', 'password'])"
+	uv run manage.py shell -c "from homeschool.core.models import Flag; Flag.objects.update_or_create(name='signup_flag', defaults={'everyone': True})"
 
 build:
 	docker compose build
