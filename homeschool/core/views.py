@@ -68,6 +68,16 @@ def help(request):
     return render(request, "core/help.html", {"support_email": settings.SUPPORT_EMAIL})
 
 
+@allow
+def blog_redirect(request):
+    messages.info(
+        request,
+        "The School Desk blog is retired. You were redirected to the home page.",
+        extra_tags="blog-retired",
+    )
+    return HttpResponseRedirect(reverse("core:index"))
+
+
 @method_decorator(authorize(any_authorized), "dispatch")
 class DashboardView(TemplateView):
     template_name = "core/app.html"

@@ -116,11 +116,6 @@ staticfiles/
 # macOS
 .DS_Store
 
-# Blog
-/blog/out/
-resources/
-.hugo_build.lock
-
 # JavaScript
 node_modules/
 static/site.css

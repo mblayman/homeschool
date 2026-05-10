@@ -5,8 +5,17 @@
 
 {% block main_css_classes %}grow{% endblock %}
 
-{# Empty the message block so that messages are consumed but not displayed. #}
-{% block message_block %}{% endblock %}
+{% block messages %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if "blog-retired" in message.tags %}
+        <ul class="flex flex-row justify-center mx-4 mt-4 mb-4 w-full">
+          <li class="bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mx-2 rounded-lg shadow-sm">{{ message }}</li>
+        </ul>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}
 
 {% block navigation %}
   {% include "nav.html" with light=True return_to_app=True %}

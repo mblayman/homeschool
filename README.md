@@ -48,7 +48,7 @@ Analyzing image contents:
 
 ```
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
-dive klakegg/hugo:0.101.0
+dive <your-image-tag>
 ```
 
 ### uv

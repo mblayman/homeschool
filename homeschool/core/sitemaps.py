@@ -5,7 +5,7 @@ from django.urls import reverse
 class StaticViewSitemap(Sitemap):
     """The sitemap for static pages template views delivered by the app.
 
-    Other static content is managed by other sitemaps (e.g., blog and docs)
+    Other static content is managed by other sitemaps (e.g., docs)
     """
 
     changefreq = "daily"

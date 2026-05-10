@@ -2,16 +2,24 @@ from denied.decorators import allow
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import include, path, register_converter
+from django.urls import include, path, re_path, register_converter
 from sesame.views import LoginView
 
 from homeschool.accounts.views import check_email, signin
 from homeschool.core.converters import HashidConverter
-from homeschool.core.views import favicon, handle_403, handle_404, handle_500
+from homeschool.core.views import (
+    blog_redirect,
+    favicon,
+    handle_403,
+    handle_404,
+    handle_500,
+)
 
 register_converter(HashidConverter, "hashid")
 
 urlpatterns = [
+    path("blog/", blog_redirect, name="blog-redirect"),
+    re_path(r"^blog/.+", blog_redirect, name="blog-redirect-catchall"),
     path("", include("homeschool.core.urls")),
     path("courses/", include("homeschool.courses.urls")),
     path("notifications/", include("homeschool.notifications.urls")),

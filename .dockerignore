@@ -8,4 +8,3 @@ node_modules/
 .ruff_cache/
 .venv/
 venv/
-blog_out/

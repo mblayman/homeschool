@@ -45,15 +45,15 @@
 
   <main class="{% block main_css_classes %}container mx-auto p-8 grow print:max-w-none{% endblock %}">
 
-    {% if messages %}
-    <ul class="flex flex-row justify-center mx-4 -mt-4 mb-4 w-full">
-      {% for message in messages %}
-        {% block message_block %}
+    {% block messages %}
+      {% if messages %}
+      <ul class="flex flex-row justify-center mx-4 -mt-4 mb-4 w-full">
+        {% for message in messages %}
           <li class="bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mx-2 rounded-lg shadow-sm">{{ message }}</li>
-        {% endblock %}
-      {% endfor %}
-    </ul>
-    {% endif %}
+        {% endfor %}
+      </ul>
+      {% endif %}
+    {% endblock %}
 
     {% block main %}{% endblock %}
   </main>
@@ -65,7 +65,6 @@
     <a href="{% url "core:about" %}" class="mx-1 hover:text-gray-900">About</a>
     <a href="{% url "core:terms" %}" class="mx-1 hover:text-gray-900">Terms</a>
     <a href="{% url "core:privacy" %}" class="mx-1 hover:text-gray-900">Privacy</a>
-    <a href="/blog/" class="mx-1 hover:text-gray-900">Blog</a>
     <a href="{% url "core:help" %}" class="mx-1 hover:text-gray-900">Help</a>
     <div class="mt-2">
       Lovingly built in <a class="hover:underline" rel="noopener" href="https://www.cityoffrederickmd.gov/" target="_blank">Frederick, Maryland</a>

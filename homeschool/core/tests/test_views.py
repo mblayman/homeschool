@@ -6,6 +6,7 @@ import time_machine
 from dateutil.relativedelta import FR, MO, SA, SU, WE, relativedelta
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.messages import get_messages
 from django.contrib.messages.storage.base import Message
 from django.contrib.messages.storage.cookie import CookieStorage
 from django.utils import timezone
@@ -91,6 +92,30 @@ class TestHelp(TestCase):
             self.get_check_200("core:help")
 
         self.assertResponseContains(settings.SUPPORT_EMAIL)
+
+
+class TestBlogRedirect(TestCase):
+    def test_blog_root_redirects_home_with_message(self):
+        response = self.get("blog-redirect")
+
+        self.response_302(response)
+        assert response.get("Location") == self.reverse("core:index")
+        message = list(get_messages(response.wsgi_request))[0]
+        assert (
+            str(message)
+            == "The School Desk blog is retired. You were redirected to the home page."
+        )
+
+    def test_blog_path_redirects_home_with_message(self):
+        response = self.get("/blog/some-old-post/")
+
+        self.response_302(response)
+        assert response.get("Location") == self.reverse("core:index")
+        message = list(get_messages(response.wsgi_request))[0]
+        assert (
+            str(message)
+            == "The School Desk blog is retired. You were redirected to the home page."
+        )
 
 
 class TestDashboard(TestCase):

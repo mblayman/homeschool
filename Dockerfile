@@ -12,14 +12,6 @@ COPY templates templates/
 
 RUN npm --prefix frontend run build
 
-FROM klakegg/hugo:0.101.0 AS hugo_builder
-
-WORKDIR /app
-
-COPY blog blog/
-
-RUN hugo --source blog
-
 FROM python:3.12-slim AS python_deps
 
 COPY --from=ghcr.io/astral-sh/uv:0.4.7 /uv /bin/uv
@@ -60,7 +52,6 @@ COPY --from=python_deps /app/.venv /app/.venv
 COPY --chown=app:app . /app/
 
 COPY --from=nodejs /app/static/site.css static/
-COPY --from=hugo_builder /app/blog/out blog/out
 
 # Some configuration is needed to make Django happy, but these values have no
 # impact to collectstatic so we can use dummy values.
@@ -81,8 +72,6 @@ RUN \
 
 RUN sphinx-build -M html "docs" "docs/_build" -W -b dirhtml \
     && python -m whitenoise.compress docs/_build/html
-
-RUN python -m whitenoise.compress blog/out
 
 USER app
 
