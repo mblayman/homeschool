@@ -1,7 +1,8 @@
 #!/bin/bash
 
 gunicorn project.wsgi \
-    --workers=2 \
+    --workers=1 \
+    --threads=2 \
     --log-file=- \
     --access-logfile=- \
     --bind=0.0.0.0:8000
