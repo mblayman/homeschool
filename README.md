@@ -53,15 +53,10 @@ dive klakegg/hugo:0.101.0
 
 ### uv
 
-If for some reason I need to work with uv inside the container,
-there are some settings needed to get around the fact that image doesn't install
-packages in a place writeable by the app user.
+The runtime image does not include `uv`.
 
-Here's an example:
-
-```
-UV_PROJECT_ENVIRONMENT=/tmp/uv-venv uv add -n --dev 'types-toml==0.10.8.20240310'
-```
+Dependencies are installed during build into `/app/.venv` and the container
+uses that virtual environment via `PATH`.
 
 ## Server config
 

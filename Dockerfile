@@ -20,19 +20,29 @@ COPY blog blog/
 
 RUN hugo --source blog
 
+FROM python:3.12-slim AS python_deps
+
+COPY --from=ghcr.io/astral-sh/uv:0.4.7 /uv /bin/uv
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock /app/
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
+
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    UV_PROJECT_ENVIRONMENT=/usr/local
+    VIRTUAL_ENV=/app/.venv \
+    PATH=/app/.venv/bin:$PATH
 
 # weasyprint deps: libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 \
     && rm -rf /var/lib/apt/lists/*
-
-COPY --from=ghcr.io/astral-sh/uv:0.4.7 /uv /bin/uv
 
 WORKDIR /app
 
@@ -45,10 +55,7 @@ RUN chown -R app:app /usr/local/share/fonts /var/cache/fontconfig \
 
 RUN mkdir -p /app && chown app:app /app
 
-COPY --chown=app:app pyproject.toml uv.lock /app/
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+COPY --from=python_deps /app/.venv /app/.venv
 
 COPY --chown=app:app . /app/
 
