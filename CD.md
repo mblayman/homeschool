@@ -88,7 +88,7 @@ Use this as a working checklist for production-only CD. Edit freely and mark ite
   - Use the existing secret set referenced in `.kamal/secrets` as the production baseline.
   - Continue managing app, AWS, Stripe, and monitoring credentials in 1Password.
 - [x] Resolve non-interactive secrets access with current 1Password tier:
-  - Decision: store deploy secrets in GitHub Actions/Environment secrets for full automation.
+  - Decision: store deploy secrets in GitHub Actions repository-level secrets for full automation.
   - Rationale: basic/personal 1Password tier does not provide a practical service-account path for non-interactive CI/CD.
   - Preserve local-machine deploy support with 1Password-based secret retrieval.
   - Accept two sources of truth for runtime access (GitHub Actions + 1Password) and manage synchronization intentionally.
@@ -118,7 +118,7 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 ### Step 0 - Resolve CI Secrets Path (blocking decision)
 
 - [x] Choose non-interactive secrets path for GitHub Actions:
-  - Store deploy secrets in GitHub Actions/Environment secrets.
+  - Store deploy secrets in GitHub Actions repository-level secrets.
 - [x] Document final decision in Section 7 and remove unused options.
 - [x] Preserve local deploy workflow:
   - Keep `kamal deploy` from dev machine working with 1Password via `op`.
