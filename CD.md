@@ -87,12 +87,12 @@ Use this as a working checklist for production-only CD. Edit freely and mark ite
 - [x] Inventory required production secrets:
   - Use the existing secret set referenced in `.kamal/secrets` as the production baseline.
   - Continue managing app, AWS, Stripe, and monitoring credentials in 1Password.
-- [ ] Resolve non-interactive secrets access with current 1Password tier:
-  - Basic/personal 1Password tiers may not support service accounts for CI.
-  - Choose one path:
-    - Keep 1Password as sole secret store and run deploys manually from local machine.
-    - Store deploy secrets in GitHub Actions/Environment secrets for full automation.
-    - Upgrade 1Password plan to one with service accounts, then use `OP_SERVICE_ACCOUNT_TOKEN` in GitHub Actions.
+- [x] Resolve non-interactive secrets access with current 1Password tier:
+  - Decision: store deploy secrets in GitHub Actions/Environment secrets for full automation.
+  - Rationale: basic/personal 1Password tier does not provide a practical service-account path for non-interactive CI/CD.
+  - Preserve local-machine deploy support with 1Password-based secret retrieval.
+  - Accept two sources of truth for runtime access (GitHub Actions + 1Password) and manage synchronization intentionally.
+  - Secret resolution behavior: prefer `CI_`-prefixed environment variable values first; fall back to `op read` when those vars are not set.
 - [x] Define secret rotation policy:
   - Rotate automation credentials (GitHub or 1Password service-account token) on a schedule and after security events.
   - Rotate underlying production secrets in 1Password as needed.
@@ -117,10 +117,12 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 
 ### Step 0 - Resolve CI Secrets Path (blocking decision)
 
-- [ ] Choose non-interactive secrets path for GitHub Actions:
-  - Option A: Store deploy secrets in GitHub Environment secrets (fastest path to full automation).
-  - Option B: Upgrade 1Password tier and use service-account-based access.
-- [ ] Document final decision in Section 7 and remove unused options.
+- [x] Choose non-interactive secrets path for GitHub Actions:
+  - Store deploy secrets in GitHub Actions/Environment secrets.
+- [x] Document final decision in Section 7 and remove unused options.
+- [x] Preserve local deploy workflow:
+  - Keep `kamal deploy` from dev machine working with 1Password via `op`.
+  - Ensure secret resolution prefers `CI_`-prefixed env vars first, then falls back to `op`.
 
 ### Step 1 - Harden CI Gates (no deploy changes yet)
 
