@@ -5,7 +5,7 @@ Use this as a working checklist for production-only CD. Edit freely and mark ite
 ## 1) CD Goals & Guardrails
 
 - [x] Define what "ready for production" means:
-  - All automated tests pass, including integration tests (to be created).
+  - All automated tests pass, including the main-only Playwright E2E suite.
   - Production Docker image build completes successfully.
 - [x] Decide release frequency and automation target:
   - Release on every merge to `main`.
@@ -39,8 +39,13 @@ Use this as a working checklist for production-only CD. Edit freely and mark ite
 
 - [x] Keep and expand required CI checks:
   - Keep existing required checks: type checks, tests, docs build.
-  - Add `pre-commit` to CI so lint/style checks run consistently.
-  - Rationale: improves consistency for future AI-assisted contributions.
+  - Use `pre-commit.ci` for lint/style checks (no duplicate pre-commit job in GitHub Actions).
+  - Rationale: keeps enforcement consistent without duplicating CI runtime.
+- [x] Define E2E gate strategy:
+  - Use Node Playwright for browser-based E2E coverage.
+  - Run E2E checks on pushes to `main` only.
+  - Run E2E against the built Docker image for production-like configuration signal.
+  - Use Django admin login (`/office/`) for authenticated E2E sessions (no custom auth bypass endpoint).
 - [x] Decide container build policy in CI:
   - Run container builds on `main` only.
   - Do not require container builds on PRs.
@@ -126,27 +131,41 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 
 ### Step 1 - Harden CI Gates (no deploy changes yet)
 
-- [ ] Update `.github/workflows/tests.yaml` to run `pre-commit` in CI.
+- [x] Decide pre-commit enforcement path:
+  - Use `pre-commit.ci` as the source of truth for pre-commit checks.
+  - Do not duplicate pre-commit checks in `.github/workflows/tests.yaml`.
 - [ ] Keep required checks as: mypy, tests, docs.
-- [ ] Add initial integration test suite scaffolding and run it in CI (can start with one high-value integration flow).
-- [ ] Confirm CI stays green on `main` after these additions.
+- [ ] Confirm CI stays green on `main` after this cleanup.
 
 ### Step 2 - Add Main-Only Docker Build Validation
 
 - [ ] Add/extend workflow so Docker build runs on pushes to `main` only.
 - [ ] Keep PR pipeline fast by skipping Docker build on PR events.
-- [ ] Ensure Docker build failure blocks deploy stages.
+- [ ] Ensure this build path is the same image build process used by Kamal.
+- [ ] Ensure Docker build failure blocks downstream deploy stages.
 
-### Step 3 - Create Production Deploy Workflow
+### Step 3 - Add Main-Only Playwright E2E Validation
+
+- [ ] Add Playwright scaffolding under `frontend` (Node Playwright test runner + config).
+- [ ] Define initial E2E test set (3-5 critical flows).
+- [ ] Run E2E on pushes to `main` only.
+- [ ] Run E2E against the exact image artifact produced by Step 2.
+- [ ] Use Django admin login flow (`/office/`) for authenticated E2E tests.
+- [ ] Seed/upsert a deterministic staff user for E2E before Playwright execution.
+- [ ] Upload Playwright artifacts (trace/screenshot/video) on failure.
+- [ ] Ensure E2E failure blocks downstream deploy stages.
+
+### Step 4 - Create Production Deploy Workflow
 
 - [ ] Add `.github/workflows/deploy.yml` dedicated to production deploys.
 - [ ] Trigger workflow on push to `main`.
 - [ ] Add workflow concurrency (single in-flight production deploy).
 - [ ] Install required tooling in workflow (`uv`, Docker/Kamal dependencies).
 - [ ] Authenticate non-interactively using the secrets approach chosen in Step 0.
+- [ ] Gate deploy job on successful main-only Docker + E2E validation.
 - [ ] Run `kamal deploy` from CI.
 
-### Step 4 - Add Post-Deploy Verification Gates
+### Step 5 - Add Post-Deploy Verification Gates
 
 - [ ] Add smoke check step(s) after `kamal deploy`:
   - Homepage responds.
@@ -157,20 +176,20 @@ Use this as the concrete execution sequence. Complete each step in order so prod
   - Verify job completion.
 - [ ] Configure workflow to fail if any check fails.
 
-### Step 5 - Validate Failure Signaling + Manual Recovery
+### Step 6 - Validate Failure Signaling + Manual Recovery
 
 - [ ] Trigger a safe failure in a test branch/copy of workflow to verify email notifications reach your inbox.
 - [ ] Confirm failed deploy leaves enough context in GitHub Actions logs for incident handling.
 - [ ] Validate manual rollback procedure with `kamal rollback` in a controlled test.
 
-### Step 6 - Go Live and Enforce
+### Step 7 - Go Live and Enforce
 
 - [ ] Enable deploy workflow in production mode for all merges/pushes to `main`.
 - [ ] Confirm first live automated deploy succeeds end-to-end.
 - [ ] Remove any obsolete manual deploy steps from personal routine.
 
-### Step 7 - Stabilization After Launch (first 2-4 weeks)
+### Step 8 - Stabilization After Launch (first 2-4 weeks)
 
 - [ ] Track deploy outcomes and fix any flaky checks immediately.
-- [ ] Expand integration test coverage incrementally around recent incident-prone areas.
+- [ ] Expand Playwright E2E coverage incrementally around recent incident-prone areas.
 - [ ] Review pipeline duration and optimize only where needed (without removing safety gates).
