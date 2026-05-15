@@ -134,14 +134,15 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 - [x] Decide pre-commit enforcement path:
   - Use `pre-commit.ci` as the source of truth for pre-commit checks.
   - Do not duplicate pre-commit checks in `.github/workflows/tests.yaml`.
-- [ ] Keep required checks as: mypy, tests, docs.
+- [x] Keep required checks as: mypy, tests, docs.
 - [ ] Confirm CI stays green on `main` after this cleanup.
 
 ### Step 2 - Add Main-Only Docker Build Validation
 
-- [ ] Add/extend workflow so Docker build runs on pushes to `main` only.
-- [ ] Keep PR pipeline fast by skipping Docker build on PR events.
-- [ ] Ensure this build path is the same image build process used by Kamal.
+- [x] Add/extend workflow so Docker build runs on pushes to `main` only.
+- [x] Keep PR pipeline fast by skipping Docker build on PR events.
+- [x] Ensure this build path is the same image build process used by Kamal.
+  - Use `kamal build push` in CI for main-only image builds.
 - [ ] Ensure Docker build failure blocks downstream deploy stages.
 
 ### Step 3 - Add Main-Only Playwright E2E Validation
