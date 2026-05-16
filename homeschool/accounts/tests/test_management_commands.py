@@ -15,25 +15,29 @@ class TestCheckWorker(TestCase):
             def get(self, *, blocking, timeout):
                 raise RuntimeError("no response")
 
-        with patch(
-            "homeschool.accounts.management.commands.check_worker.worker_health_ping",
-            return_value=BrokenResult(),
-        ):
-            with self.assertRaisesRegex(
+        with (
+            patch(
+                "homeschool.accounts.management.commands.check_worker.worker_health_ping",
+                return_value=BrokenResult(),
+            ),
+            self.assertRaisesRegex(
                 CommandError, "Worker health task did not complete in 5s"
-            ):
-                call_command("check_worker", timeout=5)
+            ),
+        ):
+            call_command("check_worker", timeout=5)
 
     def test_check_worker_command_errors_on_wrong_result(self):
         class WrongResult:
             def get(self, *, blocking, timeout):
                 return "not-the-token"
 
-        with patch(
-            "homeschool.accounts.management.commands.check_worker.worker_health_ping",
-            return_value=WrongResult(),
-        ):
-            with self.assertRaisesRegex(
+        with (
+            patch(
+                "homeschool.accounts.management.commands.check_worker.worker_health_ping",
+                return_value=WrongResult(),
+            ),
+            self.assertRaisesRegex(
                 CommandError, "Worker health task returned unexpected result"
-            ):
-                call_command("check_worker", timeout=5)
+            ),
+        ):
+            call_command("check_worker", timeout=5)
