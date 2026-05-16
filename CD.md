@@ -143,7 +143,7 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 - [x] Keep PR pipeline fast by skipping Docker build on PR events.
 - [x] Ensure this build path is the same image build process used by Kamal.
   - Use `kamal build push` in CI for main-only image builds.
-- [ ] Ensure Docker build failure blocks downstream deploy stages.
+- [x] Ensure Docker build failure blocks downstream deploy stages.
 
 ### Step 3 - Add Main-Only Playwright E2E Validation
 
@@ -155,10 +155,10 @@ Use this as the concrete execution sequence. Complete each step in order so prod
   - Configure Playwright to target a configurable base URL.
   - Add a local command/workflow path to run E2E against the local dev server (`bin/e2e-local`).
   - Validate initial E2E tests pass in local-dev mode (public index page + admin login).
-- [ ] After local mode is stable, run E2E on pushes to `main` only.
-- [ ] Run main-only E2E against the exact image artifact produced by Step 2.
+- [x] After local mode is stable, run E2E on pushes to `main` only.
+- [x] Run main-only E2E against the exact image artifact produced by Step 2.
 - [ ] Upload Playwright artifacts (trace/screenshot/video) on failure.
-- [ ] Ensure E2E failure blocks downstream deploy stages.
+- [x] Ensure E2E failure blocks downstream deploy stages.
 
 ### Step 4 - Create Production Deploy Workflow
 

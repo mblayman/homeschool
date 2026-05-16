@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DB_DIR="$ROOT_DIR/.e2e/db"
 BASE_URL="http://127.0.0.1:8000"
+PLAYWRIGHT_BIN="$ROOT_DIR/frontend/node_modules/.bin/playwright"
 
 export ALLOWED_HOSTS='*'
 export AWS_ACCESS_KEY_ID='a secret to everybody'
@@ -25,6 +26,11 @@ export DB_DIR
 export DJANGO_SETTINGS_MODULE='project.settings'
 
 mkdir -p "$DB_DIR"
+
+if [[ ! -x "$PLAYWRIGHT_BIN" ]]; then
+    echo "Playwright is not installed. Run: npm --prefix frontend install && npm --prefix frontend run e2e:install" >&2
+    exit 1
+fi
 
 uv run manage.py migrate > "$ROOT_DIR/.e2e/migrate.log" 2>&1
 
@@ -54,4 +60,4 @@ if [[ "$ready" != "1" ]]; then
     exit 1
 fi
 
-E2E_BASE_URL="$BASE_URL" npm --prefix frontend run e2e "$@"
+E2E_BASE_URL="$BASE_URL" "$PLAYWRIGHT_BIN" test --config "$ROOT_DIR/frontend/playwright.config.js" "$@"
