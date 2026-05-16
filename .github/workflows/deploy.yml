@@ -51,3 +51,6 @@ jobs:
 
       - name: Deploy with Kamal
         run: kamal deploy --version "${{ github.event.workflow_run.head_sha }}" --skip-push
+
+      - name: Smoke check homepage
+        run: curl --fail --show-error --silent --location --retry 5 --retry-delay 2 --retry-all-errors https://www.theschooldesk.app/ > /dev/null

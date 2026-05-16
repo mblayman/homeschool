@@ -174,7 +174,7 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 ### Step 5 - Add Post-Deploy Verification Gates
 
 - [ ] Add smoke check step(s) after `kamal deploy`:
-  - Homepage responds.
+  - [x] Homepage responds.
   - Login flow endpoint responds.
   - One critical app flow responds.
 - [ ] Add worker verification step:
