@@ -26,8 +26,10 @@ registry:
     - KAMAL_REGISTRY_PASSWORD
 
 ssh:
-  key_data:
-    - SSH_PRIVATE_KEY
+  keys:
+    - ~/.ssh/kamal_ci_ed25519
+    - ~/.ssh/id_ed25519
+    - ~/.ssh/id_rsa
 
 builder:
   arch: amd64
