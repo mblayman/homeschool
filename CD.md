@@ -166,6 +166,7 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 - [x] Trigger workflow after successful `main` validation via `workflow_run` on `Tests Runner`.
 - [x] Add workflow concurrency (single in-flight production deploy).
 - [x] Install required tooling in workflow (`Docker`/`Buildx`, Ruby/Kamal, SSH setup).
+  - Pin Kamal to `2.11.0` in CI and use repo `bin/kamal` wrapper (mise-backed) for local consistency.
 - [ ] Validate non-interactive SSH authentication in CI deploy path (in progress).
 - [x] Gate deploy job on successful main-only Docker + E2E validation.
 - [ ] Confirm `kamal deploy` from CI succeeds end-to-end.

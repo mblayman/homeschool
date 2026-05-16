@@ -80,7 +80,7 @@ jobs:
           ruby-version: '3.3'
 
       - name: Install Kamal
-        run: gem install kamal --no-document
+        run: gem install kamal -v 2.11.0 --no-document
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
