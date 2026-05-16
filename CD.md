@@ -135,7 +135,7 @@ Use this as the concrete execution sequence. Complete each step in order so prod
   - Use `pre-commit.ci` as the source of truth for pre-commit checks.
   - Do not duplicate pre-commit checks in `.github/workflows/tests.yaml`.
 - [x] Keep required checks as: mypy, tests, docs.
-- [ ] Confirm CI stays green on `main` after this cleanup.
+- [x] Confirm CI stays green on `main` after this cleanup.
 
 ### Step 2 - Add Main-Only Docker Build Validation
 
@@ -166,9 +166,9 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 - [x] Trigger workflow after successful `main` validation via `workflow_run` on `Tests Runner`.
 - [x] Add workflow concurrency (single in-flight production deploy).
 - [x] Install required tooling in workflow (`Docker`/`Buildx`, Ruby/Kamal, SSH setup).
-- [x] Authenticate non-interactively using the secrets approach chosen in Step 0.
+- [ ] Validate non-interactive SSH authentication in CI deploy path (in progress).
 - [x] Gate deploy job on successful main-only Docker + E2E validation.
-- [x] Run `kamal deploy` from CI.
+- [ ] Confirm `kamal deploy` from CI succeeds end-to-end.
 
 ### Step 5 - Add Post-Deploy Verification Gates
 
