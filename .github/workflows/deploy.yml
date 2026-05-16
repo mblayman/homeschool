@@ -44,8 +44,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Add server host key
-        run: mkdir -p ~/.ssh && ssh-keyscan -H 174.138.127.127 >> ~/.ssh/known_hosts
+      - name: Install pinned known_hosts
+        run: mkdir -p ~/.ssh && cp .github/known_hosts ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy with Kamal
         run: kamal deploy --version "${{ github.event.workflow_run.head_sha }}" --skip-push
