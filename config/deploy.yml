@@ -25,6 +25,10 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
+ssh:
+  key_data:
+    - SSH_PRIVATE_KEY
+
 builder:
   arch: amd64
 

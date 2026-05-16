@@ -157,18 +157,18 @@ Use this as the concrete execution sequence. Complete each step in order so prod
   - Validate initial E2E tests pass in local-dev mode (public index page + admin login).
 - [x] After local mode is stable, run E2E on pushes to `main` only.
 - [x] Run main-only E2E against the exact image artifact produced by Step 2.
-- [ ] Upload Playwright artifacts (trace/screenshot/video) on failure.
+- [x] Upload Playwright artifacts (trace/screenshot/video) on failure.
 - [x] Ensure E2E failure blocks downstream deploy stages.
 
 ### Step 4 - Create Production Deploy Workflow
 
-- [ ] Add `.github/workflows/deploy.yml` dedicated to production deploys.
-- [ ] Trigger workflow on push to `main`.
-- [ ] Add workflow concurrency (single in-flight production deploy).
-- [ ] Install required tooling in workflow (`uv`, Docker/Kamal dependencies).
-- [ ] Authenticate non-interactively using the secrets approach chosen in Step 0.
-- [ ] Gate deploy job on successful main-only Docker + E2E validation.
-- [ ] Run `kamal deploy` from CI.
+- [x] Add `.github/workflows/deploy.yml` dedicated to production deploys.
+- [x] Trigger workflow after successful `main` validation via `workflow_run` on `Tests Runner`.
+- [x] Add workflow concurrency (single in-flight production deploy).
+- [x] Install required tooling in workflow (`Docker`/`Buildx`, Ruby/Kamal, SSH setup).
+- [x] Authenticate non-interactively using the secrets approach chosen in Step 0.
+- [x] Gate deploy job on successful main-only Docker + E2E validation.
+- [x] Run `kamal deploy` from CI.
 
 ### Step 5 - Add Post-Deploy Verification Gates
 
