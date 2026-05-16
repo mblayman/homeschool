@@ -54,3 +54,6 @@ jobs:
 
       - name: Smoke check homepage
         run: curl --fail --show-error --silent --location --retry 5 --retry-delay 2 --retry-all-errors https://www.theschooldesk.app/ > /dev/null
+
+      - name: Verify worker queue health
+        run: kamal app exec --reuse "python manage.py check_worker --timeout 30"

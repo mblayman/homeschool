@@ -44,3 +44,8 @@ def _generate_magic_link(user_id):
 
 
 generate_magic_link = db_task()(_generate_magic_link)
+
+
+@db_task()
+def worker_health_ping(token):
+    return token

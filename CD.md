@@ -167,9 +167,9 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 - [x] Add workflow concurrency (single in-flight production deploy).
 - [x] Install required tooling in workflow (`Docker`/`Buildx`, Ruby/Kamal, SSH setup).
   - Pin Kamal to `2.11.0` in CI and use repo `bin/kamal` wrapper (mise-backed) for local consistency.
-- [ ] Validate non-interactive SSH authentication in CI deploy path (in progress).
+- [x] Validate non-interactive SSH authentication in CI deploy path.
 - [x] Gate deploy job on successful main-only Docker + E2E validation.
-- [ ] Confirm `kamal deploy` from CI succeeds end-to-end.
+- [x] Confirm `kamal deploy` from CI succeeds end-to-end.
 
 ### Step 5 - Add Post-Deploy Verification Gates
 
@@ -178,9 +178,9 @@ Use this as the concrete execution sequence. Complete each step in order so prod
   - Login flow endpoint responds.
   - One critical app flow responds.
 - [ ] Add worker verification step:
-  - Queue lightweight job.
-  - Verify job completion.
-- [ ] Configure workflow to fail if any check fails.
+  - [x] Queue lightweight job.
+  - [x] Verify job completion.
+- [x] Configure workflow to fail if any check fails.
 
 ### Step 6 - Validate Failure Signaling + Manual Recovery
 
