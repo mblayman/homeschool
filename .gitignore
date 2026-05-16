@@ -119,3 +119,8 @@ staticfiles/
 # JavaScript
 node_modules/
 static/site.css
+frontend/playwright-report/
+frontend/test-results/
+
+# Local E2E artifacts
+.e2e/

@@ -2,12 +2,16 @@
   "name": "homeschool",
   "scripts": {
     "build": "tailwindcss build --minify -i site.css -c tailwind.config.js -o ../static/site.css",
-    "watch": "tailwindcss build -i site.css -c tailwind.config.js -o ../static/site.css --watch"
+    "watch": "tailwindcss build -i site.css -c tailwind.config.js -o ../static/site.css --watch",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install chromium",
+    "e2e:install:ci": "playwright install --with-deps chromium"
   },
   "engines": {
     "node": "23.x"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "autoprefixer": "^10.4.2",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.0.23"

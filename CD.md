@@ -147,12 +147,16 @@ Use this as the concrete execution sequence. Complete each step in order so prod
 
 ### Step 3 - Add Main-Only Playwright E2E Validation
 
-- [ ] Add Playwright scaffolding under `frontend` (Node Playwright test runner + config).
+- [x] Add Playwright scaffolding under `frontend` (Node Playwright test runner + config).
 - [ ] Define initial E2E test set (3-5 critical flows).
-- [ ] Run E2E on pushes to `main` only.
-- [ ] Run E2E against the exact image artifact produced by Step 2.
-- [ ] Use Django admin login flow (`/office/`) for authenticated E2E tests.
-- [ ] Seed/upsert a deterministic staff user for E2E before Playwright execution.
+- [x] Use Django admin login flow (`/office/`) for authenticated E2E tests.
+- [x] Seed/upsert a deterministic staff user for E2E before Playwright execution.
+- [x] Make E2E runnable against local dev first for fast iteration:
+  - Configure Playwright to target a configurable base URL.
+  - Add a local command/workflow path to run E2E against the local dev server (`bin/e2e-local`).
+  - Validate initial E2E tests pass in local-dev mode (public index page + admin login).
+- [ ] After local mode is stable, run E2E on pushes to `main` only.
+- [ ] Run main-only E2E against the exact image artifact produced by Step 2.
 - [ ] Upload Playwright artifacts (trace/screenshot/video) on failure.
 - [ ] Ensure E2E failure blocks downstream deploy stages.
 
