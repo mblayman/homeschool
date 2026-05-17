@@ -18,6 +18,10 @@ COPY --from=ghcr.io/astral-sh/uv:0.4.7 /uv /bin/uv
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/cache/debconf/* /var/log/apt/* /var/log/dpkg.log
+
 COPY pyproject.toml uv.lock /app/
 
 RUN --mount=type=cache,target=/root/.cache/uv \
