@@ -12,7 +12,7 @@ COPY templates templates/
 
 RUN npm --prefix frontend run build
 
-FROM python:3.12-slim AS python_deps
+FROM python:3.13-slim AS python_deps
 
 COPY --from=ghcr.io/astral-sh/uv:0.4.7 /uv /bin/uv
 
@@ -23,7 +23,7 @@ COPY pyproject.toml uv.lock /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
