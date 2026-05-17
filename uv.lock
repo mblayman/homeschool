@@ -341,19 +341,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-hashid-field"
-version = "3.4.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "hashids" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/a5/49127bcdb4015e08ca620a3a124e0ef522d37289360f87b1418d16202ac8/django-hashid-field-3.4.1.tar.gz", hash = "sha256:6ebb1ed7323f2465525b395ed26186cfc66cdec948178ec471ad9b1301073dc7", size = 28752, upload-time = "2024-05-03T22:31:04.07Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/c1/6d92eaeae92000f72f2bdae6ce2c47f056f3aca25d5c919551149ea75d71/django_hashid_field-3.4.1-py3-none-any.whl", hash = "sha256:2d072f4caf37f02941a772003c1884f4ae9b31a142e5f23e9eec583b0e981bd9", size = 20313, upload-time = "2024-05-03T22:31:01.112Z" },
-]
-
-[[package]]
 name = "django-hijack"
 version = "3.7.8"
 source = { registry = "https://pypi.org/simple" }
@@ -580,7 +567,6 @@ dependencies = [
     { name = "django-debug-toolbar" },
     { name = "django-denied" },
     { name = "django-extensions" },
-    { name = "django-hashid-field" },
     { name = "django-hijack" },
     { name = "django-htmx" },
     { name = "django-ordered-model" },
@@ -591,6 +577,7 @@ dependencies = [
     { name = "django-waffle" },
     { name = "environs" },
     { name = "gunicorn" },
+    { name = "hashids" },
     { name = "huey" },
     { name = "python-dateutil" },
     { name = "requests" },
@@ -638,7 +625,6 @@ requires-dist = [
     { name = "django-debug-toolbar", specifier = "==6.3.0" },
     { name = "django-denied", specifier = "==1.3" },
     { name = "django-extensions", specifier = "==4.1" },
-    { name = "django-hashid-field", specifier = "==3.4.1" },
     { name = "django-hijack", specifier = "==3.7.8" },
     { name = "django-htmx", specifier = "==1.27.0" },
     { name = "django-ordered-model", specifier = "==3.7.4" },
@@ -649,6 +635,7 @@ requires-dist = [
     { name = "django-waffle", specifier = "==5.0.0" },
     { name = "environs", specifier = "==15.0.1" },
     { name = "gunicorn", specifier = "==25.3.0" },
+    { name = "hashids", specifier = "==1.3.1" },
     { name = "huey", specifier = "==3.0.0" },
     { name = "python-dateutil", specifier = "==2.9.0.post0" },
     { name = "requests", specifier = "==2.33.1" },
