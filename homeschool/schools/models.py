@@ -7,9 +7,9 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from hashid_field import HashidAutoField
 from ordered_model.models import OrderedModel
 
+from hashid_field import HashidAutoField
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.core.schedules import Week
 from homeschool.students.models import Student

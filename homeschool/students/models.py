@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from hashid_field import HashidAutoField
 
+from hashid_field import HashidAutoField
 from homeschool.core.schedules import Week
 
 if TYPE_CHECKING:  # pragma: no cover

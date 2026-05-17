@@ -3,8 +3,8 @@ from __future__ import annotations
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
-from hashid_field import HashidAutoField
 
+from hashid_field import HashidAutoField
 from homeschool.schools.models import SchoolYear
 
 
