@@ -1,7 +1,9 @@
 import zipfile
 from dataclasses import asdict
 from io import BytesIO
+from pathlib import Path
 
+from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -86,7 +88,9 @@ def _make_report(template_name: str, context: dict) -> bytes:
     Return raw PDF data.
     """
     site_css_path = finders.find("site.css")
-    # site.css should always be there and never return None. Ignore type check.
+    if site_css_path is None:
+        fallback_site_css = Path(settings.BASE_DIR) / "frontend" / "site.css"
+        site_css_path = str(fallback_site_css)
     with open(site_css_path) as f:  # type: ignore
         css_content = f.read()
     # Weasyprint doesn't render the Tailwind font properly.
