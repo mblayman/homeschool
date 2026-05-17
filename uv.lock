@@ -258,15 +258,15 @@ wheels = [
 
 [[package]]
 name = "dj-stripe"
-version = "2.10.3"
+version = "2.9.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "stripe" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f2/1d/2cf7839130c185f96f72fcac782040517fb0cf4d4f8c2756debfe08b7485/dj_stripe-2.10.3.tar.gz", hash = "sha256:fe870a93dfcbb7f17432fb1da7291a2222c89b32a6d6fba16cb34ed6b37f1584", size = 132793, upload-time = "2025-10-15T14:38:51.09Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/4e/b16389544f6f45ff5754f4b72ecb651433464d79f8f0fcc49eeb204e14c2/dj_stripe-2.9.2.tar.gz", hash = "sha256:c543927f640deecd2ef574b445a564a7bd6f22e2ba4c7b0c2e33a8cb7a4f2cd2", size = 149172, upload-time = "2026-01-11T21:51:30.172Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/d7/8acdaf9dfad2c6334cad4620fdb62545914b81a0d6cd847e2bedf12b35a9/dj_stripe-2.10.3-py3-none-any.whl", hash = "sha256:035b8f991429d5a474d1d46e4f3ab36722250fa9dac39b5d835c694c49a19dea", size = 156525, upload-time = "2025-10-15T14:38:49.58Z" },
+    { url = "https://files.pythonhosted.org/packages/f5/86/3600660194b716bd851d93faf1d0e58baed65765314c84a497f8ad1de90e/dj_stripe-2.9.2-py3-none-any.whl", hash = "sha256:048818586fed36f162cbbc6bf078dbb8697902043ef56e7e2c94ed5e6bba08aa", size = 184364, upload-time = "2026-01-11T21:51:28.384Z" },
 ]
 
 [[package]]
@@ -632,7 +632,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.14.3" },
     { name = "bleach", specifier = "==6.3.0" },
     { name = "boto3", specifier = "==1.43.2" },
-    { name = "dj-stripe", specifier = "==2.10.3" },
+    { name = "dj-stripe", specifier = "==2.9.2" },
     { name = "django", specifier = "==5.2.14" },
     { name = "django-anymail", extras = ["amazon-ses"], specifier = "==15.0" },
     { name = "django-debug-toolbar", specifier = "==6.3.0" },
@@ -1337,15 +1337,15 @@ wheels = [
 
 [[package]]
 name = "stripe"
-version = "15.1.0"
+version = "11.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/45/26/5d6f5f5beae6f1ff78213e2e6f4fbd431518dcd98733cdd39fb4ba0d01d3/stripe-15.1.0.tar.gz", hash = "sha256:24bd3b6bd0969a4841bd4d7681556a9e35e46c414a07c8590a225fbd5a878450", size = 1501673, upload-time = "2026-04-24T00:18:58.612Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/a4/7e16668d7adfb45229f4b67c04c79f53fe78335a6d0625303b32024d831c/stripe-11.6.0.tar.gz", hash = "sha256:0ced7cce23a6cb1a393c86a1f7f9435c9d83ae7cbd556362868caf62cb44a92c", size = 1390405, upload-time = "2025-02-24T22:39:46.962Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/4e/fd9cb74ddf1e61fb6241e2f6799a81ef99bf6cf2e94f8812ee1cd5458e5d/stripe-15.1.0-py3-none-any.whl", hash = "sha256:bdfb556be08662a41833e6403607ebf12e0062cae4f9b93e2b89b6ba926d7c82", size = 2143199, upload-time = "2026-04-24T00:18:56.027Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/67/e320a11da2049dfd50fd1726952093b173332563f32d1a94cc3758932147/stripe-11.6.0-py2.py3-none-any.whl", hash = "sha256:6e6cf09ebb6d5fc2d708401cb8868fd7bff987a6d09a0433caaa92c62f97dbc5", size = 1636766, upload-time = "2025-02-24T22:39:44.629Z" },
 ]
 
 [[package]]
