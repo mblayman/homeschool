@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from djstripe import webhooks
+from djstripe.event_handlers import djstripe_receiver
 from simple_history.models import HistoricalRecords
 
 from homeschool.users.models import User
@@ -73,7 +73,7 @@ def create_account(sender, instance, created, raw, **kwargs):
         Account.objects.create(user=instance)
 
 
-@webhooks.handler("checkout.session.completed")
+@djstripe_receiver("checkout.session.completed")
 def handle_checkout_session_completed(event, **kwargs):
     """Transition the account to an active state.
 
