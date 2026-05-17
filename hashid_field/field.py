@@ -1,18 +1,24 @@
 from django import forms
-from django.core import exceptions, checks
+from django.contrib.admin import widgets as admin_widgets
+from django.core import checks, exceptions
 from django.core import validators as django_validators
 from django.db import models
 from django.db.models import Field
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from django.contrib.admin import widgets as admin_widgets
 from hashids import Hashids
 
-from .lookups import HashidExactLookup, HashidIterableLookup
-from .lookups import HashidGreaterThan, HashidGreaterThanOrEqual, HashidLessThan, HashidLessThanOrEqual
+from .conf import settings
 from .descriptor import HashidDescriptor
 from .hashid import Hashid
-from .conf import settings
+from .lookups import (
+    HashidExactLookup,
+    HashidGreaterThan,
+    HashidGreaterThanOrEqual,
+    HashidIterableLookup,
+    HashidLessThan,
+    HashidLessThanOrEqual,
+)
 from .validators import HashidMaxValueValidator, HashidMinValueValidator
 
 
@@ -20,34 +26,45 @@ def _alphabet_unique_len(alphabet):
     return len([x for i, x in enumerate(alphabet) if alphabet.index(x) == i])
 
 
-class HashidFieldMixin(object):
+class HashidFieldMixin:
     default_error_messages = {
-        'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
-        'invalid_hashid': _("'%(value)s' value must be a valid Hashids string."),
+        "invalid": _(
+            "'%(value)s' value must be a positive integer or a valid Hashids string."
+        ),
+        "invalid_hashid": _("'%(value)s' value must be a valid Hashids string."),
     }
-    exact_lookups = ('exact', 'iexact', 'contains', 'icontains')
-    iterable_lookups = ('in',)
-    passthrough_lookups = ('isnull',)
+    exact_lookups = ("exact", "iexact", "contains", "icontains")
+    iterable_lookups = ("in",)
+    passthrough_lookups = ("isnull",)
     comparison_lookups = {
-        'gt': HashidGreaterThan,
-        'gte': HashidGreaterThanOrEqual,
-        'lt': HashidLessThan,
-        'lte': HashidLessThanOrEqual,
+        "gt": HashidGreaterThan,
+        "gte": HashidGreaterThanOrEqual,
+        "lt": HashidLessThan,
+        "lte": HashidLessThanOrEqual,
     }
 
-    def __init__(self, salt=settings.HASHID_FIELD_SALT,
-                 min_length=settings.HASHID_FIELD_MIN_LENGTH,
-                 alphabet=settings.HASHID_FIELD_ALPHABET,
-                 allow_int_lookup=settings.HASHID_FIELD_ALLOW_INT_LOOKUP,
-                 enable_hashid_object=settings.HASHID_FIELD_ENABLE_HASHID_OBJECT,
-                 enable_descriptor=settings.HASHID_FIELD_ENABLE_DESCRIPTOR,
-                 prefix="", *args, **kwargs):
+    def __init__(
+        self,
+        salt=settings.HASHID_FIELD_SALT,
+        min_length=settings.HASHID_FIELD_MIN_LENGTH,
+        alphabet=settings.HASHID_FIELD_ALPHABET,
+        allow_int_lookup=settings.HASHID_FIELD_ALLOW_INT_LOOKUP,
+        enable_hashid_object=settings.HASHID_FIELD_ENABLE_HASHID_OBJECT,
+        enable_descriptor=settings.HASHID_FIELD_ENABLE_DESCRIPTOR,
+        prefix="",
+        *args,
+        **kwargs,
+    ):
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
         if _alphabet_unique_len(self.alphabet) < 16:
-            raise exceptions.ImproperlyConfigured("'alphabet' must contain a minimum of 16 unique characters")
-        self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
+            raise exceptions.ImproperlyConfigured(
+                "'alphabet' must contain a minimum of 16 unique characters"
+            )
+        self._hashids = Hashids(
+            salt=self.salt, min_length=self.min_length, alphabet=self.alphabet
+        )
         self.allow_int_lookup = allow_int_lookup
         self.enable_hashid_object = enable_hashid_object
         self.enable_descriptor = enable_descriptor
@@ -56,9 +73,9 @@ class HashidFieldMixin(object):
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        kwargs['min_length'] = self.min_length
-        kwargs['alphabet'] = self.alphabet
-        kwargs['prefix'] = self.prefix
+        kwargs["min_length"] = self.min_length
+        kwargs["alphabet"] = self.alphabet
+        kwargs["prefix"] = self.prefix
         return name, path, args, kwargs
 
     def check(self, **kwargs):
@@ -74,7 +91,7 @@ class HashidFieldMixin(object):
                     "'alphabet' must contain a minimum of 16 unique characters",
                     hint="Add more unique characters to custom 'alphabet'",
                     obj=self,
-                    id='HashidField.E001',
+                    id="HashidField.E001",
                 )
             ]
         return []
@@ -102,9 +119,17 @@ class HashidFieldMixin(object):
             validators = []
             for validator_ in validators_:
                 if isinstance(validator_, django_validators.MaxValueValidator):
-                    validators.append(HashidMaxValueValidator(self, validator_.limit_value, validator_.message))
+                    validators.append(
+                        HashidMaxValueValidator(
+                            self, validator_.limit_value, validator_.message
+                        )
+                    )
                 elif isinstance(validator_, django_validators.MinValueValidator):
-                    validators.append(HashidMinValueValidator(self, validator_.limit_value, validator_.message))
+                    validators.append(
+                        HashidMinValueValidator(
+                            self, validator_.limit_value, validator_.message
+                        )
+                    )
                 else:
                     validators.append(validator_)
             return validators
@@ -117,8 +142,14 @@ class HashidFieldMixin(object):
             return str(hashid)
 
     def get_hashid(self, id):
-        return Hashid(id, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet,
-                      prefix=self.prefix, hashids=self._hashids)
+        return Hashid(
+            id,
+            salt=self.salt,
+            min_length=self.min_length,
+            alphabet=self.alphabet,
+            prefix=self.prefix,
+            hashids=self._hashids,
+        )
 
     def from_db_value(self, value, expression, connection):
         if value is None:
@@ -145,21 +176,21 @@ class HashidFieldMixin(object):
             hashid = self.encode_id(value)
         except ValueError:
             raise exceptions.ValidationError(
-                self.error_messages['invalid'],
-                code='invalid',
-                params={'value': value},
+                self.error_messages["invalid"],
+                code="invalid",
+                params={"value": value},
             )
         return hashid
 
     def get_prep_value(self, value):
-        if value is None or value == '':
+        if value is None or value == "":
             return None
         if isinstance(value, Hashid):
             return value.id
         try:
             hashid = self.get_hashid(value)
         except ValueError:
-            raise ValueError(self.error_messages['invalid'] % {'value': value})
+            raise ValueError(self.error_messages["invalid"] % {"value": value})
         return hashid.id
 
     def contribute_to_class(self, cls, name, **kwargs):
@@ -167,20 +198,26 @@ class HashidFieldMixin(object):
         # if callable(self.prefix):
         #     self.prefix = self.prefix(field_instance=self, model_class=cls, field_name=name, **kwargs)
         if self.enable_descriptor:
-            descriptor = HashidDescriptor(field_name=self.attname, salt=self.salt, min_length=self.min_length,
-                                          alphabet=self.alphabet, prefix=self.prefix, hashids=self._hashids,
-                                          enable_hashid_object=self.enable_hashid_object)
+            descriptor = HashidDescriptor(
+                field_name=self.attname,
+                salt=self.salt,
+                min_length=self.min_length,
+                alphabet=self.alphabet,
+                prefix=self.prefix,
+                hashids=self._hashids,
+                enable_hashid_object=self.enable_hashid_object,
+            )
             setattr(cls, self.attname, descriptor)
 
 
 class HashidCharFieldMixin:
     def formfield(self, **kwargs):
-        defaults = {'form_class': forms.CharField}
+        defaults = {"form_class": forms.CharField}
         defaults.update(kwargs)
-        if defaults.get('widget') == admin_widgets.AdminIntegerFieldWidget:
-            defaults['widget'] = admin_widgets.AdminTextInputWidget
-        if defaults.get('widget') == admin_widgets.AdminBigIntegerFieldWidget:
-            defaults['widget'] = admin_widgets.AdminTextInputWidget
+        if defaults.get("widget") == admin_widgets.AdminIntegerFieldWidget:
+            defaults["widget"] = admin_widgets.AdminTextInputWidget
+        if defaults.get("widget") == admin_widgets.AdminBigIntegerFieldWidget:
+            defaults["widget"] = admin_widgets.AdminTextInputWidget
         # noinspection PyCallByClass,PyTypeChecker
         return Field.formfield(self, **defaults)
 
@@ -192,7 +229,9 @@ class HashidField(HashidFieldMixin, HashidCharFieldMixin, models.IntegerField):
 class BigHashidField(HashidFieldMixin, HashidCharFieldMixin, models.BigIntegerField):
     description = "A Hashids obscured BigIntegerField"
 
-    def __init__(self, min_length=settings.HASHID_FIELD_BIG_MIN_LENGTH, *args, **kwargs):
+    def __init__(
+        self, min_length=settings.HASHID_FIELD_BIG_MIN_LENGTH, *args, **kwargs
+    ):
         super().__init__(min_length=min_length, *args, **kwargs)
 
 
@@ -205,12 +244,14 @@ class BigHashidAutoField(HashidFieldMixin, models.AutoField):
     description = "A Hashids obscured BigAutoField"
 
     def get_internal_type(self):
-        return 'BigAutoField'
+        return "BigAutoField"
 
     def rel_db_type(self, connection):
         return models.BigIntegerField().db_type(connection=connection)
 
-    def __init__(self, min_length=settings.HASHID_FIELD_BIG_MIN_LENGTH, *args, **kwargs):
+    def __init__(
+        self, min_length=settings.HASHID_FIELD_BIG_MIN_LENGTH, *args, **kwargs
+    ):
         super().__init__(min_length=min_length, *args, **kwargs)
 
 
@@ -218,11 +259,20 @@ class BigHashidAutoField(HashidFieldMixin, models.AutoField):
 # ModelSerializers. Not doing so can lead to hard-to-debug behavior.
 try:
     from rest_framework.serializers import ModelSerializer
+
     from hashid_field.rest import UnconfiguredHashidSerialField
 
-    ModelSerializer.serializer_field_mapping[HashidField] = UnconfiguredHashidSerialField
-    ModelSerializer.serializer_field_mapping[BigHashidField] = UnconfiguredHashidSerialField
-    ModelSerializer.serializer_field_mapping[HashidAutoField] = UnconfiguredHashidSerialField
-    ModelSerializer.serializer_field_mapping[BigHashidAutoField] = UnconfiguredHashidSerialField
+    ModelSerializer.serializer_field_mapping[HashidField] = (
+        UnconfiguredHashidSerialField
+    )
+    ModelSerializer.serializer_field_mapping[BigHashidField] = (
+        UnconfiguredHashidSerialField
+    )
+    ModelSerializer.serializer_field_mapping[HashidAutoField] = (
+        UnconfiguredHashidSerialField
+    )
+    ModelSerializer.serializer_field_mapping[BigHashidAutoField] = (
+        UnconfiguredHashidSerialField
+    )
 except ImportError:
     pass

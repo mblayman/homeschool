@@ -1,12 +1,17 @@
 import itertools
 
-import django
-from django.db.models.lookups import Lookup, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual
-from django.utils.datastructures import OrderedSet
 from django.core.exceptions import EmptyResultSet
+from django.db.models.lookups import (
+    GreaterThan,
+    GreaterThanOrEqual,
+    LessThan,
+    LessThanOrEqual,
+    Lookup,
+)
+from django.utils.datastructures import OrderedSet
 
-from .hashid import Hashid
 from .conf import settings
+from .hashid import Hashid
 
 
 def _is_int_representation(number):
@@ -25,17 +30,17 @@ def get_id_for_hashid_field(field, value):
     try:
         hashid = field.get_hashid(value)
     except ValueError:
-        raise ValueError(field.error_messages['invalid'] % {'value': value})
+        raise ValueError(field.error_messages["invalid"] % {"value": value})
     if isinstance(value, int) and not field.allow_int_lookup:
-        raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
+        raise ValueError(field.error_messages["invalid_hashid"] % {"value": value})
     if isinstance(value, str) and not field.allow_int_lookup:
         # Make sure int lookups are not allowed, even if prefixed, unless the
         # given value is actually a hashid made up entirely of numbers.
         if not value.startswith(field.prefix):
-            raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
-        without_prefix = value[len(field.prefix):]
+            raise ValueError(field.error_messages["invalid_hashid"] % {"value": value})
+        without_prefix = value[len(field.prefix) :]
         if _is_int_representation(without_prefix) and without_prefix != hashid.hashid:
-            raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
+            raise ValueError(field.error_messages["invalid_hashid"] % {"value": value})
     return hashid.id
 
 
@@ -43,6 +48,7 @@ def get_id_for_hashid_field(field, value):
 # It has been included here to increase compatibility of this module with Django versions 1.11, 2.2 and 3.0.
 # Django is Copyright (c) Django Software Foundation and individual contributors.
 # Please see https://github.com/django/django/blob/master/LICENSE
+
 
 class HashidFieldGetDbPrepValueMixin:
     get_db_prep_lookup_value_is_iterable = False
@@ -53,7 +59,7 @@ class HashidFieldGetDbPrepValueMixin:
         # For multiple values, process each one in turn. If any of them are invalid, throw it away. If all are invalid,
         # throw EmptyResultSet
         # For relational fields, use the 'field' attribute of the output_field
-        field = getattr(self.lhs.output_field, 'field', self.lhs.output_field)
+        field = getattr(self.lhs.output_field, "field", self.lhs.output_field)
         if self.get_db_prep_lookup_value_is_iterable:
             lookup_ids = []
             for val in value:
@@ -68,7 +74,7 @@ class HashidFieldGetDbPrepValueMixin:
                     lookup_ids.append(lookup_id)
             if len(lookup_ids) == 0:
                 raise EmptyResultSet
-            return '%s', lookup_ids
+            return "%s", lookup_ids
         else:
             try:
                 lookup_id = get_id_for_hashid_field(field, value)
@@ -76,48 +82,48 @@ class HashidFieldGetDbPrepValueMixin:
                 if settings.HASHID_FIELD_LOOKUP_EXCEPTION:
                     raise
                 raise EmptyResultSet
-            return '%s', [lookup_id]
+            return "%s", [lookup_id]
 
 
 class HashidExactLookup(HashidFieldGetDbPrepValueMixin, Lookup):
     prepare_rhs = False
-    lookup_name = 'exact'
+    lookup_name = "exact"
 
     def as_sql(self, compiler, connection):
         lhs_sql, params = self.process_lhs(compiler, connection)
         rhs_sql, rhs_params = self.process_rhs(compiler, connection)
         params.extend(rhs_params)
         rhs_sql = self.get_rhs_op(connection, rhs_sql)
-        return '%s %s' % (lhs_sql, rhs_sql), params
+        return f"{lhs_sql} {rhs_sql}", params
 
     def get_rhs_op(self, connection, rhs):
-        return "= %s" % rhs
+        return f"= {rhs}"
 
 
 class HashidIterableLookup(HashidExactLookup):
     # This is an amalgamation of Django's FieldGetDbPrepValueIterableMixin and In lookup to allow support of both
     # iterables (lists, tuples) and subqueries.
     get_db_prep_lookup_value_is_iterable = True
-    lookup_name = 'in'
+    lookup_name = "in"
 
     def get_prep_lookup(self):
         from django.db.models.sql.query import Query  # avoid circular import
+
         if isinstance(self.rhs, Query):
-            if django.VERSION > (4, 0):
-                self.rhs.clear_ordering(clear_default=True)
+            self.rhs.clear_ordering(clear_default=True)
             if not self.rhs.has_select_fields:
                 self.rhs.clear_select_clause()
-                self.rhs.add_fields(['pk'])
+                self.rhs.add_fields(["pk"])
 
-        if hasattr(self.rhs, 'resolve_expression'):
+        if hasattr(self.rhs, "resolve_expression"):
             return self.rhs
         prepared_values = []
-        if hasattr(self.rhs, '_prepare'):
+        if hasattr(self.rhs, "_prepare"):
             # A subquery is like an iterable but its items shouldn't be
             # prepared independently.
             return self.rhs._prepare(self.lhs.output_field)
         for rhs_value in self.rhs:
-            if hasattr(rhs_value, 'resolve_expression'):
+            if hasattr(rhs_value, "resolve_expression"):
                 # An expression will be handled by the database but can coexist
                 # alongside real values.
                 pass
@@ -125,7 +131,7 @@ class HashidIterableLookup(HashidExactLookup):
         return prepared_values
 
     def process_rhs(self, compiler, connection):
-        db_rhs = getattr(self.rhs, '_db', None)
+        db_rhs = getattr(self.rhs, "_db", None)
         if db_rhs is not None and db_rhs != connection.alias:
             raise ValueError(
                 "Subqueries aren't allowed across different databases. Force "
@@ -144,16 +150,16 @@ class HashidIterableLookup(HashidExactLookup):
             # rhs should be an iterable; use batch_process_rhs() to
             # prepare/transform those values.
             sqls, sqls_params = self.batch_process_rhs(compiler, connection, rhs)
-            placeholder = '(' + ', '.join(sqls) + ')'
+            placeholder = "(" + ", ".join(sqls) + ")"
             return (placeholder, sqls_params)
         else:
             return super().process_rhs(compiler, connection)
 
     def resolve_expression_parameter(self, compiler, connection, sql, param):
         params = [param]
-        if hasattr(param, 'resolve_expression'):
+        if hasattr(param, "resolve_expression"):
             param = param.resolve_expression(compiler.query)
-        if hasattr(param, 'as_sql'):
+        if hasattr(param, "as_sql"):
             sql, params = param.as_sql(compiler, connection)
         return sql, params
 
@@ -163,15 +169,18 @@ class HashidIterableLookup(HashidExactLookup):
         # sql/param pair. Zip them to get sql and param pairs that refer to the
         # same argument and attempt to replace them with the result of
         # compiling the param step.
-        sql, params = zip(*(
-            self.resolve_expression_parameter(compiler, connection, sql, param)
-            for sql, param in zip(*pre_processed)
-        ))
+        sql, params = zip(
+            *(
+                self.resolve_expression_parameter(compiler, connection, sql, param)
+                for sql, param in zip(*pre_processed, strict=False)
+            ),
+            strict=False,
+        )
         params = itertools.chain.from_iterable(params)
         return sql, tuple(params)
 
     def get_rhs_op(self, connection, rhs):
-        return 'IN %s' % rhs
+        return f"IN {rhs}"
 
 
 class HashidGreaterThan(HashidFieldGetDbPrepValueMixin, GreaterThan):
