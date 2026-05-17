@@ -23,7 +23,7 @@ def _patch_hashid_field_for_django_6() -> None:
         params = list(params)
         params.extend(rhs_params)
         rhs_sql = self.get_rhs_op(connection, rhs_sql)
-        return "%s %s" % (lhs_sql, rhs_sql), params
+        return f"{lhs_sql} {rhs_sql}", params
 
     HashidExactLookup.as_sql = as_sql
 
