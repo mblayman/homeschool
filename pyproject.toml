@@ -148,3 +148,12 @@ ignore = [
     # bandit: Use of `assert` detected
     "S101",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Vendored from nshafer/django-hashid-field; keep upstream style mostly intact.
+"hashid_field/*.py" = [
+    "B026",
+    "B904",
+    "E501",
+    "F401",
+]
