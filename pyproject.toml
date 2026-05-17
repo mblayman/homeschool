@@ -100,6 +100,12 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = [
+    "hashid_field.*",
+]
+ignore_errors = true
+
 [tool.pytest.ini_options]
 addopts = "--nomigrations --disable-socket"
 DJANGO_SETTINGS_MODULE = "project.testing_settings"
