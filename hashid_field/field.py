@@ -258,9 +258,8 @@ class BigHashidAutoField(HashidFieldMixin, models.AutoField):
 # Monkey patch Django REST Framework, if it's installed, to throw exceptions if fields aren't explicitly defined in
 # ModelSerializers. Not doing so can lead to hard-to-debug behavior.
 try:
-    from rest_framework.serializers import ModelSerializer
-
     from hashid_field.rest import UnconfiguredHashidSerialField
+    from rest_framework.serializers import ModelSerializer
 
     ModelSerializer.serializer_field_mapping[HashidField] = (
         UnconfiguredHashidSerialField

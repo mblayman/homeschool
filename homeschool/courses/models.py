@@ -3,9 +3,9 @@ from __future__ import annotations
 from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
+from hashid_field import HashidAutoField
 from ordered_model.models import OrderedModel, OrderedModelManager
 
-from hashid_field import HashidAutoField
 from homeschool.core.models import DaysOfWeekModel
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.users.models import User

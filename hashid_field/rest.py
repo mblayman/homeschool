@@ -1,12 +1,11 @@
 from django.apps import apps
 from django.core import exceptions
 from django.utils.translation import gettext_lazy as _
-from hashids import Hashids
-from rest_framework import fields
-
 from hashid_field.conf import settings
 from hashid_field.hashid import Hashid
 from hashid_field.lookups import _is_int_representation
+from hashids import Hashids
+from rest_framework import fields
 
 
 class UnconfiguredHashidSerialField(fields.Field):

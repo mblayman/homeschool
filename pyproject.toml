@@ -155,6 +155,9 @@ ignore = [
     "S101",
 ]
 
+[tool.ruff.lint.isort]
+known-third-party = ["hashid_field"]
+
 [tool.ruff.lint.per-file-ignores]
 # Vendored from nshafer/django-hashid-field; keep upstream style mostly intact.
 "hashid_field/*.py" = [
