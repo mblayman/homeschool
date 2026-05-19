@@ -5,7 +5,6 @@ from io import BytesIO
 from django.contrib.staticfiles import finders
 from django.template.loader import render_to_string
 from django.utils import timezone
-from weasyprint import CSS, HTML
 
 from homeschool.schools.models import SchoolYear
 from homeschool.students.models import Enrollment
@@ -98,6 +97,8 @@ def _make_report(template_name: str, context: dict) -> bytes:
     css_content += (
         '\n@page { @bottom-center { content: counter(page) " / " counter(pages); } }'
     )
+
+    from weasyprint import CSS, HTML
 
     rendered = render_to_string(template_name, context)
     html = HTML(string=rendered)
