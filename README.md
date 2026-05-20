@@ -2,6 +2,8 @@
 
 An app for homeschool planning
 
+AI agents should read [AGENTS.md](AGENTS.md) before making changes.
+
 ## Setup
 
 ### Python
