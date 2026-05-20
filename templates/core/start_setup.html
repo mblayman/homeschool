@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head_title %}Set Up Your School{% endblock %}
+{% block head_title %}Start Your School{% endblock %}
 
 {% block main %}
   <div class="mx-auto max-w-3xl text-blue-900 font-light">
-    <h1 class="font-extralight text-3xl mb-4 text-center">Set Up Your School</h1>
+    <h1 class="font-extralight text-3xl mb-4 text-center">Start Your School</h1>
     <p class="mb-4">
       To get started,
       <strong>add the basics for your first school year, student, course, and task.</strong>
     </p>
     <p class="mb-8">
-      You can adjust everything and add more later. This form should get you going
+      <em>You can adjust everything and add more later.</em> This form should get you going
       and help you understand the core concepts in School Desk.
     </p>
 
@@ -29,7 +29,7 @@
       <h2 class="font-extralight text-2xl mb-2">Student</h2>
       <p class="mb-6">
         Each student will be enrolled in a grade level.
-        Their academic record is kept across all grade levels.
+        You can add more students later.
       </p>
       {% include "forms/field.html" with field=form.student_first_name placeholder="Ada" %}
       {% include "forms/field.html" with field=form.student_last_name placeholder="Lovelace" %}
@@ -39,6 +39,7 @@
       <p class="mb-6">
         A course is your tool for grouping tasks for a school subject in a grade level.
         Every grade level may have multiple courses like Math, English, Biology, etc.
+        Add a course for the grade level above.
       </p>
       {% include "forms/field.html" with field=form.course_name placeholder="Math" %}
       {% include "forms/field.html" with field=form.course_task_description placeholder="Read chapter 1" textarea=True %}
