@@ -1220,6 +1220,21 @@ class TestStartSetupView(TestCase):
         self.response_302(response)
         assert response["Location"] == self.reverse("core:start")
 
+    def test_completed_user_redirects_to_dashboard(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        student = StudentFactory(school=user.school)
+        EnrollmentFactory(student=student, grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+
+        with override_flag("new_start_flow", active=True), self.login(user):
+            response = self.get("core:start-setup")
+
+        self.response_302(response)
+        assert response["Location"] == self.reverse("core:dashboard")
+
     def test_post_creates_starting_data(self):
         user = self.make_user()
         data = {
