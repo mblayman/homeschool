@@ -124,3 +124,7 @@ frontend/test-results/
 
 # Local E2E artifacts
 .e2e/
+
+.omo/*
+!.omo/rules/
+!.omo/rules/**

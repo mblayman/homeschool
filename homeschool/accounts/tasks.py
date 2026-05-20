@@ -30,6 +30,7 @@ def _generate_magic_link(user_id):
     """Generate magic link and send email."""
     user = User.objects.get(id=user_id)
     login_url = full_url_reverse("sesame-login") + get_query_string(user)
+    print(f"Copyable magic login link for {user.email}: {login_url}", flush=True)
     context = {"login_url": login_url}
     text_message = render_to_string("accounts/email/login.txt", context)
     html_message = render_to_string("accounts/email/login.html", context)
