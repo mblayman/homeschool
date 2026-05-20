@@ -16,15 +16,15 @@
         <h2 class="text-2xl mb-4">Awesome! You’re Ready To Build Your School Year!</h2>
         <p class="mb-4">
           Congratulations on getting your school started.
-          Now that you’ve created your first task,
-          you’re ready to keep building your school year.
+          Now that you’ve created your school year,
+          you’re ready to keep building it up.
         </p>
         <p class="mb-4">
           From here, you have some different options:
         </p>
         <ul class="list-disc list-inside mb-4">
           <li class="mb-2"><a class="underline" href="{% url "schools:grade_level_create" schoolyear.id %}">Create another grade level.</a></li>
-          <li class="mb-2"><a class="underline" href="{% url "students:create" %}">Add your first student.</a></li>
+          <li class="mb-2"><a class="underline" href="{% url "students:create" %}">Add another student.</a></li>
           <li class="mb-2"><a class="underline" href="{% url "courses:task_create" request.GET.welcome %}">Add more tasks to your course.</a></li>
         </ul>
         <p class="mb-4">
