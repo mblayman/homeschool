@@ -127,6 +127,9 @@ depend on live network access.
    flow manually, using Playwright when practical.
 6. Report any pre-existing failures separately rather than hiding them in the
    change.
+7. Shut down any long-running dev processes you started (for example gunicorn,
+   honcho, Tailwind watchers, or Huey workers) after building or testing so
+   they do not block later runs.
 
 ## Do Not
 
