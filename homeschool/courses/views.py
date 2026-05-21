@@ -176,6 +176,10 @@ class CourseDetailView(DetailView):
         course_tasks = list(self.object.course_tasks.all())
         context["course_tasks"] = course_tasks
 
+        course_resources = list(self.object.resources.all())
+        context["course_resources"] = course_resources
+        context["has_course_resources"] = bool(course_resources)
+
         last_task = None
         if course_tasks:
             last_task = course_tasks[-1]

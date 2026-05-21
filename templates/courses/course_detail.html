@@ -41,19 +41,23 @@
   {% endif %}
 
   <p class="mb-8 print:hidden">
-    {% if course_tasks %}
-      <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
-        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
-        Add New Task
-      </a>
+    {% if course_tasks or has_course_resources %}
+      {% if course_tasks %}
+        <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
+          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+          Add New Task
+        </a>
+      {% endif %}
       <a href="{% url "courses:resource_create" pk=course.id %}"
         class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
         Add New Resource
       </a>
-      <a href="{% url "courses:task_delete_bulk" pk=course.id %}"
-        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
-        Delete Multiple Tasks
-      </a>
+      {% if course_tasks %}
+        <a href="{% url "courses:task_delete_bulk" pk=course.id %}"
+          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+          Delete Multiple Tasks
+        </a>
+      {% endif %}
     {% endif %}
 
   </p>
@@ -87,10 +91,10 @@
 
   {% include "courses/_toggle_completed_tasks.html" with css_classes="mt-4" %}
 
-  {% if course.resources.all %}
+  {% if course_resources %}
     <h1 class="font-extralight text-2xl text-blue-900 mt-8 mb-4">Resources</h1>
     <ul class="max-w-2xl">
-      {% for resource in course.resources.all %}
+      {% for resource in course_resources %}
         <li class="border-t border-yellow-400">
           <a class="block px-2 py-4 hover:bg-yellow-200"
             href="{% url "courses:resource_edit" resource.id %}">

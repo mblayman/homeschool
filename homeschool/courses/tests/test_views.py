@@ -228,6 +228,61 @@ class TestCourseDetailView(TestCase):
         assert self.get_context("last_task") is None
         self.assertInContext("task_details")
 
+    def test_add_resource_link_shown_with_resources_without_tasks(self):
+        """A course with resources still shows the add-resource action."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        resource = CourseResourceFactory(course=course)
+
+        with self.login(user):
+            self.get_check_200("courses:detail", pk=course.id)
+
+        assert self.get_context("course_tasks") == []
+        assert self.get_context("course_resources") == [resource]
+        assert self.get_context("has_course_resources")
+        self.assertResponseContains("Add New Resource")
+        self.assertResponseContains(
+            self.reverse("courses:resource_create", pk=course.id), html=False
+        )
+
+    def test_action_order_with_tasks(self):
+        """The top action row keeps Add New Resource between task actions."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+        CourseResourceFactory(course=course)
+
+        with self.login(user):
+            response = self.get("courses:detail", pk=course.id)
+
+        self.response_200(response)
+        html = response.content.decode()
+        assert (
+            html.index("Add New Task")
+            < html.index("Add New Resource")
+            < html.index("Delete Multiple Tasks")
+        )
+
+    def test_action_order_with_tasks_without_resources(self):
+        """Tasks without resources still show Add New Resource in the middle."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.get("courses:detail", pk=course.id)
+
+        self.response_200(response)
+        html = response.content.decode()
+        assert (
+            html.index("Add New Task")
+            < html.index("Add New Resource")
+            < html.index("Delete Multiple Tasks")
+        )
+
     def test_grade_level_name_with_task(self):
         """Any grade level specific task has the grade level's name next to it."""
         user = self.make_user()
