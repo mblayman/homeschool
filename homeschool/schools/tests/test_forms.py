@@ -2,7 +2,7 @@ import datetime
 
 from homeschool.courses.models import Course
 from homeschool.courses.tests.factories import CourseFactory
-from homeschool.schools.forms import SchoolBreakForm, SchoolYearForm
+from homeschool.schools.forms import GradeLevelForm, SchoolBreakForm, SchoolYearForm
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
     SchoolBreakFactory,
@@ -45,6 +45,39 @@ class TestSchoolYearForm(TestCase):
 
         assert not is_valid
         assert "end_date" in form.errors
+
+    def test_only_school_for_user(self):
+        school = SchoolFactory()
+        other_school = SchoolFactory()
+        data = {
+            "school": str(other_school.id),
+            "start_date": "1/1/2020",
+            "end_date": "12/31/2020",
+            "monday": True,
+        }
+        form = SchoolYearForm(user=school.admin, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert form.non_field_errors() == [
+            "A school year cannot be created for a different school."
+        ]
+
+    def test_start_date_before_end_date(self):
+        school = SchoolFactory()
+        data = {
+            "school": str(school.id),
+            "start_date": "12/31/2020",
+            "end_date": "1/1/2020",
+            "monday": True,
+        }
+        form = SchoolYearForm(user=school.admin, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert "The start date must be before the end date." in form.non_field_errors()
 
     def test_no_overlapping_school_years(self):
         """A school year's dates may not overlap with another."""
@@ -191,6 +224,31 @@ class TestSchoolYearForm(TestCase):
         errors = form.non_field_errors()
         assert "You have a school break before the school year's start date." in errors
         assert "You have a school break after the school year's end date." in errors
+
+
+class TestGradeLevelForm(TestCase):
+    def test_only_school_year_for_user(self):
+        school = SchoolFactory()
+        school_year = SchoolYearFactory()
+        data = {"school_year": str(school_year.id), "name": "Kindergarten"}
+        form = GradeLevelForm(user=school.admin, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert form.non_field_errors() == [
+            "A grade level cannot be created for a different user's school year."
+        ]
+
+    def test_bogus_school_year(self):
+        school = SchoolFactory()
+        data = {"school_year": "0", "name": "Kindergarten"}
+        form = GradeLevelForm(user=school.admin, data=data)
+
+        is_valid = form.is_valid()
+
+        assert not is_valid
+        assert form.non_field_errors() == ["Invalid school year."]
 
 
 class TestSchoolBreakForm(TestCase):

@@ -19,12 +19,8 @@
   </div>
 
   {% if not has_school_years %}
-    {% include "core/start_banner.html" %}
     {% include "schools/empty_school_years.html" %}
   {% elif not has_students %}
-    {% if not has_tasks %}
-      {% include "core/start_banner.html" %}
-    {% endif %}
     {% include "students/empty_students.html" %}
   {% elif schedules or next_year_schedules %}
 

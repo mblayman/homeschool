@@ -14,17 +14,13 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.functional import cached_property
-from django.views.generic import CreateView, FormView, TemplateView
-from waffle import flag_is_active
+from django.views.generic import FormView, TemplateView
 
 from homeschool.accounts.models import Account
 from homeschool.core.forms import StartSetupForm
 from homeschool.core.schedules import Week
-from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
 from homeschool.notifications.models import Notification
-from homeschool.schools.forms import GradeLevelForm, SchoolYearForm
 from homeschool.schools.models import GradeLevel, SchoolYear
 from homeschool.students.models import Coursework, Enrollment, Grade, Student
 
@@ -85,10 +81,8 @@ class DashboardView(TemplateView):
     template_name = "core/app.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if flag_is_active(request, "new_start_flow") and not start_setup_has_started(
-            request.user
-        ):
-            return HttpResponseRedirect(reverse("core:start-setup"))
+        if not start_setup_has_started(request.user):
+            return HttpResponseRedirect(reverse("core:start"))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -490,32 +484,6 @@ class DailyView(TemplateView):
             messages.add_message(self.request, messages.SUCCESS, message)
 
 
-class StartView(TemplateView):
-    template_name = "core/start.html"
-
-    @method_decorator(authorize(any_authorized))
-    def dispatch(self, *args, **kwargs):
-        # Remove alert messages contributed by django-allauth during sign up
-        # that distract from the onboarding start page.
-        # Removing from the incoming request prevents Django from rendering messages
-        # on *this* view.
-        self.request.COOKIES.pop("messages", "")
-
-        response = super().dispatch(*args, **kwargs)
-
-        # Tell the browser to remove any existing messages.
-        # Removing from the response prevents Django from rendering messages
-        # on the *next* view.
-        response.delete_cookie("messages")
-
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["support_email"] = settings.SUPPORT_EMAIL
-        return context
-
-
 def start_setup_has_started(user):
     school_years = SchoolYear.objects.filter(school=user.school)
     grade_levels = GradeLevel.objects.filter(school_year__in=school_years)
@@ -530,32 +498,14 @@ def start_setup_has_started(user):
     )
 
 
-def start_setup_is_complete(user):
-    school_years = SchoolYear.objects.filter(school=user.school)
-    grade_levels = GradeLevel.objects.filter(school_year__in=school_years)
-    courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
-    return (
-        school_years.exists()
-        and grade_levels.exists()
-        and Student.objects.filter(school=user.school).exists()
-        and Enrollment.objects.filter(grade_level__in=grade_levels).exists()
-        and courses.exists()
-        and CourseTask.objects.filter(course__in=courses).exists()
-    )
-
-
 @method_decorator(authorize(any_authorized), "dispatch")
 class StartSetupView(FormView):
     template_name = "core/start_setup.html"
     form_class = StartSetupForm
 
     def dispatch(self, request, *args, **kwargs):
-        if not flag_is_active(request, "new_start_flow"):
-            return HttpResponseRedirect(reverse("core:start"))
-        if start_setup_is_complete(request.user):
-            return HttpResponseRedirect(reverse("core:dashboard"))
         if start_setup_has_started(request.user):
-            return HttpResponseRedirect(reverse("core:start"))
+            return HttpResponseRedirect(reverse("core:dashboard"))
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -570,130 +520,6 @@ class StartSetupView(FormView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         kwargs["today"] = timezone.localdate()
-        return kwargs
-
-
-@method_decorator(authorize(any_authorized), "dispatch")
-class StartSchoolYearView(CreateView):
-    template_name = "core/start_school_year.html"
-    form_class = SchoolYearForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["school_year"] = SchoolYear.objects.filter(
-            school=self.request.user.school
-        ).first()
-        return context
-
-    def get_success_url(self):
-        return reverse("core:start-grade-level")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-
-        if "data" in kwargs:
-            # Since this view is for easy onboarding,
-            # set a reasonable standard week.
-            # The QueryDict is immutable so it must be copied to update it.
-            data = kwargs["data"].copy()
-            data.update(
-                {
-                    "monday": True,
-                    "tuesday": True,
-                    "wednesday": True,
-                    "thursday": True,
-                    "friday": True,
-                }
-            )
-            kwargs["data"] = data
-        return kwargs
-
-
-@method_decorator(authorize(any_authorized), "dispatch")
-class StartGradeLevelView(CreateView):
-    template_name = "core/start_grade_level.html"
-    form_class = GradeLevelForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["grade_level"] = GradeLevel.objects.filter(
-            school_year__school=self.request.user.school
-        ).first()
-        context["school_year"] = SchoolYear.objects.filter(
-            school=self.request.user.school
-        ).first()
-        return context
-
-    def get_success_url(self):
-        return reverse("core:start-course")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-
-@method_decorator(authorize(any_authorized), "dispatch")
-class StartCourseView(CreateView):
-    template_name = "core/start_course.html"
-    form_class = CourseForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["grade_level"] = self.grade_level
-        if self.grade_level:
-            context["course"] = (
-                Course.objects.filter(grade_levels__in=[self.grade_level])
-                .distinct()
-                .first()
-            )
-        return context
-
-    def get_success_url(self):
-        return reverse("core:start-course-task")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["school_year"] = (
-            self.grade_level.school_year if self.grade_level else None
-        )
-        return kwargs
-
-    @cached_property
-    def grade_level(self) -> GradeLevel | None:
-        return GradeLevel.objects.filter(
-            school_year__school=self.request.user.school
-        ).first()
-
-
-@method_decorator(authorize(any_authorized), "dispatch")
-class StartCourseTaskView(CreateView):
-    template_name = "core/start_course_task.html"
-    form_class = CourseTaskForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        course = (
-            Course.objects.filter(
-                grade_levels__school_year__school=self.request.user.school
-            )
-            .distinct()
-            .first()
-        )
-        context["course"] = course
-        if course:
-            context["task"] = CourseTask.objects.filter(course=course).first()
-        return context
-
-    def get_success_url(self):
-        return (
-            reverse("schools:current_school_year") + f"?welcome={self.object.course.id}"
-        )
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
         return kwargs
 
 

@@ -1,6 +1,6 @@
 from denied.decorators import allow
 from django.contrib.sitemaps.views import sitemap
-from django.urls import include, path
+from django.urls import path
 
 from homeschool.core import views
 from homeschool.core.sitemaps import sitemaps
@@ -28,5 +28,5 @@ urlpatterns = [
         views.DailyView.as_view(),
         name="daily_for_date",
     ),
-    path("start/", include("homeschool.core.start_urls")),
+    path("start/", views.StartSetupView.as_view(), name="start"),
 ]

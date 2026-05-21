@@ -5,12 +5,8 @@ import pytest
 import time_machine
 from dateutil.relativedelta import FR, MO, SA, SU, WE, relativedelta
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.messages import get_messages
-from django.contrib.messages.storage.base import Message
-from django.contrib.messages.storage.cookie import CookieStorage
 from django.utils import timezone
-from waffle.testutils import override_flag
 
 from homeschool.core.schedules import Week
 from homeschool.courses.models import Course, CourseTask
@@ -25,7 +21,6 @@ from homeschool.schools.models import GradeLevel, SchoolBreak, SchoolYear
 from homeschool.schools.tests.factories import (
     GradeLevelFactory,
     SchoolBreakFactory,
-    SchoolFactory,
     SchoolYearFactory,
 )
 from homeschool.students.models import Coursework, Enrollment, Student
@@ -133,31 +128,25 @@ class TestDashboard(TestCase):
         )
         return enrollment.student, enrollment.grade_level
 
-    def test_ok(self):
+    def test_redirects_brand_new_user_to_start(self):
         user = self.make_user()
 
         with self.login(user):
-            self.get_check_200("core:dashboard")
-
-        assert self.get_context("nav_link") == "dashboard"
-
-    def test_new_start_flow_off_keeps_dashboard(self):
-        user = self.make_user()
-
-        with self.login(user):
-            self.get_check_200("core:dashboard")
-
-        assert self.get_context("nav_link") == "dashboard"
-
-    def test_new_start_flow_redirects_incomplete_user(self):
-        user = self.make_user()
-        with override_flag("new_start_flow", active=True), self.login(user):
             response = self.get("core:dashboard")
 
         self.response_302(response)
-        assert response["Location"] == self.reverse("core:start-setup")
+        assert response["Location"] == self.reverse("core:start")
 
-    def test_new_start_flow_allows_completed_user(self):
+    def test_allows_started_user(self):
+        user = self.make_user()
+        SchoolYearFactory(school=user.school)
+
+        with self.login(user):
+            self.get_check_200("core:dashboard")
+
+        assert self.get_context("nav_link") == "dashboard"
+
+    def test_allows_completed_user(self):
         user = self.make_user()
         grade_level = GradeLevelFactory(school_year__school=user.school)
         student = StudentFactory(school=user.school)
@@ -165,16 +154,16 @@ class TestDashboard(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
         CourseTaskFactory(course=course)
 
-        with override_flag("new_start_flow", active=True), self.login(user):
+        with self.login(user):
             self.get_check_200("core:dashboard")
 
         assert self.get_context("nav_link") == "dashboard"
 
-    def test_new_start_flow_does_not_redirect_partially_started_user(self):
+    def test_allows_partially_started_user(self):
         user = self.make_user()
         SchoolYearFactory(school=user.school)
 
-        with override_flag("new_start_flow", active=True), self.login(user):
+        with self.login(user):
             self.get_check_200("core:dashboard")
 
         assert self.get_context("nav_link") == "dashboard"
@@ -277,7 +266,7 @@ class TestDashboard(TestCase):
             school_year=grade_level.school_year, start_date=friday, end_date=friday
         )
 
-        with self.login(user), self.assertNumQueries(18):
+        with self.login(user), self.assertNumQueries(19):
             self.get("core:dashboard")
 
         expected_schedule = {
@@ -353,7 +342,7 @@ class TestDashboard(TestCase):
         task_3 = CourseTaskFactory(course=course)
         task_4 = CourseTaskFactory(course=course)
 
-        with self.login(user), self.assertNumQueries(19):
+        with self.login(user), self.assertNumQueries(20):
             self.get("core:weekly", year=2020, month=1, day=27)
 
         expected_schedule = {
@@ -664,20 +653,10 @@ class TestDashboard(TestCase):
 
         assert not self.get_context("show_whats_new")
 
-    def test_no_school_years(self):
-        """When no school years exist, it is marked in the context."""
-        user = self.make_user()
-        # Other user's school years don't count.
-        SchoolYearFactory()
-
-        with self.login(user):
-            self.get_check_200("core:dashboard")
-
-        assert not self.get_context("has_school_years")
-
     def test_no_students(self):
         """When no student exists, it is marked in the context."""
         user = self.make_user()
+        SchoolYearFactory(school=user.school)
         # Other user's students don't count.
         StudentFactory()
 
@@ -1137,36 +1116,12 @@ class TestDaily(TestCase):
         assert self.get_context("has_tasks")
 
 
-class TestStartView(TestCase):
+class TestStartSetupView(TestCase):
     def test_ok(self):
         user = self.make_user()
 
         with self.login(user):
             self.get_check_200("core:start")
-
-        assert self.get_context("support_email") == settings.SUPPORT_EMAIL
-
-    def test_no_message_on_visit(self):
-        """Clear out messages from django-allauth on sign up."""
-        user = self.make_user()
-        # _encode is not a public API. Ignore the type check.
-        self.client.cookies["messages"] = CookieStorage(request=None)._encode(  # type: ignore
-            [Message(messages.INFO, "Find me")]
-        )
-
-        with self.login(user):
-            response = self.get("core:start")
-
-        self.assertResponseNotContains("Find me", response)
-        assert response.cookies["messages"].value == ""
-
-
-class TestStartSetupView(TestCase):
-    def test_ok(self):
-        user = self.make_user()
-
-        with override_flag("new_start_flow", active=True), self.login(user):
-            self.get_check_200("core:start-setup")
 
     def test_school_year_placeholders_follow_the_calendar(self):
         user = self.make_user()
@@ -1187,38 +1142,28 @@ class TestStartSetupView(TestCase):
         for today, start_placeholder, end_placeholder in cases:
             with self.subTest(today=today):
                 with (
-                    override_flag("new_start_flow", active=True),
                     self.login(user),
                     mock.patch(
                         "homeschool.core.views.timezone", autospec=True
                     ) as mock_timezone,
                 ):
                     mock_timezone.localdate.return_value = today
-                    response = self.get("core:start-setup")
+                    response = self.get("core:start")
 
                 self.response_200(response)
                 html = response.content.decode()
                 assert f'placeholder="{start_placeholder}"' in html
                 assert f'placeholder="{end_placeholder}"' in html
 
-    def test_flag_off_redirects_to_old_start(self):
-        user = self.make_user()
-
-        with self.login(user):
-            response = self.get("core:start-setup")
-
-        self.response_302(response)
-        assert response["Location"] == self.reverse("core:start")
-
-    def test_partially_started_user_redirects_to_old_start(self):
+    def test_partially_started_user_redirects_to_dashboard(self):
         user = self.make_user()
         SchoolYearFactory(school=user.school)
 
-        with override_flag("new_start_flow", active=True), self.login(user):
-            response = self.get("core:start-setup")
+        with self.login(user):
+            response = self.get("core:start")
 
         self.response_302(response)
-        assert response["Location"] == self.reverse("core:start")
+        assert response["Location"] == self.reverse("core:dashboard")
 
     def test_completed_user_redirects_to_dashboard(self):
         user = self.make_user()
@@ -1229,8 +1174,8 @@ class TestStartSetupView(TestCase):
         course = CourseFactory(grade_levels=[grade_level])
         CourseTaskFactory(course=course)
 
-        with override_flag("new_start_flow", active=True), self.login(user):
-            response = self.get("core:start-setup")
+        with self.login(user):
+            response = self.get("core:start")
 
         self.response_302(response)
         assert response["Location"] == self.reverse("core:dashboard")
@@ -1247,8 +1192,8 @@ class TestStartSetupView(TestCase):
             "course_task_description": "Read chapter 1",
         }
 
-        with override_flag("new_start_flow", active=True), self.login(user):
-            response = self.post("core:start-setup", data=data)
+        with self.login(user):
+            response = self.post("core:start", data=data)
 
         school_year = SchoolYear.objects.get(school=user.school)
         grade_level = GradeLevel.objects.get(school_year=school_year)
@@ -1282,8 +1227,8 @@ class TestStartSetupView(TestCase):
             "course_task_description": "Read chapter 1",
         }
 
-        with override_flag("new_start_flow", active=True), self.login(user):
-            response = self.post("core:start-setup", data=data)
+        with self.login(user):
+            response = self.post("core:start", data=data)
 
         self.response_200(response)
         form = self.get_context("form")
@@ -1303,259 +1248,14 @@ class TestStartSetupView(TestCase):
             "course_task_description": "Read chapter 1",
         }
 
-        with override_flag("new_start_flow", active=True), self.login(user):
-            response = self.post("core:start-setup", data=data)
+        with self.login(user):
+            response = self.post("core:start", data=data)
 
         self.response_200(response)
         form = self.get_context("form")
         assert form.non_field_errors() == [
             "A school year may not be longer than 500 days."
         ]
-
-
-class TestStartSchoolYearView(TestCase):
-    def test_ok(self):
-        user = self.make_user()
-
-        with self.login(user):
-            self.get_check_200("core:start-school-year")
-
-    def test_valid_submission(self):
-        user = self.make_user()
-        data = {
-            "school": str(user.school.id),
-            "start_date": "1/1/20",
-            "end_date": "12/31/20",
-        }
-
-        with self.login(user):
-            response = self.post("core:start-school-year", data=data)
-
-        school_year = SchoolYear.objects.get(school=user.school)
-        assert school_year.days_of_week == (
-            SchoolYear.MONDAY
-            + SchoolYear.TUESDAY
-            + SchoolYear.WEDNESDAY
-            + SchoolYear.THURSDAY
-            + SchoolYear.FRIDAY
-        )
-        self.response_302(response)
-        assert response.get("Location") == self.reverse("core:start-grade-level")
-
-    def test_start_date_before_end_date(self):
-        user = self.make_user()
-        data = {
-            "school": str(user.school.id),
-            "start_date": "12/31/20",
-            "end_date": "1/1/20",
-        }
-
-        with self.login(user):
-            response = self.post("core:start-school-year", data=data)
-
-        self.response_200(response)
-        form = self.get_context("form")
-        assert form.non_field_errors() == [
-            "The start date must be before the end date."
-        ]
-
-    def test_only_school_for_user(self):
-        school = SchoolFactory()
-        user = self.make_user()
-        data = {
-            "school": str(school.id),
-            "start_date": "1/1/20",
-            "end_date": "12/31/20",
-        }
-
-        with self.login(user):
-            response = self.post("core:start-school-year", data=data)
-
-        self.response_200(response)
-        form = self.get_context("form")
-        assert form.non_field_errors() == [
-            "A school year cannot be created for a different school."
-        ]
-
-    def test_has_school_year(self):
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-
-        with self.login(user):
-            self.get("core:start-school-year")
-
-        self.assertContext("school_year", school_year)
-
-
-class TestStartGradeLevelView(TestCase):
-    def test_ok(self):
-        user = self.make_user()
-
-        with self.login(user):
-            self.get_check_200("core:start-grade-level")
-
-    def test_has_school_year(self):
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-
-        with self.login(user):
-            self.get("core:start-grade-level")
-
-        self.assertContext("school_year", school_year)
-
-    def test_has_grade_level(self):
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-
-        with self.login(user):
-            self.get("core:start-grade-level")
-
-        self.assertContext("grade_level", grade_level)
-
-    def test_valid_submission(self):
-        user = self.make_user()
-        school_year = SchoolYearFactory(school=user.school)
-        data = {"school_year": str(school_year.id), "name": "Kindergarten"}
-
-        with self.login(user):
-            response = self.post("core:start-grade-level", data=data)
-
-        self.assertEqual(GradeLevel.objects.filter(school_year=school_year).count(), 1)
-        self.response_302(response)
-        assert response.get("Location") == self.reverse("core:start-course")
-
-    def test_only_school_year_for_user(self):
-        user = self.make_user()
-        school_year = SchoolYearFactory()
-        data = {"school_year": str(school_year.id), "name": "Kindergarten"}
-
-        with self.login(user):
-            response = self.post("core:start-grade-level", data=data)
-
-        self.response_200(response)
-        form = self.get_context("form")
-        assert form.non_field_errors() == [
-            "A grade level cannot be created for a different user's school year."
-        ]
-
-    def test_bogus_school_year(self):
-        user = self.make_user()
-        data = {"school_year": "0", "name": "Kindergarten"}
-
-        with self.login(user):
-            response = self.post("core:start-grade-level", data=data)
-
-        self.response_200(response)
-        form = self.get_context("form")
-        assert form.non_field_errors() == ["Invalid school year."]
-
-
-class TestStartCourseView(TestCase):
-    def test_ok(self):
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-
-        with self.login(user):
-            self.get_check_200("core:start-course")
-
-        assert self.get_context("grade_level") == grade_level
-        assert self.get_context("course") == course
-
-    def test_only_users_grade_level(self):
-        """The grade level must belong to the user."""
-        user = self.make_user()
-        GradeLevelFactory()
-
-        with self.login(user):
-            self.get_check_200("core:start-course")
-
-        assert self.get_context("grade_level") is None
-
-    def test_only_users_course(self):
-        """The course must belong to the user for the grade level."""
-        user = self.make_user()
-        GradeLevelFactory(school_year__school=user.school)
-        CourseFactory()
-
-        with self.login(user):
-            self.get_check_200("core:start-course")
-
-        assert self.get_context("course") is None
-
-    def test_post(self):
-        """A successful POST creates a course."""
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        data = {
-            "name": "Astronomy",
-            "default_task_duration": "30",
-            "grade_levels": str(grade_level.id),
-        }
-
-        with self.login(user):
-            response = self.post("core:start-course", data=data)
-
-        assert response.status_code == 302
-        assert response["Location"] == self.reverse("core:start-course-task")
-        assert Course.objects.filter(name="Astronomy").exists()
-
-
-class TestStartCourseTaskView(TestCase):
-    def test_ok(self):
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-        task = CourseTaskFactory(course=course)
-
-        with self.login(user):
-            self.get_check_200("core:start-course-task")
-
-        assert self.get_context("course") == course
-        assert self.get_context("task") == task
-
-    def test_only_users_course(self):
-        """The course must belong to the user."""
-        user = self.make_user()
-        CourseFactory()
-
-        with self.login(user):
-            self.get_check_200("core:start-course-task")
-
-        assert self.get_context("course") is None
-
-    def test_only_users_course_task(self):
-        """The task must belong to the user."""
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        CourseFactory(grade_levels=[grade_level])
-        CourseTaskFactory()
-
-        with self.login(user):
-            self.get_check_200("core:start-course-task")
-
-        assert self.get_context("task") is None
-
-    def test_post(self):
-        """A successful POST creates a course."""
-        user = self.make_user()
-        grade_level = GradeLevelFactory(school_year__school=user.school)
-        course = CourseFactory(grade_levels=[grade_level])
-        data = {
-            "description": "My first task",
-            "duration": str(course.default_task_duration),
-            "course": str(course.id),
-        }
-
-        with self.login(user):
-            response = self.post("core:start-course-task", data=data)
-
-        assert response.status_code == 302
-        assert (
-            response["Location"]
-            == self.reverse("schools:current_school_year") + f"?welcome={course.id}"
-        )
-        assert CourseTask.objects.filter(description="My first task").exists()
 
 
 class TestOfficeDashboard(TestCase):
