@@ -130,6 +130,8 @@ depend on live network access.
 7. Shut down any long-running dev processes you started (for example gunicorn,
    honcho, Tailwind watchers, or Huey workers) after building or testing so
    they do not block later runs.
+8. Keep code coverage at 100%; add or update tests for every new or changed
+   Python line before finishing.
 
 ## Do Not
 

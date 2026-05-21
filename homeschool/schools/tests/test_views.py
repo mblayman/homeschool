@@ -112,6 +112,22 @@ class TestSchoolYearDetailView(TestCase):
         assert self.get_context("nav_link") == "school_year"
         assert self.get_context("is_in_school_year")
 
+    def test_welcome_banner(self):
+        user = self.make_user()
+        school_year = SchoolYearFactory(school=user.school)
+        grade_level = GradeLevelFactory(school_year=school_year)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            response = self.get(
+                "schools:school_year_detail",
+                pk=school_year.id,
+                data={"welcome": str(course.id)},
+            )
+
+        self.response_200(response)
+        self.assertResponseContains("Awesome! You’re Ready To Build Your School Year!")
+
     def test_show_all_months(self):
         """When the option is provided, the page shows all calendar months."""
         user = self.make_user()

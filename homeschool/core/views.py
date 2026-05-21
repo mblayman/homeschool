@@ -15,9 +15,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, FormView, TemplateView
+from waffle import flag_is_active
 
 from homeschool.accounts.models import Account
+from homeschool.core.forms import StartSetupForm
 from homeschool.core.schedules import Week
 from homeschool.courses.forms import CourseForm, CourseTaskForm
 from homeschool.courses.models import Course, CourseTask, GradedWork
@@ -81,6 +83,13 @@ def blog_redirect(request):
 @method_decorator(authorize(any_authorized), "dispatch")
 class DashboardView(TemplateView):
     template_name = "core/app.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if flag_is_active(request, "new_start_flow") and not start_setup_has_started(
+            request.user
+        ):
+            return HttpResponseRedirect(reverse("core:start-setup"))
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -505,6 +514,63 @@ class StartView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["support_email"] = settings.SUPPORT_EMAIL
         return context
+
+
+def start_setup_has_started(user):
+    school_years = SchoolYear.objects.filter(school=user.school)
+    grade_levels = GradeLevel.objects.filter(school_year__in=school_years)
+    courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
+    return (
+        school_years.exists()
+        or grade_levels.exists()
+        or Student.objects.filter(school=user.school).exists()
+        or Enrollment.objects.filter(grade_level__in=grade_levels).exists()
+        or courses.exists()
+        or CourseTask.objects.filter(course__in=courses).exists()
+    )
+
+
+def start_setup_is_complete(user):
+    school_years = SchoolYear.objects.filter(school=user.school)
+    grade_levels = GradeLevel.objects.filter(school_year__in=school_years)
+    courses = Course.objects.filter(grade_levels__in=grade_levels).distinct()
+    return (
+        school_years.exists()
+        and grade_levels.exists()
+        and Student.objects.filter(school=user.school).exists()
+        and Enrollment.objects.filter(grade_level__in=grade_levels).exists()
+        and courses.exists()
+        and CourseTask.objects.filter(course__in=courses).exists()
+    )
+
+
+@method_decorator(authorize(any_authorized), "dispatch")
+class StartSetupView(FormView):
+    template_name = "core/start_setup.html"
+    form_class = StartSetupForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not flag_is_active(request, "new_start_flow"):
+            return HttpResponseRedirect(reverse("core:start"))
+        if start_setup_is_complete(request.user):
+            return HttpResponseRedirect(reverse("core:dashboard"))
+        if start_setup_has_started(request.user):
+            return HttpResponseRedirect(reverse("core:start"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        school_year = form.save()
+        course = Course.objects.get(grade_levels__school_year=school_year)
+        self.success_url = (
+            reverse("schools:current_school_year") + f"?welcome={course.id}"
+        )
+        return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        kwargs["today"] = timezone.localdate()
+        return kwargs
 
 
 @method_decorator(authorize(any_authorized), "dispatch")

@@ -37,7 +37,8 @@
             value="{{ field.value }}"
           {% endif %}
         {% endif %}
-        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if placeholder %}placeholder="{{ placeholder }}"
+        {% elif field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}
         {% if autofocus %}autofocus{% endif %}
         {% include "django/forms/widgets/attrs.html" %}
         {% if field.field.required and not dont_require %}required{% endif %}

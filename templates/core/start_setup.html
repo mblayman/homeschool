@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Start Your School{% endblock %}
+
+{% block main %}
+  <div class="mx-auto max-w-3xl text-blue-900 font-light">
+    <h1 class="font-extralight text-3xl mb-4 text-center">Start Your School</h1>
+    <p class="mb-4">
+      To get started,
+      <strong>add the basics for your first school year, student, course, and task.</strong>
+    </p>
+    <p class="mb-8">
+      <em>You can adjust everything and add more later.</em> This form should get you going
+      and help you understand the core concepts in School Desk.
+    </p>
+
+    {% include "forms/non_field_errors.html" %}
+    <form method="post" class="w-full mx-auto">
+      {% csrf_token %}
+      <h2 class="font-extralight text-2xl mb-2">School Year</h2>
+      <p class="mb-6">
+        A school year can have multiple grade levels for your different students.
+        The school year will track progress throughout the academic year.
+      </p>
+      {% include "forms/field.html" with field=form.school_year_start_date autofocus=True %}
+      {% include "forms/field.html" with field=form.school_year_end_date %}
+
+      <h2 class="font-extralight text-2xl mb-2">Student</h2>
+      <p class="mb-6">
+        Each student will be enrolled in a grade level.
+        You can add more students later.
+      </p>
+      {% include "forms/field.html" with field=form.student_first_name placeholder="Ada" %}
+      {% include "forms/field.html" with field=form.student_last_name placeholder="Lovelace" %}
+      {% include "forms/field.html" with field=form.grade_level_name placeholder="Kindergarten" %}
+
+      <h2 class="font-extralight text-2xl mb-4">Course</h2>
+      <p class="mb-6">
+        A course is your tool for grouping tasks for a school subject in a grade level.
+        Every grade level may have multiple courses like Math, English, Biology, etc.
+        Add a course for the grade level above.
+      </p>
+      {% include "forms/field.html" with field=form.course_name placeholder="Math" %}
+      {% include "forms/field.html" with field=form.course_task_description placeholder="Read chapter 1" textarea=True %}
+
+      <div class="md:flex md:items-center">
+        <div class="md:w-1/4"></div>
+        <div class="md:w-3/4 flex items-center justify-end">
+          <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+            Start Planning
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}
