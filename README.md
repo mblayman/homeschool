@@ -63,7 +63,7 @@ uses that virtual environment via `PATH`.
 ## Server config
 
 1. Add ssh keys.
-2. Turn off passworth auth
+2. Turn off password auth
 
 ```
 /etc/ssh/sshd_config
@@ -179,7 +179,7 @@ Forum topics:
 
 * https://forums.welltrainedmind.com/topic/109604-anyone-use-homeschool-skedtrack/ discussion of site
 * https://forums.welltrainedmind.com/topic/521718-digital-planner-for-looping-schedule/ looping questions
-* https://forums.welltrainedmind.com/topic/540598-lets-share-how-we-set-up-onenote/ onenote replacing skedtrack
+* https://forums.welltrainedmind.com/topic/540598-lets-share-how-we-set-up-onenote/ OneNote replacing Skedtrack
 * https://forums.welltrainedmind.com/topic/265754-gradingrecord-keepingtranscripts/ looking for tools 2011
 * https://forums.welltrainedmind.com/topic/109114-free-curriculum-list/ curriculum list 2009
 * https://forums.welltrainedmind.com/topic/337281-if-you-have-a-long-loop-schedule-for-your-homeschool-can-you-share/ looping schedule topic
@@ -284,7 +284,7 @@ https://shop.wellplannedgal.com/index.php/shop/well-planned-day-online.html
 
 Things to try:
 
-* Google Adwords keyword planner
+* Google AdWords keyword planner
 * followerwonk.com
 * Topsy Analytics to check social mentions?
 * Ahrefs Site Explorer to see referral traffic for other sites

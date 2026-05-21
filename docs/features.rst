@@ -128,7 +128,7 @@ Year-End Bundle
 
 Wouldn't it be nice if all the reports you need
 for your school year
-were together a single bundle
+were together in a single bundle
 for your record keeping?
 School Desk provides exactly that.
 
@@ -179,5 +179,5 @@ Teacher Tools
 -------------
 
 School Desk includes a teacher checklist feature
-that lets teacher's record notes about their students' activities
+that lets teachers record notes about their students' activities
 for the week.
