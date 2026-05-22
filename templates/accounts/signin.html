@@ -49,7 +49,7 @@
           <a href="{% url "core:privacy" %}" class="underline" target="_blank">Privacy Policy</a>.
         </p>
         {% if turnstile_enabled %}
-          <div class="mt-4 cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="light"></div>
+          <div class="mt-4 cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="light" data-size="flexible"></div>
         {% endif %}
       </form>
       <p class="text-center text-blue-900 text-xl font-extralight mt-8">
