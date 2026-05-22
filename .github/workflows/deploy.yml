@@ -26,6 +26,8 @@ jobs:
       CI_STRIPE_LIVE_SECRET_KEY: ${{ secrets.CI_STRIPE_LIVE_SECRET_KEY }}
       CI_STRIPE_TEST_PUBLISHABLE_KEY: ${{ secrets.CI_STRIPE_TEST_PUBLISHABLE_KEY }}
       CI_STRIPE_TEST_SECRET_KEY: ${{ secrets.CI_STRIPE_TEST_SECRET_KEY }}
+      CI_TURNSTILE_SITE_KEY: ${{ secrets.CI_TURNSTILE_SITE_KEY }}
+      CI_TURNSTILE_SECRET_KEY: ${{ secrets.CI_TURNSTILE_SECRET_KEY }}
 
     steps:
       - uses: actions/checkout@v4

@@ -114,6 +114,21 @@ depend on live network access.
   placeholders for local and automated work.
 - The runtime Docker image installs dependencies into `/app/.venv` during build;
   it does not include `uv` at runtime.
+- When adding or renaming production secrets, update every handoff in the secret
+  chain:
+  - `project/settings.py` or the consuming code reads the runtime variable name.
+  - `.env.example` provides a safe local placeholder when local development or
+    tests need the setting.
+  - `.kamal/secrets` maps the runtime variable to its `CI_` GitHub Actions
+    secret, with the 1Password `op://school-desk/server/...` fallback.
+  - `config/deploy.yml` lists the runtime variable under `env.secret` so Kamal
+    injects it into app containers.
+  - `.github/workflows/deploy.yml` exports the `CI_` GitHub secret into the
+    deploy job environment before `kamal deploy` runs.
+  - `bin/sync-gh-secrets` includes the `CI_` secret name so 1Password values can
+    be synced into GitHub repository secrets.
+  - `.github/workflows/tests.yaml`, `bin/e2e-local`, and `bin/e2e-docker` include
+    placeholders only when build, test, or e2e commands require the setting.
 
 ## Agent Workflow
 
