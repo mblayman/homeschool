@@ -63,6 +63,8 @@ env:
     - STRIPE_LIVE_SECRET_KEY
     - STRIPE_TEST_PUBLISHABLE_KEY
     - STRIPE_TEST_SECRET_KEY
+    - TURNSTILE_SITE_KEY
+    - TURNSTILE_SECRET_KEY
 
 aliases:
   shell: app exec --interactive --reuse "bash"

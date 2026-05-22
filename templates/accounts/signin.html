@@ -48,6 +48,9 @@
           <a href="{% url "core:terms" %}" class="underline" target="_blank">Terms of Service</a> and
           <a href="{% url "core:privacy" %}" class="underline" target="_blank">Privacy Policy</a>.
         </p>
+        {% if turnstile_enabled %}
+          <div class="mt-4 cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="light" data-size="flexible"></div>
+        {% endif %}
       </form>
       <p class="text-center text-blue-900 text-xl font-extralight mt-8">
         Your 60 day free trial awaits!
@@ -58,4 +61,10 @@
     </p>
   {% endflag %}
   </div>
+{% endblock %}
+
+{% block scripts %}
+  {% if turnstile_enabled %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  {% endif %}
 {% endblock %}

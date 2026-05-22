@@ -36,6 +36,8 @@ HUEY = {
 # Make sure that tests are never sending real emails.
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+TURNSTILE_ENABLED = False
+
 
 # The password hasher is deliberately slow on the real site. Use a dumb and fast one.
 class SimplePasswordHasher(BasePasswordHasher):
