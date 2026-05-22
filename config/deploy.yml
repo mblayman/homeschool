@@ -3,6 +3,9 @@ image: mblayman/homeschool
 
 deploy_timeout: 90
 
+hooks_output:
+  pre-deploy: :verbose
+
 servers:
   web:
     - 174.138.127.127
