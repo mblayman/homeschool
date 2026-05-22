@@ -8,6 +8,8 @@ from django.conf import settings
 from django.contrib.messages import get_messages
 from django.utils import timezone
 
+from homeschool.accounts.models import Account
+from homeschool.accounts.tests.factories import AccountFactory
 from homeschool.core.schedules import Week
 from homeschool.courses.models import Course, CourseTask
 from homeschool.courses.tests.factories import (
@@ -1274,6 +1276,20 @@ class TestOfficeOnboarding(TestCase):
 
         with self.login(user):
             self.get_check_200("office:onboarding")
+
+    def test_shows_trialing_user_email(self):
+        """A trialing user's email appears in the onboarding table."""
+        viewer = UserFactory(is_staff=True)
+        account = AccountFactory(
+            status=Account.AccountStatus.TRIALING,
+            user__email="trial@example.com",
+        )
+
+        with self.login(viewer):
+            response = self.get("office:onboarding")
+
+        self.response_200(response)
+        self.assertContains(response, account.user.email)
 
     def test_marks_tirekicker(self):
         """A tirekicker that is not using the app is marked for the context."""
