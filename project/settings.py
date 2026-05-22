@@ -14,6 +14,10 @@ DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR", False)
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", [])
 
+TURNSTILE_SITE_KEY = env.str("TURNSTILE_SITE_KEY", "")
+TURNSTILE_SECRET_KEY = env.str("TURNSTILE_SECRET_KEY", "")
+TURNSTILE_ENABLED = env.bool("TURNSTILE_ENABLED", True)
+
 # App constants
 domain = "theschooldesk.app"
 
