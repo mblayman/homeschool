@@ -38,6 +38,7 @@ class TestSignIn:
 
         assert response.status_code == 200
         assert b"cf-turnstile" in response.content
+        assert b'data-theme="light"' in response.content
         assert (
             b"https://challenges.cloudflare.com/turnstile/v0/api.js" in response.content
         )
