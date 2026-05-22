@@ -2,9 +2,12 @@ from unittest import mock
 
 from django.conf import settings
 from django.contrib.messages import get_messages
+from django.core.cache import cache
+from django.test import override_settings
 from django.urls import reverse
 
 from homeschool.accounts.tests.factories import AccountFactory, PriceFactory
+from homeschool.core.models import Flag
 from homeschool.test import TestCase
 from homeschool.users.tests.factories import UserFactory
 
@@ -21,6 +24,30 @@ class TestSignIn:
         response = client.post(reverse("signin"), data=data)
 
         assert response.status_code == 302
+
+    @override_settings(
+        TURNSTILE_ENABLED=True,
+        TURNSTILE_SITE_KEY="1x00000000000000000000AA",
+    )
+    def test_turnstile_widget(self, db, client):
+        """The signin page renders Turnstile when enabled."""
+        Flag.objects.create(name="signup_flag", everyone=True)
+        cache.clear()
+
+        response = client.get(reverse("signin"))
+
+        assert response.status_code == 200
+        assert b"cf-turnstile" in response.content
+        assert (
+            b"https://challenges.cloudflare.com/turnstile/v0/api.js" in response.content
+        )
+
+    def test_turnstile_widget_disabled(self, db, client):
+        """The local/test signin page skips Turnstile by default."""
+        response = client.get(reverse("signin"))
+
+        assert response.status_code == 200
+        assert b"cf-turnstile" not in response.content
 
 
 class TestCheckEmail:

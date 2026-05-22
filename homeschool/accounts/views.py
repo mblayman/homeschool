@@ -18,12 +18,20 @@ from .stripe_gateway import stripe_gateway
 def signin(request):
     form = SiginForm()
     if request.method == "POST":
-        form = SiginForm(request.POST)
+        form = SiginForm(request.POST, remote_ip=request.META.get("REMOTE_ADDR"))
         if form.is_valid():
             form.save()
             return redirect(reverse("check-email"))
 
-    return render(request, "accounts/signin.html", {"form": form})
+    return render(
+        request,
+        "accounts/signin.html",
+        {
+            "form": form,
+            "turnstile_enabled": settings.TURNSTILE_ENABLED,
+            "turnstile_site_key": settings.TURNSTILE_SITE_KEY,
+        },
+    )
 
 
 @allow
