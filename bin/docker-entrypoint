@@ -1,8 +1,7 @@
 #!/bin/bash
 
-if [ "${*}" == "/app/bin/server" ]; then
-    # Don't waste time running the system checks.
-    ./manage.py migrate --skip-checks
+if [ "$#" -eq 1 ] && [[ "$1" == *" "* ]]; then
+    exec /bin/bash -lc "$1"
 fi
 
 exec "${@}"

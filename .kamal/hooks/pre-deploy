@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [ "${KAMAL_COMMAND:-}" = "rollback" ]; then
+  exit 0
+fi
+
+args=(
+  app exec
+  --primary
+  --roles=web
+  --version "${KAMAL_VERSION}"
+  --skip-hooks
+)
+
+if [ -n "${KAMAL_DESTINATION:-}" ]; then
+  args+=(--destination "${KAMAL_DESTINATION}")
+fi
+
+args+=("python manage.py migrate --skip-checks")
+
+kamal "${args[@]}"
