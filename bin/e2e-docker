@@ -48,6 +48,12 @@ docker run -d \
 
 trap 'docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true' EXIT
 
+if ! docker exec "$CONTAINER_NAME" python manage.py migrate --skip-checks > "$ROOT_DIR/.e2e/migrate.log" 2>&1; then
+    echo "Failed to migrate the E2E database. See $ROOT_DIR/.e2e/migrate.log" >&2
+    docker logs "$CONTAINER_NAME" || true
+    exit 1
+fi
+
 ready=0
 for i in {1..60}; do
     running_container="$(docker ps --filter "name=^${CONTAINER_NAME}$" --format '{{.Names}}')"
