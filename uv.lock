@@ -56,16 +56,16 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.43.7"
+version = "1.43.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6b/0d/67ebf496fe061397f7eb907504e950fe6d2fa5945fd05891f3033376e471/boto3-1.43.7.tar.gz", hash = "sha256:b1e4b40f4a828c67291b12ebefd17d87a57321101e4a0c969b2f593a0310f343", size = 113170, upload-time = "2026-05-13T19:35:48.556Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c5/a8/5422bd25bd2520a6122cb82b2dfa280c66e380102533761b96e7a10f1a4d/boto3-1.43.8.tar.gz", hash = "sha256:d1235602d715c727c1923ef4bcdb5612a20575a9a5e4f2db00d571e0ea1f85fc", size = 113144, upload-time = "2026-05-14T19:34:36.518Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/40/87/68fdfc7eaed69c4c77de1b9f1ddbd52e529510161baf9b2bf863be07aad1/boto3-1.43.7-py3-none-any.whl", hash = "sha256:7060f603ca0f645153ee2244506db4db5968a858cd513399d8df70637c362159", size = 140524, upload-time = "2026-05-13T19:35:44.879Z" },
+    { url = "https://files.pythonhosted.org/packages/38/48/920c58e5b4450dd389ef3e56dca8803af093ccc0a8e04dd69a60812b7f94/boto3-1.43.8-py3-none-any.whl", hash = "sha256:1894497c383e3cdf50e210f1f57a43e9f4047a5d3accc73ffdb7eacc3b0f011b", size = 140523, upload-time = "2026-05-14T19:34:33.883Z" },
 ]
 
 [[package]]
@@ -613,7 +613,7 @@ dev = [
 requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.14.3" },
     { name = "bleach", specifier = "==6.3.0" },
-    { name = "boto3", specifier = "==1.43.7" },
+    { name = "boto3", specifier = "==1.43.8" },
     { name = "dj-stripe", specifier = "==2.10.3" },
     { name = "django", specifier = "==6.0.5" },
     { name = "django-anymail", extras = ["amazon-ses"], specifier = "==15.0" },
