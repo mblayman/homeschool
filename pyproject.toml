@@ -5,7 +5,7 @@ requires-python = ">=3.13, <3.14"
 dependencies = [
     "beautifulsoup4==4.14.3",
     "bleach==6.3.0",
-    "boto3==1.43.9",
+    "boto3==1.43.10",
     "dj-stripe==2.10.3",
     "django-anymail[amazon-ses]==15.0",
     "django-debug-toolbar==6.3.0",
