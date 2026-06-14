@@ -178,6 +178,8 @@ MEDIA_URL = "/media/"
 # Forms
 # This setting lets Django form widget templates be used or overridden.
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+# Django 6 changes URLField's default scheme to https.
+FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
