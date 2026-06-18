@@ -60,8 +60,8 @@ created by the Makefile is `matt@example.com` with password `correcthorse`.
 Start with the narrowest check that exercises your change, then widen only as
 needed.
 
+- `mise run test`: preferred full test command from `mise.toml`.
 - `uv run pytest path/to/test.py -q`: preferred focused Python test command.
-- `make fcov`: fast coverage check for the full Django test suite.
 - `make coverage`: slower coverage run with migrations enabled.
 - `make mypy`: type-check `homeschool`, `project`, and `manage.py`.
 - `npm --prefix frontend run build`: verify CSS builds after template or
@@ -136,8 +136,8 @@ depend on live network access.
    editing a feature.
 2. Reproduce or cover behavior with a focused test when changing Python logic.
 3. Make the smallest coherent change that satisfies the task.
-4. Run focused tests first, then `make fcov` and `make mypy` when the change is
-   not trivially local.
+4. Run focused tests first, then `mise run test` and `make mypy` when the change is
+    not trivially local.
 5. For user-visible web changes, run the app and verify the affected page or
    flow manually, using Playwright when practical.
 6. Report any pre-existing failures separately rather than hiding them in the
