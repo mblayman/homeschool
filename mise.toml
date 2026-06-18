@@ -1,0 +1,3 @@
+[tools]
+nodejs = "23.1.0"
+"gem:kamal" = "2.11.0"

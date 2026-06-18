@@ -103,8 +103,8 @@ depend on live network access.
 ## Environment And Secrets
 
 - `.env.example` is the source for local placeholder values.
-- `.tool-versions` pins local Node, Ruby, and Kamal versions for developers who
-  use asdf-compatible tooling.
+- `mise.toml` pins local Node, Ruby, and Kamal versions for developers using
+  mise.
 - `.opencode/` contains local OpenCode plugin dependencies. Do not treat it as
   application source or edit it for app changes.
 - Never commit `.env`, database files, media files, generated static files, or
