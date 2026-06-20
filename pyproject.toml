@@ -4,7 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.13, <3.14"
 dependencies = [
     "beautifulsoup4==4.14.3",
-    "bleach==6.3.0",
+    "bleach==6.4.0",
     "boto3==1.43.13",
     "dj-stripe==2.10.3",
     "django-anymail[amazon-ses]==15.0",
