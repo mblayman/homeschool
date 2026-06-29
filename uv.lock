@@ -253,15 +253,15 @@ wheels = [
 
 [[package]]
 name = "dj-stripe"
-version = "2.10.3"
+version = "2.10.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "stripe" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f2/1d/2cf7839130c185f96f72fcac782040517fb0cf4d4f8c2756debfe08b7485/dj_stripe-2.10.3.tar.gz", hash = "sha256:fe870a93dfcbb7f17432fb1da7291a2222c89b32a6d6fba16cb34ed6b37f1584", size = 132793, upload-time = "2025-10-15T14:38:51.09Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/2e/b302ba2e502753899b2e8a41bf69c187069475779f338e669934c96fa613/dj_stripe-2.10.4.tar.gz", hash = "sha256:058243f6a17f9b97889fec1b413d71d175846d9e641298220bdee31cac0b8eef", size = 133339, upload-time = "2026-06-19T18:34:57.143Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/d7/8acdaf9dfad2c6334cad4620fdb62545914b81a0d6cd847e2bedf12b35a9/dj_stripe-2.10.3-py3-none-any.whl", hash = "sha256:035b8f991429d5a474d1d46e4f3ab36722250fa9dac39b5d835c694c49a19dea", size = 156525, upload-time = "2025-10-15T14:38:49.58Z" },
+    { url = "https://files.pythonhosted.org/packages/b0/34/c9511c09a2785fc0b59e5338e6e80a5e2f755afb47cf68ac855190592e69/dj_stripe-2.10.4-py3-none-any.whl", hash = "sha256:35e341335742ea53864f16d1daef6d2e4ccb593e4d51d0c8f63016f06daf6fff", size = 157319, upload-time = "2026-06-19T18:34:58.506Z" },
 ]
 
 [[package]]
@@ -614,7 +614,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.15.0" },
     { name = "bleach", specifier = "==6.4.0" },
     { name = "boto3", specifier = "==1.43.13" },
-    { name = "dj-stripe", specifier = "==2.10.3" },
+    { name = "dj-stripe", specifier = "==2.10.4" },
     { name = "django", specifier = "==6.0.6" },
     { name = "django-anymail", extras = ["amazon-ses"], specifier = "==15.0" },
     { name = "django-debug-toolbar", specifier = "==6.3.0" },
