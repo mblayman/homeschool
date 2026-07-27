@@ -349,15 +349,15 @@ wheels = [
 
 [[package]]
 name = "django-htmx"
-version = "1.27.0"
+version = "1.28.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/f2/8c3e28a5eed8e5226835c762892bfef74eda7e8629c65b49c186098eb303/django_htmx-1.27.0.tar.gz", hash = "sha256:036e5da801bfdf5f1ca815f21592cfb9f004a898f330c842f15e55c70e301a75", size = 65362, upload-time = "2025-11-28T23:18:55.049Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/d9/b31339fae8ede6a7cb0b9facaefe2ee4fc01d9f37a31a3dc03759765a2c3/django_htmx-1.28.0.tar.gz", hash = "sha256:699e229de0bbf19b3ee1a5d419702f5c154fa956e6921fec89faa7401b99e536", size = 100946, upload-time = "2026-07-12T22:19:19.589Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/ac/25d28489dc43224e260f4ebee7565f7ef1efe12af0f284a89500c19f75e2/django_htmx-1.27.0-py3-none-any.whl", hash = "sha256:13e1e13b87d39b57f95aae6e4987cb3df056d0b1373a41f4a94504a00298ffd8", size = 62126, upload-time = "2025-11-28T23:18:53.57Z" },
+    { url = "https://files.pythonhosted.org/packages/20/d5/71b3a206f7a2135e2ab4a789be143a00222b52d22729c84f480915049e94/django_htmx-1.28.0-py3-none-any.whl", hash = "sha256:e6911acccf3e7905d511c4fd6ab86fe06572205e80a0f32ca7aa94a115ae0619", size = 98588, upload-time = "2026-07-12T22:19:18.225Z" },
 ]
 
 [[package]]
@@ -621,7 +621,7 @@ requires-dist = [
     { name = "django-denied", specifier = "==1.3" },
     { name = "django-extensions", specifier = "==4.1" },
     { name = "django-hijack", specifier = "==3.7.8" },
-    { name = "django-htmx", specifier = "==1.27.0" },
+    { name = "django-htmx", specifier = "==1.28.0" },
     { name = "django-ordered-model", specifier = "==3.7.4" },
     { name = "django-sesame", specifier = "==3.2.3" },
     { name = "django-simple-history", specifier = "==3.12.0" },
