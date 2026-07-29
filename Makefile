@@ -22,6 +22,8 @@ shell:
 # -n 4    --dist loadfile, 4 CPUs, 445 tests, 43s
 # -n 2    --dist loadfile, 4 CPUs, 445 tests, 39s
 # no parallelism,                  445 tests, 41s
+# With coverage sysmon enabled, -n 2 --dist loadfile ran 499 tests in about 50s.
+# More workers were neutral or slower because each worker pays migration setup cost.
 coverage:
 	uv run pytest --cov=homeschool --migrations -n 2 --dist loadfile
 

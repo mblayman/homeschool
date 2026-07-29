@@ -36,18 +36,18 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
-    "coverage[toml]==7.6.1",
+    "coverage[toml]==7.15.2",
     "django-test-plus==2.2.4",
     "factory-boy==3.3.1",
     "honcho==1.1.0",
     "mypy==1.11.2",
     "pip-tools==7.4.1",
     "pre-commit==3.8.0",
-    "pytest-cov==5.0.0",
-    "pytest-django==4.8.0",
-    "pytest-socket==0.7.0",
-    "pytest-xdist==3.6.1",
-    "pytest==8.3.2",
+    "pytest-cov==7.1.0",
+    "pytest-django==4.12.0",
+    "pytest-socket==0.8.0",
+    "pytest-xdist==3.8.0",
+    "pytest==9.1.1",
     "responses==0.10.15",
     "ruff==0.6.3",
     "time-machine==2.15.0",
@@ -58,6 +58,9 @@ dev-dependencies = [
     "types-six==1.16.21.20240513",
     "types-toml==0.10.8.20240310",
 ]
+
+[tool.coverage.run]
+core = "sysmon"
 
 [tool.coverage.report]
 fail_under = 100
@@ -109,6 +112,7 @@ ignore_errors = true
 [tool.pytest.ini_options]
 addopts = "--nomigrations --disable-socket"
 DJANGO_SETTINGS_MODULE = "project.testing_settings"
+verbosity_subtests = 0
 filterwarnings = [
     # Enable warnings as errors.
     "error",

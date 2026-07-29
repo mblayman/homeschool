@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.5/.schema/devbox.schema.json",
+  "packages": {
+    "python": "3.13",
+    "glib": {
+      "version": "latest",
+      "outputs": ["out", "dev"]
+    },
+    "pango": {
+      "version": "latest",
+      "outputs": ["out", "dev"]
+    },
+    "harfbuzz":   "latest",
+    "fontconfig": {
+      "version": "latest",
+      "outputs": ["bin", "lib", "dev", "out"]
+    },
+    "cairo":      "latest",
+    "gdk-pixbuf": "latest",
+    "libffi":     "latest",
+    "pkg-config": "latest"
+  },
+  "env": {
+    "LD_LIBRARY_PATH": "$DEVBOX_PACKAGES_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  },
+  "shell": {
+    "init_hook": ["uv sync --frozen", ". $VENV_DIR/bin/activate"],
+    "scripts": {
+      "test": ["mise run test"]
+    }
+  }
+}
