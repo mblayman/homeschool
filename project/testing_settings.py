@@ -34,7 +34,9 @@ HUEY = {
 }
 
 # Make sure that tests are never sending real emails.
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+MAILERS["default"]["BACKEND"] = (  # noqa: F405
+    "django.core.mail.backends.locmem.EmailBackend"
+)
 
 TURNSTILE_ENABLED = False
 
