@@ -152,10 +152,14 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Email
-EMAIL_BACKEND = env.str("EMAIL_BACKEND", "anymail.backends.amazon_ses.EmailBackend")
+MAILERS = {
+    "default": {
+        "BACKEND": env.str("EMAIL_BACKEND", "anymail.backends.amazon_ses.EmailBackend")
+    }
+}
 # Enable this to test with MailHog for local email testing.
 if env.bool("EMAIL_TESTING", False):
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    MAILERS["default"]["BACKEND"] = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = "0.0.0.0"  # noqa: S104 This is for local testing only. It's ok.
     EMAIL_PORT = 1025
 DEFAULT_FROM_EMAIL = f"noreply@email.{domain}"
