@@ -3,7 +3,7 @@ default_language_version:
 
 repos:
 - repo: https://github.com/adamchainz/django-upgrade
-  rev: 1.31.1
+  rev: 1.32.0
   hooks:
   - id: django-upgrade
     args: [--target-version, "4.2"]
@@ -14,7 +14,7 @@ repos:
     files: \.(md|rst)$
     args: ["--gitignore", "--no-must-find-files"]
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.16.3
+  rev: v0.16.4
   hooks:
     # Run the linter.
     - id: ruff
