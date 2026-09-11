@@ -125,6 +125,8 @@ filterwarnings = [
     # weasyprint==62.3
     "ignore:.*transform is deprecated.*:DeprecationWarning",
     "ignore:.*text_matrix is deprecated.*:DeprecationWarning",
+    # weasyprint==70.0; production installs libharfbuzz-subset0
+    "ignore:.*HarfBuzz-Subset will be required by future versions of WeasyPrint.*:DeprecationWarning",
 ]
 # This warning is coming from dj-stripe 2.5.1 (Example)
 #    ignore:.*The providing_args argument is deprecated\..*:DeprecationWarning
