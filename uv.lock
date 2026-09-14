@@ -461,15 +461,15 @@ wheels = [
 
 [[package]]
 name = "environs"
-version = "15.1.0"
+version = "15.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "marshmallow" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f8/d3/49f397f0f8ec988d0225ae1a72e8b45cfb4efb9425080a3e2d3b5cc4ff29/environs-15.1.0.tar.gz", hash = "sha256:268597f56e74d3304b8724db3d3d94db54427d7a7f17153e6b22520a6f0cfb9e", size = 36593, upload-time = "2026-08-01T02:21:06.354Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/1d/eaf85ea68976560b74eb2449baf43b5ec020db4960e56b1143b83703524f/environs-15.2.0.tar.gz", hash = "sha256:1bfc0d32b43692f28a6e294ad2b69903d43a214672ebcf3124a66d66b52b2418", size = 36816, upload-time = "2026-08-29T19:38:57.49Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/51/61/5e76e4827bb5fdbe42a88cf387ba1f875868e0e82e9768e2c25ca941d9ed/environs-15.1.0-py3-none-any.whl", hash = "sha256:6f1f83181caa98b1301a4fc96ace072e94b725409422ccd47b52fbc8d2ce7aa7", size = 17394, upload-time = "2026-08-01T02:21:05.135Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/0e/47b55c623e8062fc64c16306ed7fde823e992452953a395220d209b7a208/environs-15.2.0-py3-none-any.whl", hash = "sha256:3e460fda6b3c29ebf9add476f55f4977018d00071cac1a62f4399e35b8d28c7a", size = 17393, upload-time = "2026-08-29T19:38:56.39Z" },
 ]
 
 [[package]]
@@ -636,7 +636,7 @@ requires-dist = [
     { name = "django-storages", specifier = "==1.14.6" },
     { name = "django-tz-detect", specifier = "==0.5.0" },
     { name = "django-waffle", specifier = "==5.0.0" },
-    { name = "environs", specifier = "==15.1.0" },
+    { name = "environs", specifier = "==15.2.0" },
     { name = "gunicorn", specifier = "==26.2.0" },
     { name = "hashids", specifier = "==1.3.1" },
     { name = "huey", specifier = "==3.3.4" },
