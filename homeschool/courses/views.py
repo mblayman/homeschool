@@ -607,6 +607,12 @@ class CourseTaskUpdateView(UpdateView):
 def bulk_delete_course_tasks(request, pk):
     """Bulk delete course tasks."""
     course = Course.objects.get(pk=pk)
+    if not course.course_tasks.exists():
+        url = reverse("courses:detail", args=[course.id])
+        if request.method == "POST":
+            return HttpResponseClientRedirect(url)
+        return HttpResponseRedirect(url)
+
     tasks = get_course_task_queryset(request.user).filter(course=course)
 
     if request.method == "POST":
@@ -668,7 +674,11 @@ def course_task_hx_delete(request, pk):
 
     # Context collection evaluates before template rendering
     # so the task needs to be deleted before getting the new context.
+    # Count remaining tasks only after delete; course_tasks above is lazy.
     task.delete()
+    if not course.course_tasks.exists():
+        url = reverse("courses:detail", args=[course.id])
+        return HttpResponseClientRedirect(url)
 
     show_completed_tasks = bool(request.GET.get("completed_tasks"))
     grade_levels = task.course.grade_levels.all().order_by("id")
