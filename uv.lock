@@ -445,14 +445,14 @@ wheels = [
 
 [[package]]
 name = "django-sesame"
-version = "3.2.3"
+version = "3.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a7/97/5340660eff87af3e1eb318b483677eae9b30512eebede6fbe29b3b502713/django_sesame-3.2.3.tar.gz", hash = "sha256:09977a1c55bdbcce0a024c712c4d683e1a69543a217626ffa1d5f7ef7ebffc58", size = 17597, upload-time = "2025-05-02T19:06:42.124Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/9c/43e3b6981e864f23d438eb07f691c6d005c07d5d6ef149f367d0e4abf78b/django_sesame-3.2.5.tar.gz", hash = "sha256:eeb662069ea74d635ab11e0f93446c8a7c187f41b0788ddc3c6c72c6f8db2eb1", size = 17583, upload-time = "2026-10-02T20:36:28.941Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/b8/61d44649c57efc58ad6851192db0c3afed2b161a474bb1d010446d6d8637/django_sesame-3.2.3-py3-none-any.whl", hash = "sha256:5da0210a57a8f48dd61a6c8125e61121403042ed000c96187e4188a8241496d6", size = 20285, upload-time = "2025-05-02T19:06:40.814Z" },
+    { url = "https://files.pythonhosted.org/packages/32/35/02e4f7602e56427a9bcb9a8445c1b9d18d4e4b0c5f751daef8dda5b79232/django_sesame-3.2.5-py3-none-any.whl", hash = "sha256:dfca2b0e0d480408894d9d0423109dc659d186e1946184f62506eeda2b4377c1", size = 20267, upload-time = "2026-10-02T20:36:27.906Z" },
 ]
 
 [[package]]
@@ -694,7 +694,7 @@ requires-dist = [
     { name = "django-hijack", specifier = "==3.7.8" },
     { name = "django-htmx", specifier = "==1.29.0" },
     { name = "django-ordered-model", specifier = "==3.7.4" },
-    { name = "django-sesame", specifier = "==3.2.3" },
+    { name = "django-sesame", specifier = "==3.2.5" },
     { name = "django-simple-history", specifier = "==3.13.0" },
     { name = "django-storages", specifier = "==1.14.6" },
     { name = "django-tz-detect", specifier = "==0.5.0" },

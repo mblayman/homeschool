@@ -31,7 +31,7 @@ dependencies = [
     "sphinx==9.1.0",
     "weasyprint==70.0",
     "whitenoise[brotli]==6.12.0",
-    "django-sesame==3.2.3",
+    "django-sesame==3.2.5",
 ]
 
 [tool.uv]
