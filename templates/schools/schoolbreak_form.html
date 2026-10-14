@@ -30,7 +30,7 @@
         <div class="md:w-3/4">
           {% for student in students %}
             <div class="py-1">
-              <label class="p-4 w-full inline-block hover:bg-gray-200 rounded" for="student-{{ student.id }}">
+              <label class="p-4 w-full inline-block hover:bg-gray-200 rounded-sm" for="student-{{ student.id }}">
                 <input class="mr-2" type="checkbox" value="{{ student.id }}" id="student-{{ student.id }}" name="student-{{ student.id }}"
                 {% if create %}
                   checked
@@ -51,16 +51,16 @@
       <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
         {% if not create %}
           <a href="{% url "schools:school_break_delete" schoolbreak.id %}"
-            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+            class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3" type="submit">
             Delete
           </a>
         {% endif %}
         <div class="grow"></div>
         <a href="{% url "schools:school_year_detail" school_year.id %}"
-          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+          class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3">
           Cancel
         </a>
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded-sm focus:outline-hidden focus:ring-3" type="submit">
           {% if create %}Add{% else %}Update{% endif %} Break
         </button>
       </div>

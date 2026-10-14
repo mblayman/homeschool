@@ -1,8 +1,8 @@
 {
   "name": "homeschool",
   "scripts": {
-    "build": "tailwindcss build --minify -i site.css -c tailwind.config.js -o ../static/site.css",
-    "watch": "tailwindcss build -i site.css -c tailwind.config.js -o ../static/site.css --watch",
+    "build": "tailwindcss --minify -i site.css -o ../static/site.css",
+    "watch": "tailwindcss -i site.css -o ../static/site.css --watch",
     "e2e": "playwright test",
     "e2e:install": "playwright install chromium",
     "e2e:install:ci": "playwright install --with-deps chromium"
@@ -12,8 +12,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.5.23",
+    "@tailwindcss/cli": "^4.3.3",
     "tailwindcss": "^4.3.3"
+  },
+  "overrides": {
+    "@parcel/watcher": "2.5.6"
   }
 }

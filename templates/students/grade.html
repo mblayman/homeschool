@@ -28,7 +28,7 @@
               {{ work.course_task|linebreaksbr }}
             </div>
             <div class="w-2/12 p-2 text-sm font-light overflow-x-auto">
-              <input class="bg-white appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+              <input class="bg-white appearance-none border-2 border-gray-200 rounded-sm w-full py-2 px-4 text-gray-700 leading-tight focus:outline-hidden focus:border-blue-500"
                 {% if forloop.first %}autofocus{% endif %}
                 type="number" min="0" name="graded_work-{{ student_work.student.id }}-{{ work.id }}" autocomplete="off">
             </div>
@@ -39,16 +39,16 @@
       <div class="flex flex-col sm:flex-row items-center justify-end mt-8">
         {% if request.GET.next %}
           <a href="{{ request.GET.next }}"
-            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3">
             Exit
           </a>
         {% else %}
           <a href="{% url "core:daily" %}"
-            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+            class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3">
             Exit
           </a>
         {% endif %}
-        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
+        <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded-sm focus:outline-hidden focus:ring-3" type="submit">
           Save
         </button>
       </div>

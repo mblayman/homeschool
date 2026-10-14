@@ -34,8 +34,18 @@ jobs:
       - name: Install the project
         run: uv sync --dev
 
-      - name: Fake build the site.css
-        run: touch static/site.css
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm --prefix frontend ci
+
+      - name: Build the site.css
+        run: npm --prefix frontend run build
 
       - name: Check types
         run: make mypy
