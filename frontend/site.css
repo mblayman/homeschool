@@ -8,7 +8,9 @@
   looks the same as it did with Tailwind CSS v3.
 
   If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
+  color utility to any element that depends on these defaults. Use the literal
+  v3 gray-200 value because the legacy JavaScript theme replaces Tailwind's
+  default palette and therefore does not define the --color-gray-200 variable.
 */
 @layer base {
   *,
@@ -16,6 +18,6 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: #edf2f7;
   }
 }
