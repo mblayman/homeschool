@@ -24,7 +24,7 @@
   </h1>
 
   {% if not course.is_running %}
-    <div class="flex flex-row items-center bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mb-8 rounded-lg shadow-sm max-w-xl">
+    <div class="flex flex-row items-center bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mb-8 rounded-lg shadow-xs max-w-xl">
       <span class="text-yellow-500 mr-4">
         <svg class="h-8 w-8 pb-1 inline fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 5h2v6H9V5zm0 8h2v2H9v-2z"/></svg>
       </span>
@@ -44,17 +44,17 @@
     {% if course_tasks or has_course_resources %}
       {% if course_tasks %}
         <a href="{% url "courses:task_create" pk=course.id %}{% if last_task %}?previous_task={{ last_task.id }}&next={{ request.path|urlencode }}%23task-{{ last_task.id }}{% endif %}"
-          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
           Add New Task
         </a>
       {% endif %}
       <a href="{% url "courses:resource_create" pk=course.id %}"
-        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
         Add New Resource
       </a>
       {% if course_tasks %}
         <a href="{% url "courses:task_delete_bulk" pk=course.id %}"
-          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+          class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
           Delete Multiple Tasks
         </a>
       {% endif %}
@@ -115,7 +115,7 @@
             related to this course.
           </p>
           <a href="{% url "courses:resource_create" pk=course.id %}"
-            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+            class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
             Add Resource
           </a>
         </div>

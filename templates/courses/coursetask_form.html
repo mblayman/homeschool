@@ -7,7 +7,7 @@
 
   <div class="max-w-lg">
     {% if previous_task %}
-      <div class="bg-blue-100 rounded p-2 mb-4">
+      <div class="bg-blue-100 rounded-sm p-2 mb-4">
         <p class="font-extralight text-base text-gray-800 mb-2">
           <strong>Previous Task:</strong>
         </p>
@@ -39,7 +39,7 @@
           </div>
           <div class="md:w-3/4">
             <div class="relative">
-              <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500" id="id_grade_level" name="grade_level">
+              <select class="block appearance-none w-full bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-sm leading-tight focus:outline-hidden focus:border-blue-500" id="id_grade_level" name="grade_level">
                 <option value="">All grade levels</option>
                 {% for grade_level in grade_levels %}
                   <option value="{{ grade_level.id }}"
@@ -62,26 +62,26 @@
         <div class="md:w-1/4"></div>
         {% if create %}
           <div class="md:w-3/4 text-right">
-            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3" type="submit">
               Add
             </button>
           </div>
         {% else %}
           <div class="md:w-3/4 flex flex-col sm:flex-row items-center">
             <a href="{{ delete_url }}"
-              class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring" type="submit">
+              class="bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3" type="submit">
               Delete
             </a>
             {% if request.GET.next %}
               <div class="grow"></div>
               <a href="{{ request.GET.next }}"
-                class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:ring">
+                class="hover:bg-gray-200 text-blue-700 font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3">
                 Cancel
               </a>
             {% else %}
               <div class="grow"></div>
             {% endif %}
-            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:ring" type="submit">
+            <button class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded-sm focus:outline-hidden focus:ring-3" type="submit">
               Update
             </button>
           </div>
@@ -92,18 +92,18 @@
         <div class="md:flex md:items-center mb-2">
           <div class="md:w-1/4"></div>
           <div class="md:w-3/4">
-            <label class="block w-full pl-1 py-2 text-blue-900 font-extralight rounded hover:bg-gray-200">
+            <label class="block w-full pl-1 py-2 text-blue-900 font-extralight rounded-sm hover:bg-gray-200">
               <input onchange="toggleAutonumber(this)" class="mr-2" type="checkbox" name="replicate">
-              Replicate <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" type="number" name="replicate_count" value="2" min="1" max="{{ max_tasks }}"> times
+              Replicate <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded-sm py-2 px-4 text-gray-700 leading-tight focus:outline-hidden focus:border-blue-500" type="number" name="replicate_count" value="2" min="1" max="{{ max_tasks }}"> times
             </label>
           </div>
         </div>
         <div class="md:flex md:items-center opacity-0 transition duration-200 ease-in-out" id="autonumber_option">
           <div class="md:w-1/4"></div>
           <div class="md:w-3/4">
-            <label class="block w-full pl-1 py-2 text-blue-900 font-extralight rounded hover:bg-gray-200">
+            <label class="block w-full pl-1 py-2 text-blue-900 font-extralight rounded-sm hover:bg-gray-200">
               <input class="mr-2" type="checkbox" name="autonumber">
-              Number each task starting at <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" type="number" name="starting_at" value="1" min="0">
+              Number each task starting at <input class="w-20 bg-white appearance-none border-2 border-gray-200 rounded-sm py-2 px-4 text-gray-700 leading-tight focus:outline-hidden focus:border-blue-500" type="number" name="starting_at" value="1" min="0">
             </label>
             <p class="p-1 text-sm text-blue-900 font-extralight">
               Example: “Lesson” creates “Lesson 1”, “Lesson 2”, etc.

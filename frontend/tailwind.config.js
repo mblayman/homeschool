@@ -133,11 +133,6 @@ module.exports = {
       '5xl': '3rem',
       '6xl': '4rem',
     },
-    extend: {
-      screens: {
-        print: {raw: 'print'}
-      }
-    }
   },
   plugins: []
 }

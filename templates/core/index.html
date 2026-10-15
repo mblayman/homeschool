@@ -10,7 +10,7 @@
     {% for message in messages %}
       {% if "blog-retired" in message.tags %}
         <ul class="flex flex-row justify-center mx-4 mt-4 mb-4 w-full">
-          <li class="bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mx-2 rounded-lg shadow-sm">{{ message }}</li>
+          <li class="bg-yellow-200 border border-yellow-300 text-blue-900 p-4 mx-2 rounded-lg shadow-xs">{{ message }}</li>
         </ul>
       {% endif %}
     {% endfor %}
@@ -83,7 +83,7 @@
           <div class="w-full sm:w-1/2 p-6">
             <div class="relative flex">
               <div class="absolute inset-0 bg-yellow-500 rounded-lg rotate-3 origin-bottom-right"></div>
-              <div class="rounded-lg shadow z-10">
+              <div class="rounded-lg shadow-sm z-10">
                 <div class="bg-white rounded-lg p-3 md:p-6 shadow-lg">
                   <div class="rounded-md overflow-hidden">
                     <img width="1237" height="1095" src="{% static "welcome.svg" %}" alt="Woman helping child with backpack">
@@ -98,7 +98,7 @@
           <div class="w-full sm:w-1/2 p-6 mt-6">
             <div class="relative flex">
               <div class="absolute inset-0 bg-yellow-500 rounded-lg -rotate-3 origin-bottom-left"></div>
-              <div class="rounded-lg shadow z-10">
+              <div class="rounded-lg shadow-sm z-10">
                 <div class="bg-white rounded-lg p-3 md:p-6 shadow-lg">
                   <div class="rounded-md overflow-hidden">
                     <img width="1237" height="1095" src="{% static "todo.svg" %}" alt="Womain checking items off of a list">
@@ -134,7 +134,7 @@
     {#   </div> #}
     {#   <div class="lg:flex justify-center w-full px-6 lg:space-x-12 pb-16 md:pb-20 space-y-6 lg:space-y-0"> #}
     {#     <div class="relative flex lg:w-1/3 lg:-rotate-2"> #}
-    {#       <div class="rounded-lg shadow z-10"> #}
+    {#       <div class="rounded-lg shadow-sm z-10"> #}
     {#         <div class="flex flex-col bg-white rounded-lg p-6 shadow-lg text-xl text-center h-full border-t-4 border-yellow-300 leading-normal"> #}
     {#           <img src="https://savvycal.global.ssl.fastly.net/images/testimonials/mailbrew-fabrizio-d6538e663a0eead09d788641edd98ec9.jpg?vsn=d" class="block mx-auto w-24 h-24 rounded-full" alt="Fabrizio" loading="lazy" width="400" height="400"> #}
     {#           <p class="grow py-6 text-gray-500">“SavvyCal makes scheduling calls and meetings so easy for us. I wish we had this years ago.”</p> #}
@@ -144,7 +144,7 @@
     {#       </div> #}
     {#     </div> #}
     {#     <div class="relative flex lg:w-1/3 lg:rotate-1"> #}
-    {#       <div class="rounded-lg shadow z-10"> #}
+    {#       <div class="rounded-lg shadow-sm z-10"> #}
     {#         <div class="flex flex-col bg-white rounded-lg p-6 shadow-lg text-xl text-center h-full border-t-4 border-yellow-500 leading-normal"> #}
     {#           <img src="{% static "testimonials/elease.jpg" %}" class="block mx-auto w-24 h-24 rounded-full" alt="Elease L from Maryland" loading="lazy" width="400" height="400"> #}
     {#           <p class="grow py-6 text-gray-500">“I use SavvyCal so my customers can easily compare my availability to their own. Making their lives a little easier is a treat I’m happy to pay for.”</p> #}
@@ -154,7 +154,7 @@
     {#       </div> #}
     {#     </div> #}
     {#     <div class="relative flex lg:w-1/3 lg:-rotate-2"> #}
-    {#       <div class="rounded-lg shadow z-10"> #}
+    {#       <div class="rounded-lg shadow-sm z-10"> #}
     {#         <div class="flex flex-col bg-white rounded-lg p-6 shadow-lg text-xl text-center h-full border-t-4 border-yellow-300 leading-normal"><img src="https://savvycal.global.ssl.fastly.net/images/testimonials/tinyseed-tracy-3415f917c4c0929ec6b601a1833e030e.jpg?vsn=d" class="block mx-auto w-24 h-24 rounded-full" alt="Fabrizio" loading="lazy" width="400" height="400"><p class="grow py-6 text-gray-500">“My favorite is the personalized links. SavvyCal links feel more natural and save <em>everyone</em> time.”</p> #}
     {#           <div class="text-gray-700 font-medium">Tracy Osborn</div> #}
     {#           <div class="text-lg text-gray-500">Program Manager at TinySeed</div> #}
@@ -191,7 +191,7 @@
     {#     </div> #}
 
     {#     <div class="w-full md:w-1/3 p-6 flex flex-col grow shrink"> #}
-    {#       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow"> #}
+    {#       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow-sm"> #}
     {#         <a href="#" class="flex flex-wrap no-underline hover:no-underline"> #}
     {#           <p class="w-full text-gray-600 text-xs md:text-sm px-6">xGETTING STARTED</p> #}
     {#           <div class="w-full font-bold text-xl text-gray-800 px-6">Lorem ipsum dolor sit amet.</div> #}
@@ -200,7 +200,7 @@
     {#           </p> #}
     {#         </a> #}
     {#       </div> #}
-    {#       <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6"> #}
+    {#       <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow-sm p-6"> #}
     {#         <div class="flex items-center justify-center"> #}
     {#           <button class="mx-auto lg:mx-0 hover:underline bg-blue-700 text-white font-bold rounded-full my-6 py-4 px-8 shadow-lg">Action</button> #}
     {#         </div> #}
@@ -208,7 +208,7 @@
     {#     </div> #}
 
     {#     <div class="w-full md:w-1/3 p-6 flex flex-col grow shrink"> #}
-    {#       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow"> #}
+    {#       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow-sm"> #}
     {#         <a href="#" class="flex flex-wrap no-underline hover:no-underline"> #}
     {#           <p class="w-full text-gray-600 text-xs md:text-sm px-6">xGETTING STARTED</p> #}
     {#           <div class="w-full font-bold text-xl text-gray-800 px-6">Lorem ipsum dolor sit amet.</div> #}
@@ -217,7 +217,7 @@
     {#           </p> #}
     {#         </a> #}
     {#       </div> #}
-    {#       <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6"> #}
+    {#       <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow-sm p-6"> #}
     {#         <div class="flex items-center justify-center"> #}
     {#           <button class="mx-auto lg:mx-0 hover:underline bg-blue-700 text-white font-bold rounded-full my-6 py-4 px-8 shadow-lg">Action</button> #}
     {#         </div> #}
@@ -225,7 +225,7 @@
     {#     </div> #}
 
     {#     <div class="w-full md:w-1/3 p-6 flex flex-col grow shrink"> #}
-    {#       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow"> #}
+    {#       <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow-sm"> #}
     {#         <a href="#" class="flex flex-wrap no-underline hover:no-underline"> #}
     {#           <p class="w-full text-gray-600 text-xs md:text-sm px-6">xGETTING STARTED</p> #}
     {#           <div class="w-full font-bold text-xl text-gray-800 px-6">Lorem ipsum dolor sit amet.</div> #}
@@ -234,7 +234,7 @@
     {#           </p> #}
     {#         </a> #}
     {#       </div> #}
-    {#       <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6"> #}
+    {#       <div class="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow-sm p-6"> #}
     {#         <div class="flex items-center justify-center"> #}
     {#           <button class="mx-auto lg:mx-0 hover:underline bg-blue-700 text-white font-bold rounded-full my-6 py-4 px-8 shadow-lg">Action</button> #}
     {#         </div> #}
@@ -256,7 +256,7 @@
 
         <div class="flex flex-col sm:flex-row justify-center pt-12 my-4">
 
-          <div class="flex flex-col w-5/6 lg:w-1/3 mx-auto lg:mx-0 rounded-none lg:rounded-l-lg bg-white mt-4 shadow">
+          <div class="flex flex-col w-5/6 lg:w-1/3 mx-auto lg:mx-0 rounded-none lg:rounded-l-lg bg-white mt-4 shadow-sm">
             <div class="flex-1 bg-white text-gray-700 rounded-t rounded-b-none overflow-hidden">
               <div class="p-8 text-3xl font-bold text-center border-b-4">Monthly</div>
               <ul class="w-full text-center text-sm">
@@ -274,7 +274,7 @@
           </div>
 
           <div class="flex flex-col w-5/6 lg:w-1/3 mx-auto lg:mx-0 rounded-lg bg-white mt-4 sm:-mt-6 shadow-lg z-10">
-            <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow">
+            <div class="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow-sm">
               <div class="w-full mt-4 pb-2 text-center">
                 <span class="bg-yellow-500 text-white text-sm p-1 px-2 rounded-lg">Better Value</a>
               </div>
@@ -287,7 +287,7 @@
                 <li class="border-b py-4">Save 17% Over Monthly</li>
               </ul>
             </div>
-            <div class="bg-blue-700 text-white flex-none mt-auto bg-white rounded-b sm:rounded-bl-none rounded-t-none overflow-hidden shadow p-6">
+            <div class="bg-blue-700 text-white flex-none mt-auto rounded-b sm:rounded-bl-none rounded-t-none overflow-hidden shadow-sm p-6">
               <div class="w-full pt-6 text-4xl font-bold text-center">$49.99 <span class="text-base">/ year</span></div>
               <div class="flex items-center justify-center">
                 <a href="{% url "signin" %}" class="mx-auto lg:mx-0 hover:underline bg-yellow-500 text-white font-bold rounded-full my-6 py-4 px-8 shadow-lg">Start Free Trial</a>

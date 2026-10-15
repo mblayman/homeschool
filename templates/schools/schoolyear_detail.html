@@ -65,11 +65,11 @@
   <p class="mb-8">
     {% if grade_levels %}
       <a href="{% url "schools:grade_level_create" schoolyear.id %}"
-        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
         Add Grade Level
       </a>
       <a href="{% url "schools:school_break_create" schoolyear.id %}"
-        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+        class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
         Add Break
       </a>
     {% endif %}
@@ -162,7 +162,7 @@
             </div>
             <div>
               <a href="{% url "students:enrollment_create" schoolyear.id %}"
-                class="bg-blue-700 hover:bg-blue-500 text-white font-normal py-2 px-3 rounded focus:outline-none focus:ring">
+                class="bg-blue-700 hover:bg-blue-500 text-white font-normal py-2 px-3 rounded-sm focus:outline-hidden focus:ring-3">
                 Enroll Student
               </a>
             </div>
@@ -220,7 +220,7 @@
                 <p class="mb-8">Your new grade level doesn’t have any courses yet. Let’s add your first one!</p>
                 <p class="mb-8">
                   <a href="{% url "courses:create" %}?school_year={{ schoolyear.id }}&grade_level={{ grade_level_info.grade_level.id }}"
-                    class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+                    class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
                     Add Course
                   </a>
                 </p>
@@ -238,7 +238,7 @@
           </p>
           <div class="text-center">
             <a href="{% url "schools:grade_level_create" schoolyear.id %}"
-              class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring mr-2">
+              class="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:ring-3 mr-2">
               Add Grade Level
             </a>
           </div>
