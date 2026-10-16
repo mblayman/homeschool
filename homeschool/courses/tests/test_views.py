@@ -555,6 +555,32 @@ class TestBulkDeleteCourseTasks(TestCase):
 
         assert self.get_context("task_details")[0]["task"] == task
 
+    def test_get_no_tasks(self):
+        """A course with no tasks redirects to the course detail."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            response = self.get("courses:task_delete_bulk", pk=course.id)
+
+        self.response_302(response)
+        assert response.get("Location") == self.reverse("courses:detail", pk=course.id)
+
+    def test_post_no_tasks(self):
+        """Posting with no tasks redirects to the course detail."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+
+        with self.login(user):
+            response = self.post("courses:task_delete_bulk", pk=course.id, data={})
+
+        self.response_200(response)
+        assert response.get("HX-Redirect") == self.reverse(
+            "courses:detail", pk=course.id
+        )
+
 
 class TestCourseDeleteView(TestCase):
     def test_get(self):
@@ -1192,7 +1218,42 @@ class TestCourseTaskHxDeleteView(TestCase):
 
         assert CourseTask.objects.count() == 0
         self.response_200(response)
-        assert "task_details" in response.context
+        assert response.get("HX-Redirect") == self.reverse(
+            "courses:detail", pk=course.id
+        )
+
+    def test_delete_one_of_two(self):
+        """Deleting one task keeps the remaining task in the partial."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        course = CourseFactory(grade_levels=[grade_level])
+        task = CourseTaskFactory(course=course)
+        remaining_task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.delete("courses:task_hx_delete", pk=task.id)
+
+        self.response_200(response)
+        assert response.get("HX-Redirect") is None
+        assert response.context["task_details"][0]["task"] == remaining_task
+
+    def test_delete_last_incomplete_hides_completed(self):
+        """A remaining completed task stays on the hidden-complete empty state."""
+        user = self.make_user()
+        grade_level = GradeLevelFactory(school_year__school=user.school)
+        enrollment = EnrollmentFactory(grade_level=grade_level)
+        course = CourseFactory(grade_levels=[grade_level])
+        completed_task = CourseTaskFactory(course=course)
+        CourseworkFactory(student=enrollment.student, course_task=completed_task)
+        task = CourseTaskFactory(course=course)
+
+        with self.login(user):
+            response = self.delete("courses:task_hx_delete", pk=task.id)
+
+        self.response_200(response)
+        assert response.get("HX-Redirect") is None
+        assert "All of the current tasks are complete." in response.content.decode()
+        assert CourseTask.objects.filter(id=completed_task.id).exists()
 
 
 class TestCourseTaskDown(TestCase):
