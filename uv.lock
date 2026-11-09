@@ -705,7 +705,7 @@ requires-dist = [
     { name = "environs", specifier = "==15.2.0" },
     { name = "gunicorn", specifier = "==26.2.0" },
     { name = "hashids", specifier = "==1.3.1" },
-    { name = "huey", specifier = "==3.4.0" },
+    { name = "huey", specifier = "==3.5.3" },
     { name = "python-dateutil", specifier = "==2.9.0.post0" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "sentry-sdk", specifier = "==2.73.0" },
@@ -755,11 +755,11 @@ wheels = [
 
 [[package]]
 name = "huey"
-version = "3.4.0"
+version = "3.5.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/57/25/1281d8f3febc30b5facbfc5e4163447241711591c094dac642d32c827eb0/huey-3.4.0.tar.gz", hash = "sha256:ac9b02e741f13da4092ea19bcaafc73669e97d3153914d2fed2868df144f6dfa", size = 630013, upload-time = "2026-09-04T02:04:34.521Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/34/a5193a2658b0e21a787bf23c4f58ed95238c9882371e26e4d169059d91fc/huey-3.5.3.tar.gz", hash = "sha256:3d9e8fe95638bde843fbcfe38c063d906afa0d4b0cf94955a24c0f90eb09bb44", size = 625867, upload-time = "2026-10-24T02:08:57.018Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/57/31/cee585bd4d1e39947a426a6736f4e17d22b454952370fb9cf48eb3103085/huey-3.4.0-py3-none-any.whl", hash = "sha256:d0580762397744026f83baae5f2b97a62474a62b8565ac75bbafefe72f9c784f", size = 136493, upload-time = "2026-09-04T02:04:32.848Z" },
+    { url = "https://files.pythonhosted.org/packages/ce/2c/bce2ca816fa58424d56792b520336651a0f17c13739d88ddfa8385199718/huey-3.5.3-py3-none-any.whl", hash = "sha256:30cbf102f2074570709cf5a5f8e4a1826cf1fbb55d7fcffda1272a0cfa74f55d", size = 139585, upload-time = "2026-10-24T02:08:55.779Z" },
 ]
 
 [[package]]
