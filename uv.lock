@@ -493,15 +493,14 @@ wheels = [
 
 [[package]]
 name = "django-tz-detect"
-version = "0.5.0"
+version = "0.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
-    { name = "pytz" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/3e/75b2c2f7005d095cc23bc74a250cd2c3ff1aff232cc35dbb7e4f30084cc4/django-tz-detect-0.5.0.tar.gz", hash = "sha256:b804c562ecd6e1c2a303cc9a88e5ad18df053b07f15453d67984f3f34b038de4", size = 11325, upload-time = "2024-03-19T12:03:26.387Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ea/5e/7f2881bb4ab0022db29557294a91322748e33c6620f0c2c6d1b0ac0f1bf8/django_tz_detect-0.6.1.tar.gz", hash = "sha256:44a3eeca4f2d740dc024364f6e846c951d561f6dd8244067bfbd5af688457b15", size = 12197, upload-time = "2026-11-10T16:43:35.493Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5e/e5/3877abeca4bb1a1fa73d040f89e6560e40206b02eb43cef9fab4efa8682b/django_tz_detect-0.5.0-py3-none-any.whl", hash = "sha256:4dd6e5e4080c2257a205545134f252e51e2c58225de362dc8f05328c88599237", size = 11680, upload-time = "2024-03-19T12:03:24.839Z" },
+    { url = "https://files.pythonhosted.org/packages/2e/7a/0d1deddc9116be2a22ebaf2c87ba5eaec99016060d20a492ea603a79bf98/django_tz_detect-0.6.1-py3-none-any.whl", hash = "sha256:04dd02bad0468ea88db8b97c31e44f6dc4d9d13c24db06ca1ecd29c74f2efaac", size = 13165, upload-time = "2026-11-10T16:43:34.046Z" },
 ]
 
 [[package]]
@@ -700,7 +699,7 @@ requires-dist = [
     { name = "django-sesame", specifier = "==3.2.5" },
     { name = "django-simple-history", specifier = "==3.13.0" },
     { name = "django-storages", specifier = "==1.14.6" },
-    { name = "django-tz-detect", specifier = "==0.5.0" },
+    { name = "django-tz-detect", specifier = "==0.6.1" },
     { name = "django-waffle", specifier = "==5.0.0" },
     { name = "environs", specifier = "==15.2.0" },
     { name = "gunicorn", specifier = "==26.2.0" },
@@ -1121,15 +1120,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/82/ed/0301aeeac3e5353ef3d94b6ec08bbcabd04a72018415dcb29e588514bba8/python_dotenv-1.2.2.tar.gz", hash = "sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3", size = 50135, upload-time = "2026-03-01T16:00:26.196Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0b/d7/1959b9648791274998a9c3526f6d0ec8fd2233e4d4acce81bbae76b44b2a/python_dotenv-1.2.2-py3-none-any.whl", hash = "sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a", size = 22101, upload-time = "2026-03-01T16:00:25.09Z" },
-]
-
-[[package]]
-name = "pytz"
-version = "2026.3.post1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fb/48/fb042503b6ca6cd271261dc559fd6432f7d8c713153e9ec5c591af4dfc1c/pytz-2026.3.post1.tar.gz", hash = "sha256:2211d3fcf9a797d3405cac96ac7f61d80e6a644f72a3309607282fe8a2010c5d", size = 319745, upload-time = "2026-07-25T15:12:07.385Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0f/7b/39c34ca613b0b198cb866466651b26b045e2009864c5183c979a3b83f383/pytz-2026.3.post1-py2.py3-none-any.whl", hash = "sha256:dd95840dd199baea12d9cc096a1d452caa6596a1c1e4b5f3dbd1541855d5e815", size = 508283, upload-time = "2026-07-25T15:12:05.782Z" },
 ]
 
 [[package]]
